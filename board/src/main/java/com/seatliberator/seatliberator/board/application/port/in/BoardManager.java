@@ -1,9 +1,10 @@
 package com.seatliberator.seatliberator.board.application.port.in;
 
-import java.util.UUID;
+import com.seatliberator.seatliberator.board.application.port.in.command.BoardCreateCommand;
+import com.seatliberator.seatliberator.board.application.port.in.command.BoardDeleteCommand;
 
 public interface BoardManager {
-    BoardEntry create(String name, String description);
+    BoardEntry create(BoardCreateCommand command);
 
-    void remove(UUID boardId);
+    void delete(BoardDeleteCommand command);
 }

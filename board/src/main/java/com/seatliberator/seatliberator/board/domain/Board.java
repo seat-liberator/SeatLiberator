@@ -15,18 +15,6 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Board {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
-    @Setter
-    @Column(nullable = false)
-    private String name;
-
-    @Setter
-    @Column(nullable = true)
-    private String description;
-
     @OneToMany(
             mappedBy = "board",
             fetch = FetchType.LAZY,
@@ -34,6 +22,15 @@ public class Board {
             orphanRemoval = true
     )
     private final List<Post> posts = new ArrayList<>();
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+    @Setter
+    @Column(nullable = false)
+    private String name;
+    @Setter
+    @Column(nullable = true)
+    private String description;
 
     private Board(
             String name,
