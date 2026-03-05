@@ -34,6 +34,6 @@ public class ReservationController {
                 )
         );
 
-        return Map.of("Success", result);
+        return Map.of("success", result);
     }
 }

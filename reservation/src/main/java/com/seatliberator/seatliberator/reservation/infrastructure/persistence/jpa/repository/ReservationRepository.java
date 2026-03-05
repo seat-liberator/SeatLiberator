@@ -13,7 +13,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Query("""
             SELECT COUNT(r) > 0
             FROM Reservation r
-            WHERE r.seatId = :seatId
+            WHERE r.roomId = :roomId
+            AND r.seatId = :seatId
             AND r.startTime < :endTime
             AND r.endTime > :startTime
             """)
