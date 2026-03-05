@@ -18,9 +18,15 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.projectlombok:lombok")
 
+    // Spring Data Jpa
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
+
+    // PostgreSQL
+    runtimeOnly("org.postgresql:postgresql")
 }
 tasks.test {
     useJUnitPlatform()
