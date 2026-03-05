@@ -26,7 +26,8 @@ public class Post {
     private String content;
 
     @Setter(AccessLevel.PROTECTED)
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
     private Post(
