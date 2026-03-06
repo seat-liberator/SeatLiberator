@@ -18,6 +18,18 @@ import java.util.UUID;
 public class BoardController {
     private final BoardManager boardManager;
 
+    @GetMapping
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.ok(boardManager.getAll());
+    }
+
+    @GetMapping("/{boardId}")
+    public ResponseEntity<?> get(
+            @PathVariable("boardId") UUID boardId
+    ) {
+        return ResponseEntity.ok(boardManager.get(boardId));
+    }
+
     @PostMapping
     public ResponseEntity<?> post(
             @RequestBody BoardCreateRequest body
