@@ -8,6 +8,7 @@ import com.seatliberator.seatliberator.board.infrastructure.web.request.BoardCre
 import com.seatliberator.seatliberator.board.infrastructure.web.request.BoardUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -18,9 +19,21 @@ import java.util.UUID;
 public class BoardController {
     private final BoardManager boardManager;
 
+    @GetMapping
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.ok(boardManager.getAll());
+    }
+
+    @GetMapping("/{boardId}")
+    public ResponseEntity<?> get(
+            @PathVariable("boardId") UUID boardId
+    ) {
+        return ResponseEntity.ok(boardManager.get(boardId));
+    }
+
     @PostMapping
     public ResponseEntity<?> post(
-            @RequestBody BoardCreateRequest body
+            @RequestBody @Valid BoardCreateRequest body
     ) {
         var command = new BoardCreateCommand(
                 body.name(),
