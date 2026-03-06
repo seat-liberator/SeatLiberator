@@ -8,10 +8,10 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Entity
-@Table(name = "board")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Board {
@@ -29,7 +29,7 @@ public class Board {
     @Column(nullable = false)
     private String name;
     @Setter
-    @Column(nullable = true)
+    @Column
     private String description;
 
     private Board(
@@ -47,17 +47,24 @@ public class Board {
         return new Board(name, description);
     }
 
-    public void addPost(
+    public Post addPost(
             String title,
             String content
     ) {
         var post = Post.create(title, content);
         this.posts.add(post);
         post.setBoard(this);
+        return post;
     }
 
     public void removePost(Post post) {
         this.posts.remove(post);
         post.setBoard(null);
+    }
+
+    public Optional<Post> findPost(UUID postId) {
+        return this.posts.stream()
+                .filter(post -> post.getId().equals(postId))
+                .findFirst();
     }
 }
