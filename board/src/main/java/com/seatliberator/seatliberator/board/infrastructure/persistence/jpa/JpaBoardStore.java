@@ -6,6 +6,7 @@ import com.seatliberator.seatliberator.board.infrastructure.persistence.jpa.repo
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,8 +16,8 @@ public class JpaBoardStore implements BoardStore {
     private final BoardRepository repository;
 
     @Override
-    public Board save(Board board) {
-        return repository.save(board);
+    public void save(Board board) {
+        repository.save(board);
     }
 
     @Override
@@ -27,5 +28,10 @@ public class JpaBoardStore implements BoardStore {
     @Override
     public Optional<Board> getSingle(UUID boardId) {
         return repository.findById(boardId);
+    }
+
+    @Override
+    public List<Board> getAll() {
+        return repository.findAll();
     }
 }
