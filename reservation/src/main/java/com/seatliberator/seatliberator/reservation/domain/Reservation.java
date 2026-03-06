@@ -1,9 +1,6 @@
 package com.seatliberator.seatliberator.reservation.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.Instant;
@@ -16,14 +13,20 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String userId;
-    private String roomId;
-    private String seatId;
-    private Instant startTime;
-    private Instant endTime;
 
-    protected Reservation() {
-    }
+    @Column(nullable = false)
+    private String roomId;
+
+    @Column(nullable = false)
+    private String seatId;
+
+    @Column(nullable = false)
+    private Instant startTime;
+
+    @Column(nullable = false)
+    private Instant endTime;
 
     private Reservation(String userId, String roomId, String seatId, Instant startTime, Instant endTime) {
         this.userId = userId;
@@ -34,7 +37,11 @@ public class Reservation {
     }
 
     public static Reservation create(String userId, String roomId, String seatId, Instant startTime, Instant endTime) {
-        return new Reservation(userId, roomId, seatId, startTime, endTime);
+        if(!startTime.isBefore(endTime)){
+            return new Reservation(userId, roomId, seatId, startTime, endTime);
+        } else {
+            throw new IllegalArgumentException("Wrong Argument");
+        }
     }
 
     public void update(String userId, String roomId, String seatId, Instant startTime, Instant endTime) {
