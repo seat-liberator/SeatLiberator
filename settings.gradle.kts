@@ -1,3 +1,4 @@
 rootProject.name = "seatliberator"
 
-include("identity")
+include("identity:identity-core")
+include("identity:identity-application")

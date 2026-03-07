@@ -10,6 +10,8 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":identity:identity-core"))
+
     // Web
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
 
@@ -21,10 +23,7 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.projectlombok:lombok")
-
-    // Test
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.testcontainers:testcontainers-junit-jupiter")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.20.1")
 }
 
 tasks.test {
