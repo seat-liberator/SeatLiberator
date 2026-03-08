@@ -112,6 +112,6 @@ public class FileBasedSigningKeyStore implements KeyStore {
                 .replace("-----END PUBLIC KEY-----", "")
                 .replaceAll("\\s", "");
         byte[] decoded = Base64.getDecoder().decode(key);
-        return (RSAPublicKey) KeyFactory.getInstance("RSA").generatePrivate(new X509EncodedKeySpec(decoded));
+        return (RSAPublicKey) KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(decoded));
     }
 }
