@@ -7,14 +7,14 @@ import org.slf4j.LoggerFactory;
 import java.util.Set;
 import java.util.UUID;
 
-public class BypassIntrospector implements Introspector {
-    private static final Logger log = LoggerFactory.getLogger(BypassIntrospector.class);
+public class AllowAllIntrospector implements Introspector {
+    private static final Logger log = LoggerFactory.getLogger(AllowAllIntrospector.class);
 
     private final ActorFactory actorFactory;
     private final IntrospectionFactory introspectionFactory;
     private final Long expiration;
 
-    public BypassIntrospector(
+    public AllowAllIntrospector(
             ActorFactory actorFactory,
             IntrospectionFactory introspectionFactory,
             Long expiration
@@ -26,8 +26,7 @@ public class BypassIntrospector implements Introspector {
 
     @Override
     public Introspection introspect(String token) {
-        log.warn("""
-                Introspect is not defined and is currently bypassed. this may cause security issues. Use this only when you need to exclude the module in test or development environment""");
+        log.warn("AllowAllIntrospector is enabled. Actual token introspection is bypassed, and every token is considered active. expirationMs={}", expiration);
 
         var fakeSubject = UUID.randomUUID().toString();
         var fakeActor = actorFactory.createActor(fakeSubject, Set.of());

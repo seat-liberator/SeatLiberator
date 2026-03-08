@@ -34,15 +34,8 @@ public class IdentityAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(Introspector.class)
     Introspector introspector(
-            ActorFactory actorFactory,
-            IntrospectionFactory introspectionFactory,
-            IntrospectionConfigurationProperties properties
+            IntrospectionFactory introspectionFactory
     ) {
-        Long expiration = properties.expirationMs();
-        return new BypassIntrospector(
-                actorFactory,
-                introspectionFactory,
-                expiration
-        );
+        return new DenyAllIntrospector(introspectionFactory);
     }
 }

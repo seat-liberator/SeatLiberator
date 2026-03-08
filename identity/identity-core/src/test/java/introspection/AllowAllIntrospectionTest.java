@@ -8,16 +8,16 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class BypassIntrospectionTest {
+public class AllowAllIntrospectionTest {
     private final ActorFactory actorFactory = new SimpleActorFactory();
     private final IntrospectionFactory introspectionFactory = new SimpleIntrospectionFactory();
 
     @Test
-    @DisplayName("BypassIntrospector는 항상 active introspection을 반환한다")
+    @DisplayName("AllowAllIntrospector는 항상 active introspection을 반환한다")
     void shouldReturnActiveIntrospection() {
         // given
         Long expiration = 60000L;
-        Introspector introspector = new BypassIntrospector(
+        Introspector introspector = new AllowAllIntrospector(
                 actorFactory,
                 introspectionFactory,
                 expiration
@@ -34,10 +34,10 @@ public class BypassIntrospectionTest {
     }
 
     @Test
-    @DisplayName("BypassIntrospector는 호출마다 서로 다른 fake subject를 생성한다")
+    @DisplayName("AllowAllIntrospector는 호출마다 서로 다른 fake subject를 생성한다")
     void shouldCreateDifferentFakeSubjectPerInvocation() {
         // given
-        Introspector introspector = new BypassIntrospector(
+        Introspector introspector = new AllowAllIntrospector(
                 actorFactory,
                 introspectionFactory,
                 60000L
@@ -54,11 +54,11 @@ public class BypassIntrospectionTest {
     }
 
     @Test
-    @DisplayName("BypassIntrospector는 전달받은 token 값과 무관하게 introspection을 반환한다")
+    @DisplayName("AllowAllIntrospector는 전달받은 token 값과 무관하게 introspection을 반환한다")
     void shouldIgnoreTokenValue() {
         // given
         Long expiration = 12345L;
-        Introspector introspector = new BypassIntrospector(
+        Introspector introspector = new AllowAllIntrospector(
                 actorFactory,
                 introspectionFactory,
                 expiration
