@@ -32,6 +32,10 @@ public class FileBasedSigningKeyStore implements KeyStore {
             JWKSProperties jwksProperties,
             ResourceLoader resourceLoader
     ) {
+        if (!jwksProperties.isConfigured()) {
+            throw new IllegalStateException("identity.jwks properties are not configured");
+        }
+
         this.signableKid = jwksProperties.signableKid();
         this.keyMap = jwksProperties.keys().stream()
                 .map(entry -> loadKey(entry, resourceLoader))

@@ -20,17 +20,19 @@ public record JWKSProperties(
     }
 
     public JWKSProperties {
-        Objects.requireNonNull(signableKid);
-        Objects.requireNonNull(keys);
+        signableKid = signableKid != null ? signableKid : "";
+        keys = keys != null ? keys : Set.of();
 
         var availableKids = keys.stream().map(KeyEntry::kid).toList();
 
-        log.debug("""
-                Available key entries id: {}
-                Signable key id: {}""", availableKids, signableKid);
+        log.debug("Available key entries id: {}, Signable key id: {}", availableKids, signableKid);
 
-        if (keys.stream().noneMatch(keyEntry -> Objects.equals(keyEntry.kid, signableKid))) {
-            throw new IllegalArgumentException("There is no key matching the key id of a signable key among the provided key sets.");
+        if (keys.stream().noneMatch(keyEntry -> Objects.equals(keyEntry.kid(), signableKid()))) {
+            log.debug("There is no key matching the key id of a signable key among the provided key sets.");
         }
+    }
+
+    public boolean isConfigured() {
+        return !signableKid.isBlank() && !keys.isEmpty();
     }
 }
