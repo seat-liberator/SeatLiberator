@@ -3,7 +3,7 @@ package com.seatliberator.seatliberator.jwks.infrastructure.io;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.seatliberator.seatliberator.jwks.application.config.JWKSProperties;
-import com.seatliberator.seatliberator.jwks.application.port.out.KeyRepository;
+import com.seatliberator.seatliberator.jwks.application.port.out.KeyStore;
 import com.seatliberator.seatliberator.jwks.domain.KeyStatus;
 import com.seatliberator.seatliberator.jwks.domain.SigningKey;
 import org.springframework.core.io.Resource;
@@ -24,11 +24,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Repository
-public class FileBasedSigningKeyRepository implements KeyRepository {
+public class FileBasedSigningKeyStore implements KeyStore {
     private final String signableKid;
     private final Map<String, SigningKey> keyMap;
 
-    public FileBasedSigningKeyRepository(
+    public FileBasedSigningKeyStore(
             JWKSProperties jwksProperties,
             ResourceLoader resourceLoader
     ) {
@@ -54,7 +54,7 @@ public class FileBasedSigningKeyRepository implements KeyRepository {
     }
 
     @Override
-    public List<SigningKey> getAllVerifyOnlyKeys() {
+    public List<SigningKey> getAllVerifiableKey() {
         return keyMap.values().stream()
                 .filter(SigningKey::canVerify)
                 .toList();

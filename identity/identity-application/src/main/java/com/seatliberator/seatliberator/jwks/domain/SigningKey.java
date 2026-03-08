@@ -12,7 +12,7 @@ public record SigningKey(
     }
 
     public boolean canVerify() {
-        return status == KeyStatus.VERIFY_ONLY;
+        return status == KeyStatus.VERIFY_ONLY || status == KeyStatus.SIGNABLE;
     }
 
     public RSAKey toPublicJwk() {
