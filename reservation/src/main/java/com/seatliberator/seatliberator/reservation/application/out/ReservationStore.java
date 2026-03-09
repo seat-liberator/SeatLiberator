@@ -13,4 +13,6 @@ public interface ReservationStore {
     void delete(Reservation reservation);
 
     boolean existsSeatConflict(String roomId, String seatId, Instant startTime, Instant endTime);
+
+    boolean existsSeatConflictExceptId(Long id, String roomId, String seatId, Instant startTime, Instant endTime);
 }

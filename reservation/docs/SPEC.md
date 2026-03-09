@@ -6,6 +6,7 @@
 ### ERD 테이블 ㅋㅋ
 
 ![img.png](img.png)
+
 ## API 목록들
 
 ### 좌석 예약

@@ -34,4 +34,9 @@ public class JpaReservationStore implements ReservationStore {
     public boolean existsSeatConflict(String roomId, String seatId, Instant startTime, Instant endTime) {
         return repository.existsSeatConflict(roomId, seatId, startTime, endTime);
     }
+
+    @Override
+    public boolean existsSeatConflictExceptId(Long id, String roomId, String seatId, Instant startTime, Instant endTime) {
+        return repository.existsSeatConflictExceptId(id, roomId, seatId, startTime, endTime);
+    }
 }

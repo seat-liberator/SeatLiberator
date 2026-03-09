@@ -23,6 +23,7 @@ public class ReservationService implements ReservationManager {
             return false;
         }
 
+
         if (reservationStore.existsSeatConflict(
                 command.roomId(),
                 command.seatId(),
@@ -49,6 +50,16 @@ public class ReservationService implements ReservationManager {
     public boolean update(ReservationUpdateCommand command) {
 
         Reservation reservation = reservationStore.findByUserId(command.userId()).orElseThrow();
+
+        if (reservationStore.existsSeatConflictExceptId(
+                reservation.getId(),
+                command.roomId(),
+                command.seatId(),
+                command.startTime(),
+                command.endTime()
+        )) {
+            return false;
+        }
 
         reservation.update(command.userId(), command.roomId(), command.seatId(), command.startTime(), command.endTime());
 
