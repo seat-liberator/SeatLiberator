@@ -1,8 +1,9 @@
 package com.seatliberator.seatliberator.jwks.infrastructure.web.controller;
 
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.seatliberator.seatliberator.jwks.application.port.in.KeyProvider;
-import com.seatliberator.seatliberator.jwks.domain.SigningKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,10 +17,16 @@ public class JWKSController {
 
     @GetMapping("/.well-known/jwks.json")
     public Map<String, Object> keys() {
-        var result = keyProvider.getVerifiableKeys();
+        var result = keyProvider.getVerificationKeys();
 
-        var keys = result.keys().stream()
-                .map(SigningKey::toPublicJwk)
+        var keys = result.stream()
+                .map(rsaVerificationKey ->
+                        new RSAKey.Builder(rsaVerificationKey.getRsaPublicKey())
+                                .keyID(rsaVerificationKey.getKid())
+                                .keyUse(KeyUse.SIGNATURE)
+                                .algorithm(JWSAlgorithm.RS256)
+                                .build()
+                )
                 .map(RSAKey::toJSONObject)
                 .toList();
 

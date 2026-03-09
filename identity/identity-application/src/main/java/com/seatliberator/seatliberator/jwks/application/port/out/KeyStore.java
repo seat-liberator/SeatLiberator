@@ -1,14 +1,12 @@
 package com.seatliberator.seatliberator.jwks.application.port.out;
 
-import com.seatliberator.seatliberator.jwks.domain.SigningKey;
+import com.seatliberator.seatliberator.jwks.domain.RSASignatureKey;
+import com.seatliberator.seatliberator.jwks.domain.RSAVerificationKey;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface KeyStore {
-    SigningKey getSignableKey();
+    RSASignatureKey getSignableKey();
 
-    Optional<SigningKey> getByKid(String kid);
-
-    List<SigningKey> getAllVerifiableKey();
+    List<RSAVerificationKey> getAllVerifiableKey();
 }

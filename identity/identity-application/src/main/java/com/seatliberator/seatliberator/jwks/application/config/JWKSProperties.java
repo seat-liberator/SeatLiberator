@@ -11,13 +11,6 @@ public record JWKSProperties(
         String signableKid,
         Set<KeyEntry> keys
 ) {
-    public record KeyEntry(
-            String kid,
-            String privateKey,
-            String publicKey
-    ) {
-    }
-
     public JWKSProperties {
         signableKid = signableKid != null ? signableKid : "";
         keys = keys != null ? keys : Set.of();
@@ -37,5 +30,12 @@ public record JWKSProperties(
 
     public boolean isConfigured() {
         return !signableKid.isBlank() && !keys.isEmpty();
+    }
+
+    public record KeyEntry(
+            String kid,
+            String privateKey,
+            String publicKey
+    ) {
     }
 }

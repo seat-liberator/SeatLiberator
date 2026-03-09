@@ -1,11 +1,10 @@
 package com.seatliberator.seatliberator.jwks.infrastructure.io;
 
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.jwk.RSAKey;
 import com.seatliberator.seatliberator.jwks.application.config.JWKSProperties;
 import com.seatliberator.seatliberator.jwks.application.port.out.KeyStore;
 import com.seatliberator.seatliberator.jwks.domain.KeyStatus;
-import com.seatliberator.seatliberator.jwks.domain.SigningKey;
+import com.seatliberator.seatliberator.jwks.domain.RSASignatureKey;
+import com.seatliberator.seatliberator.jwks.domain.RSAVerificationKey;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Repository;
@@ -24,11 +23,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Repository
-public class FileBasedSigningKeyStore implements KeyStore {
+public class FileBasedKeyStore implements KeyStore {
     private final String signableKid;
-    private final Map<String, SigningKey> keyMap;
+    private final Map<String, RSASignatureKey> keyMap;
 
-    public FileBasedSigningKeyStore(
+    public FileBasedKeyStore(
             JWKSProperties jwksProperties,
             ResourceLoader resourceLoader
     ) {
@@ -40,31 +39,27 @@ public class FileBasedSigningKeyStore implements KeyStore {
         this.keyMap = jwksProperties.keys().stream()
                 .map(entry -> loadKey(entry, resourceLoader))
                 .collect(Collectors.toUnmodifiableMap(
-                        SigningKey::kid,
+                        RSASignatureKey::getKid,
                         Function.identity()
                 ));
     }
-    
+
     @Override
-    public SigningKey getSignableKey() {
+    public RSASignatureKey getSignableKey() {
         return Optional.ofNullable(keyMap.get(signableKid))
-                .filter(SigningKey::canSign)
+                .filter(RSASignatureKey::canSign)
                 .orElseThrow(() -> new IllegalStateException("Active signable key not found: " + signableKid));
     }
 
     @Override
-    public Optional<SigningKey> getByKid(String kid) {
-        return Optional.ofNullable(keyMap.get(kid));
-    }
-
-    @Override
-    public List<SigningKey> getAllVerifiableKey() {
+    public List<RSAVerificationKey> getAllVerifiableKey() {
         return keyMap.values().stream()
-                .filter(SigningKey::canVerify)
+                .filter(RSASignatureKey::canVerify)
+                .map(RSAVerificationKey.class::cast)
                 .toList();
     }
 
-    private SigningKey loadKey(
+    private RSASignatureKey loadKey(
             JWKSProperties.KeyEntry entry,
             ResourceLoader resourceLoader
     ) {
@@ -73,22 +68,17 @@ public class FileBasedSigningKeyStore implements KeyStore {
                     ? KeyStatus.SIGNABLE
                     : KeyStatus.VERIFY_ONLY;
 
-            Resource privateKeyResource = resourceLoader.getResource(entry.privateKey());
             Resource publicKeyResource = resourceLoader.getResource(entry.publicKey());
+            Resource privateKeyResource = resourceLoader.getResource(entry.privateKey());
 
-            RSAPrivateKey privateKey = readPrivateKey(privateKeyResource);
             RSAPublicKey publicKey = readPublicKey(publicKeyResource);
+            RSAPrivateKey privateKey = readPrivateKey(privateKeyResource);
 
-            RSAKey rsaKey = new RSAKey.Builder(publicKey)
-                    .privateKey(privateKey)
-                    .keyID(entry.kid())
-                    .algorithm(JWSAlgorithm.RS256)
-                    .build();
-            
-            return new SigningKey(
+            return new RSASignatureKey(
                     entry.kid(),
                     keyStatus,
-                    rsaKey
+                    publicKey,
+                    privateKey
             );
         } catch (Exception e) {
             throw new IllegalStateException("Failed to load key: " + entry.kid());
