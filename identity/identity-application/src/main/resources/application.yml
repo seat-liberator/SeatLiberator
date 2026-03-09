@@ -1,0 +1,14 @@
+logging:
+  level:
+    com.seatliberator.seatliberator.jwks: debug
+
+identity:
+  jwks:
+    signable-kid: "key-20260308-214814"
+    keys:
+      - kid: "key-20260308-214814"
+        private-key: "classpath:keys/key-20260308-214814/private.pem"
+        public-key: "classpath:keys/key-20260308-214814/public.pem"
+      - kid: "key-20260308-214756"
+        private-key: "classpath:keys/key-20260308-214756/private.pem"
+        public-key: "classpath:keys/key-20260308-214756/public.pem"
