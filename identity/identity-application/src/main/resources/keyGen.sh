@@ -19,7 +19,7 @@ openssl rsa \
 cat > "${BASE_DIR}/metadata.env" <<EOF
 KID=${KID}
 ALG=RS256
-CREATED_AT=$(date -I seconds)
+CREATED_AT=$(date -Iseconds)
 EOF
 
 echo "Generated key pair:"
