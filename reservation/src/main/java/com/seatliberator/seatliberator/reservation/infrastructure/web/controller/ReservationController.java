@@ -53,6 +53,12 @@ public class ReservationController {
         return Map.of("success", result);
     }
 
-
+    @DeleteMapping("/{userId}")
+    public Map<String, Boolean> delete(
+            @PathVariable String userId
+    ) {
+        boolean result = reservationManager.cancel(userId);
+        return Map.of("success", result);
+    }
 
 }
