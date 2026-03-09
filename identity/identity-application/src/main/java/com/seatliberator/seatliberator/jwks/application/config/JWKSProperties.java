@@ -3,7 +3,6 @@ package com.seatliberator.seatliberator.jwks.application.config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.Objects;
 import java.util.Set;
 
 @Slf4j
@@ -27,7 +26,11 @@ public record JWKSProperties(
 
         log.debug("Available key entries id: {}, Signable key id: {}", availableKids, signableKid);
 
-        if (keys.stream().noneMatch(keyEntry -> Objects.equals(keyEntry.kid(), signableKid()))) {
+        boolean matched = keys.stream()
+                .map(KeyEntry::kid)
+                .anyMatch(signableKid::equals);
+
+        if (!matched) {
             log.debug("There is no key matching the key id of a signable key among the provided key sets.");
         }
     }
