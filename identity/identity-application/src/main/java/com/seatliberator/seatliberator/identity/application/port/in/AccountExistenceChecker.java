@@ -5,5 +5,5 @@ import com.seatliberator.seatliberator.identity.application.port.in.command.Exis
 public interface AccountExistenceChecker {
     boolean isCredentialAccountExists(ExistenceCheckingCommand.Credential command);
 
-    boolean isOIDCAccountExists(ExistenceCheckingCommand.Federated command);
+    boolean isFederatedAccountExists(ExistenceCheckingCommand.Federated command);
 }

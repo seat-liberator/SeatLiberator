@@ -70,7 +70,7 @@ public class User {
         return u;
     }
 
-    public void addOidcAccount(FederatedAccount federatedAccount) {
+    public void addFederatedAccount(FederatedAccount federatedAccount) {
         if (federatedAccount == null) {
             return;
         }
