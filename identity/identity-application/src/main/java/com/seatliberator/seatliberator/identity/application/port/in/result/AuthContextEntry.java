@@ -7,11 +7,13 @@ public class AuthContextEntry {
             UUID userId,
             String email,
             String passwordHash
-    ) {}
+    ) {
+    }
 
     public record Federated(
             UUID userId,
             String registrationId,
             String providerUserId
-    ) {}
+    ) {
+    }
 }

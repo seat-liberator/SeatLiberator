@@ -5,11 +5,13 @@ public class RegistrationCommand {
             String nickname,
             String email,
             String password
-    ) {}
+    ) {
+    }
 
     public record Federated(
             String nickname,
             String registrationId,
             String providerUserId
-    ) {}
+    ) {
+    }
 }
