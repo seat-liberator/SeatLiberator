@@ -4,9 +4,9 @@ import com.seatliberator.seatliberator.board.application.exception.BoardNotFound
 import com.seatliberator.seatliberator.board.application.exception.PostNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @RestControllerAdvice
 public class BoardControllerAdvice {
@@ -31,7 +31,6 @@ public class BoardControllerAdvice {
             var message = fieldError != null ? fieldError.getDefaultMessage() : "Invalid request.";
             return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, message);
         }
-
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 }
