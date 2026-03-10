@@ -16,9 +16,6 @@ dependencies {
     // Spring Data Jpa
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
-    // Bean Validation (Jakarta)
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-
     // Lombok
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("org.postgresql:postgresql")

@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,9 +27,7 @@ public class BoardService implements BoardManager {
         // 이유:
         // 1) DB의 not-null 제약에만 의존하면 예외가 영속 계층에서 늦게 발생해 원인 파악이 어려움.
         // 2) 애플리케이션 계층에서 비즈니스 전제조건을 먼저 확인하는 것이 책임 분리에 더 적합함.
-        var boardName = Optional.ofNullable(command.name())
-                .filter(name -> !name.isBlank())
-                .orElseThrow(() -> new IllegalArgumentException("Board name is required."));
+        var boardName = Objects.requireNonNull(command.name(), "Board name is required.");
         var board = Board.create(boardName, command.description());
         boardStore.save(board);
         return BoardEntry.of(board);

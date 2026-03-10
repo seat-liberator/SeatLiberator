@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @RestControllerAdvice
 public class BoardControllerAdvice {
@@ -22,15 +21,5 @@ public class BoardControllerAdvice {
     @ExceptionHandler(PostNotFoundException.class)
     public ProblemDetail handlePostNotFound(PostNotFoundException exception) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
-    }
-
-    @ExceptionHandler({MethodArgumentNotValidException.class, IllegalArgumentException.class})
-    public ProblemDetail handleBadRequest(Exception exception) {
-        if (exception instanceof MethodArgumentNotValidException validationException) {
-            var fieldError = validationException.getBindingResult().getFieldError();
-            var message = fieldError != null ? fieldError.getDefaultMessage() : "Invalid request.";
-            return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, message);
-        }
-        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 }
