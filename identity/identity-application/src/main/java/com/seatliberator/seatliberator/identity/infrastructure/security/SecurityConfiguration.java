@@ -1,36 +1,33 @@
 package com.seatliberator.seatliberator.identity.infrastructure.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.List;
+import tools.jackson.databind.ObjectMapper;
 
 @Configuration
 @EnableWebSecurity(debug = true)
 @RequiredArgsConstructor
+@EnableConfigurationProperties(SecurityConfigurationProperties.class)
 public class SecurityConfiguration {
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    CorsConfigurationSource corsConfigurationSource(
+            SecurityConfigurationProperties properties
+    ) {
         var configuration = new CorsConfiguration();
 
 
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:3000",
-                "http://localhost:5173"
-        ));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
+        configuration.setAllowedOrigins(properties.allowedOrigins());
+        configuration.setAllowedMethods(properties.allowedMethods());
+        configuration.setAllowedHeaders(properties.allowedHeaders());
+        configuration.setAllowCredentials(properties.allowCredentials());
 
-        configuration.setExposedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setExposedHeaders(properties.exposedHeaders());
 
         var source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -38,16 +35,9 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(
-            HttpSecurity http,
-            CorsConfigurationSource corsConfigurationSource
-    ) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource));
-
-        return http.build();
+    ResponseWriter responseWriter(
+            ObjectMapper objectMapper
+    ) {
+        return new ResponseWriter(objectMapper);
     }
 }
