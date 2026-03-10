@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.application.out;
+package com.seatliberator.seatliberator.reservation.application.port.out;
 
 import com.seatliberator.seatliberator.reservation.domain.Reservation;
 

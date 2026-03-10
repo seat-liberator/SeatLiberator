@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.infrastructure.persistence.jpa;
 
-import com.seatliberator.seatliberator.reservation.application.out.ReservationStore;
+import com.seatliberator.seatliberator.reservation.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.domain.Reservation;
 import com.seatliberator.seatliberator.reservation.infrastructure.persistence.jpa.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
