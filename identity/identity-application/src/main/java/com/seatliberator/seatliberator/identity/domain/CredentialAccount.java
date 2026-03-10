@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "credential")
+@Table(name = "credential_account")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CredentialAccount extends AbstractAccount {

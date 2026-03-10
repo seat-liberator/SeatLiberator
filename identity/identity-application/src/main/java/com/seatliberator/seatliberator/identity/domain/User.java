@@ -28,7 +28,7 @@ public class User {
             orphanRemoval = true,
             cascade = CascadeType.ALL
     )
-    private List<OIDCAccount> oidcAccounts = new ArrayList<>();
+    private List<FederatedAccount> federatedAccounts = new ArrayList<>();
 
     @OneToOne(
             mappedBy = "user",
@@ -40,10 +40,10 @@ public class User {
 
     public User(
             String nickname,
-            List<OIDCAccount> oidcAccounts,
+            List<FederatedAccount> federatedAccounts,
             CredentialAccount credentialAccount
     ) {
-        List<OIDCAccount> alignOIDCAccounts = oidcAccounts.stream()
+        List<FederatedAccount> alignFederatedAccounts = federatedAccounts.stream()
                 .peek(account -> {
                     if (account.getUser() != null && account.getUser() != this) {
                         account.assignUser(this);
@@ -56,7 +56,7 @@ public class User {
         }
 
         this.nickname = nickname;
-        this.oidcAccounts = alignOIDCAccounts;
+        this.federatedAccounts = alignFederatedAccounts;
         this.credentialAccount = credentialAccount;
     }
 
@@ -70,17 +70,17 @@ public class User {
         return u;
     }
 
-    public void addOidcAccount(OIDCAccount oidcAccount) {
-        if (oidcAccount == null) {
+    public void addOidcAccount(FederatedAccount federatedAccount) {
+        if (federatedAccount == null) {
             return;
         }
 
-        if (!this.oidcAccounts.contains(oidcAccount)) {
-            this.oidcAccounts.add(oidcAccount);
+        if (!this.federatedAccounts.contains(federatedAccount)) {
+            this.federatedAccounts.add(federatedAccount);
         }
 
-        if (oidcAccount.getUser() != this) {
-            oidcAccount.assignUser(this);
+        if (federatedAccount.getUser() != this) {
+            federatedAccount.assignUser(this);
         }
     }
 
