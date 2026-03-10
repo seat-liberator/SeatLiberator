@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-public class JWKSController {
+public class JwksController {
     private final KeyProvider keyProvider;
 
     @GetMapping("/.well-known/jwks.json")
