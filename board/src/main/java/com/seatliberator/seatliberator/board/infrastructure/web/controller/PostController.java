@@ -6,6 +6,7 @@ import com.seatliberator.seatliberator.board.application.port.in.command.PostDel
 import com.seatliberator.seatliberator.board.application.port.in.command.PostUpdateCommand;
 import com.seatliberator.seatliberator.board.infrastructure.web.request.PostCreateRequest;
 import com.seatliberator.seatliberator.board.infrastructure.web.request.PostUpdateRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +46,7 @@ public class PostController {
     @PostMapping
     public ResponseEntity<?> post(
             @PathVariable("boardId") UUID boardId,
-            @RequestBody PostCreateRequest body
+            @RequestBody @Valid PostCreateRequest body
     ) {
         // Web DTO -> Application Command 변환
         var command = new PostCreateCommand(boardId, body.title(), body.content());

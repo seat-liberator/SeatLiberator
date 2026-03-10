@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,8 +33,12 @@ public class PostService implements PostManager {
         var board = findBoardOrThrow(command.boardId());
 
         // 2. 필수 입력값 검증
-        var title = Objects.requireNonNull(command.title(), "Post title is required.");
-        var content = Objects.requireNonNull(command.content(), "Post content is required.");
+        var title = Optional.ofNullable(command.title())
+                .filter(value -> !value.isBlank())
+                .orElseThrow(() -> new IllegalArgumentException("Post title is required."));
+        var content = Optional.ofNullable(command.content())
+                .filter(value -> !value.isBlank())
+                .orElseThrow(() -> new IllegalArgumentException("Post content is required."));
 
         // 3. 도메인 행위로 게시글 생성 및 연관관계 설정
         var post = board.addPost(title, content);

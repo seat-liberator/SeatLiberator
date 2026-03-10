@@ -16,7 +16,7 @@ dependencies {
     // Spring Data Jpa
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
-    // Bean Validation (Jakarta)
+    // Bean Validation
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
     // Lombok
