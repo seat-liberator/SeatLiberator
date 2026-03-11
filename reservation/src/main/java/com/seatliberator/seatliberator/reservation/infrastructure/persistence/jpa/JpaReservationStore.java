@@ -31,12 +31,12 @@ public class JpaReservationStore implements ReservationStore {
     }
 
     @Override
-    public boolean existsSeatConflict(String roomId, String seatId, Instant startTime, Instant endTime) {
-        return repository.existsSeatConflict(roomId, seatId, startTime, endTime);
+    public boolean existsReservationConflict(String roomId, String seatId, Instant startTime, Instant endTime) {
+        return repository.existsReservationConflict(roomId, seatId, startTime, endTime);
     }
 
     @Override
-    public boolean existsSeatConflictExceptId(Long id, String roomId, String seatId, Instant startTime, Instant endTime) {
-        return repository.existsSeatConflictExceptId(id, roomId, seatId, startTime, endTime);
+    public boolean existsReservationConflictExceptId(Long id, String roomId, String seatId, Instant startTime, Instant endTime) {
+        return repository.existsReservationConflictExceptId(id, roomId, seatId, startTime, endTime);
     }
 }
