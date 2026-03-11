@@ -11,8 +11,8 @@ public record CredentialAuthenticationConfigurationProperties(
 ) {
     public CredentialAuthenticationConfigurationProperties {
         signIn = Optional.ofNullable(signIn)
-                .orElse(new Endpoint("POST", "/sign-in"));
+                .orElse(new Endpoint("POST", "/auth/sign-in"));
         signUp = Optional.ofNullable(signUp)
-                .orElse(new Endpoint("POST", "/sign-up"));
+                .orElse(new Endpoint("POST", "/auth/sign-up"));
     }
 }
