@@ -39,7 +39,7 @@ public class CredentialAuthenticationConfiguration {
             ObjectMapper objectMapper,
             CredentialAuthenticationConfigurationProperties properties
     ) {
-        var endpoint = properties.signIn();
+        var endpoint = properties.signUp();
         var matcher = PathPatternRequestMatcher.withDefaults()
                 .matcher(HttpMethod.valueOf(endpoint.method()), endpoint.uri());
 
