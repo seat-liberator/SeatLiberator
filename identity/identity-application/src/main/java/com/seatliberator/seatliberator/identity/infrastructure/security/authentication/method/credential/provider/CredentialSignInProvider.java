@@ -49,6 +49,6 @@ public class CredentialSignInProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(@NonNull Class<?> authentication) {
-        return false;
+        return CredentialSignInAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }
