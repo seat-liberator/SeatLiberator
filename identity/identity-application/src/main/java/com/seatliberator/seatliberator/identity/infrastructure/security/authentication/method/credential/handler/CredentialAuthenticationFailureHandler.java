@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -12,6 +13,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 
 import java.io.IOException;
 
+@Slf4j
 @RequiredArgsConstructor
 public class CredentialAuthenticationFailureHandler implements AuthenticationFailureHandler {
     private final ResponseWriter responseWriter;
@@ -22,10 +24,17 @@ public class CredentialAuthenticationFailureHandler implements AuthenticationFai
             @Nullable HttpServletResponse response,
             AuthenticationException exception
     ) throws IOException, ServletException {
+        log.debug(
+                "Credential authentication failed. message={}",
+                exception.getMessage()
+        );
+
         responseWriter.write(
                 response,
                 HttpStatus.UNAUTHORIZED,
                 exception.getMessage()
         );
+
+        log.debug("Credential authentication failure response written.");
     }
 }

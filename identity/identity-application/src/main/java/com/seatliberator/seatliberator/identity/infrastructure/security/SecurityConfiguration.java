@@ -11,7 +11,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import tools.jackson.databind.ObjectMapper;
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 @RequiredArgsConstructor
 @EnableConfigurationProperties(SecurityConfigurationProperties.class)
 public class SecurityConfiguration {

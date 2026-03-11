@@ -35,23 +35,32 @@ public class JsonCredentialSignUpProcessingFilter extends AbstractAuthentication
             @NonNull HttpServletResponse response
     ) throws AuthenticationException, IOException, ServletException {
         try {
+            log.debug("Attempting credential sign-up request parsing.");
+
             var body = objectMapper.readValue(request.getInputStream(), CredentialSignUpRequest.class);
 
-            var displayName = body.nickname();
+            var nickname = body.nickname();
             var email = body.email();
             var password = body.password();
 
+            log.debug("Credential sign-up request parsed. email={}, nickname={}", email, nickname);
+
             var authentication = CredentialSignUpAuthenticationToken.unauthenticated(
-                    displayName,
+                    nickname,
                     email,
                     password
             );
 
-            log.debug("Processed email={}", email);
+            log.debug("Credential sign-up authentication token created. email={}", email);
 
-            return getAuthenticationManager().authenticate(authentication);
-        } catch (Exception e) {
-            throw new AuthenticationProcessingException("Error occurred while parsing sign up request body");
+            var authenticated = getAuthenticationManager().authenticate(authentication);
+
+            log.debug("Credential sign-up authentication request delegated successfully. email={}", email);
+
+            return authenticated;
+        } catch (IOException e) {
+            log.debug("Credential sign-up request parsing failed due to invalid request body.", e);
+            throw new AuthenticationProcessingException("Error occurred while parsing sign in request body");
         }
     }
 }

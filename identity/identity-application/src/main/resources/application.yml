@@ -1,6 +1,7 @@
 logging:
   level:
     com.seatliberator.seatliberator.jwks: debug
+    com.seatliberator.seatliberator.identity: debug
 
 identity:
   jwks:
