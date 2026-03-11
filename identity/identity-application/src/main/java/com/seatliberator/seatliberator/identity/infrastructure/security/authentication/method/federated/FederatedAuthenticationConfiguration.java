@@ -100,6 +100,7 @@ public class FederatedAuthenticationConfiguration {
             HttpSecurity httpSecurity,
             CorsConfigurationSource corsConfigurationSource,
             OidcUserService customOidcUserService,
+            OAuth2UserService<OAuth2UserRequest, OAuth2User> customOAuth2UserService,
             AuthenticationSuccessHandler federatedAuthenticationSuccessHandler,
             AuthenticationFailureHandler federatedAuthenticationFailureHandler
     ) {
@@ -117,6 +118,7 @@ public class FederatedAuthenticationConfiguration {
 
                                         u -> u
                                                 .oidcUserService(customOidcUserService)
+                                                .userService(customOAuth2UserService)
                                 )
                                 .successHandler(federatedAuthenticationSuccessHandler)
                                 .failureHandler(federatedAuthenticationFailureHandler)
