@@ -50,7 +50,8 @@ public class SeatController {
 
     @DeleteMapping("/{roomId}/{seatId}")
     public Map<String, Boolean> delete(
-            @PathVariable String roomId, String seatId
+            @PathVariable String roomId,
+            @PathVariable String seatId
     ){
         boolean result = seatManager.delete(roomId, seatId);
         return Map.of("success", result);

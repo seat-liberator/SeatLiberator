@@ -19,4 +19,13 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
             AND s.seatId = :seatId
             """)
     boolean existsSeatConflict(String roomId, String seatId);
+
+    @Query("""
+            SELECT COUNT(s) > 0
+            FROM Seat s
+            WHERE s.id <> :id
+            AND s.roomId = :roomId
+            AND s.seatId = :seatId
+            """)
+    boolean existsSeatConflictExept(String roomId, String seatId);
 }

@@ -14,4 +14,6 @@ public interface SeatStore {
 
     boolean existsSeatConflict(String roomId, String seatId);
 
+    boolean existsSeatConflictExcept(String roomId, String seatId);
+
 }
