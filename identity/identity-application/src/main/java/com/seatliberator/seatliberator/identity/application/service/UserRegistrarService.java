@@ -4,7 +4,7 @@ import com.seatliberator.seatliberator.identity.application.exception.Applicatio
 import com.seatliberator.seatliberator.identity.application.exception.ApplicationException;
 import com.seatliberator.seatliberator.identity.application.port.in.UserRegistrar;
 import com.seatliberator.seatliberator.identity.application.port.in.command.RegistrationCommand;
-import com.seatliberator.seatliberator.identity.application.port.in.result.UserEntry;
+import com.seatliberator.seatliberator.identity.application.port.in.result.AuthEntry;
 import com.seatliberator.seatliberator.identity.application.port.out.CredentialAccountStore;
 import com.seatliberator.seatliberator.identity.application.port.out.FederatedAccountStore;
 import com.seatliberator.seatliberator.identity.application.port.out.UserStore;
@@ -25,7 +25,7 @@ public class UserRegistrarService implements UserRegistrar {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserEntry register(RegistrationCommand.Credential command) {
+    public AuthEntry register(RegistrationCommand.Credential command) {
         boolean existsAccount = credentialAccountStore.existsByEmail(command.email());
 
         if (existsAccount) throw new ApplicationException(ApplicationErrorCode.EMAIL_DUPLICATED);
@@ -41,14 +41,14 @@ public class UserRegistrarService implements UserRegistrar {
 
         var savedUser = userStore.save(user);
 
-        return new UserEntry(
+        return new AuthEntry(
                 savedUser.getId(),
                 savedUser.getNickname()
         );
     }
 
     @Override
-    public UserEntry register(RegistrationCommand.Federated command) {
+    public AuthEntry register(RegistrationCommand.Federated command) {
         boolean existsAccount = federatedAccountStore.existsByRegistrationIdAndProviderUserId(
                 command.registrationId(),
                 command.providerUserId()
@@ -66,7 +66,7 @@ public class UserRegistrarService implements UserRegistrar {
 
         var savedUser = userStore.save(user);
 
-        return new UserEntry(
+        return new AuthEntry(
                 savedUser.getId(),
                 savedUser.getNickname()
         );

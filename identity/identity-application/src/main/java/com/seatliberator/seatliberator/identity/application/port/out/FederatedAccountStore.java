@@ -10,7 +10,7 @@ public interface FederatedAccountStore {
             String providerUserId
     );
 
-    Optional<AuthContextRecord.Federated> findFederatedAuthByRegistrationIdAndProviderUserId(
+    Optional<AuthRecord.Federated> findFederatedAuthByRegistrationIdAndProviderUserId(
             String registrationId,
             String providerUserId
     );

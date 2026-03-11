@@ -7,7 +7,7 @@ import java.util.Optional;
 public interface CredentialAccountStore {
     Optional<CredentialAccount> findByEmail(String email);
 
-    Optional<AuthContextRecord.Credential> findCredentialAuthByEmail(String email);
+    Optional<AuthRecord.Credential> findCredentialAuthByEmail(String email);
 
     boolean existsByEmail(String email);
 

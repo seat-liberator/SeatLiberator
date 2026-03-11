@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.infrastructure.persistence.jpa;
 
-import com.seatliberator.seatliberator.identity.application.port.out.AuthContextRecord;
+import com.seatliberator.seatliberator.identity.application.port.out.AuthRecord;
 import com.seatliberator.seatliberator.identity.application.port.out.CredentialAccountStore;
 import com.seatliberator.seatliberator.identity.domain.CredentialAccount;
 import com.seatliberator.seatliberator.identity.infrastructure.persistence.jpa.repository.CredentialAccountRepository;
@@ -20,10 +20,11 @@ public class JpaCredentialAccountStore implements CredentialAccountStore {
     }
 
     @Override
-    public Optional<AuthContextRecord.Credential> findCredentialAuthByEmail(String email) {
+    public Optional<AuthRecord.Credential> findCredentialAuthByEmail(String email) {
         return credentialAccountRepository.findAuthByEmail(email)
-                .map(credentialAccount -> new AuthContextRecord.Credential(
+                .map(credentialAccount -> new AuthRecord.Credential(
                         credentialAccount.getUser().getId(),
+                        credentialAccount.getUser().getNickname(),
                         credentialAccount.getEmail(),
                         credentialAccount.getPasswordHash()
                 ));

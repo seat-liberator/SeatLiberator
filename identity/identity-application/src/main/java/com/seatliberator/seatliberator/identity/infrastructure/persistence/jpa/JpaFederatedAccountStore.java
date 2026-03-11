@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.infrastructure.persistence.jpa;
 
-import com.seatliberator.seatliberator.identity.application.port.out.AuthContextRecord;
+import com.seatliberator.seatliberator.identity.application.port.out.AuthRecord;
 import com.seatliberator.seatliberator.identity.application.port.out.FederatedAccountStore;
 import com.seatliberator.seatliberator.identity.domain.FederatedAccount;
 import com.seatliberator.seatliberator.identity.infrastructure.persistence.jpa.repository.FederatedAccountRepository;
@@ -20,13 +20,14 @@ public class JpaFederatedAccountStore implements FederatedAccountStore {
     }
 
     @Override
-    public Optional<AuthContextRecord.Federated> findFederatedAuthByRegistrationIdAndProviderUserId(String registrationId, String providerUserId) {
+    public Optional<AuthRecord.Federated> findFederatedAuthByRegistrationIdAndProviderUserId(String registrationId, String providerUserId) {
         return federatedAccountRepository.findAuthByRegistrationIdAndProviderUserId(
                         registrationId,
                         providerUserId
                 )
-                .map(federatedAccount -> new AuthContextRecord.Federated(
+                .map(federatedAccount -> new AuthRecord.Federated(
                         federatedAccount.getUser().getId(),
+                        federatedAccount.getUser().getNickname(),
                         federatedAccount.getRegistrationId(),
                         federatedAccount.getProviderUserId()
                 ));

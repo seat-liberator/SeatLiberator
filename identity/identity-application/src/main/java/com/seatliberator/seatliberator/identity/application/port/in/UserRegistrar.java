@@ -1,10 +1,10 @@
 package com.seatliberator.seatliberator.identity.application.port.in;
 
 import com.seatliberator.seatliberator.identity.application.port.in.command.RegistrationCommand;
-import com.seatliberator.seatliberator.identity.application.port.in.result.UserEntry;
+import com.seatliberator.seatliberator.identity.application.port.in.result.AuthEntry;
 
 public interface UserRegistrar {
-    UserEntry register(RegistrationCommand.Credential command);
+    AuthEntry register(RegistrationCommand.Credential command);
 
-    UserEntry register(RegistrationCommand.Federated command);
+    AuthEntry register(RegistrationCommand.Federated command);
 }
