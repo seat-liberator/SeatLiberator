@@ -1,7 +1,6 @@
 package com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.federated.converter;
 
 import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.federated.principal.CustomOidcPrincipal;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
@@ -16,9 +15,8 @@ import org.springframework.util.StringUtils;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class CustomOidcUserConverter implements Converter<OidcUserSource, OidcUser> {
-    @Override
-    public OidcUser convert(OidcUserSource source) {
+public class CustomOidcUserConverter {
+    public static OidcUser convert(OidcUserSource source) {
         OidcUserRequest userRequest = source.getUserRequest();
         OidcUserInfo userInfo = source.getUserInfo();
         Set<GrantedAuthority> authorities = new LinkedHashSet<>();

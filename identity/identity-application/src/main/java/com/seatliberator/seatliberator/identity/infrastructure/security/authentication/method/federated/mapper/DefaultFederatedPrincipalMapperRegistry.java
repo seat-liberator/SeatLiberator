@@ -25,16 +25,53 @@ public class DefaultFederatedPrincipalMapperRegistry implements FederatedPrincip
                 .map(FederatedPrincipalMapper::key)
                 .toList();
 
-        log.debug("Registered {} mappers. available registration id={}", federatedPrincipalMappers.size(), availableRegistrationIds);
+
+        log.debug(
+                "Registered federated principal mappers. count={}, registrationIds={}",
+                federatedPrincipalMappers.size(),
+                availableRegistrationIds
+        );
     }
 
     @Override
     public void registerProfileMapper(FederatedPrincipalMapper federatedPrincipalMapper) {
-        registry.putIfAbsent(federatedPrincipalMapper.key(), federatedPrincipalMapper);
+        var registrationId = federatedPrincipalMapper.key();
+
+        if (registry.containsKey(registrationId)) {
+            log.debug(
+                    "Skipped federated principal mapper registration because mapper already exists. registrationId={}",
+                    registrationId
+            );
+            return;
+        }
+
+        registry.put(registrationId, federatedPrincipalMapper);
+
+        log.debug(
+                "Registered federated principal mapper. registrationId={}, mapperType={}",
+                registrationId,
+                federatedPrincipalMapper.getClass().getSimpleName()
+        );
     }
 
     @Override
     public @Nullable FederatedPrincipalMapper resolve(String registrationId) {
-        return registry.get(registrationId);
+        var mapper = registry.get(registrationId);
+
+        if (mapper == null) {
+            log.debug(
+                    "Federated principal mapper not found. registrationId={}",
+                    registrationId
+            );
+            return null;
+        }
+
+        log.debug(
+                "Federated principal mapper resolved. registrationId={}, mapperType={}",
+                registrationId,
+                mapper.getClass().getSimpleName()
+        );
+
+        return mapper;
     }
 }

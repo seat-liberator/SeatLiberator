@@ -10,9 +10,11 @@ import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
 import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.federated.principal.FederatedPrincipal;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Set;
 
+@Slf4j
 @RequiredArgsConstructor
 public class DefaultFederatedSignInProcessor implements FederatedSignInProcessor {
     private final AccountAuthenticator accountAuthenticator;
@@ -22,6 +24,12 @@ public class DefaultFederatedSignInProcessor implements FederatedSignInProcessor
 
     @Override
     public Actor authenticate(FederatedPrincipal principal) {
+        log.debug(
+                "Attempting federated sign-in processing. registrationId={}, email={}",
+                principal.registrationId(),
+                principal.email()
+        );
+
         var existsCommand = new ExistenceCheckingCommand.Federated(
                 principal.registrationId(),
                 principal.providerUserId()
@@ -31,7 +39,19 @@ public class DefaultFederatedSignInProcessor implements FederatedSignInProcessor
                 existsCommand
         );
 
+        log.debug(
+                "Federated account existence check completed. registrationId={}, exists={}",
+                principal.registrationId(),
+                existsAccount
+        );
+
         if (!existsAccount) {
+            log.debug(
+                    "Federated account not found. proceeding with federated registration. registrationId={}, nickname={}",
+                    principal.registrationId(),
+                    principal.nickname()
+            );
+
             var registrationCommand = new RegistrationCommand.Federated(
                     principal.nickname(),
                     principal.registrationId(),
@@ -39,6 +59,11 @@ public class DefaultFederatedSignInProcessor implements FederatedSignInProcessor
             );
 
             userRegistrar.register(registrationCommand);
+
+            log.debug(
+                    "Federated registration succeeded during sign-in processing. registrationId={}",
+                    principal.registrationId()
+            );
         }
 
         var authenticationCommand = new AuthenticationCommand.Federated(
@@ -46,11 +71,30 @@ public class DefaultFederatedSignInProcessor implements FederatedSignInProcessor
                 principal.providerUserId()
         );
 
+        log.debug(
+                "Federated authentication command created during sign-in processing. registrationId={}",
+                principal.registrationId()
+        );
+
         var authContext = accountAuthenticator.authenticate(authenticationCommand);
 
-        return new SimpleActor(
+        log.debug(
+                "Federated authentication succeeded during sign-in processing. registrationId={}, userId={}",
+                principal.registrationId(),
+                authContext.userId()
+        );
+
+        var actor = new SimpleActor(
                 authContext.userId().toString(),
                 Set.of("ROLE_USER")
         );
+
+        log.debug(
+                "Federated sign-in processing completed. registrationId={}, subject={}",
+                principal.registrationId(),
+                actor.subject()
+        );
+
+        return actor;
     }
 }

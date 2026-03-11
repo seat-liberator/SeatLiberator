@@ -2,9 +2,11 @@ package com.seatliberator.seatliberator.identity.infrastructure.security.authent
 
 import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.federated.principal.CustomOidcPrincipal;
 import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.federated.principal.FederatedPrincipal;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.util.StringUtils;
 
+@Slf4j
 public class GoogleOidcPrincipalMapper implements FederatedPrincipalMapper {
     @Override
     public String key() {
@@ -13,11 +15,20 @@ public class GoogleOidcPrincipalMapper implements FederatedPrincipalMapper {
 
     @Override
     public FederatedPrincipal resolve(OidcUser oidcUser) {
+        log.debug("Attempting federated principal mapping. registrationId={}", key());
+
         var claims = oidcUser.getClaims();
 
         var providerUserId = oidcUser.getSubject();
         var email = (String) claims.get("email");
         var nickname = String.valueOf(claims.getOrDefault("name", ""));
+
+        log.debug(
+                "Google principal claims resolved. registrationId={}, email={}, nicknamePresent={}",
+                key(),
+                email,
+                StringUtils.hasText(nickname)
+        );
 
         CustomOidcPrincipal customOidcPrincipal = (CustomOidcPrincipal) oidcUser;
 
@@ -28,6 +39,13 @@ public class GoogleOidcPrincipalMapper implements FederatedPrincipalMapper {
         if (StringUtils.hasText(nickname)) {
             customOidcPrincipal.setNickname(nickname);
         }
+
+        log.debug(
+                "Google federated principal mapping succeeded. registrationId={}, email={}, nicknamePresent={}",
+                key(),
+                email,
+                StringUtils.hasText(nickname)
+        );
 
         return customOidcPrincipal;
     }

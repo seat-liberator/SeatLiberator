@@ -32,7 +32,7 @@ import java.util.List;
 public class FederatedAuthenticationConfiguration {
     @Bean
     Converter<OidcUserSource, OidcUser> customOidcUserConverter() {
-        return new CustomOidcUserConverter();
+        return CustomOidcUserConverter::convert;
     }
 
     @Bean
