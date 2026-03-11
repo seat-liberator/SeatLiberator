@@ -4,6 +4,7 @@ import com.seatliberator.seatliberator.identity.infrastructure.security.authenti
 import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.federated.principal.FederatedPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.StringUtils;
 
 @Slf4j
@@ -14,8 +15,17 @@ public class GoogleOidcPrincipalMapper implements FederatedPrincipalMapper {
     }
 
     @Override
-    public FederatedPrincipal resolve(OidcUser oidcUser) {
+    public FederatedPrincipal resolve(OAuth2User oAuth2User) {
         log.debug("Attempting federated principal mapping. registrationId={}", key());
+
+        if (!(oAuth2User instanceof OidcUser oidcUser)) {
+            log.debug(
+                    "Google federated principal mapping failed because oauth2 user was not OIDC user. registrationId={}, principalType={}",
+                    key(),
+                    oAuth2User == null ? "null" : oAuth2User.getClass().getName()
+            );
+            throw new IllegalArgumentException("Google federated principal mapping requires OidcUser");
+        }
 
         var claims = oidcUser.getClaims();
 
@@ -30,14 +40,18 @@ public class GoogleOidcPrincipalMapper implements FederatedPrincipalMapper {
                 StringUtils.hasText(nickname)
         );
 
-        CustomOidcPrincipal customOidcPrincipal = (CustomOidcPrincipal) oidcUser;
+        var principal = new CustomOidcPrincipal(
+                oidcUser.getAuthorities(),
+                oidcUser.getIdToken(),
+                oidcUser.getUserInfo()
+        );
 
-        customOidcPrincipal.setRegistrationId(key());
-        customOidcPrincipal.setProviderUserId(providerUserId);
-        customOidcPrincipal.setEmail(email);
+        principal.setRegistrationId(key());
+        principal.setProviderUserId(providerUserId);
+        principal.setEmail(email);
 
         if (StringUtils.hasText(nickname)) {
-            customOidcPrincipal.setNickname(nickname);
+            principal.setNickname(nickname);
         }
 
         log.debug(
@@ -47,6 +61,6 @@ public class GoogleOidcPrincipalMapper implements FederatedPrincipalMapper {
                 StringUtils.hasText(nickname)
         );
 
-        return customOidcPrincipal;
+        return principal;
     }
 }

@@ -5,22 +5,22 @@ import com.seatliberator.seatliberator.identity.application.port.in.AccountExist
 import com.seatliberator.seatliberator.identity.application.port.in.UserRegistrar;
 import com.seatliberator.seatliberator.identity.infrastructure.security.FilterChainUtils;
 import com.seatliberator.seatliberator.identity.infrastructure.security.ResponseWriter;
-import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.federated.converter.CustomOidcUserConverter;
 import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.federated.handler.DefaultFederatedSignInProcessor;
 import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.federated.handler.FederatedAuthenticationFailureHandler;
 import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.federated.handler.FederatedAuthenticationSuccessHandler;
 import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.federated.handler.FederatedSignInProcessor;
 import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.federated.mapper.*;
+import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.federated.service.CustomOAuth2UserService;
 import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.federated.service.CustomOidcUserService;
 import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.token.handler.TokenIssueProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
-import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserSource;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -30,11 +30,6 @@ import java.util.List;
 
 @Configuration
 public class FederatedAuthenticationConfiguration {
-    @Bean
-    Converter<OidcUserSource, OidcUser> customOidcUserConverter() {
-        return CustomOidcUserConverter::convert;
-    }
-
     @Bean
     FederatedPrincipalMapper githubOAuth2PrincipalMapper() {
         return new GithubOAuth2PrincipalMapper();
@@ -53,15 +48,17 @@ public class FederatedAuthenticationConfiguration {
     }
 
     @Bean
-    OidcUserService customOidcUserService(
-            FederatedPrincipalMapperRegistry federatedPrincipalMapperRegistry,
-            Converter<OidcUserSource, OidcUser> customOidcUserConverter
+    OAuth2UserService<OAuth2UserRequest, OAuth2User> customOAuth2UserService(
+            FederatedPrincipalMapperRegistry federatedPrincipalMapperRegistry
     ) {
-        var s = new CustomOidcUserService(federatedPrincipalMapperRegistry);
+        return new CustomOAuth2UserService(federatedPrincipalMapperRegistry);
+    }
 
-        s.setOidcUserConverter(customOidcUserConverter);
-
-        return s;
+    @Bean
+    OidcUserService customOidcUserService(
+            FederatedPrincipalMapperRegistry federatedPrincipalMapperRegistry
+    ) {
+        return new CustomOidcUserService(federatedPrincipalMapperRegistry);
     }
 
     @Bean
@@ -117,6 +114,7 @@ public class FederatedAuthenticationConfiguration {
                 .oauth2Login(
                         oauth -> oauth
                                 .userInfoEndpoint(
+
                                         u -> u
                                                 .oidcUserService(customOidcUserService)
                                 )
