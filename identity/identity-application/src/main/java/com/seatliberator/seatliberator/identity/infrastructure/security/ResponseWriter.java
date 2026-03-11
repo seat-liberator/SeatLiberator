@@ -20,6 +20,7 @@ public class ResponseWriter {
     ) throws IOException {
         if (response == null) return;
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(status.value());
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(objectMapper.writeValueAsString(body));
     }
