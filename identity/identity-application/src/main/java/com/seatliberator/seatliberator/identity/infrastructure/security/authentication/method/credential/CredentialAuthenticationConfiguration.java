@@ -37,7 +37,9 @@ public class CredentialAuthenticationConfiguration {
     JsonCredentialSignUpProcessingFilter jsonCredentialRegisterProcessingFilter(
             AuthenticationManager credentialAuthenticationManager,
             ObjectMapper objectMapper,
-            CredentialAuthenticationConfigurationProperties properties
+            CredentialAuthenticationConfigurationProperties properties,
+            AuthenticationSuccessHandler credentialAuthenticationSuccessHandler,
+            AuthenticationFailureHandler credentialAuthenticationFailureHandler
     ) {
         var endpoint = properties.signUp();
         var matcher = PathPatternRequestMatcher.withDefaults()
@@ -46,6 +48,8 @@ public class CredentialAuthenticationConfiguration {
         var filter = new JsonCredentialSignUpProcessingFilter(matcher, objectMapper);
 
         filter.setAuthenticationManager(credentialAuthenticationManager);
+        filter.setAuthenticationSuccessHandler(credentialAuthenticationSuccessHandler);
+        filter.setAuthenticationFailureHandler(credentialAuthenticationFailureHandler);
 
         return filter;
     }
@@ -65,7 +69,9 @@ public class CredentialAuthenticationConfiguration {
     JsonCredentialSignInProcessingFilter jsonCredentialSignInProcessingFilter(
             AuthenticationManager credentialAuthenticationManager,
             ObjectMapper objectMapper,
-            CredentialAuthenticationConfigurationProperties properties
+            CredentialAuthenticationConfigurationProperties properties,
+            AuthenticationSuccessHandler credentialAuthenticationSuccessHandler,
+            AuthenticationFailureHandler credentialAuthenticationFailureHandler
     ) {
         var endpoint = properties.signUp();
         var matcher = PathPatternRequestMatcher.withDefaults()
@@ -74,6 +80,8 @@ public class CredentialAuthenticationConfiguration {
         var filter = new JsonCredentialSignInProcessingFilter(matcher, objectMapper);
 
         filter.setAuthenticationManager(credentialAuthenticationManager);
+        filter.setAuthenticationSuccessHandler(credentialAuthenticationSuccessHandler);
+        filter.setAuthenticationFailureHandler(credentialAuthenticationFailureHandler);
 
         return filter;
     }
