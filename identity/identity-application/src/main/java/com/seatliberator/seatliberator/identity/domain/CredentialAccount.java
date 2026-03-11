@@ -8,7 +8,13 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "credential_account")
+@Table(
+        name = "credential_account",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_credential_account_email",
+                columnNames = {"email"}
+        )
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CredentialAccount extends AbstractAccount {

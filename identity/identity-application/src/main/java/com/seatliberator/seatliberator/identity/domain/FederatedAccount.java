@@ -8,7 +8,15 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "federated_account")
+@Table(
+        name = "federated_account",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_federated_account_registration_provider_user",
+                        columnNames = {"registration_id", "provider_user_id"}
+                )
+        }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FederatedAccount extends AbstractAccount {
