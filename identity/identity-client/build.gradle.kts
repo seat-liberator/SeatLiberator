@@ -17,6 +17,9 @@ dependencies {
 
     // Jwt
     implementation("org.springframework.security:spring-security-oauth2-jose")
+
+    // Logging
+    implementation("org.slf4j:slf4j-api")
 }
 
 tasks.test {
