@@ -18,6 +18,9 @@ dependencies {
     // Jwt
     implementation("org.springframework.security:spring-security-oauth2-jose")
 
+    // Web
+     implementation("org.springframework:spring-webflux")
+
     // Logging
     implementation("org.slf4j:slf4j-api")
 }
