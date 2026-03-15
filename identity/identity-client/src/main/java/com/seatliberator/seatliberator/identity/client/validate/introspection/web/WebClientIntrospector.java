@@ -2,7 +2,6 @@ package com.seatliberator.seatliberator.identity.client.validate.introspection.w
 
 import com.seatliberator.seatliberator.identity.core.introspect.Introspection;
 import com.seatliberator.seatliberator.identity.core.introspect.Introspector;
-import com.seatliberator.seatliberator.identity.core.introspect.SimpleIntrospection;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Map;
@@ -27,7 +26,7 @@ public class WebClientIntrospector implements Introspector {
                 .uri(apiUrl)
                 .bodyValue(payload)
                 .retrieve()
-                .bodyToMono(SimpleIntrospection.class)
+                .bodyToMono(WebIntrospectionResponse.class)
                 .block();
     }
 }
