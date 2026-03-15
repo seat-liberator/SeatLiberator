@@ -19,7 +19,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             AND r.startTime < :endTime
             AND r.endTime > :startTime
             """)
-    boolean existsSeatConflict(String roomId, String seatId, Instant startTime, Instant endTime);
+    boolean existsReservationConflict(String roomId, String seatId, Instant startTime, Instant endTime);
 
     @Query("""
                 SELECT COUNT(r) > 0
@@ -30,7 +30,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                 AND r.startTime < :endTime
                 AND r.endTime > :startTime
             """)
-    boolean existsSeatConflictExceptId(
+    boolean existsReservationConflictExceptId(
             Long id,
             String roomId,
             String seatId,

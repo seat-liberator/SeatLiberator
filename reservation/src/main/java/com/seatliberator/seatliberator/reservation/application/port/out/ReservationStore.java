@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.application.out;
+package com.seatliberator.seatliberator.reservation.application.port.out;
 
 import com.seatliberator.seatliberator.reservation.domain.Reservation;
 
@@ -12,7 +12,7 @@ public interface ReservationStore {
 
     void delete(Reservation reservation);
 
-    boolean existsSeatConflict(String roomId, String seatId, Instant startTime, Instant endTime);
+    boolean existsReservationConflict(String roomId, String seatId, Instant startTime, Instant endTime);
 
-    boolean existsSeatConflictExceptId(Long id, String roomId, String seatId, Instant startTime, Instant endTime);
+    boolean existsReservationConflictExceptId(Long id, String roomId, String seatId, Instant startTime, Instant endTime);
 }
