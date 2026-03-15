@@ -1,6 +1,7 @@
 # identity-client README
 
-`identity-client`는 소비자 서비스가 `identity-application`의 공개키 목록과 원격 introspection, 그리고 Spring Security 연동용 인증 변환 구성을 재사용할 수 있도록 감싼 클라이언트 모듈입니다.
+`identity-client`는 소비자 서비스가 `identity-application`의 공개키 목록과 원격 introspection, 그리고 Spring Security 연동용 인증 변환 구성을 재사용할 수
+있도록 감싼 클라이언트 모듈입니다.
 
 이 모듈이 제공하는 기본 기능은 두 가지입니다.
 
@@ -21,7 +22,8 @@ dependencies {
 }
 ```
 
-`identity-client`는 `identity-core`를 함께 가져오므로, 별도 설정이 없더라도 `Introspector` 기본 구현은 제공됩니다. 다만 기본 구현은 `DenyAllIntrospector`이므로 토큰을 항상 비활성으로 판단합니다.
+`identity-client`는 `identity-core`를 함께 가져오므로, 별도 설정이 없더라도 `Introspector` 기본 구현은 제공됩니다. 다만 기본 구현은 `DenyAllIntrospector`
+이므로 토큰을 항상 비활성으로 판단합니다.
 
 ## 2. JWT 검증 사용
 
@@ -93,7 +95,8 @@ public class SecurityConfig {
 }
 ```
 
-이 경우 소비자 서비스는 `spring.security.oauth2.resourceserver.jwt.jwk-set-uri`를 직접 적지 않아도 됩니다. `identity-client`가 만든 `JwtDecoder`를 그대로 사용하면 됩니다.
+이 경우 소비자 서비스는 `spring.security.oauth2.resourceserver.jwt.jwk-set-uri`를 직접 적지 않아도 됩니다. `identity-client`가 만든 `JwtDecoder`
+를 그대로 사용하면 됩니다.
 
 ## 3. 원격 Introspection 사용
 
@@ -211,8 +214,10 @@ public class SensitiveActionAuthorizer {
 - 일반적인 API 인증은 JWT + JWKS 기반 `JwtDecoder`로 처리합니다.
 - 결제, 좌석 확정, 관리자 기능처럼 신뢰 수준이 더 필요한 작업만 `Introspector`로 원격 재검증합니다.
 - JWT 검증과 introspection을 동시에 켜도 됩니다. 둘은 용도가 다릅니다.
-- - Spring Security와 함께 사용할 경우, `identity-client`가 제공하는 `JwtDecoder`를 Resource Server 설정에 연결합니다.
-- 애플리케이션 레이어에서 Spring Security의 `Authentication` 타입을 직접 사용하고 싶지 않다면, 소비자 서비스에서 `jwtAuthenticationConverter`를 구현해 `ActorContext` 기반 인증 객체로 변환하는 방식을 권장합니다.
+-
+    - Spring Security와 함께 사용할 경우, `identity-client`가 제공하는 `JwtDecoder`를 Resource Server 설정에 연결합니다.
+- 애플리케이션 레이어에서 Spring Security의 `Authentication` 타입을 직접 사용하고 싶지 않다면, 소비자 서비스에서 `jwtAuthenticationConverter`를 구현해
+  `ActorContext` 기반 인증 객체로 변환하는 방식을 권장합니다.
 
 ## 6. 주의할 점
 
@@ -220,4 +225,5 @@ public class SensitiveActionAuthorizer {
 - `identity.validate.introspection.web.enabled=true`이면 `server.base-url`, `server.uri`가 모두 필요합니다.
 - 현재 구현상 `WebClient` 빈이 없으면 원격 `Introspector` 자동 구성이 활성화되지 않습니다.
 - introspection을 별도로 활성화하지 않으면 `identity-core`의 기본 `DenyAllIntrospector`가 사용됩니다.
-- `identity-client`는 `JwtDecoder`까지만 자동 구성합니다. Spring Security `SecurityFilterChain` 및 `jwtAuthenticationConverter` 구성은 소비자 서비스가 직접 결정합니다.
+- `identity-client`는 `JwtDecoder`까지만 자동 구성합니다. Spring Security `SecurityFilterChain` 및 `jwtAuthenticationConverter` 구성은
+  소비자 서비스가 직접 결정합니다.
