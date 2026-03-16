@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.application.service;
 
-import com.seatliberator.seatliberator.reservation.application.out.ReservationStore;
+import com.seatliberator.seatliberator.reservation.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.application.port.in.ReservationManager;
 import com.seatliberator.seatliberator.reservation.application.port.in.command.ReservationCreateCommand;
 import com.seatliberator.seatliberator.reservation.application.port.in.command.ReservationUpdateCommand;
@@ -24,7 +24,7 @@ public class ReservationService implements ReservationManager {
         }
 
 
-        if (reservationStore.existsSeatConflict(
+        if (reservationStore.existsReservationConflict(
                 command.roomId(),
                 command.seatId(),
                 command.startTime(),
@@ -51,7 +51,7 @@ public class ReservationService implements ReservationManager {
 
         Reservation reservation = reservationStore.findByUserId(command.userId()).orElseThrow();
 
-        if (reservationStore.existsSeatConflictExceptId(
+        if (reservationStore.existsReservationConflictExceptId(
                 reservation.getId(),
                 command.roomId(),
                 command.seatId(),
