@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.reservation.application.service;
 
-import com.seatliberator.seatliberator.reservation.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.application.port.in.ReservationManager;
 import com.seatliberator.seatliberator.reservation.application.port.in.command.ReservationCreateCommand;
 import com.seatliberator.seatliberator.reservation.application.port.in.command.ReservationUpdateCommand;
+import com.seatliberator.seatliberator.reservation.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.application.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.domain.Reservation;
 import lombok.RequiredArgsConstructor;
@@ -97,10 +97,13 @@ public class ReservationService implements ReservationManager {
 
     private void lockSeats(String roomId1, String seatId1, String roomId2, String seatId2) {
 
-        String seatKey1 = roomId1 + "-" + seatId1;
-        String seatKey2 = roomId2 + "-" + seatId2;
+        if (roomId1.equals(roomId2) && seatId1.equals(seatId2)) {
+            seatStore.findForUpdate(roomId1, seatId1).orElseThrow();
+        }
 
-        if (seatKey1.compareTo(seatKey2) <= 0) {
+        int roomCompare = roomId1.compareTo(roomId2);
+
+        if (roomCompare < 0 || (roomCompare == 0 && seatId1.compareTo(seatId2) < 0)) {
             seatStore.findForUpdate(roomId1, seatId1).orElseThrow();
             seatStore.findForUpdate(roomId2, seatId2).orElseThrow();
         } else {

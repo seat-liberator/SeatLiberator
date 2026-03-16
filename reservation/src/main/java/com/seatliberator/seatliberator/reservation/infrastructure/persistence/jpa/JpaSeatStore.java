@@ -15,8 +15,8 @@ public class JpaSeatStore implements SeatStore {
     private final SeatRepository repository;
 
     @Override
-    public Seat save(Seat seat){
-        return repository.save(seat);
+    public void save(Seat seat) {
+        repository.save(seat);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class JpaSeatStore implements SeatStore {
     }
 
     @Override
-    public boolean existsSeatConflictExcept(String roomId, String seatId) {
-        return repository.existsSeatConflictExcept(roomId, seatId);
+    public boolean existsSeatConflictExcept(Long id, String roomId, String seatId) {
+        return repository.existsSeatConflictExcept(id, roomId, seatId);
     }
 }

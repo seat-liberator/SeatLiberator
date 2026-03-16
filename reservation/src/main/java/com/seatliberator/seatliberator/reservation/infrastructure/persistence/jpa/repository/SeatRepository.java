@@ -14,11 +14,11 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
-        SELECT s
-        FROM Seat s
-        WHERE s.roomId = :roomId
-        AND s.seatId = :seatId
-    """)
+                SELECT s
+                FROM Seat s
+                WHERE s.roomId = :roomId
+                AND s.seatId = :seatId
+            """)
     Optional<Seat> findForUpdate(String roomId, String seatId);
 
     void deleteByRoomIdAndSeatId(String roomId, String seatId);
@@ -38,5 +38,5 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
             AND s.roomId = :roomId
             AND s.seatId = :seatId
             """)
-    boolean existsSeatConflictExcept(String roomId, String seatId);
+    boolean existsSeatConflictExcept(Long id, String roomId, String seatId);
 }

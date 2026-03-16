@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface SeatStore {
 
-    Seat save(Seat seat);
+    void save(Seat seat);
 
     Optional<Seat> findByRoomIdAndSeatId(String roomId, String seatId);
 
@@ -16,6 +16,6 @@ public interface SeatStore {
 
     boolean existsSeatConflict(String roomId, String seatId);
 
-    boolean existsSeatConflictExcept(String roomId, String seatId);
+    boolean existsSeatConflictExcept(Long id, String roomId, String seatId);
 
 }

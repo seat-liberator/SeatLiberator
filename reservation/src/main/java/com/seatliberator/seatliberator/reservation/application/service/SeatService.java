@@ -17,12 +17,12 @@ public class SeatService implements SeatManager {
     private final SeatStore seatStore;
 
     @Override
-    public boolean create(SeatCreateCommand command){
+    public boolean create(SeatCreateCommand command) {
 
-        if(seatStore.existsSeatConflict(
+        if (seatStore.existsSeatConflict(
                 command.roomId(),
                 command.seatId()
-        )){
+        )) {
             return false;
         }
 
@@ -37,20 +37,20 @@ public class SeatService implements SeatManager {
     }
 
     @Override
-    public boolean update(SeatUpdateCommand command){
-        Seat seat = seatStore.findByRoomIdAndSeatId(command.roomId(), command.seatId()).orElseThrow();
+    public boolean update(SeatUpdateCommand command) {
+        Seat seat = seatStore.findByRoomIdAndSeatId(command.oldRoomId(), command.newSeatId()).orElseThrow();
 
-        if(seatStore.existsSeatConflictExcept(command.roomId(), command.seatId())){
+        if (seatStore.existsSeatConflictExcept(seat.getId(), command.oldRoomId(), command.newSeatId())) {
             return false;
         }
 
-        seat.update(command.roomId(), command.seatId());
+        seat.update(command.newRoomId(), command.newSeatId());
 
         return true;
     }
 
     @Override
-    public boolean delete(String roomId, String seatId){
+    public boolean delete(String roomId, String seatId) {
 
         seatStore.deleteByRoomIdAndSeatId(roomId, seatId);
 
