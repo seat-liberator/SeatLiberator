@@ -88,7 +88,7 @@ public class ReservationService implements ReservationManager {
         seatStore.findForUpdate(
                 reservation.getRoomId(),
                 reservation.getSeatId()
-        ).orElseThrow();
+        ).ifPresent(seat -> {});
 
         reservationStore.delete(reservation);
 
