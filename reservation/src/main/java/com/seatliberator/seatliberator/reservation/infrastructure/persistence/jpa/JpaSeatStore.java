@@ -36,6 +36,6 @@ public class JpaSeatStore implements SeatStore {
 
     @Override
     public boolean existsSeatConflictExcept(String roomId, String seatId) {
-        return repository.existsSeatConflictExept(roomId, seatId);
+        return repository.existsSeatConflictExcept(roomId, seatId);
     }
 }

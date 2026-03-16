@@ -27,5 +27,5 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
             AND s.roomId = :roomId
             AND s.seatId = :seatId
             """)
-    boolean existsSeatConflictExept(String roomId, String seatId);
+    boolean existsSeatConflictExcept(String roomId, String seatId);
 }

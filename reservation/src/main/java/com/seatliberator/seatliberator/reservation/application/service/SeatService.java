@@ -40,7 +40,7 @@ public class SeatService implements SeatManager {
     public boolean update(SeatUpdateCommand command){
         Seat seat = seatStore.findByRoomIdAndSeatId(command.roomId(), command.seatId()).orElseThrow();
 
-        if(seatStore.existsSeatConflict(command.roomId(), command.seatId())){
+        if(seatStore.existsSeatConflictExcept(command.roomId(), command.seatId())){
             return false;
         }
 
