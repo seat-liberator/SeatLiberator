@@ -25,6 +25,11 @@ public class JpaSeatStore implements SeatStore {
     }
 
     @Override
+    public Optional<Seat> findForUpdate(String roomId, String seatId) {
+        return repository.findForUpdate(roomId, seatId);
+    }
+
+    @Override
     public void deleteByRoomIdAndSeatId(String roomId, String seatId) {
         repository.deleteByRoomIdAndSeatId(roomId, seatId);
     }
@@ -36,6 +41,6 @@ public class JpaSeatStore implements SeatStore {
 
     @Override
     public boolean existsSeatConflictExcept(String roomId, String seatId) {
-        return repository.existsSeatConflictExept(roomId, seatId);
+        return repository.existsSeatConflictExcept(roomId, seatId);
     }
 }

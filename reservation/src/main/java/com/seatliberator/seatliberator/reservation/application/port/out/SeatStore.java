@@ -10,6 +10,8 @@ public interface SeatStore {
 
     Optional<Seat> findByRoomIdAndSeatId(String roomId, String seatId);
 
+    Optional<Seat> findForUpdate(String roomId, String seatId);
+
     void deleteByRoomIdAndSeatId(String roomId, String seatId);
 
     boolean existsSeatConflict(String roomId, String seatId);
