@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":identity:identity-core"))
+    api(project(":identity:identity-core"))
 
     // Validation
     implementation("org.springframework.boot:spring-boot-starter-validation")
