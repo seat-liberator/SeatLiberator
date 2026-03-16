@@ -7,11 +7,11 @@ import java.util.Set;
 
 @Slf4j
 @ConfigurationProperties(prefix = "identity.jwks")
-public record JWKSProperties(
+public record JwksProperties(
         String signableKid,
         Set<KeyEntry> keys
 ) {
-    public JWKSProperties {
+    public JwksProperties {
         signableKid = signableKid != null ? signableKid : "";
         keys = keys != null ? keys : Set.of();
 

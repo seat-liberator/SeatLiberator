@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.jwks.infrastructure.io;
 
-import com.seatliberator.seatliberator.jwks.application.config.JWKSProperties;
+import com.seatliberator.seatliberator.jwks.application.config.JwksProperties;
 import com.seatliberator.seatliberator.jwks.application.port.out.KeyStore;
 import com.seatliberator.seatliberator.jwks.domain.KeyStatus;
 import com.seatliberator.seatliberator.jwks.domain.RSASignatureKey;
@@ -28,7 +28,7 @@ public class FileBasedKeyStore implements KeyStore {
     private final Map<String, RSASignatureKey> keyMap;
 
     public FileBasedKeyStore(
-            JWKSProperties jwksProperties,
+            JwksProperties jwksProperties,
             ResourceLoader resourceLoader
     ) {
         if (!jwksProperties.isConfigured()) {
@@ -60,7 +60,7 @@ public class FileBasedKeyStore implements KeyStore {
     }
 
     private RSASignatureKey loadKey(
-            JWKSProperties.KeyEntry entry,
+            JwksProperties.KeyEntry entry,
             ResourceLoader resourceLoader
     ) {
         try {

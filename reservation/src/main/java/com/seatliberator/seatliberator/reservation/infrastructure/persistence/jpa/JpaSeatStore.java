@@ -40,7 +40,12 @@ public class JpaSeatStore implements SeatStore {
     }
 
     @Override
+<<<<<<< reservation_concurrency
     public boolean existsSeatConflictExcept(Long id, String roomId, String seatId) {
         return repository.existsSeatConflictExcept(id, roomId, seatId);
+=======
+    public boolean existsSeatConflictExcept(String roomId, String seatId) {
+        return repository.existsSeatConflictExcept(roomId, seatId);
+>>>>>>> main
     }
 }
