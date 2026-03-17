@@ -31,6 +31,11 @@ public class JpaReservationStore implements ReservationStore {
     }
 
     @Override
+    public Optional<Reservation> findByRoomIdAndSeatId(String roomId, String seatId) {
+        return repository.findByRoomIdAndSeatId(roomId, seatId);
+    }
+
+    @Override
     public void delete(Reservation reservation) {
         repository.delete(reservation);
     }

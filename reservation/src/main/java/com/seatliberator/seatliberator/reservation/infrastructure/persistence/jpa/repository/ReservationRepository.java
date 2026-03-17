@@ -11,6 +11,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     Optional<Reservation> findByUserId(String userId);
 
+    Optional<Reservation> findByRoomIdAndSeatId(String roomId, String seatId);
+
     @Query("""
             SELECT COUNT(r) > 0
             FROM Reservation r

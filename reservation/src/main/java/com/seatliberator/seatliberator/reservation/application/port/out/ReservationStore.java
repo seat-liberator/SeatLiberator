@@ -12,6 +12,8 @@ public interface ReservationStore {
 
     Optional<Reservation> findByUserId(String userId);
 
+    Optional<Reservation> findByRoomIdAndSeatId(String roomId, String seatId);
+
     void delete(Reservation reservation);
 
     boolean existsReservationConflict(String roomId, String seatId, Instant startTime, Instant endTime);
