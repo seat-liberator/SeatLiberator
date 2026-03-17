@@ -73,7 +73,7 @@ public class Reservation {
             throw new IllegalStateException("만료된 예약입니다.");
         }
 
-        if (Instant.now().isAfter(this.endTime)) {
+        if (!Instant.now().isBefore(this.endTime)) {
             this.status = ReservationStatus.EXPIRED;
             throw new IllegalStateException("만료된 예약입니다.");
         }
