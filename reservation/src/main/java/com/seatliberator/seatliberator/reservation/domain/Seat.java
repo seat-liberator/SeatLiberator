@@ -1,6 +1,5 @@
 package com.seatliberator.seatliberator.reservation.domain;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,16 +25,16 @@ public class Seat {
     @Column(nullable = false)
     private String seatId;
 
-    private Seat(String roomId, String seatId){
+    private Seat(String roomId, String seatId) {
         this.roomId = roomId;
         this.seatId = seatId;
     }
 
-    public static Seat create(String roomId, String seatId){
+    public static Seat create(String roomId, String seatId) {
         return new Seat(roomId, seatId);
     }
 
-    public void update(String roomId, String seatId){
+    public void update(String roomId, String seatId) {
         this.roomId = roomId;
         this.seatId = seatId;
     }

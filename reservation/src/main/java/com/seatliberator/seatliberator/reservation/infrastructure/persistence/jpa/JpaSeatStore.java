@@ -15,7 +15,7 @@ public class JpaSeatStore implements SeatStore {
     private final SeatRepository repository;
 
     @Override
-    public Seat save(Seat seat){
+    public Seat save(Seat seat) {
         return repository.save(seat);
     }
 

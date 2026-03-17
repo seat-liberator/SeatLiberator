@@ -23,7 +23,7 @@ public class SeatController {
     @PostMapping
     public Map<String, Boolean> create(
             @RequestBody SeatCreateRequest request
-            ){
+    ) {
         boolean result = seatManager.create(
                 new SeatCreateCommand(
                         request.roomId(),
@@ -37,7 +37,7 @@ public class SeatController {
     @PutMapping
     public Map<String, Boolean> update(
             @RequestBody SeatUpdateRequest request
-            ){
+    ) {
         boolean result = seatManager.update(
                 new SeatUpdateCommand(
                         request.roomId(),
@@ -52,7 +52,7 @@ public class SeatController {
     public Map<String, Boolean> delete(
             @PathVariable String roomId,
             @PathVariable String seatId
-    ){
+    ) {
         boolean result = seatManager.delete(roomId, seatId);
         return Map.of("success", result);
     }
