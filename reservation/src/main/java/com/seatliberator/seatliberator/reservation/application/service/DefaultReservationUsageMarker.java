@@ -6,8 +6,10 @@ import com.seatliberator.seatliberator.reservation.application.port.in.Reservati
 import com.seatliberator.seatliberator.reservation.application.port.in.entry.ReservationStatusTransitionEntry;
 import com.seatliberator.seatliberator.reservation.application.port.out.ReservationStore;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Service
 @RequiredArgsConstructor
 public class DefaultReservationUsageMarker implements ReservationUsageMarker {
     private final ReservationStore reservationStore;
