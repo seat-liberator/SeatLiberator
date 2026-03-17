@@ -8,11 +8,10 @@ import com.seatliberator.seatliberator.reservation.application.port.in.command.R
 import com.seatliberator.seatliberator.reservation.application.port.in.command.SeatBasedReservationLocator;
 import com.seatliberator.seatliberator.reservation.application.port.in.entry.ReservationEntry;
 import com.seatliberator.seatliberator.reservation.application.port.out.ReservationStore;
-import com.seatliberator.seatliberator.reservation.domain.Reservation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -21,15 +20,11 @@ public class DefaultReservationReader implements ReservationReader {
 
     @Override
     public ReservationEntry read(ReservationLocator reservationLocator) {
-        Optional<Reservation> optReservation = Optional.empty();
-
-        if (reservationLocator instanceof IdBasedReservationLocator(Long reservationId)) {
-            optReservation = reservationStore.findById(reservationId);
-        }
-
-        if (reservationLocator instanceof SeatBasedReservationLocator(String roomId, String seatId)) {
-            optReservation = reservationStore.findByRoomIdAndSeatId(roomId, seatId);
-        }
+        var optReservation = switch (reservationLocator) {
+            case IdBasedReservationLocator(Long reservationId) -> reservationStore.findById(reservationId);
+            case SeatBasedReservationLocator(String roomId, String seatId, Instant startTime, Instant endTime) ->
+                    reservationStore.findReservationBySeatAt(roomId, seatId, startTime, endTime);
+        };
 
         return optReservation
                 .map(ReservationEntry::of)

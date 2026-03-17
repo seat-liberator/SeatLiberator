@@ -12,7 +12,7 @@ public interface ReservationStore {
 
     Optional<Reservation> findByUserId(String userId);
 
-    Optional<Reservation> findByRoomIdAndSeatId(String roomId, String seatId);
+    Optional<Reservation> findReservationBySeatAt(String roomId, String seatId, Instant startTime, Instant endTime);
 
     void delete(Reservation reservation);
 

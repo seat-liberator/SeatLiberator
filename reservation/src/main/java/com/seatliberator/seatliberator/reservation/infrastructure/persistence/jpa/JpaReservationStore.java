@@ -31,8 +31,8 @@ public class JpaReservationStore implements ReservationStore {
     }
 
     @Override
-    public Optional<Reservation> findByRoomIdAndSeatId(String roomId, String seatId) {
-        return repository.findByRoomIdAndSeatId(roomId, seatId);
+    public Optional<Reservation> findReservationBySeatAt(String roomId, String seatId, Instant startTime, Instant endTime) {
+        return repository.findReservationBySeatAt(roomId, seatId, startTime, endTime);
     }
 
     @Override
