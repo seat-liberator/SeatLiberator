@@ -4,6 +4,7 @@ import java.util.UUID;
 
 public record PostCreateCommand(
         UUID boardId,
+        UUID categoryId,
         String title,
         String content
 ) {

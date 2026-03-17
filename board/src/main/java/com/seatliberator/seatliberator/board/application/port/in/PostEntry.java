@@ -7,9 +7,15 @@ import java.util.UUID;
 public record PostEntry(
         UUID postId,
         String title,
-        String content
+        String content,
+        UUID categoryId
 ) {
     public static PostEntry of(Post post) {
-        return new PostEntry(post.getId(), post.getTitle(), post.getContent());
+        return new PostEntry(
+                post.getId(),
+                post.getTitle(),
+                post.getContent(),
+                post.getCategory().getId()
+        );
     }
 }

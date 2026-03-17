@@ -7,6 +7,7 @@ import java.util.UUID;
 public record PostUpdateCommand(
         UUID boardId,
         UUID postId,
+        @Nullable UUID categoryId,
         @Nullable String title,
         @Nullable String content
 ) {

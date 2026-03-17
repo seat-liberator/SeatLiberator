@@ -49,7 +49,7 @@ public class PostController {
             @RequestBody @Valid PostCreateRequest body
     ) {
         // Web DTO -> Application Command 변환
-        var command = new PostCreateCommand(boardId, body.title(), body.content());
+        var command = new PostCreateCommand(boardId, body.categoryId(), body.title(), body.content());
         var result = postManager.create(command);
 
         // 생성된 리소스 URI를 Location 헤더로 제공
@@ -65,7 +65,7 @@ public class PostController {
             @RequestBody PostUpdateRequest body
     ) {
         // Web DTO 에서 Application Command 로 변환
-        var command = new PostUpdateCommand(boardId, postId, body.title(), body.content());
+        var command = new PostUpdateCommand(boardId, postId, body.categoryId(), body.title(), body.content());
         return ResponseEntity.ok(postManager.update(command));
     }
 
