@@ -20,9 +20,9 @@ public class DefaultReservationUsageMarker implements ReservationUsageMarker {
 
         try {
             reservation.markUsed();
-            return ReservationStatusTransitionEntry.markSuccess();
+            return ReservationStatusTransitionEntry.markSuccess(reservation.getStatus());
         } catch (IllegalStateException e) {
-            return ReservationStatusTransitionEntry.markFail(e.getMessage());
+            return ReservationStatusTransitionEntry.markFail(e.getMessage(), reservation.getStatus());
         }
     }
 }
