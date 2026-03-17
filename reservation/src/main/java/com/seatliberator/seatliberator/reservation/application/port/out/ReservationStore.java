@@ -8,6 +8,8 @@ import java.util.Optional;
 public interface ReservationStore {
     Reservation save(Reservation reservation);
 
+    Optional<Reservation> findById(Long reservationId);
+
     Optional<Reservation> findByUserId(String userId);
 
     void delete(Reservation reservation);
