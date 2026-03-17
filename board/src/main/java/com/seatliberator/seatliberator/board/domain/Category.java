@@ -6,47 +6,40 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "post")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post {
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Setter
     @Column(nullable = false)
-    private String title;
+    private String name;
 
     @Setter
-    @Column(nullable = false)
-    private String content;
+    @Column
+    private String description;
 
     @Setter(AccessLevel.PROTECTED)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-    @Setter(AccessLevel.PROTECTED)
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    private final List<Post> posts = new ArrayList<>();
 
-    private Post(
-            String title,
-            String content
-    ) {
-        this.title = title;
-        this.content = content;
+    private Category(String name, String description) {
+        this.name = name;
+        this.description = description;
     }
 
-    public static Post create(
-            String title,
-            String content
-    ) {
-        return new Post(title, content);
+    public static Category create(String name, String description) {
+        return new Category(name, description);
     }
 }

@@ -22,6 +22,13 @@ public class Board {
             orphanRemoval = true
     )
     private final List<Post> posts = new ArrayList<>();
+    @OneToMany(
+            mappedBy = "board",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private final List<Category> categories = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -49,11 +56,13 @@ public class Board {
 
     public Post addPost(
             String title,
-            String content
+            String content,
+            Category category
     ) {
         var post = Post.create(title, content);
         this.posts.add(post);
         post.setBoard(this);
+        post.setCategory(category);
         return post;
     }
 
@@ -62,9 +71,31 @@ public class Board {
         post.setBoard(null);
     }
 
+    public void changePostCategory(Post post, Category category) {
+        post.setCategory(category);
+    }
+
     public Optional<Post> findPost(UUID postId) {
         return this.posts.stream()
                 .filter(post -> post.getId().equals(postId))
+                .findFirst();
+    }
+
+    public Category addCategory(String name, String description) {
+        var category = Category.create(name, description);
+        this.categories.add(category);
+        category.setBoard(this);
+        return category;
+    }
+
+    public void removeCategory(Category category) {
+        this.categories.remove(category);
+        category.setBoard(null);
+    }
+
+    public Optional<Category> findCategory(UUID categoryId) {
+        return this.categories.stream()
+                .filter(category -> category.getId().equals(categoryId))
                 .findFirst();
     }
 }
