@@ -82,7 +82,7 @@ public class CategoryService implements CategoryManager {
     @Override
     @Transactional(readOnly = true)
     public List<CategoryEntry> getAll(UUID boardId) {
-        var board = findBoardOrThrow(boardId);
+        var board = findBoardWithCategoriesOrThrow(boardId);
         return board.getCategories().stream()
                 .map(CategoryEntry::of)
                 .toList();
@@ -90,6 +90,11 @@ public class CategoryService implements CategoryManager {
 
     private Board findBoardOrThrow(UUID boardId) {
         return boardStore.getSingle(boardId)
+                .orElseThrow(() -> new BoardNotFoundException(boardId));
+    }
+
+    private Board findBoardWithCategoriesOrThrow(UUID boardId) {
+        return boardStore.getSingleWithCategories(boardId)
                 .orElseThrow(() -> new BoardNotFoundException(boardId));
     }
 

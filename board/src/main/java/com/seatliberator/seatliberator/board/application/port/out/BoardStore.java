@@ -13,6 +13,8 @@ public interface BoardStore {
 
     Optional<Board> getSingle(UUID boardId);
 
+    Optional<Board> getSingleWithCategories(UUID boardId);
+
     // 변경사항: 저장소 포트에 전체 게시판 조회 기능을 추가
     // 이유: 서비스 계층이 JPA 구현체 세부사항에 의존하지 않고 목록 조회를 수행하도록 포트에서 추상화해야 함
     List<Board> getAll();

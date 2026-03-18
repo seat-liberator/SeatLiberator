@@ -31,6 +31,11 @@ public class JpaBoardStore implements BoardStore {
     }
 
     @Override
+    public Optional<Board> getSingleWithCategories(UUID boardId) {
+        return repository.findByIdWithCategories(boardId);
+    }
+
+    @Override
     public List<Board> getAll() {
         return repository.findAll();
     }
