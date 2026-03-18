@@ -31,8 +31,8 @@ public class Post {
     private Board board;
 
     @Setter(AccessLevel.PROTECTED)
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "category_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
     private Category category;
 
     private Post(

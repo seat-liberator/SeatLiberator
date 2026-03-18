@@ -1,6 +1,7 @@
 package com.seatliberator.seatliberator.board.application.port.in;
 
 import com.seatliberator.seatliberator.board.domain.Post;
+import org.jspecify.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -8,14 +9,14 @@ public record PostEntry(
         UUID postId,
         String title,
         String content,
-        UUID categoryId
+        @Nullable UUID categoryId
 ) {
     public static PostEntry of(Post post) {
         return new PostEntry(
                 post.getId(),
                 post.getTitle(),
                 post.getContent(),
-                post.getCategory().getId()
+                post.getCategory() != null ? post.getCategory().getId() : null
         );
     }
 }
