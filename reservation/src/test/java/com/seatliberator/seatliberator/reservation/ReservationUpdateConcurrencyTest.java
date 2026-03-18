@@ -6,6 +6,8 @@ import com.seatliberator.seatliberator.reservation.application.port.in.command.S
 import com.seatliberator.seatliberator.reservation.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.application.service.ReservationService;
 import com.seatliberator.seatliberator.reservation.application.service.SeatService;
+import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,11 +40,20 @@ public class ReservationUpdateConcurrencyTest {
     ReservationService reservationService;
     @Autowired
     SeatService seatService;
+    @Autowired
+    EntityManager em;
+
     int threadCount;
 
     @BeforeEach
     void run() {
         this.threadCount = 500;
+    }
+
+    @AfterEach
+    void cleanUp() {
+        em.createQuery("DELETE FROM Reservation").executeUpdate();
+        em.createQuery("DELETE FROM Seat").executeUpdate();
     }
 
     @Test
