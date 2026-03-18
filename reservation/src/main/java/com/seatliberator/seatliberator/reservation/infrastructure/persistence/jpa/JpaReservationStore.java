@@ -21,8 +21,18 @@ public class JpaReservationStore implements ReservationStore {
     }
 
     @Override
+    public Optional<Reservation> findById(Long reservationId) {
+        return repository.findById(reservationId);
+    }
+
+    @Override
     public Optional<Reservation> findByUserId(String userId) {
         return repository.findByUserId(userId);
+    }
+
+    @Override
+    public Optional<Reservation> findReservationBySeatAt(String roomId, String seatId, Instant startTime, Instant endTime) {
+        return repository.findReservationBySeatAt(roomId, seatId, startTime, endTime);
     }
 
     @Override
