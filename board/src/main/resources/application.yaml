@@ -3,7 +3,7 @@ identity:
     jwt:
       enabled: true
       jwks-server:
-        base-url: http://localhost:9000
+        base-url: ${JWKS_BASE_URL}
         uri: /.well-known/jwks.json
 
 spring:
