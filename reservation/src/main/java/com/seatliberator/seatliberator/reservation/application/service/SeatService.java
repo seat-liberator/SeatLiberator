@@ -38,13 +38,13 @@ public class SeatService implements SeatManager {
 
     @Override
     public boolean update(SeatUpdateCommand command) {
-        Seat seat = seatStore.findByRoomIdAndSeatId(command.roomId(), command.seatId()).orElseThrow();
+        Seat seat = seatStore.findByRoomIdAndSeatId(command.oldRoomId(), command.oldSeatId()).orElseThrow();
 
-        if (seatStore.existsSeatConflictExcept(command.roomId(), command.seatId())) {
+        if (seatStore.existsSeatConflictExcept(seat.getId(), command.newRoomId(), command.newSeatId())) {
             return false;
         }
 
-        seat.update(command.roomId(), command.seatId());
+        seat.update(command.newRoomId(), command.newSeatId());
 
         return true;
     }

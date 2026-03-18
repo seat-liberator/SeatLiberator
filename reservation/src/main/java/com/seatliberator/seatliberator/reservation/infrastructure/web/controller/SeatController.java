@@ -40,8 +40,10 @@ public class SeatController {
     ) {
         boolean result = seatManager.update(
                 new SeatUpdateCommand(
-                        request.roomId(),
-                        request.seatId()
+                        request.oldRoomId(),
+                        request.oldSeatId(),
+                        request.newRoomId(),
+                        request.newSeatId()
                 )
         );
 
