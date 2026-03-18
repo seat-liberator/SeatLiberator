@@ -1,3 +1,11 @@
+identity:
+  validate:
+    jwt:
+      enabled: true
+      jwks-server:
+        base-url: ${JWKS_BASE_URL}
+        uri: /.well-known/jwks.json
+
 spring:
   application:
     name: "board"

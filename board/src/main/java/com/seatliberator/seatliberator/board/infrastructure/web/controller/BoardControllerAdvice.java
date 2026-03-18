@@ -1,6 +1,7 @@
 package com.seatliberator.seatliberator.board.infrastructure.web.controller;
 
 import com.seatliberator.seatliberator.board.application.exception.BoardNotFoundException;
+import com.seatliberator.seatliberator.board.application.exception.CategoryNotFoundException;
 import com.seatliberator.seatliberator.board.application.exception.PostNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -21,6 +22,11 @@ public class BoardControllerAdvice {
 
     @ExceptionHandler(PostNotFoundException.class)
     public ProblemDetail handlePostNotFound(PostNotFoundException exception) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ProblemDetail handleCategoryNotFound(CategoryNotFoundException exception) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 

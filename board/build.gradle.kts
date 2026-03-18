@@ -10,6 +10,9 @@ repositories {
 }
 
 dependencies {
+    // Identity
+    implementation(project(":identity:identity-client"))
+
     // Spring Web MVC
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
 
@@ -18,6 +21,10 @@ dependencies {
 
     // Bean Validation (Jakarta)
     implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    // Spring Security
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
     // Lombok
     compileOnly("org.projectlombok:lombok")

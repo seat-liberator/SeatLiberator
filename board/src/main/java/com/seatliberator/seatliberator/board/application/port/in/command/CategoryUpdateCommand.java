@@ -4,11 +4,10 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.UUID;
 
-public record PostUpdateCommand(
+public record CategoryUpdateCommand(
         UUID boardId,
-        UUID postId,
-        @Nullable UUID categoryId,
-        @Nullable String title,
-        @Nullable String content
+        UUID categoryId,
+        @Nullable String name,
+        @Nullable String description
 ) {
 }

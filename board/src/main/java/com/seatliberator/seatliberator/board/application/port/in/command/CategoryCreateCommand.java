@@ -2,10 +2,9 @@ package com.seatliberator.seatliberator.board.application.port.in.command;
 
 import java.util.UUID;
 
-public record PostCreateCommand(
+public record CategoryCreateCommand(
         UUID boardId,
-        UUID categoryId,
-        String title,
-        String content
+        String name,
+        String description
 ) {
 }
