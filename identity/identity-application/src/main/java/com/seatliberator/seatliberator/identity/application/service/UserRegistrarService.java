@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.identity.application.service;
 
-import com.seatliberator.seatliberator.identity.application.exception.ApplicationErrorCode;
-import com.seatliberator.seatliberator.identity.application.exception.ApplicationException;
+import com.seatliberator.seatliberator.identity.application.exception.IdentityApplicationErrorCode;
+import com.seatliberator.seatliberator.identity.application.exception.IdentityApplicationException;
 import com.seatliberator.seatliberator.identity.application.port.in.UserRegistrar;
 import com.seatliberator.seatliberator.identity.application.port.in.command.RegistrationCommand;
 import com.seatliberator.seatliberator.identity.application.port.in.result.AuthEntry;
@@ -41,7 +41,7 @@ public class UserRegistrarService implements UserRegistrar {
                     "Credential registration failed because email already exists. email={}",
                     command.email()
             );
-            throw new ApplicationException(ApplicationErrorCode.EMAIL_DUPLICATED);
+            throw new IdentityApplicationException(IdentityApplicationErrorCode.EMAIL_DUPLICATED);
         }
 
         var passwordHash = passwordEncoder.encode(command.password());
@@ -105,7 +105,7 @@ public class UserRegistrarService implements UserRegistrar {
                     "Federated registration failed because account already exists. registrationId={}",
                     command.registrationId()
             );
-            throw new ApplicationException(ApplicationErrorCode.AUTHENTICATION_FAILED);
+            throw new IdentityApplicationException(IdentityApplicationErrorCode.AUTHENTICATION_FAILED);
         }
 
         log.debug(

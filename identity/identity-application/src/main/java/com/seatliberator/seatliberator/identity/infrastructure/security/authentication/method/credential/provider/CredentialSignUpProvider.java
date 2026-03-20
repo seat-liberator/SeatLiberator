@@ -1,6 +1,7 @@
 package com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.credential.provider;
 
-import com.seatliberator.seatliberator.identity.application.exception.ApplicationException;
+import com.seatliberator.seatliberator.identity.application.exception.IdentityApplicationErrorCode;
+import com.seatliberator.seatliberator.identity.application.exception.IdentityApplicationException;
 import com.seatliberator.seatliberator.identity.application.port.in.UserRegistrar;
 import com.seatliberator.seatliberator.identity.application.port.in.command.RegistrationCommand;
 import com.seatliberator.seatliberator.identity.application.port.in.result.AuthEntry;
@@ -45,8 +46,7 @@ public class CredentialSignUpProvider implements AuthenticationProvider {
         );
         log.debug("Credential registration command created. email={}, nickname={}", email, nickname);
 
-        AuthEntry authEntry;
-
+        final AuthEntry authEntry;
         try {
             authEntry = userRegistrar.register(registrationCommand);
             log.debug(
@@ -54,17 +54,21 @@ public class CredentialSignUpProvider implements AuthenticationProvider {
                     email,
                     authEntry.userId()
             );
-        } catch (ApplicationException e) {
+        } catch (IdentityApplicationException e) {
             log.debug(
                     "Credential sign-up failed in application service. email={}, errorCode={}",
                     email,
                     e.getErrorCode()
             );
 
-            throw switch (e.getErrorCode()) {
-                case AUTHENTICATION_FAILED, EMAIL_DUPLICATED -> new AuthenticationServiceException(e.getMessage());
-                default -> new AuthenticationServiceException("Credential sign-up failed", e);
-            };
+            if (e.getErrorCode() instanceof IdentityApplicationErrorCode identityApplicationErrorCode) {
+                throw switch (identityApplicationErrorCode) {
+                    case AUTHENTICATION_FAILED, EMAIL_DUPLICATED -> new AuthenticationServiceException(e.getMessage());
+                    default -> new AuthenticationServiceException("Credential sign-up failed", e);
+                };
+            }
+
+            throw new AuthenticationServiceException("Credential sign-up failed", e);
         }
 
         var trustedUserPrincipal = new TrustedUserPrincipal(
