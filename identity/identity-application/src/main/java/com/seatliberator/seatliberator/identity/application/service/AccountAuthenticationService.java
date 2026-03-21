@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.identity.application.service;
 
-import com.seatliberator.seatliberator.identity.application.exception.ApplicationErrorCode;
-import com.seatliberator.seatliberator.identity.application.exception.ApplicationException;
+import com.seatliberator.seatliberator.identity.application.exception.IdentityApplicationErrorCode;
+import com.seatliberator.seatliberator.identity.application.exception.IdentityApplicationException;
 import com.seatliberator.seatliberator.identity.application.port.in.AccountAuthenticator;
 import com.seatliberator.seatliberator.identity.application.port.in.command.AuthenticationCommand;
 import com.seatliberator.seatliberator.identity.application.port.in.result.AuthEntry;
@@ -28,7 +28,7 @@ public class AccountAuthenticationService implements AccountAuthenticator {
         var auth = credentialAccountStore.findCredentialAuthByEmail(command.email())
                 .orElseThrow(() -> {
                     log.debug("Credential authentication failed because account was not found. email={}", command.email());
-                    return new ApplicationException(ApplicationErrorCode.AUTHENTICATION_FAILED);
+                    return new IdentityApplicationException(IdentityApplicationErrorCode.AUTHENTICATION_FAILED);
                 });
 
         log.debug(
@@ -43,7 +43,7 @@ public class AccountAuthenticationService implements AccountAuthenticator {
                     command.email(),
                     auth.userId()
             );
-            throw new ApplicationException(ApplicationErrorCode.AUTHENTICATION_FAILED);
+            throw new IdentityApplicationException(IdentityApplicationErrorCode.AUTHENTICATION_FAILED);
         }
 
         log.debug(
@@ -75,7 +75,7 @@ public class AccountAuthenticationService implements AccountAuthenticator {
                             command.registrationId(),
                             command.providerUserId()
                     );
-                    return new ApplicationException(ApplicationErrorCode.AUTHENTICATION_FAILED);
+                    return new IdentityApplicationException(IdentityApplicationErrorCode.AUTHENTICATION_FAILED);
                 });
 
         log.debug(
