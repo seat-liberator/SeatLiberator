@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.credential.provider;
 
-import com.seatliberator.seatliberator.identity.application.exception.ApplicationException;
+import com.seatliberator.seatliberator.identity.application.exception.IdentityApplicationException;
 import com.seatliberator.seatliberator.identity.application.port.in.AccountAuthenticator;
 import com.seatliberator.seatliberator.identity.application.port.in.command.AuthenticationCommand;
 import com.seatliberator.seatliberator.identity.application.port.in.result.AuthEntry;
@@ -13,11 +13,13 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,15 +42,16 @@ public class CredentialSignInProvider implements AuthenticationProvider {
         var authenticationCommand = new AuthenticationCommand.Credential(email, password);
         log.debug("Credential authentication command created. email={}", email);
 
-        AuthEntry authEntry;
+        final AuthEntry authEntry;
         try {
-            authEntry = accountAuthenticator.authenticate(authenticationCommand);
+            authEntry = Objects.requireNonNull(accountAuthenticator.authenticate(authenticationCommand), "AccountAuthenticator.authenticate must not return null");
+
             log.debug(
                     "Credential authentication application service succeeded. email={}, userId={}",
                     email,
                     authEntry.userId()
             );
-        } catch (ApplicationException e) {
+        } catch (IdentityApplicationException e) {
             log.debug(
                     "Credential sign-in failed in application service. email={}, errorCode={}",
                     email,
@@ -56,8 +59,8 @@ public class CredentialSignInProvider implements AuthenticationProvider {
             );
 
             throw switch (e.getErrorCode()) {
-                case AUTHENTICATION_FAILED -> new AuthenticationServiceException(e.getMessage());
-                default -> new AuthenticationServiceException("Credential sign-up failed", e);
+                case AUTHENTICATION_FAILED -> new BadCredentialsException(e.getMessage());
+                default -> new AuthenticationServiceException("Credential sign-in failed", e);
             };
         }
 
