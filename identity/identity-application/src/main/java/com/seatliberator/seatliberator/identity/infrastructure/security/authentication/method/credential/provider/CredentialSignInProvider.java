@@ -1,6 +1,5 @@
 package com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.credential.provider;
 
-import com.seatliberator.seatliberator.identity.application.exception.IdentityApplicationErrorCode;
 import com.seatliberator.seatliberator.identity.application.exception.IdentityApplicationException;
 import com.seatliberator.seatliberator.identity.application.port.in.AccountAuthenticator;
 import com.seatliberator.seatliberator.identity.application.port.in.command.AuthenticationCommand;
@@ -59,14 +58,10 @@ public class CredentialSignInProvider implements AuthenticationProvider {
                     e.getErrorCode()
             );
 
-            if (e.getErrorCode() instanceof IdentityApplicationErrorCode identityApplicationErrorCode) {
-                throw switch (identityApplicationErrorCode) {
-                    case AUTHENTICATION_FAILED -> new BadCredentialsException(e.getMessage());
-                    default -> new AuthenticationServiceException("Credential sign-in failed", e);
-                };
-            }
-
-            throw new AuthenticationServiceException("Credential sign-in failed", e);
+            throw switch (e.getErrorCode()) {
+                case AUTHENTICATION_FAILED -> new BadCredentialsException(e.getMessage());
+                default -> new AuthenticationServiceException("Credential sign-in failed", e);
+            };
         }
 
         var trustedUserPrincipal = new TrustedUserPrincipal(

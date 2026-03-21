@@ -1,6 +1,5 @@
 package com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.credential.provider;
 
-import com.seatliberator.seatliberator.identity.application.exception.IdentityApplicationErrorCode;
 import com.seatliberator.seatliberator.identity.application.exception.IdentityApplicationException;
 import com.seatliberator.seatliberator.identity.application.port.in.UserRegistrar;
 import com.seatliberator.seatliberator.identity.application.port.in.command.RegistrationCommand;
@@ -61,14 +60,10 @@ public class CredentialSignUpProvider implements AuthenticationProvider {
                     e.getErrorCode()
             );
 
-            if (e.getErrorCode() instanceof IdentityApplicationErrorCode identityApplicationErrorCode) {
-                throw switch (identityApplicationErrorCode) {
-                    case AUTHENTICATION_FAILED, EMAIL_DUPLICATED -> new AuthenticationServiceException(e.getMessage());
-                    default -> new AuthenticationServiceException("Credential sign-up failed", e);
-                };
-            }
-
-            throw new AuthenticationServiceException("Credential sign-up failed", e);
+            throw switch (e.getErrorCode()) {
+                case AUTHENTICATION_FAILED, EMAIL_DUPLICATED -> new AuthenticationServiceException(e.getMessage());
+                default -> new AuthenticationServiceException("Credential sign-up failed", e);
+            };
         }
 
         var trustedUserPrincipal = new TrustedUserPrincipal(

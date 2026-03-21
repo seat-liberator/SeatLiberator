@@ -6,4 +6,13 @@ public class IdentityApplicationException extends ApplicationBaseException {
     public IdentityApplicationException(IdentityApplicationErrorCode errorCode) {
         super(errorCode);
     }
+
+    public IdentityApplicationException(IdentityApplicationErrorCode errorCode, Throwable cause) {
+        super(errorCode, cause);
+    }
+
+    @Override
+    public IdentityApplicationErrorCode getErrorCode() {
+        return (IdentityApplicationErrorCode) super.getErrorCode();
+    }
 }
