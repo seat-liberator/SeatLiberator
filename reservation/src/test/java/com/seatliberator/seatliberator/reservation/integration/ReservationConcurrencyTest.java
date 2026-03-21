@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation;
+package com.seatliberator.seatliberator.reservation.integration;
 
 import com.seatliberator.seatliberator.reservation.application.port.in.command.ReservationCreateCommand;
 import com.seatliberator.seatliberator.reservation.application.port.in.command.SeatCreateCommand;
@@ -24,33 +24,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
-//@Testcontainers
 public class ReservationConcurrencyTest {
 
     private static final Logger log = LoggerFactory.getLogger(ReservationConcurrencyTest.class);
-
-//    private static final PostgreSQLContainer<?> postgres;
-
-//    static {
-//        postgres = new PostgreSQLContainer<>("postgres:18-alpine")
-//                .withDatabaseName("reservation_test")
-//                .withUsername("test_user")
-//                .withPassword("test_password");
-//        postgres.start();
-//    }
 
     @Autowired
     ReservationService reservationService;
     @Autowired
     SeatService seatService;
     int threadCount;
-
-//    @DynamicPropertySource
-//    static void setProperties(DynamicPropertyRegistry registry) {
-//        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-//        registry.add("spring.datasource.username", postgres::getUsername);
-//        registry.add("spring.datasource.password", postgres::getPassword);
-//    }
 
     @BeforeEach
     void run() {

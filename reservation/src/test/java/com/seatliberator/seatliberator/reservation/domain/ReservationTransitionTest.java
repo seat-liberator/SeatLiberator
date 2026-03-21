@@ -1,16 +1,15 @@
-package reservation.domain;
+package com.seatliberator.seatliberator.reservation.domain;
 
-import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 
+import static com.seatliberator.seatliberator.reservation.ReservationTestFixture.createReservation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static reservation.domain.ReservationTestFixture.createReservation;
 
-public class ReservationTest {
+public class ReservationTransitionTest {
 
     @Test
     @DisplayName("에약은 사용 처리되면 USED 상태가 된다.")
