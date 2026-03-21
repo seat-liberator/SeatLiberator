@@ -53,6 +53,7 @@ public class ReservationService implements ReservationManager {
         return true;
     }
 
+    @Transactional
     @Override
     public boolean update(ReservationUpdateCommand command) {
 

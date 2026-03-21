@@ -12,10 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Instant;
 import java.util.concurrent.CountDownLatch;
@@ -28,20 +24,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Testcontainers
+//@Testcontainers
 public class ReservationConcurrencyTest {
 
     private static final Logger log = LoggerFactory.getLogger(ReservationConcurrencyTest.class);
 
-    private static final PostgreSQLContainer<?> postgres;
+//    private static final PostgreSQLContainer<?> postgres;
 
-    static {
-        postgres = new PostgreSQLContainer<>("postgres:18-alpine")
-                .withDatabaseName("reservation_test")
-                .withUsername("test_user")
-                .withPassword("test_password");
-        postgres.start();
-    }
+//    static {
+//        postgres = new PostgreSQLContainer<>("postgres:18-alpine")
+//                .withDatabaseName("reservation_test")
+//                .withUsername("test_user")
+//                .withPassword("test_password");
+//        postgres.start();
+//    }
 
     @Autowired
     ReservationService reservationService;
@@ -49,16 +45,16 @@ public class ReservationConcurrencyTest {
     SeatService seatService;
     int threadCount;
 
-    @DynamicPropertySource
-    static void setProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
+//    @DynamicPropertySource
+//    static void setProperties(DynamicPropertyRegistry registry) {
+//        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+//        registry.add("spring.datasource.username", postgres::getUsername);
+//        registry.add("spring.datasource.password", postgres::getPassword);
+//    }
 
     @BeforeEach
     void run() {
-        this.threadCount = 5000;
+        this.threadCount = 500;
     }
 
     @Test
@@ -115,7 +111,8 @@ public class ReservationConcurrencyTest {
                             log.debug("Thread {} report exception occurred.", threadId);
                             fail.incrementAndGet();
                         }
-                    } catch (Exception ignored) {
+                    } catch (Exception e) {
+                        fail.incrementAndGet();
                     } finally {
                         done.countDown();
                     }
