@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation;
+package com.seatliberator.seatliberator.reservation.integration;
 
 import com.seatliberator.seatliberator.reservation.application.port.in.command.ReservationCreateCommand;
 import com.seatliberator.seatliberator.reservation.application.port.in.command.SeatCreateCommand;

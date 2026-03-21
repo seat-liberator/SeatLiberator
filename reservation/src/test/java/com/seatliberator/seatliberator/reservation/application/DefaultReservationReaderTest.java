@@ -1,4 +1,4 @@
-package reservation.domain;
+package com.seatliberator.seatliberator.reservation.application;
 
 import com.seatliberator.seatliberator.reservation.application.exception.ApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.exception.ApplicationException;
@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import java.time.Instant;
 import java.util.Optional;
 
+import static com.seatliberator.seatliberator.reservation.ReservationTestFixture.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static reservation.domain.ReservationTestFixture.*;
 
 public class DefaultReservationReaderTest {
     private final ReservationStore reservationStore = mock(ReservationStore.class);

@@ -1,4 +1,4 @@
-package reservation.domain;
+package com.seatliberator.seatliberator.reservation.application;
 
 import com.seatliberator.seatliberator.reservation.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.application.service.DefaultReservationOwnershipChecker;
@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Test;
 import java.time.Instant;
 import java.util.Optional;
 
+import static com.seatliberator.seatliberator.reservation.ReservationTestFixture.INITIAL_USER_ID;
+import static com.seatliberator.seatliberator.reservation.ReservationTestFixture.createReservation;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static reservation.domain.ReservationTestFixture.INITIAL_USER_ID;
-import static reservation.domain.ReservationTestFixture.createReservation;
 
 public class DefaultReservationOwnershipCheckerTest {
     private final ReservationStore reservationStore = mock(ReservationStore.class);
