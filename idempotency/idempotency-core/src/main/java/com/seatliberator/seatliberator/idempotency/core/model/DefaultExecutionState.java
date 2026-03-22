@@ -115,6 +115,11 @@ public class DefaultExecutionState implements ExecutionState {
         if (phase != ExecutionPhase.RUNNING) {
             throw new IllegalStateException("Can transition to RESOLVED only when phase is RUNNING.");
         }
+        if (tryStartAt == null) {
+            throw new IllegalStateException("RUNNING phase must have tryStartAt before resolving.");
+        }
+
+        validateResolvedTransition(tryStartAt, resolvedAt);
 
         this.phase = ExecutionPhase.RESOLVED;
         this.resolvedAt = resolvedAt;
@@ -176,7 +181,6 @@ public class DefaultExecutionState implements ExecutionState {
         if (attemptCount != 0) {
             throw new IllegalArgumentException("PENDING phase must have attemptCount == 0.");
         }
-
         if (tryStartAt != null) {
             throw new IllegalArgumentException("PENDING phase must not have tryStartAt.");
         }
@@ -192,7 +196,6 @@ public class DefaultExecutionState implements ExecutionState {
         if (attemptCount <= 0) {
             throw new IllegalArgumentException("RUNNING phase must have attemptCount > 0.");
         }
-
         if (tryStartAt == null) {
             throw new IllegalArgumentException("RUNNING phase must have tryStartAt.");
         }
@@ -204,11 +207,19 @@ public class DefaultExecutionState implements ExecutionState {
         }
     }
 
+    private void validateResolvedTransition(
+            @NonNull Instant tryStartAt,
+            @NonNull Instant resolvedAt
+    ) {
+        if (resolvedAt.isBefore(tryStartAt)) {
+            throw new IllegalArgumentException("resolvedAt must not be before tryStartAt.");
+        }
+    }
+
     private void validateResolvedPhase() {
         if (attemptCount <= 0) {
             throw new IllegalArgumentException("RESOLVED phase must have attemptCount > 0.");
         }
-
         if (tryStartAt == null) {
             throw new IllegalArgumentException("RESOLVED phase must have tryStartAt.");
         }
@@ -227,7 +238,6 @@ public class DefaultExecutionState implements ExecutionState {
         if (attemptCount <= 0) {
             throw new IllegalArgumentException("EXECUTION_ERROR phase must have attemptCount > 0.");
         }
-
         if (tryStartAt == null) {
             throw new IllegalArgumentException("EXECUTION_ERROR phase must have tryStartAt.");
         }
