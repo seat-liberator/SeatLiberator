@@ -10,4 +10,8 @@ public record ImmutableIdempotencyContext(
             throw new IllegalArgumentException("fingerprint must not be blank.");
         }
     }
+
+    public static ImmutableIdempotencyContext of(IdempotencyContext context) {
+        return new ImmutableIdempotencyContext(context.fingerprint());
+    }
 }

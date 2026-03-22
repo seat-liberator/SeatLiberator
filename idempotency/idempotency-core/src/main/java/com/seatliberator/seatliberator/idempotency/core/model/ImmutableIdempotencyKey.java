@@ -15,4 +15,8 @@ public record ImmutableIdempotencyKey(
             throw new IllegalArgumentException("operation must not be blank.");
         }
     }
+
+    public static ImmutableIdempotencyKey of(IdempotencyKey key) {
+        return new ImmutableIdempotencyKey(key.sourceKey(), key.operation());
+    }
 }
