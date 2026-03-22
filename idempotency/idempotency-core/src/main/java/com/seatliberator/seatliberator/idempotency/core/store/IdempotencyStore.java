@@ -21,14 +21,10 @@ public interface IdempotencyStore {
      * PENDING 또는 EXECUTION_ERROR -> RUNNING 전이 시도<br>
      * 성공 시 true, 전이 불가/경쟁 패배 시 false.<br>
      *
-     * @param key:     멱등키
-     * @param context: 멱등 실행 맥락
+     * @param key: 멱등키
      * @return 성공 시 true, 전이 불가 및 경쟁 패배 시 false
      */
-    boolean tryMarkRunning(
-            @NonNull IdempotencyKey key,
-            @NonNull IdempotencyContext context
-    );
+    boolean tryMarkRunning(@NonNull IdempotencyKey key);
 
     /**
      * RUNNING -> RESOLVED 전이를 시도한다.<br>
