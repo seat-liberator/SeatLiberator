@@ -7,3 +7,4 @@ include("identity:identity-application")
 include("identity:identity-client")
 
 include("kernel")
+include("idempotency:idempotency-core")
