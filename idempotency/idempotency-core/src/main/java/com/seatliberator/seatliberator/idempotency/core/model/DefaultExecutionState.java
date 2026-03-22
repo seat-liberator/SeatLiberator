@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.idempotency.core.model;
 
+import com.seatliberator.seatliberator.idempotency.core.util.ExecutionStateValidator;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -29,7 +30,7 @@ public class DefaultExecutionState implements ExecutionState {
         this.resolvedAt = resolvedAt;
         this.output = output;
 
-        validatePhase();
+        ExecutionStateValidator.validate(this);
     }
 
     public static DefaultExecutionState of(ExecutionState executionState) {
@@ -96,46 +97,28 @@ public class DefaultExecutionState implements ExecutionState {
     public void markRunning(
             @NonNull Instant tryStartAt
     ) {
-        if (!(phase == ExecutionPhase.PENDING || phase == ExecutionPhase.EXECUTION_ERROR)) {
-            throw new IllegalStateException("Can transition to RUNNING only when phase is PENDING or EXECUTION_ERROR");
-        }
+        ExecutionStateValidator.validateRunningPhaseTransition(this, tryStartAt);
+        clearResolvedHistory();
 
         this.phase = ExecutionPhase.RUNNING;
         this.attemptCount++;
         this.tryStartAt = tryStartAt;
-
-        clearResolvedHistory();
-        validateRunningPhase();
     }
 
     public void markResolved(
             @NonNull Instant resolvedAt,
             @NonNull ExecutionOutput output
     ) {
-        if (phase != ExecutionPhase.RUNNING) {
-            throw new IllegalStateException("Can transition to RESOLVED only when phase is RUNNING.");
-        }
-        if (tryStartAt == null) {
-            throw new IllegalStateException("RUNNING phase must have tryStartAt before resolving.");
-        }
-
-        validateResolvedTransition(tryStartAt, resolvedAt);
+        ExecutionStateValidator.validateResolvedPhaseTransition(this, resolvedAt, output);
 
         this.phase = ExecutionPhase.RESOLVED;
         this.resolvedAt = resolvedAt;
         this.output = output;
-
-        validateResolvedPhase();
     }
 
     public void markExecutionError() {
-        if (phase != ExecutionPhase.RUNNING) {
-            throw new IllegalStateException("Can transition to EXECUTION_ERROR only when phase is RUNNING");
-        }
+        ExecutionStateValidator.validateExecutionErrorTransition(this);
         this.phase = ExecutionPhase.EXECUTION_ERROR;
-
-        clearResolvedHistory();
-        validateExecutionErrorPhase();
     }
 
     @Override
@@ -166,86 +149,5 @@ public class DefaultExecutionState implements ExecutionState {
     private void clearResolvedHistory() {
         this.resolvedAt = null;
         this.output = null;
-    }
-
-    private void validatePhase() {
-        switch (phase) {
-            case PENDING -> validatePendingPhase();
-            case RUNNING -> validateRunningPhase();
-            case RESOLVED -> validateResolvedPhase();
-            case EXECUTION_ERROR -> validateExecutionErrorPhase();
-        }
-    }
-
-    private void validatePendingPhase() {
-        if (attemptCount != 0) {
-            throw new IllegalArgumentException("PENDING phase must have attemptCount == 0.");
-        }
-        if (tryStartAt != null) {
-            throw new IllegalArgumentException("PENDING phase must not have tryStartAt.");
-        }
-        if (resolvedAt != null) {
-            throw new IllegalArgumentException("PENDING phase must not have resolvedAt.");
-        }
-        if (output != null) {
-            throw new IllegalArgumentException("PENDING phase must not have output.");
-        }
-    }
-
-    private void validateRunningPhase() {
-        if (attemptCount <= 0) {
-            throw new IllegalArgumentException("RUNNING phase must have attemptCount > 0.");
-        }
-        if (tryStartAt == null) {
-            throw new IllegalArgumentException("RUNNING phase must have tryStartAt.");
-        }
-        if (resolvedAt != null) {
-            throw new IllegalArgumentException("RUNNING phase must not have resolvedAt.");
-        }
-        if (output != null) {
-            throw new IllegalArgumentException("RUNNING phase must not have output.");
-        }
-    }
-
-    private void validateResolvedTransition(
-            @NonNull Instant tryStartAt,
-            @NonNull Instant resolvedAt
-    ) {
-        if (resolvedAt.isBefore(tryStartAt)) {
-            throw new IllegalArgumentException("resolvedAt must not be before tryStartAt.");
-        }
-    }
-
-    private void validateResolvedPhase() {
-        if (attemptCount <= 0) {
-            throw new IllegalArgumentException("RESOLVED phase must have attemptCount > 0.");
-        }
-        if (tryStartAt == null) {
-            throw new IllegalArgumentException("RESOLVED phase must have tryStartAt.");
-        }
-        if (resolvedAt == null) {
-            throw new IllegalArgumentException("RESOLVED phase must have resolvedAt.");
-        }
-        if (output == null) {
-            throw new IllegalArgumentException("RESOLVED phase must have output.");
-        }
-        if (resolvedAt.isBefore(tryStartAt)) {
-            throw new IllegalArgumentException("resolvedAt must not be before tryStartAt.");
-        }
-    }
-
-    private void validateExecutionErrorPhase() {
-        if (attemptCount <= 0) {
-            throw new IllegalArgumentException("EXECUTION_ERROR phase must have attemptCount > 0.");
-        }
-        if (tryStartAt == null) {
-            throw new IllegalArgumentException("EXECUTION_ERROR phase must have tryStartAt.");
-        }
-        if (resolvedAt != null) {
-            throw new IllegalArgumentException("EXECUTION_ERROR phase must not have resolvedAt.");
-        }
-        if (output != null) {
-            throw new IllegalArgumentException("EXECUTION_ERROR phase must not have output.");
-        }
     }
 }
