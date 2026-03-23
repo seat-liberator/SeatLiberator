@@ -27,6 +27,9 @@ public class DefaultExecutionDecisionEngine implements ExecutionDecisionEngine {
         if (maxAttemptCount < 1) {
             throw new IllegalArgumentException("maxAttemptCount must be >= 1");
         }
+        if (timeout.isNegative()) {
+            throw new IllegalArgumentException("timeout duration must be >= 1");
+        }
         this.maxAttemptCount = maxAttemptCount;
         this.timeout = timeout;
         this.clock = clock;
