@@ -18,8 +18,8 @@ public record ExecutionDecision(
                 throw new IllegalArgumentException("executable decision must use EXECUTE");
             }
         } else {
-            if (kind == Decision.EXECUTE && throwable == null) {
-                throw new IllegalArgumentException("non-executing decision cannot use executable decision kind without error");
+            if (kind == Decision.EXECUTE) {
+                throw new IllegalArgumentException("non-executing decision cannot use executable decision kind");
             }
         }
     }
