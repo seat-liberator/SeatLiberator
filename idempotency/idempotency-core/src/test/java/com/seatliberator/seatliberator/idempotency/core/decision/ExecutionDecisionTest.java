@@ -75,14 +75,23 @@ public class ExecutionDecisionTest {
     }
 
     @Test
-    @DisplayName("shouldExecute가 false인데 throwable 없이 kind가 EXECUTE면 예외를 던진다")
-    void shouldExecute가_false인데_throwable_없이_kind가_EXECUTE면_예외를_던진다() {
+    @DisplayName("shouldExecute가 false인데 kind가 EXECUTE면 예외를 던진다")
+    void shouldExecute가_false인데_kind가_EXECUTE면_예외를_던진다() {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> new ExecutionDecision(
                         false,
                         Decision.EXECUTE,
                         null
+                )
+        );
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new ExecutionDecision(
+                        false,
+                        Decision.EXECUTE,
+                        new RuntimeException("BOOM")
                 )
         );
     }
