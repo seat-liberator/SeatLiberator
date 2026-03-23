@@ -10,7 +10,6 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -201,7 +200,7 @@ public class InMemoryIdempotencyStoreTest {
 
     @Test
     @DisplayName("동시에 여러 번 getOrCreate를 호출해도 최초 1회만 newlyCreated=true 이다")
-    void getOrCreate_creates_only_once_under_race() throws Exception {
+    void 동시에_여러_번_getOrCreate를_호출해도_최초_1회만_newlyCreated가_True다() throws Exception {
         IdempotencyKey key = key("reserve-seat");
         IdempotencyContext context = context("user-1");
 
@@ -210,34 +209,35 @@ public class InMemoryIdempotencyStoreTest {
         var ready = new CountDownLatch(threadCount);
         var start = new CountDownLatch(1);
 
-        List<Callable<Boolean>> tasks = new ArrayList<>();
-        for (int i = 0; i < threadCount; i++) {
-            tasks.add(() -> {
-                ready.countDown();
-                start.await();
-                return store.getOrCreate(key, context).newlyCreated();
-            });
-        }
-
-        ready.await();
-        start.countDown();
-
-        List<Future<Boolean>> futures = executor.invokeAll(tasks);
-        executor.shutdown();
-
-        long createdCount = 0;
-        for (Future<Boolean> future : futures) {
-            if (future.get()) {
-                createdCount++;
+        try {
+            List<Future<Boolean>> futures = new ArrayList<>();
+            for (int i = 0; i < threadCount; i++) {
+                futures.add(executor.submit(() -> {
+                    ready.countDown();
+                    start.await();
+                    return store.getOrCreate(key, context).newlyCreated();
+                }));
             }
-        }
 
-        assertEquals(1, createdCount);
+            ready.await();
+            start.countDown();
+
+            long createdCount = 0;
+            for (Future<Boolean> future : futures) {
+                if (future.get()) {
+                    createdCount++;
+                }
+            }
+
+            assertEquals(1, createdCount);
+        } finally {
+            executor.shutdown();
+        }
     }
 
     @Test
     @DisplayName("동시에 여러 번 RUNNING 전이를 시도해도 정확히 한 번만 성공한다")
-    void tryMarkRunning_allows_only_one_winner_under_race() throws Exception {
+    void 동시에_여러_번_RUNNING_전이를_시도해도_정확히_한_번만_성공한다() throws Exception {
         IdempotencyKey key = key("reserve-seat");
         store.getOrCreate(key, context("user-1"));
 
