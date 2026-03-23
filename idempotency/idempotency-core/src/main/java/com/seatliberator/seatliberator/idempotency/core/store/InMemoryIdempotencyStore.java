@@ -7,6 +7,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
 public class InMemoryIdempotencyStore implements IdempotencyStore {
     private final ConcurrentHashMap<IdempotencyKey, IdempotencyState> states = new ConcurrentHashMap<>();
@@ -22,12 +23,13 @@ public class InMemoryIdempotencyStore implements IdempotencyStore {
             @NonNull IdempotencyContext initialContext
     ) {
         Instant now = clock.instant();
+        var normKey = normKey(key);
         AtomicBoolean created = new AtomicBoolean(false);
 
-        IdempotencyState state = states.compute(key, (ignored, exists) -> {
+        IdempotencyState state = states.compute(normKey, (ignored, exists) -> {
             if (exists == null) {
                 created.set(true);
-                return ImmutableIdempotencyState.create(key, initialContext, now);
+                return ImmutableIdempotencyState.create(normKey, initialContext, now);
             }
             return exists;
         });
@@ -38,29 +40,11 @@ public class InMemoryIdempotencyStore implements IdempotencyStore {
     @Override
     public boolean tryMarkRunning(@NonNull IdempotencyKey key) {
         Instant now = clock.instant();
-        AtomicBoolean success = new AtomicBoolean(false);
-
-        states.computeIfPresent(key, (ignored, exists) -> {
-            DefaultExecutionState updatedExecutionState = DefaultExecutionState.of(exists.executionState());
-
-            try {
-                updatedExecutionState.markRunning(now);
-            } catch (IllegalStateException e) {
-                return exists;
-            }
-
-            ImmutableIdempotencyState updated = new ImmutableIdempotencyState(
-                    ImmutableIdempotencyKey.of(exists.key()),
-                    ImmutableIdempotencyContext.of(exists.context()),
-                    ImmutableExecutionState.of(updatedExecutionState),
-                    exists.createdAt()
-            );
-
-            success.set(true);
-            return updated;
+        return tryTransition(normKey(key), state -> {
+            var copy = DefaultExecutionState.of(state);
+            copy.markRunning(now);
+            return copy;
         });
-
-        return success.get();
     }
 
     @Override
@@ -69,53 +53,50 @@ public class InMemoryIdempotencyStore implements IdempotencyStore {
             @NonNull ExecutionOutput output
     ) {
         Instant now = clock.instant();
-        AtomicBoolean success = new AtomicBoolean(false);
-
-        states.computeIfPresent(key, (ignored, exists) -> {
-            DefaultExecutionState updatedExecutionState = DefaultExecutionState.of(exists.executionState());
-
-            try {
-                updatedExecutionState.markResolved(now, output);
-            } catch (IllegalStateException e) {
-                return exists;
-            }
-
-            ImmutableIdempotencyState updated = new ImmutableIdempotencyState(
-                    ImmutableIdempotencyKey.of(exists.key()),
-                    ImmutableIdempotencyContext.of(exists.context()),
-                    ImmutableExecutionState.of(updatedExecutionState),
-                    exists.createdAt()
-            );
-
-            success.set(true);
-            return updated;
+        return tryTransition(normKey(key), state -> {
+            var copy = DefaultExecutionState.of(state);
+            copy.markResolved(now, output);
+            return copy;
         });
-
-        return success.get();
     }
 
     @Override
     public boolean tryMarkExecutionError(@NonNull IdempotencyKey key) {
+        return tryTransition(normKey(key), state -> {
+            var copy = DefaultExecutionState.of(state);
+            copy.markExecutionError();
+            return copy;
+        });
+    }
+
+    private ImmutableIdempotencyKey normKey(IdempotencyKey key) {
+        return ImmutableIdempotencyKey.of(key);
+    }
+
+    private boolean tryTransition(
+            @NonNull IdempotencyKey key,
+            @NonNull Function<ExecutionState, ExecutionState> transition
+    ) {
+
         AtomicBoolean success = new AtomicBoolean(false);
 
         states.computeIfPresent(key, (ignored, exists) -> {
-            DefaultExecutionState updatedExecutionState = DefaultExecutionState.of(exists.executionState());
+            final ExecutionState state;
 
             try {
-                updatedExecutionState.markExecutionError();
-            } catch (IllegalStateException e) {
+                state = transition.apply(exists.executionState());
+            } catch (IllegalStateException | IllegalArgumentException e) {
                 return exists;
             }
 
-            ImmutableIdempotencyState updated = new ImmutableIdempotencyState(
+            success.set(true);
+
+            return new ImmutableIdempotencyState(
                     ImmutableIdempotencyKey.of(exists.key()),
                     ImmutableIdempotencyContext.of(exists.context()),
-                    ImmutableExecutionState.of(updatedExecutionState),
+                    ImmutableExecutionState.of(state),
                     exists.createdAt()
             );
-
-            success.set(true);
-            return updated;
         });
 
         return success.get();
