@@ -14,7 +14,7 @@ public record ImmutableEventTrace(
         @Nullable ImmutableEventAggregateDescriptor aggregateDescriptor,
         @NonNull Instant createdAt
 ) implements EventTrace {
-    public static ImmutableEventTrace of(EventTrace trace) {
+    public static ImmutableEventTrace copyOf(EventTrace trace) {
         var descriptor = Optional.ofNullable(trace.aggregateDescriptor())
                 .map(ImmutableEventAggregateDescriptor::of)
                 .orElse(null);
