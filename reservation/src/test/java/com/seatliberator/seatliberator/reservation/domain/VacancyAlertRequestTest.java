@@ -53,8 +53,8 @@ public class VacancyAlertRequestTest {
     }
 
     @Test
-    @DisplayName("취thㅗ")
-    void 취th_ㅗ() {
+    @DisplayName("취소")
+    void 취소() {
 
 
         // given
