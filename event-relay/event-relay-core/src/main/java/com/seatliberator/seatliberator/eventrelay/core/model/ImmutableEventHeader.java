@@ -5,7 +5,14 @@ import org.jspecify.annotations.NonNull;
 public record ImmutableEventHeader(
         @NonNull ImmutableEventType eventType
 ) implements EventHeader {
-    public static ImmutableEventHeader copyOf(EventHeader eventHeader) {
-        return new ImmutableEventHeader(ImmutableEventType.of(eventHeader.eventType()));
+
+    public static @NonNull ImmutableEventHeader copyOf(@NonNull EventHeader eventHeader) {
+        return new ImmutableEventHeader(ImmutableEventType.copyOf(eventHeader.eventType()));
+    }
+
+    public static @NonNull ImmutableEventHeader from(@NonNull EventType type) {
+        return new ImmutableEventHeader(
+                ImmutableEventType.copyOf(type)
+        );
     }
 }
