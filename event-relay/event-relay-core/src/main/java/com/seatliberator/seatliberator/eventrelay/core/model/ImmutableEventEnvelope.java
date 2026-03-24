@@ -7,13 +7,24 @@ public record ImmutableEventEnvelope(
         @NonNull ImmutableEventTrace trace,
         @NonNull String rawPayload
 ) implements EventEnvelope {
-    public static ImmutableEventEnvelope copyOf(EventEnvelope envelope) {
-        var header = ImmutableEventHeader.copyOf(envelope.header());
-        var trace = ImmutableEventTrace.copyOf(envelope.trace());
+
+    public static @NonNull ImmutableEventEnvelope copyOf(@NonNull EventEnvelope envelope) {
         return new ImmutableEventEnvelope(
-                header,
-                trace,
+                ImmutableEventHeader.copyOf(envelope.header()),
+                ImmutableEventTrace.copyOf(envelope.trace()),
                 envelope.rawPayload()
+        );
+    }
+
+    public static @NonNull ImmutableEventEnvelope from(
+            @NonNull EventHeader header,
+            @NonNull EventTrace trace,
+            @NonNull String rawPayload
+    ) {
+        return new ImmutableEventEnvelope(
+                ImmutableEventHeader.copyOf(header),
+                ImmutableEventTrace.copyOf(trace),
+                rawPayload
         );
     }
 }
