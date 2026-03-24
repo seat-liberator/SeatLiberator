@@ -1,6 +1,8 @@
 package com.seatliberator.seatliberator.eventrelay.core.codec;
 
+import com.seatliberator.seatliberator.eventrelay.core.codec.exception.EventPayloadSerializationException;
 import com.seatliberator.seatliberator.eventrelay.core.model.EventPayload;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
 public class JacksonEventPayloadSerializer implements EventPayloadSerializer {
@@ -12,6 +14,10 @@ public class JacksonEventPayloadSerializer implements EventPayloadSerializer {
 
     @Override
     public String stringify(EventPayload payload) {
-        return objectMapper.writeValueAsString(payload);
+        try {
+            return objectMapper.writeValueAsString(payload);
+        } catch (JacksonException e) {
+            throw new EventPayloadSerializationException(e);
+        }
     }
 }
