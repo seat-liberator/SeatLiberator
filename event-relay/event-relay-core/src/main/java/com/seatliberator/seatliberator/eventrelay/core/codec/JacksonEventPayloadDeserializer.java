@@ -1,6 +1,8 @@
 package com.seatliberator.seatliberator.eventrelay.core.codec;
 
+import com.seatliberator.seatliberator.eventrelay.core.codec.exception.EventPayloadDeserializationException;
 import com.seatliberator.seatliberator.eventrelay.core.model.EventPayload;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
 public class JacksonEventPayloadDeserializer implements EventPayloadDeserializer {
@@ -12,6 +14,10 @@ public class JacksonEventPayloadDeserializer implements EventPayloadDeserializer
 
     @Override
     public <P extends EventPayload> P materialize(String rawPayload, Class<P> expect) {
-        return objectMapper.readValue(rawPayload, expect);
+        try {
+            return objectMapper.readValue(rawPayload, expect);
+        } catch (JacksonException e) {
+            throw new EventPayloadDeserializationException(e);
+        }
     }
 }
