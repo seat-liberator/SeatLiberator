@@ -16,7 +16,7 @@ public class VacancyAlertRequestTest {
 
     @Test
     @DisplayName("정상 생성")
-    void 정상_생성(){
+    void 정상_생성() {
 
         // given
         Instant start = now.plusSeconds(60);
@@ -40,7 +40,7 @@ public class VacancyAlertRequestTest {
 
     @Test
     @DisplayName("endTime이_startTime보다_이전이면_예외")
-    void endTime이_startTime보다_이전이면_예외(){
+    void endTime이_startTime보다_이전이면_예외() {
 
         //given
         Instant start = now.plusSeconds(60);
@@ -48,13 +48,13 @@ public class VacancyAlertRequestTest {
 
         // when & then
         assertThatThrownBy(() ->
-                VacancyAlertRequest.of("u","r","s",start,end,now)
+                VacancyAlertRequest.of("u", "r", "s", start, end, now)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("취thㅗ")
-    void 취th_ㅗ(){
+    void 취th_ㅗ() {
 
 
         // given
@@ -69,7 +69,7 @@ public class VacancyAlertRequestTest {
 
     @Test
     @DisplayName("만료")
-    void 만료(){
+    void 만료() {
 
         // given
         VacancyAlertRequest request = create();
@@ -83,7 +83,7 @@ public class VacancyAlertRequestTest {
 
     @Test
     @DisplayName("충족")
-    void 충족(){
+    void 충족() {
 
         // given
         VacancyAlertRequest request = create();
@@ -97,7 +97,7 @@ public class VacancyAlertRequestTest {
 
     @Test
     @DisplayName("ACTIVE 상태 아니면 상태 변경 실패")
-    void ACTIVE_상태_아니면_상태_변경_실패(){
+    void ACTIVE_상태_아니면_상태_변경_실패() {
 
         // given
         VacancyAlertRequest request = create();
