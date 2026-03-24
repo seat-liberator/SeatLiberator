@@ -1,6 +1,8 @@
 package com.seatliberator.seatliberator.eventrelay.core.codec;
 
+import com.seatliberator.seatliberator.eventrelay.core.codec.exception.EventEnvelopeSerializationException;
 import com.seatliberator.seatliberator.eventrelay.core.model.EventEnvelope;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
 public class JacksonEventEnvelopeSerializer implements EventEnvelopeSerializer {
@@ -12,6 +14,10 @@ public class JacksonEventEnvelopeSerializer implements EventEnvelopeSerializer {
 
     @Override
     public String stringify(EventEnvelope envelope) {
-        return objectMapper.writeValueAsString(envelope);
+        try {
+            return objectMapper.writeValueAsString(envelope);
+        } catch (JacksonException e) {
+            throw new EventEnvelopeSerializationException(e);
+        }
     }
 }
