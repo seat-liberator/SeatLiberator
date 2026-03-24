@@ -1,7 +1,5 @@
 package com.seatliberator.seatliberator.eventrelay.core.codec;
 
-import com.seatliberator.seatliberator.eventrelay.core.model.factory.EventEnvelopeFactory;
-import com.seatliberator.seatliberator.eventrelay.core.model.factory.ImmutableEventEnvelopeFactory;
 import com.seatliberator.seatliberator.eventrelay.core.util.EventTestFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,13 +12,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JacksonEventEnvelopeSerializerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final EventEnvelopeSerializer serializer = new JacksonEventEnvelopeSerializer(objectMapper);
-    private final EventEnvelopeFactory factory = new ImmutableEventEnvelopeFactory();
 
     @Test
     @DisplayName("EventEnvelope를 JSON 문자열로 직렬화한다")
     void stringify() {
         // given
-        var envelope = EventTestFixture.createEnvelope(factory);
+        var envelope = EventTestFixture.createEnvelope();
 
         // when
         String actual = serializer.stringify(envelope);

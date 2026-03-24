@@ -1,7 +1,6 @@
 package com.seatliberator.seatliberator.eventrelay.core.util;
 
 import com.seatliberator.seatliberator.eventrelay.core.model.*;
-import com.seatliberator.seatliberator.eventrelay.core.model.factory.EventEnvelopeFactory;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.Clock;
@@ -54,16 +53,16 @@ public class EventTestFixture {
         return createTrace(createFixedClock());
     }
 
-    public static EventEnvelope createEnvelope(EventEnvelopeFactory factory, Clock clock) {
-        return factory.create(
+    public static EventEnvelope createEnvelope(Clock clock) {
+        return ImmutableEventEnvelope.from(
                 createHeader(),
                 createTrace(clock),
                 createRawPayload()
         );
     }
 
-    public static EventEnvelope createEnvelope(EventEnvelopeFactory factory) {
-        return createEnvelope(factory, createFixedClock());
+    public static EventEnvelope createEnvelope() {
+        return createEnvelope(createFixedClock());
     }
 
     public static TestPayload createPayload() {
