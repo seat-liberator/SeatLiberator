@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.eventrelay.core.store;
 
 import com.seatliberator.seatliberator.eventrelay.core.model.EventEnvelope;
-import com.seatliberator.seatliberator.eventrelay.core.model.factory.EventEnvelopeFactory;
+import com.seatliberator.seatliberator.eventrelay.core.model.ImmutableEventEnvelope;
 import com.seatliberator.seatliberator.eventrelay.core.relay.EventFlow;
 import com.seatliberator.seatliberator.eventrelay.core.store.exception.EventNotFoundException;
 import com.seatliberator.seatliberator.eventrelay.core.store.model.DefaultStoredEvent;
@@ -18,19 +18,16 @@ import java.util.Map;
 public class DefaultEventStore implements EventStore {
     private final Map<String, StoredEvent> repository = new HashMap<>();
     private final EventStateTransitionPolicy transitionPolicy;
-    private final EventEnvelopeFactory envelopeFactory;
     private final int batchSize;
 
     public DefaultEventStore(
             @NonNull EventStateTransitionPolicy transitionPolicy,
-            @NonNull EventEnvelopeFactory envelopeFactory,
             int batchSize
     ) {
         if (batchSize < 1) {
             throw new IllegalArgumentException("batchSize는 1보다 작을 수 없습니다.");
         }
         this.transitionPolicy = transitionPolicy;
-        this.envelopeFactory = envelopeFactory;
         this.batchSize = batchSize;
     }
 
@@ -65,7 +62,7 @@ public class DefaultEventStore implements EventStore {
         candidate.forEach(e -> e.markProcessing(claimedAt));
 
         return candidate.stream()
-                .map(envelopeFactory::copy)
+                .<EventEnvelope>map(ImmutableEventEnvelope::copyOf)
                 .toList();
     }
 
