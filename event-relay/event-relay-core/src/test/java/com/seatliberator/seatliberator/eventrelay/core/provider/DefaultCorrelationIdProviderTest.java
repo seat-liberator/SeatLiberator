@@ -13,7 +13,7 @@ public class DefaultCorrelationIdProviderTest {
     void get() {
         IdGenerator generator = () -> "correlation-1";
 
-        var provider = new DefaultEventIdProvider(generator);
+        var provider = new DefaultCorrelationIdProvider(generator);
 
         var actual = provider.get();
 
