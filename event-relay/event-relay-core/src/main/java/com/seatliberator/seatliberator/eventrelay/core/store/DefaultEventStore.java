@@ -5,7 +5,7 @@ import com.seatliberator.seatliberator.eventrelay.core.model.ImmutableEventEnvel
 import com.seatliberator.seatliberator.eventrelay.core.relay.EventFlow;
 import com.seatliberator.seatliberator.eventrelay.core.store.exception.EventNotFoundException;
 import com.seatliberator.seatliberator.eventrelay.core.store.model.DefaultStoredEvent;
-import com.seatliberator.seatliberator.eventrelay.core.store.model.EventState;
+import com.seatliberator.seatliberator.eventrelay.core.store.model.EventStatus;
 import com.seatliberator.seatliberator.eventrelay.core.store.model.StoredEvent;
 import org.jspecify.annotations.NonNull;
 
@@ -56,7 +56,7 @@ public class DefaultEventStore implements EventStore {
     ) {
         synchronized (lock) {
             var candidate = repository.values().stream()
-                    .filter(EventState::isPending)
+                    .filter(e -> e.status() == EventStatus.PENDING || e.status() == EventStatus.FAILED)
                     .filter(e -> e.flow() == flow)
                     .sorted(Comparator.comparing(e -> e.trace().createdAt()))
                     .limit(batchSize)
