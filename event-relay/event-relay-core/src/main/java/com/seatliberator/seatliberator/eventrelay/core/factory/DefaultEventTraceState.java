@@ -37,9 +37,15 @@ public class DefaultEventTraceState implements EventTraceState {
     }
 
     public static DefaultEventTraceState copyOf(@NonNull EventTraceState state) {
+        var sourceTrace = Optional.ofNullable(state.sourceTrace())
+                .map(ImmutableEventTrace::copyOf)
+                .orElse(null);
+        var aggregateDescriptor = Optional.ofNullable(state.aggregateDescriptor())
+                .map(ImmutableEventAggregateDescriptor::copyOf)
+                .orElse(null);
         return new DefaultEventTraceState(
-                state.sourceTrace(),
-                state.aggregateDescriptor(),
+                sourceTrace,
+                aggregateDescriptor,
                 state.overrideCorrelationId(),
                 state.overrideCausationId(),
                 state.disableInheritCorrelationId(),
