@@ -19,6 +19,7 @@ public class DefaultEventStore implements EventStore {
     private final Map<String, StoredEvent> repository = new HashMap<>();
     private final EventStateTransitionPolicy transitionPolicy;
     private final int batchSize;
+    private final Object lock = new Object();
 
     public DefaultEventStore(
             @NonNull EventStateTransitionPolicy transitionPolicy,
@@ -37,12 +38,14 @@ public class DefaultEventStore implements EventStore {
             @NonNull EventFlow flow,
             @NonNull Instant acceptedAt
     ) {
-        var event = DefaultStoredEvent.create(envelope, flow, acceptedAt);
-        var eventId = envelope.trace().eventId();
+        synchronized (lock) {
+            var event = DefaultStoredEvent.create(envelope, flow, acceptedAt);
+            var eventId = envelope.trace().eventId();
 
-        var previous = repository.putIfAbsent(eventId, event);
-        if (previous != null) {
-            throw new IllegalStateException("Duplicated event id: " + eventId);
+            var previous = repository.putIfAbsent(eventId, event);
+            if (previous != null) {
+                throw new IllegalStateException("Duplicated event id: " + eventId);
+            }
         }
     }
 
@@ -51,19 +54,21 @@ public class DefaultEventStore implements EventStore {
             @NonNull EventFlow flow,
             @NonNull Instant claimedAt
     ) {
-        var candidate = repository.values().stream()
-                .filter(EventState::isPending)
-                .filter(e -> e.flow() == flow)
-                .sorted(Comparator.comparing(e -> e.trace().createdAt()))
-                .limit(batchSize)
-                .toList();
+        synchronized (lock) {
+            var candidate = repository.values().stream()
+                    .filter(EventState::isPending)
+                    .filter(e -> e.flow() == flow)
+                    .sorted(Comparator.comparing(e -> e.trace().createdAt()))
+                    .limit(batchSize)
+                    .toList();
 
-        candidate.forEach(e -> transitionPolicy.validateMarkProcessing(e, claimedAt));
-        candidate.forEach(e -> e.markProcessing(claimedAt));
+            candidate.forEach(e -> transitionPolicy.validateMarkProcessing(e, claimedAt));
+            candidate.forEach(e -> e.markProcessing(claimedAt));
 
-        return candidate.stream()
-                .<EventEnvelope>map(ImmutableEventEnvelope::copyOf)
-                .toList();
+            return candidate.stream()
+                    .<EventEnvelope>map(ImmutableEventEnvelope::copyOf)
+                    .toList();
+        }
     }
 
     @Override
@@ -71,9 +76,11 @@ public class DefaultEventStore implements EventStore {
             @NonNull String eventId,
             @NonNull Instant resolvedAt
     ) {
-        var event = find(eventId);
-        transitionPolicy.validateMarkCompleted(event, resolvedAt);
-        event.markCompleted(resolvedAt);
+        synchronized (lock) {
+            var event = find(eventId);
+            transitionPolicy.validateMarkCompleted(event, resolvedAt);
+            event.markCompleted(resolvedAt);
+        }
     }
 
     @Override
@@ -81,9 +88,11 @@ public class DefaultEventStore implements EventStore {
             @NonNull String eventId,
             @NonNull Instant resolvedAt
     ) {
-        var event = find(eventId);
-        transitionPolicy.validateMarkFailed(event, resolvedAt);
-        event.markFailed(resolvedAt);
+        synchronized (lock) {
+            var event = find(eventId);
+            transitionPolicy.validateMarkFailed(event, resolvedAt);
+            event.markFailed(resolvedAt);
+        }
     }
 
     private StoredEvent find(String eventId) {
