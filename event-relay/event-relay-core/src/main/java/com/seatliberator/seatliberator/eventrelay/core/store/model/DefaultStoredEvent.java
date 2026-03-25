@@ -1,8 +1,6 @@
 package com.seatliberator.seatliberator.eventrelay.core.store.model;
 
-import com.seatliberator.seatliberator.eventrelay.core.model.EventEnvelope;
-import com.seatliberator.seatliberator.eventrelay.core.model.EventHeader;
-import com.seatliberator.seatliberator.eventrelay.core.model.EventTrace;
+import com.seatliberator.seatliberator.eventrelay.core.model.*;
 import com.seatliberator.seatliberator.eventrelay.core.relay.EventFlow;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -58,8 +56,8 @@ public class DefaultStoredEvent implements StoredEvent {
             @NonNull Instant acceptedAt
     ) {
         return new DefaultStoredEvent(
-                envelope.header(),
-                envelope.trace(),
+                ImmutableEventHeader.copyOf(envelope.header()),
+                ImmutableEventTrace.copyOf(envelope.trace()),
                 envelope.rawPayload(),
                 flow,
                 EventStatus.PENDING,
