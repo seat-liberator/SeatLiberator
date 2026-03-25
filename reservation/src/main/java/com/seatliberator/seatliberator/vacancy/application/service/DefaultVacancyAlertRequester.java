@@ -8,6 +8,7 @@ import com.seatliberator.seatliberator.vacancy.application.port.out.VacancyAlert
 import com.seatliberator.seatliberator.vacancy.application.port.out.VacancyAlertRequestStore;
 import com.seatliberator.seatliberator.vacancy.domain.VacancyAlertRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,6 +38,10 @@ public class DefaultVacancyAlertRequester implements VacancyAlertRequester {
                 command.requestedAt()
         );
 
-        return store.save(request);
+        try {
+            return store.save(request);
+        } catch (DataIntegrityViolationException e) {
+            throw new ApplicationException(ApplicationErrorCode.DUPLICATED_REQUEST);
+        }
     }
 }
