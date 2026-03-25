@@ -31,8 +31,8 @@ public class RegistryEventRouter implements EventRouter {
         }
 
         traceHolder.withSource(
-                envelope.trace(),
-                () -> handle(listener, envelope)
+                () -> handle(listener, envelope),
+                envelope.trace()
         );
     }
 
