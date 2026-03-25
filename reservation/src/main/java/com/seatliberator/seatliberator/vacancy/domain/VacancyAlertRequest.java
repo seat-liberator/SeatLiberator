@@ -17,6 +17,7 @@ import java.util.UUID;
                         name = "uk_vacancy_alert_active_request",
                         columnNames = {
                                 "user_id",
+                                "room_id",
                                 "seat_id",
                                 "target_start_time",
                                 "target_end_time"
