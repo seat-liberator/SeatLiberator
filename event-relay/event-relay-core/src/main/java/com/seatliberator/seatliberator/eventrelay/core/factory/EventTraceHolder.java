@@ -18,13 +18,13 @@ public interface EventTraceHolder {
     );
 
     <T> @NonNull T withSource(
-            @NonNull EventTrace trace,
-            @NonNull Supplier<T> action
+            @NonNull Supplier<T> action,
+            @NonNull EventTrace trace
     );
 
     void withSource(
-            @NonNull EventTrace trace,
-            @NonNull Runnable action
+            @NonNull Runnable action,
+            @NonNull EventTrace trace
     );
 
     @NonNull EventTraceState current();

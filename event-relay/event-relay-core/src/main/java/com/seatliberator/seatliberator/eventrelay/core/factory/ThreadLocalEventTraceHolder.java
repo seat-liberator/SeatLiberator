@@ -39,8 +39,8 @@ public class ThreadLocalEventTraceHolder implements EventTraceHolder {
 
     @Override
     public @NonNull <T> T withSource(
-            @NonNull EventTrace trace,
-            @NonNull Supplier<T> action
+            @NonNull Supplier<T> action,
+            @NonNull EventTrace trace
     ) {
         var state = local.get();
         var copied = state.copy();
@@ -58,15 +58,14 @@ public class ThreadLocalEventTraceHolder implements EventTraceHolder {
 
     @Override
     public void withSource(
-            @NonNull EventTrace trace,
-            @NonNull Runnable action
+            @NonNull Runnable action,
+            @NonNull EventTrace trace
     ) {
         withSource(
-                trace,
                 () -> {
                     action.run();
                     return null;
-                }
+                }, trace
         );
     }
 
