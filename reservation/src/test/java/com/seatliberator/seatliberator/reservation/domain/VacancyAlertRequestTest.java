@@ -61,7 +61,7 @@ public class VacancyAlertRequestTest {
         VacancyAlertRequest request = create();
 
         // when
-        request.cancel(now);
+        request.cancel(request.getUserId(), now);
 
         // then
         assertThat(request.getStatus()).isEqualTo(VacancyAlertStatus.CANCELLED);
@@ -101,7 +101,7 @@ public class VacancyAlertRequestTest {
 
         // given
         VacancyAlertRequest request = create();
-        request.cancel(now);
+        request.cancel(request.getUserId(), now);
 
         // when & then
         assertThatThrownBy(() -> request.expire(now)).isInstanceOf(IllegalStateException.class);
