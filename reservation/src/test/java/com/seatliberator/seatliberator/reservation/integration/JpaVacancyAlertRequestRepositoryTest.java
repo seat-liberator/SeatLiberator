@@ -79,12 +79,14 @@ public class JpaVacancyAlertRequestRepositoryTest {
         // then
         boolean exists1 = reader.existsActiveRequestFor(
                 "user1",
+                "room1",
                 "seat1",
                 r1.getTargetStartTime(),
                 r1.getTargetEndTime()
         );
         boolean exists2 = reader.existsActiveRequestFor(
                 "user1",
+                "room1",
                 "seat1",
                 r2.getTargetStartTime(),
                 r2.getTargetEndTime()

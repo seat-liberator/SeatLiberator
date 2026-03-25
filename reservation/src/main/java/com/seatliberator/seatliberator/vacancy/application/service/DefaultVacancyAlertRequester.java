@@ -20,6 +20,7 @@ public class DefaultVacancyAlertRequester implements VacancyAlertRequester {
     public VacancyAlertRequest request(VacancyAlertRequestCommand command) {
         if (reader.existsActiveRequestFor(
                 command.userId(),
+                command.roomId(),
                 command.seatId(),
                 command.startTime(),
                 command.endTime()

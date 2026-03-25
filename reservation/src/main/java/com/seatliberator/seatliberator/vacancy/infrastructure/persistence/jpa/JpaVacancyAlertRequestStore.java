@@ -21,9 +21,10 @@ public class JpaVacancyAlertRequestStore implements
     private final VacancyAlertRequestRepository repository;
 
     @Override
-    public boolean existsActiveRequestFor(String userId, String seatId, Instant targetStartTime, Instant targetEndTime) {
+    public boolean existsActiveRequestFor(String userId,String roomId, String seatId, Instant targetStartTime, Instant targetEndTime) {
         return repository.existsRequestFor(
                 userId,
+                roomId,
                 seatId,
                 targetStartTime,
                 targetEndTime,
