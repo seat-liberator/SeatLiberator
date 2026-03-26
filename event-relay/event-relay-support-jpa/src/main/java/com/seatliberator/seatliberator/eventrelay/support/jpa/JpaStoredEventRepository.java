@@ -26,7 +26,7 @@ public interface JpaStoredEventRepository extends JpaRepository<JpaStoredEvent, 
             @NonNull Pageable pageable
     );
 
-    @Modifying
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
             UPDATE JpaStoredEvent e
             SET e.status = 'PROCESSING', e.startedAt = :startedAt
@@ -37,7 +37,7 @@ public interface JpaStoredEventRepository extends JpaRepository<JpaStoredEvent, 
             @NonNull @Param("startedAt") Instant startedAt
     );
 
-    @Modifying
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
             UPDATE JpaStoredEvent e
             SET e.status = :status, e.resolvedAt = :resolvedAt
