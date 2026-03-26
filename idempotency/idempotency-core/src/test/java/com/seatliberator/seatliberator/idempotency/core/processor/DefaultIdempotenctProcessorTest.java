@@ -92,6 +92,30 @@ public class DefaultIdempotenctProcessorTest {
     }
 
     @Test
+    @DisplayName("EXECUTE 결정이고 action이 InterruptedException을 던지면 resolved 저장 없이 interrupt 상태를 복원하고 pending 예외를 던진다")
+    void EXECUTE_결정이고_action이_InterruptedException을_던지면_resolved_저장_없이_interrupt_상태를_복원하고_pending_예외를_던진다() {
+        var key = key("seat", "reserve");
+        var ctx = context("user-1");
+        var state = mock(IdempotencyState.class);
+        var record = new IdempotencyRecord(state, true);
+
+        when(store.getOrCreate(key, ctx)).thenReturn(record);
+        when(engine.decide(state, ctx)).thenReturn(ExecutionDecision.execute());
+        when(store.tryMarkRunning(key)).thenReturn(true);
+
+        try {
+            assertThatThrownBy(() -> processor.process(key, ctx, () -> {
+                throw new InterruptedException("interrupted");
+            })).isInstanceOf(ExecutionPendingException.class);
+
+            assertThat(Thread.currentThread().isInterrupted()).isTrue();
+            verify(store, never()).tryMarkResolved(any(), any());
+        } finally {
+            Thread.interrupted(); // 다음 테스트에 영향 없도록 clear
+        }
+    }
+
+    @Test
     @DisplayName("RUNNING 전이에 실패하면 pending 예외를 던진다")
     void RUNNING_전이에_실패하면_pending_예외를_던진다() {
         var key = key("seat", "reserve");
@@ -155,6 +179,55 @@ public class DefaultIdempotenctProcessorTest {
                 .thenReturn(ExecutionDecision.skip(Decision.REUSE_RESOLVED_RESULT));
 
         assertThatThrownBy(() -> processor.process(key, ctx, () -> "NEW")).isSameAs(exception);
+    }
+
+    @Test
+    @DisplayName("REUSE_RESOLVED_RESULT 이고 checked failure output이면 저장된 checked 예외를 그대로 다시 던진다")
+    void REUSE_RESOLVED_RESULT_이고_checked_failure_output이면_저장된_checked_예외를_그대로_다시_던진다() {
+        var key = key("seat", "reserve");
+        var ctx = context("user-1");
+        var state = mock(IdempotencyState.class);
+        var executionState = mock(ExecutionState.class);
+        var exception = new java.io.IOException("checked boom");
+        var executionOutput = ImmutableExecutionOutput.failure(exception);
+
+        when(state.executionState()).thenReturn(executionState);
+        when(executionState.output()).thenReturn(executionOutput);
+        when(state.createdAt()).thenReturn(Instant.now());
+
+        var record = new IdempotencyRecord(state, false);
+
+        when(store.getOrCreate(key, ctx)).thenReturn(record);
+        when(engine.decide(state, ctx))
+                .thenReturn(ExecutionDecision.skip(Decision.REUSE_RESOLVED_RESULT));
+
+        assertThatThrownBy(() -> processor.process(key, ctx, () -> "NEW"))
+                .isSameAs(exception);
+    }
+
+    @Test
+    @DisplayName("EXECUTE 결정이고 action이 checked 예외를 던지면 failure output으로 저장 후 같은 예외를 던진다")
+    void EXECUTE_결정이고_action이_checked_예외를_던지면_failure_output으로_저장_후_같은_예외를_던진다() {
+        var key = key("seat", "reserve");
+        var ctx = context("user-1");
+        var state = mock(IdempotencyState.class);
+        var record = new IdempotencyRecord(state, true);
+        var exception = new java.io.IOException("checked boom");
+
+        when(store.getOrCreate(key, ctx)).thenReturn(record);
+        when(engine.decide(state, ctx)).thenReturn(ExecutionDecision.execute());
+        when(store.tryMarkRunning(key)).thenReturn(true);
+        when(store.tryMarkResolved(eq(key), any())).thenReturn(true);
+
+        assertThatThrownBy(() -> processor.process(key, ctx, () -> {
+            throw exception;
+        })).isSameAs(exception);
+
+        ArgumentCaptor<ExecutionOutput> captor = ArgumentCaptor.forClass(ExecutionOutput.class);
+        verify(store).tryMarkResolved(eq(key), captor.capture());
+
+        assertThat(captor.getValue().hasError()).isTrue();
+        assertThat(captor.getValue().error()).isSameAs(exception);
     }
 
     @Test

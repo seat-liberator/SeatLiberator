@@ -25,6 +25,11 @@ public class DefaultIdempotentProcessor implements IdempotentProcessor {
         this.executionDecisionEngine = executionDecisionEngine;
     }
 
+    @SuppressWarnings("unchecked")
+    private static <E extends Throwable> void throwUnchecked(Throwable throwable) throws E {
+        throw (E) throwable;
+    }
+
     @Retryable(
             includes = ExecutionPendingException.class,
             maxRetries = 10,
@@ -63,6 +68,9 @@ public class DefaultIdempotentProcessor implements IdempotentProcessor {
         try {
             T result = action.execute();
             output = ImmutableExecutionOutput.success(result);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new ExecutionPendingException();
         } catch (Exception e) {
             output = ImmutableExecutionOutput.failure(e);
         }
@@ -83,29 +91,30 @@ public class DefaultIdempotentProcessor implements IdempotentProcessor {
     }
 
     private <T> T processRejectContextMismatch(Throwable throwable) {
-        throw rethrow(throwable);
+        throwUnchecked(throwable);
+        throw new IllegalStateException("Unreachable");
     }
 
     private <T> T processRejectAttemptLimitExceeded(Throwable throwable) {
-        throw rethrow(throwable);
+        throwUnchecked(throwable);
+        throw new IllegalStateException("Unreachable");
     }
 
     private <T> T processRejectExecutionTimeout(Throwable throwable) {
-        throw rethrow(throwable);
+        throwUnchecked(throwable);
+        throw new IllegalStateException("Unreachable");
     }
 
     private RuntimeException rethrow(Throwable throwable) {
-        if (throwable instanceof RuntimeException runtimeException) {
-            return runtimeException;
-        }
-
-        return new IllegalStateException("Idempotent processing rejected.", throwable);
+        throwUnchecked(throwable);
+        throw new IllegalStateException("Unreachable");
     }
 
     @SuppressWarnings("unchecked")
     private <T> T unwrap(@NonNull ExecutionOutput output) {
         if (output.hasError()) {
-            throw rethrow(output.error());
+            throwUnchecked(output.error());
+            throw new IllegalStateException("Unreachable");
         }
 
         return (T) output.result();
