@@ -8,3 +8,4 @@ include("identity:identity-client")
 
 include("kernel")
 include("event-relay:event-relay-core")
+include("event-relay:event-relay-support-jpa")
