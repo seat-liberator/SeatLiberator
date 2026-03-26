@@ -12,6 +12,7 @@ repositories {
 dependencies {
     implementation("org.springframework:spring-context")
     implementation("tools.jackson.core:jackson-databind")
+    implementation("org.springframework.boot:spring-boot-autoconfigure")
 
     implementation("org.slf4j:slf4j-api")
 
