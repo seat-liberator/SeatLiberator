@@ -76,5 +76,9 @@ public class JpaPostgresqlEventAcceptor implements EventAcceptor {
         query.setParameter("resolvedAt", e.resolvedAt());
 
         int inserted = query.executeUpdate();
+
+        if (inserted == 0) {
+            throw new IllegalStateException("Duplicated event id: " + e.getId());
+        }
     }
 }

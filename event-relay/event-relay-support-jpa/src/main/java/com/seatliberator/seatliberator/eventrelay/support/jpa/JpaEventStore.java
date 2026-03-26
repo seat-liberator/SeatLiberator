@@ -4,6 +4,7 @@ import com.seatliberator.seatliberator.eventrelay.core.model.EventEnvelope;
 import com.seatliberator.seatliberator.eventrelay.core.model.ImmutableEventEnvelope;
 import com.seatliberator.seatliberator.eventrelay.core.relay.EventFlow;
 import com.seatliberator.seatliberator.eventrelay.core.store.EventStore;
+import com.seatliberator.seatliberator.eventrelay.core.store.exception.EventNotFoundException;
 import com.seatliberator.seatliberator.eventrelay.core.store.model.EventStatus;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.PageRequest;
@@ -61,11 +62,17 @@ public class JpaEventStore implements EventStore {
     @Override
     public void reportCompleted(@NonNull String eventId, @NonNull Instant resolvedAt) {
         int updated = repository.markResolved(eventId, EventStatus.COMPLETED, resolvedAt);
+        if (updated == 0) {
+            throw new EventNotFoundException(eventId);
+        }
     }
 
     @Transactional
     @Override
     public void reportFailed(@NonNull String eventId, @NonNull Instant resolvedAt) {
         int updated = repository.markResolved(eventId, EventStatus.FAILED, resolvedAt);
+        if (updated == 0) {
+            throw new EventNotFoundException(eventId);
+        }
     }
 }
