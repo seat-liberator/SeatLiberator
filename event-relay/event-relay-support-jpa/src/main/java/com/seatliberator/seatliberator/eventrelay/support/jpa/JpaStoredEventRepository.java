@@ -19,7 +19,7 @@ public interface JpaStoredEventRepository extends JpaRepository<JpaStoredEvent, 
             FROM JpaStoredEvent e
             WHERE e.flow = :flow
                 AND e.status IN :statuses
-            ORDER BY e.acceptedAt ASC""")
+            ORDER BY e.trace.createdAt ASC""")
     List<JpaStoredEvent> claim(
             @NonNull @Param("statuses") List<EventStatus> statuses,
             @NonNull @Param("flow") EventFlow flow,
