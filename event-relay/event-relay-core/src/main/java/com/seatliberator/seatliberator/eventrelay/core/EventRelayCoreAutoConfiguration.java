@@ -14,6 +14,8 @@ import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.DefaultEve
 import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.EventPublisher;
 import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.EventSender;
 import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.NoOpEventSender;
+import com.seatliberator.seatliberator.eventrelay.core.scheduler.EventScheduler;
+import com.seatliberator.seatliberator.eventrelay.core.scheduler.FixedDelayEventScheduler;
 import com.seatliberator.seatliberator.eventrelay.core.store.*;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -29,6 +31,12 @@ import java.util.UUID;
 @AutoConfiguration
 @EnableConfigurationProperties(EventStoreConfigurationProperties.class)
 public class EventRelayCoreAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean(EventScheduler.class)
+    EventScheduler eventScheduler(EventRelay eventRelay) {
+        return new FixedDelayEventScheduler(eventRelay);
+    }
 
     @Bean
     @ConditionalOnMissingBean(EventRelay.class)
