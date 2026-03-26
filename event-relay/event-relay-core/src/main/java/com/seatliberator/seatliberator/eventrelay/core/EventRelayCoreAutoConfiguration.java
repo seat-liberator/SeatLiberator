@@ -135,6 +135,10 @@ public class EventRelayCoreAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean({
+            EventListenerRegistry.class,
+            EventListenerRegistrar.class
+    })
     DefaultEventListenerRegistry defaultEventListenerRegistry(List<EventListener<?>> listeners) {
         return new DefaultEventListenerRegistry(listeners);
     }
@@ -152,6 +156,10 @@ public class EventRelayCoreAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean({
+            EventDefinitionRegistry.class,
+            EventDefinitionRegistrar.class
+    })
     DefaultEventDefinitionRegistry defaultEventDefinitionRegistry(List<EventDefinition<?>> definitions) {
         return new DefaultEventDefinitionRegistry(definitions);
     }
