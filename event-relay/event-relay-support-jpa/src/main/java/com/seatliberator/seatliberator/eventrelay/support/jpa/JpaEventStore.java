@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class JpaEventStore implements EventStore {
@@ -55,6 +56,7 @@ public class JpaEventStore implements EventStore {
 
         return repository.findAllById(claimedIds).stream()
                 .<EventEnvelope>map(ImmutableEventEnvelope::copyOf)
+                .sorted(Comparator.comparing(e -> e.trace().createdAt()))
                 .toList();
     }
 
