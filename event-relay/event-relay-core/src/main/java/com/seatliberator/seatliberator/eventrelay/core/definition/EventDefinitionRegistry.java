@@ -7,7 +7,9 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 public interface EventDefinitionRegistry {
-    @Nullable EventDefinition<?> resolve(EventType type);
+    @Nullable EventDefinitionCollection resolve(@NonNull EventDefinitionNamespace namespace);
 
-    @NonNull List<EventDefinition<?>> listAll();
+    @Nullable RegisteredEventDefinition resolve(@NonNull EventType type);
+
+    @NonNull List<EventDefinitionCollection> listAll();
 }
