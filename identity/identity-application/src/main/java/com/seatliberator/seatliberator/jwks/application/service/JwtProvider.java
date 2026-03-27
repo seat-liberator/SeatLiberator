@@ -9,8 +9,11 @@ import org.springframework.util.StringUtils;
 
 import java.time.Clock;
 import java.time.Duration;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class JwtProvider implements TokenProvider {
@@ -27,15 +30,30 @@ public class JwtProvider implements TokenProvider {
             throw new IllegalArgumentException("subject must be non-empty string");
         }
 
+        var scopes = resolveScopes(attributes.get("scopes"));
+
         JwtClaimsSet claimsSet = JwtClaimsSet.builder()
                 .issuer("seat-liberator-identity")
                 .subject(subject)
                 .audience(List.of("api"))
                 .issuedAt(now)
                 .expiresAt(now.plus(expiration))
+                .claim("scopes", scopes)
                 .build();
 
         var parameters = JwtEncoderParameters.from(claimsSet);
         return jwtEncoder.encode(parameters).getTokenValue();
+    }
+
+    private static Set<String> resolveScopes(Object rawScopes) {
+        if (rawScopes instanceof Collection<?> scopes) {
+            return scopes.stream()
+                    .filter(String.class::isInstance)
+                    .map(String.class::cast)
+                    .map(String::trim)
+                    .filter(StringUtils::hasText)
+                    .collect(Collectors.toUnmodifiableSet());
+        }
+        return Set.of();
     }
 }
