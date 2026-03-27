@@ -185,6 +185,23 @@ public class DefaultVacancyAlertRequesterTest {
                 .isInstanceOf(ApplicationException.class);
     }
 
+    @Test
+    @DisplayName("취소된_알람은_다시_신청할_수_있다")
+    void 취소된_알람은_다시_신청할_수_있다(){
+
+        // given
+        var command = requestCommand();
+        var saved = requester.request(command);
+
+        requester.cancelVacancyAlert(new VacancyAlertCancelCommand(command.userId(), saved.getId()));
+
+        // when
+        var result = requester.request(command);
+
+        // then
+        assertThat(result).isNotNull();
+    }
+
     private VacancyAlertRequestCommand requestCommand() {
         var now = Instant.now();
         return new VacancyAlertRequestCommand(
