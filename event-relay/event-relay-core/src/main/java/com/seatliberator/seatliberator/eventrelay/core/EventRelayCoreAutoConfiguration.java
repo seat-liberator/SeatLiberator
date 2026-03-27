@@ -37,13 +37,13 @@ public class EventRelayCoreAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(EventScheduler.class)
-    EventScheduler eventScheduler(EventRelay eventRelay) {
+    FixedDelayEventScheduler eventScheduler(EventRelay eventRelay) {
         return new FixedDelayEventScheduler(eventRelay);
     }
 
     @Bean
     @ConditionalOnMissingBean(EventRelay.class)
-    EventRelay eventRelay(
+    SimpleEventRelay eventRelay(
             EventRouter eventRouter,
             EventSender eventSender,
             EventStore eventStore,
@@ -54,7 +54,7 @@ public class EventRelayCoreAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(EventRouter.class)
-    EventRouter eventRouter(
+    RegistryEventRouter eventRouter(
             EventListenerRegistry eventListenerRegistry,
             EventPayloadDeserializer eventPayloadDeserializer,
             EventTraceHolder eventTraceHolder
@@ -64,7 +64,7 @@ public class EventRelayCoreAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(EventPublisher.class)
-    EventPublisher eventPublisher(
+    DefaultEventPublisher eventPublisher(
             EventPayloadSerializer eventPayloadSerializer,
             EventStore eventStore,
             EventTraceFactory eventTraceFactory,
@@ -75,13 +75,13 @@ public class EventRelayCoreAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(EventSender.class)
-    EventSender eventSender() {
+    NoOpEventSender eventSender() {
         return new NoOpEventSender();
     }
 
     @Bean
     @ConditionalOnMissingBean(EventStore.class)
-    EventStore eventStore(
+    DefaultEventStore eventStore(
             EventStateTransitionPolicy eventStateTransitionPolicy,
             EventStoreConfigurationProperties properties
     ) {
@@ -90,13 +90,13 @@ public class EventRelayCoreAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(EventStateTransitionPolicy.class)
-    EventStateTransitionPolicy eventStateTransitionPolicy() {
+    DefaultEventStateTransitionPolicy eventStateTransitionPolicy() {
         return new DefaultEventStateTransitionPolicy();
     }
 
     @Bean
     @ConditionalOnMissingBean(EventTraceFactory.class)
-    EventTraceFactory eventTraceFactory(
+    ImmutableEventTraceFactory eventTraceFactory(
             EventTraceHolder eventTraceHolder,
             EventIdProvider eventIdProvider,
             CorrelationIdProvider correlationIdProvider,
@@ -108,44 +108,26 @@ public class EventRelayCoreAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(EventTraceHolder.class)
-    EventTraceHolder eventTraceHolder() {
+    ThreadLocalEventTraceHolder eventTraceHolder() {
         return new ThreadLocalEventTraceHolder();
     }
 
     @Bean
     @ConditionalOnMissingBean(EventEnvelopeSerializer.class)
-    EventEnvelopeSerializer eventEnvelopeSerializer(ObjectMapper objectMapper) {
+    JacksonEventEnvelopeSerializer eventEnvelopeSerializer(ObjectMapper objectMapper) {
         return new JacksonEventEnvelopeSerializer(objectMapper);
     }
 
     @Bean
     @ConditionalOnMissingBean(EventPayloadSerializer.class)
-    EventPayloadSerializer eventPayloadSerializer(ObjectMapper objectMapper) {
+    JacksonEventPayloadSerializer eventPayloadSerializer(ObjectMapper objectMapper) {
         return new JacksonEventPayloadSerializer(objectMapper);
     }
 
     @Bean
     @ConditionalOnMissingBean(EventPayloadDeserializer.class)
-    EventPayloadDeserializer eventPayloadDeserializer(ObjectMapper objectMapper) {
+    JacksonEventPayloadDeserializer eventPayloadDeserializer(ObjectMapper objectMapper) {
         return new JacksonEventPayloadDeserializer(objectMapper);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean({
-            EventListenerRegistry.class,
-            EventListenerRegistrar.class
-    })
-    EventListenerRegistrar eventListenerRegistrar(DefaultEventListenerRegistry registry) {
-        return registry;
-    }
-
-    @Bean
-    @ConditionalOnMissingBean({
-            EventListenerRegistry.class,
-            EventListenerRegistrar.class
-    })
-    EventListenerRegistry eventListenerRegistry(DefaultEventListenerRegistry registry) {
-        return registry;
     }
 
     @Bean
@@ -159,24 +141,6 @@ public class EventRelayCoreAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean({
-            EventDefinitionRegistrar.class,
-            EventDefinitionRegistry.class,
-    })
-    EventDefinitionRegistrar eventDefinitionRegistrar(DefaultEventDefinitionRegistry registry) {
-        return registry;
-    }
-
-    @Bean
-    @ConditionalOnMissingBean({
-            EventDefinitionRegistrar.class,
-            EventDefinitionRegistry.class,
-    })
-    EventDefinitionRegistry eventDefinitionRegistry(DefaultEventDefinitionRegistry registry) {
-        return registry;
-    }
-
-    @Bean
-    @ConditionalOnMissingBean({
             EventDefinitionRegistry.class,
             EventDefinitionRegistrar.class
     })
@@ -186,19 +150,19 @@ public class EventRelayCoreAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(EventIdProvider.class)
-    EventIdProvider eventIdProvider(IdGenerator idGenerator) {
+    DefaultEventIdProvider eventIdProvider(IdGenerator idGenerator) {
         return new DefaultEventIdProvider(idGenerator);
     }
 
     @Bean
     @ConditionalOnMissingBean(CorrelationIdProvider.class)
-    CorrelationIdProvider correlationIdProvider(IdGenerator idGenerator) {
+    DefaultCorrelationIdProvider correlationIdProvider(IdGenerator idGenerator) {
         return new DefaultCorrelationIdProvider(idGenerator);
     }
 
     @Bean
     @ConditionalOnMissingBean(ProducerProvider.class)
-    ProducerProvider producerProvider(Environment environment) {
+    SpringApplicationNameProducerProvider producerProvider(Environment environment) {
         return new SpringApplicationNameProducerProvider(environment);
     }
 
