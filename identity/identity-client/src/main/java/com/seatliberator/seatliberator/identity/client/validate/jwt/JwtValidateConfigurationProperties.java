@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.client.validate.jwt;
 
-import com.seatliberator.seatliberator.identity.client.properties.ServerProperties;
+import com.seatliberator.seatliberator.identity.client.ServerProperties;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
 import org.springframework.boot.context.properties.ConfigurationProperties;
