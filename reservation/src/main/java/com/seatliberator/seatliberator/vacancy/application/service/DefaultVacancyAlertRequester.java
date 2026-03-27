@@ -3,12 +3,16 @@ package com.seatliberator.seatliberator.vacancy.application.service;
 import com.seatliberator.seatliberator.vacancy.application.exception.ApplicationErrorCode;
 import com.seatliberator.seatliberator.vacancy.application.exception.ApplicationException;
 import com.seatliberator.seatliberator.vacancy.application.port.in.VacancyAlertRequester;
+import com.seatliberator.seatliberator.vacancy.application.port.in.command.VacancyAlertCancelCommand;
 import com.seatliberator.seatliberator.vacancy.application.port.in.command.VacancyAlertRequestCommand;
 import com.seatliberator.seatliberator.vacancy.application.port.out.VacancyAlertRequestReader;
 import com.seatliberator.seatliberator.vacancy.application.port.out.VacancyAlertRequestStore;
 import com.seatliberator.seatliberator.vacancy.domain.VacancyAlertRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +24,7 @@ public class DefaultVacancyAlertRequester implements VacancyAlertRequester {
     public VacancyAlertRequest request(VacancyAlertRequestCommand command) {
         if (reader.existsActiveRequestFor(
                 command.userId(),
+                command.roomId(),
                 command.seatId(),
                 command.startTime(),
                 command.endTime()
@@ -36,6 +41,22 @@ public class DefaultVacancyAlertRequester implements VacancyAlertRequester {
                 command.requestedAt()
         );
 
-        return store.save(request);
+        try {
+            return store.save(request);
+        } catch (DataIntegrityViolationException e) {
+            throw new ApplicationException(ApplicationErrorCode.DUPLICATED_REQUEST);
+        }
     }
+
+    @Override
+    public void cancelVacancyAlert(VacancyAlertCancelCommand command) {
+
+        VacancyAlertRequest alert = reader.findById(command.alertId())
+                .orElseThrow(() -> new ApplicationException(ApplicationErrorCode.NOT_FOUND));
+
+        alert.cancel(command.userId(), Instant.now());
+
+        store.save(alert);
+    }
+
 }

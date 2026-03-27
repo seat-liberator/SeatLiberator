@@ -16,12 +16,14 @@ public interface VacancyAlertRequestRepository extends JpaRepository<VacancyAler
             SELECT COUNT(v) > 0
             FROM VacancyAlertRequest v
             WHERE v.userId = :userId
+                        AND v.roomId = :roomId
                 AND v.seatId = :seatId
                 AND v.targetStartTime = :targetStartTime
                 AND v.targetEndTime = :targetEndTime
                 AND v.status = :status""")
     boolean existsRequestFor(
             @Param("userId") String userId,
+            @Param("roomId") String roomId,
             @Param("seatId") String seatId,
             @Param("targetStartTime") Instant targetStartTime,
             @Param("targetEndTime") Instant targetEndTime,

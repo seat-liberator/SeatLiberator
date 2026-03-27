@@ -10,6 +10,7 @@ import java.util.UUID;
 public interface VacancyAlertRequestReader {
     boolean existsActiveRequestFor(
             String userId,
+            String roomId,
             String seatId,
             Instant targetStartTime,
             Instant targetEndTime

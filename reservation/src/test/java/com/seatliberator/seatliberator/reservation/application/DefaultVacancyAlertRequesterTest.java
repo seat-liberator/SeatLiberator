@@ -2,6 +2,7 @@ package com.seatliberator.seatliberator.reservation.application;
 
 import com.seatliberator.seatliberator.vacancy.application.exception.ApplicationException;
 import com.seatliberator.seatliberator.vacancy.application.port.in.VacancyAlertRequester;
+import com.seatliberator.seatliberator.vacancy.application.port.in.command.VacancyAlertCancelCommand;
 import com.seatliberator.seatliberator.vacancy.application.port.in.command.VacancyAlertRequestCommand;
 import com.seatliberator.seatliberator.vacancy.application.port.out.VacancyAlertRequestReader;
 import com.seatliberator.seatliberator.vacancy.application.port.out.VacancyAlertRequestStore;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -142,4 +144,74 @@ public class DefaultVacancyAlertRequesterTest {
         assertThat(r2.getSeatId()).isEqualTo(seatId);
         assertThat(r2.getStatus()).isEqualTo(VacancyAlertStatus.ACTIVE);
     }
+
+    @Test
+    @DisplayName("본인이_알람을_취소할_수_있다")
+    void 본인이_알람을_취소할_수_있다(){
+
+        // given
+        var command = requestCommand();
+        var saved = requester.request(command);
+
+        // when
+        requester.cancelVacancyAlert(new VacancyAlertCancelCommand(command.userId(), saved.getId()));
+
+        // then
+        var result = reader.findById(saved.getId()).orElseThrow();
+        assertThat(result.getStatus()).isEqualTo(VacancyAlertStatus.CANCELLED);
+    }
+
+    @Test
+    @DisplayName("타인은_알람을_취소할_수_없다")
+    void 타인은_알람을_취소할_수_없다(){
+
+        // given
+        var command = requestCommand();
+        var saved = requester.request(command);
+
+        // when & then
+        assertThatThrownBy(() ->
+                requester.cancelVacancyAlert(new VacancyAlertCancelCommand("other-user", saved.getId())))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("존재하지_않는_알람_취소_시_예외_발생")
+    void 존재하지_않는_알람_취소_시_예외_발생(){
+
+        // when & then
+        assertThatThrownBy(() ->
+                requester.cancelVacancyAlert(new VacancyAlertCancelCommand("user1", UUID.randomUUID())))
+                .isInstanceOf(ApplicationException.class);
+    }
+
+    @Test
+    @DisplayName("취소된_알람은_다시_신청할_수_있다")
+    void 취소된_알람은_다시_신청할_수_있다(){
+
+        // given
+        var command = requestCommand();
+        var saved = requester.request(command);
+
+        requester.cancelVacancyAlert(new VacancyAlertCancelCommand(command.userId(), saved.getId()));
+
+        // when
+        var result = requester.request(command);
+
+        // then
+        assertThat(result).isNotNull();
+    }
+
+    private VacancyAlertRequestCommand requestCommand() {
+        var now = Instant.now();
+        return new VacancyAlertRequestCommand(
+                "user1",
+                "room1",
+                "seat1",
+                now.plusSeconds(60),
+                now.plusSeconds(120),
+                now
+        );
+    }
+
 }
