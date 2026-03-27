@@ -7,26 +7,31 @@ import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.EventSende
 import org.jspecify.annotations.NonNull;
 import org.springframework.kafka.core.KafkaTemplate;
 
+import java.util.concurrent.TimeUnit;
+
 public class KafkaEventSender implements EventSender {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final EventDefinitionRegistry definitionRegistry;
     private final EventEnvelopeSerializer serializer;
     private final TopicFactory topicFactory;
+    private final long sendTimeout;
 
     public KafkaEventSender(
             KafkaTemplate<String, String> kafkaTemplate,
             EventDefinitionRegistry definitionRegistry,
             EventEnvelopeSerializer serializer,
-            TopicFactory topicFactory
+            TopicFactory topicFactory,
+            long sendTimeout
     ) {
         this.kafkaTemplate = kafkaTemplate;
         this.definitionRegistry = definitionRegistry;
         this.serializer = serializer;
         this.topicFactory = topicFactory;
+        this.sendTimeout = sendTimeout;
     }
 
     @Override
-    public void send(@NonNull EventEnvelope envelope) {
+    public void send(@NonNull EventEnvelope envelope) throws Exception {
         var type = envelope.header().eventType();
         var definition = definitionRegistry.resolve(type);
         if (definition == null) {
@@ -36,6 +41,6 @@ public class KafkaEventSender implements EventSender {
         var data = serializer.stringify(envelope);
         var key = envelope.trace().eventId();
 
-        kafkaTemplate.send(topic, key, data);
+        kafkaTemplate.send(topic, key, data).get(sendTimeout, TimeUnit.SECONDS);
     }
 }
