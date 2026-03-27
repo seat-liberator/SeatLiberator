@@ -29,7 +29,13 @@ public class SimpleEventRelay implements EventRelay {
 
     @Override
     public void run() {
-        runSingleFlow(EventFlow.OUTBOUND, sender::send);
+        runSingleFlow(EventFlow.OUTBOUND, envelope -> {
+            try {
+                sender.send(envelope);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
         runSingleFlow(EventFlow.INBOUND, router::route);
     }
 

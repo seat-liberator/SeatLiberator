@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConfigurationProperties(prefix = "event-relay.kafka")
 public record EventRelayKafkaSupportConfigurationProperties(
         @DefaultValue("event") String topicSuffix,
-        @DefaultValue(".") String topicDelimiter
+        @DefaultValue(".") String topicDelimiter,
+        @DefaultValue("1") long sendTimeout
 ) {
 }

@@ -9,7 +9,7 @@ public class NoOpEventSender implements EventSender {
     private static final Logger log = LoggerFactory.getLogger(NoOpEventSender.class);
 
     @Override
-    public void send(@NonNull EventEnvelope envelope) {
+    public void send(@NonNull EventEnvelope envelope) throws Exception {
         var eventId = envelope.trace().eventId();
         var eventType = envelope.header().eventType().name();
         var rawPayload = envelope.rawPayload();

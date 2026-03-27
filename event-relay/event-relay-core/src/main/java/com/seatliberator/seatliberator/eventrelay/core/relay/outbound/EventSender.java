@@ -5,5 +5,5 @@ import org.jspecify.annotations.NonNull;
 
 @FunctionalInterface
 public interface EventSender {
-    void send(@NonNull EventEnvelope envelope);
+    void send(@NonNull EventEnvelope envelope) throws Exception;
 }

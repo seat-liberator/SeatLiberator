@@ -34,9 +34,10 @@ public class EventRelayKafkaSupportAutoConfiguration {
             KafkaTemplate<String, String> kafkaTemplate,
             EventDefinitionRegistry eventDefinitionRegistry,
             EventEnvelopeSerializer eventEnvelopeSerializer,
-            TopicFactory topicFactory
+            TopicFactory topicFactory,
+            EventRelayKafkaSupportConfigurationProperties properties
     ) {
-        return new KafkaEventSender(kafkaTemplate, eventDefinitionRegistry, eventEnvelopeSerializer, topicFactory);
+        return new KafkaEventSender(kafkaTemplate, eventDefinitionRegistry, eventEnvelopeSerializer, topicFactory, properties.sendTimeout());
     }
 
     @Bean
