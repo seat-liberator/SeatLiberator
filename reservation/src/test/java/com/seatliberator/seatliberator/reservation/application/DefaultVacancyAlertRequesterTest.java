@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -172,6 +173,16 @@ public class DefaultVacancyAlertRequesterTest {
         assertThatThrownBy(() ->
                 requester.cancelVacancyAlert(new VacancyAlertCancelCommand("other-user", saved.getId())))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("존재하지_않는_알람_취소_시_예외_발생")
+    void 존재하지_않는_알람_취소_시_예외_발생(){
+
+        // when & then
+        assertThatThrownBy(() ->
+                requester.cancelVacancyAlert(new VacancyAlertCancelCommand("user1", UUID.randomUUID())))
+                .isInstanceOf(ApplicationException.class);
     }
 
     private VacancyAlertRequestCommand requestCommand() {
