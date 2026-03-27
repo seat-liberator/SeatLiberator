@@ -160,6 +160,20 @@ public class DefaultVacancyAlertRequesterTest {
         assertThat(result.getStatus()).isEqualTo(VacancyAlertStatus.CANCELLED);
     }
 
+    @Test
+    @DisplayName("타인은_알람을_취소할_수_없다")
+    void 타인은_알람을_취소할_수_없다(){
+
+        // given
+        var command = requestCommand();
+        var saved = requester.request(command);
+
+        // when & then
+        assertThatThrownBy(() ->
+                requester.cancelVacancyAlert(new VacancyAlertCancelCommand("other-user", saved.getId())))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
     private VacancyAlertRequestCommand requestCommand() {
         var now = Instant.now();
         return new VacancyAlertRequestCommand(
