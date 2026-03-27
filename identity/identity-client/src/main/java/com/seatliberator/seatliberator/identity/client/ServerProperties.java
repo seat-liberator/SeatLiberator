@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.client.properties;
+package com.seatliberator.seatliberator.identity.client;
 
 
 import java.net.URI;
