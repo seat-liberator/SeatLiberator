@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.jwks.application.service;
 
-import com.seatliberator.seatliberator.identity.core.token.TokenProvider;
+import com.seatliberator.seatliberator.jwks.application.port.in.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
