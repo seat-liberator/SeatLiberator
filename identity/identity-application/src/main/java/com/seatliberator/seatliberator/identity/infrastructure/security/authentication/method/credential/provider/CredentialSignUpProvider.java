@@ -68,7 +68,8 @@ public class CredentialSignUpProvider implements AuthenticationProvider {
 
         var trustedUserPrincipal = new TrustedUserPrincipal(
                 authEntry.userId().toString(),
-                authEntry.nickname()
+                authEntry.nickname(),
+                authEntry.scopes()
         );
         log.debug(
                 "Trusted user principal created for credential sign-up. email={}, userId={}",

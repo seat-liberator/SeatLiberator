@@ -12,8 +12,6 @@ import com.seatliberator.seatliberator.identity.infrastructure.security.authenti
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Set;
-
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultFederatedSignInProcessor implements FederatedSignInProcessor {
@@ -86,7 +84,7 @@ public class DefaultFederatedSignInProcessor implements FederatedSignInProcessor
 
         var actor = new SimpleActor(
                 authContext.userId().toString(),
-                Set.of("ROLE_USER")
+                authContext.scopes()
         );
 
         log.debug(

@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import java.io.IOException;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -45,7 +46,7 @@ public class CredentialAuthenticationSuccessHandler implements AuthenticationSuc
 
         var principal = authentication.getPrincipal();
 
-        if (!(principal instanceof TrustedUserPrincipal(String subject, String nickname))) {
+        if (!(principal instanceof TrustedUserPrincipal(String subject, String nickname, Set<String> scopes))) {
             log.debug(
                     "Credential authentication success handling skipped because principal was not trusted user principal. principalType={}",
                     principal == null ? "null" : principal.getClass().getName()
@@ -59,7 +60,7 @@ public class CredentialAuthenticationSuccessHandler implements AuthenticationSuc
                 nickname
         );
 
-        var issuedTokenEntry = tokenIssueProcessor.process(subject);
+        var issuedTokenEntry = tokenIssueProcessor.process(subject, scopes);
         log.debug("Token issuance succeeded for credential authentication. subject={}", subject);
 
         responseWriter.write(
