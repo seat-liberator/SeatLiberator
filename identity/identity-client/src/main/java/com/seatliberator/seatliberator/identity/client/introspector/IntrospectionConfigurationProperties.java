@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.core.introspect;
+package com.seatliberator.seatliberator.identity.client.introspector;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;

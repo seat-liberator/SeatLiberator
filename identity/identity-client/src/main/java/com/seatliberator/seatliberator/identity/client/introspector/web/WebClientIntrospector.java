@@ -1,7 +1,7 @@
-package com.seatliberator.seatliberator.identity.client.validate.introspection.web;
+package com.seatliberator.seatliberator.identity.client.introspector.web;
 
-import com.seatliberator.seatliberator.identity.core.introspect.Introspection;
-import com.seatliberator.seatliberator.identity.core.introspect.Introspector;
+import com.seatliberator.seatliberator.identity.core.introspection.Introspection;
+import com.seatliberator.seatliberator.identity.client.introspector.Introspector;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Map;

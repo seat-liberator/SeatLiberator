@@ -17,26 +17,6 @@ public class ActorContextJwtAuthenticationConverter implements Converter<Jwt, Ab
     private static final String SCOPE_CLAIM = "scope";
     private static final String SCOPES_CLAIM = "scopes";
 
-    @Override
-    public AbstractAuthenticationToken convert(Jwt source) {
-        String subject = source.getSubject();
-        Set<String> scopes = extractScopes(source);
-        var authorities = scopes.stream()
-                .map(SimpleGrantedAuthority::new)
-                .toList();
-
-        Actor actor = new SimpleActor(
-                subject,
-                scopes
-        );
-
-        return new ActorContextAuthenticationToken(
-                actor,
-                source,
-                authorities
-        );
-    }
-
     private static Set<String> extractScopes(Jwt source) {
         var scopes = new LinkedHashSet<String>();
         scopes.addAll(readScopesClaim(source.getClaim(SCOPES_CLAIM)));
@@ -62,5 +42,25 @@ public class ActorContextJwtAuthenticationConverter implements Converter<Jwt, Ab
         }
 
         return Set.of();
+    }
+
+    @Override
+    public AbstractAuthenticationToken convert(Jwt source) {
+        String subject = source.getSubject();
+        Set<String> scopes = extractScopes(source);
+        var authorities = scopes.stream()
+                .map(SimpleGrantedAuthority::new)
+                .toList();
+
+        Actor actor = new SimpleActor(
+                subject,
+                scopes
+        );
+
+        return new ActorContextAuthenticationToken(
+                actor,
+                source,
+                authorities
+        );
     }
 }

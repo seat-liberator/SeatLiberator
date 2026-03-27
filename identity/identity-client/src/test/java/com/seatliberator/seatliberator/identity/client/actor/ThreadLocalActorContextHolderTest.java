@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.identity.client.actor;
 
-import com.seatliberator.seatliberator.identity.client.actor.exception.UnidentifiableActorException;
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
+import com.seatliberator.seatliberator.identity.client.actor.exception.UnidentifiableActorException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
