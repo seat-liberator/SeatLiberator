@@ -40,7 +40,7 @@ class DefaultVacancyAlertNotificationReaderTest {
         var entries = service.readAllByUser("user-1", "user-1");
 
         assertThat(entries).hasSize(1);
-        assertThat(entries.get(0).seatId()).isEqualTo("seat-1");
+        assertThat(entries.getFirst().seatId()).isEqualTo("seat-1");
     }
 
     @Test

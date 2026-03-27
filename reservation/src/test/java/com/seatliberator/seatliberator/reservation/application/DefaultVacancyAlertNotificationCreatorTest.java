@@ -47,9 +47,9 @@ class DefaultVacancyAlertNotificationCreatorTest {
         var saved = (List<VacancyAlertNotification>) captor.getValue();
 
         assertThat(saved).hasSize(1);
-        assertThat(saved.get(0).getUserId()).isEqualTo("user-1");
-        assertThat(saved.get(0).getSeatId()).isEqualTo("seat-1");
+        assertThat(saved.getFirst().getUserId()).isEqualTo("user-1");
+        assertThat(saved.getFirst().getSeatId()).isEqualTo("seat-1");
         assertThat(entries).hasSize(1);
-        assertThat(entries.get(0).userId()).isEqualTo("user-1");
+        assertThat(entries.getFirst().userId()).isEqualTo("user-1");
     }
 }
