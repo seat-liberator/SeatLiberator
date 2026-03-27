@@ -66,7 +66,7 @@ public class VacancyAlertRequest {
             throw new IllegalArgumentException("targetStartTime is must be before targetEndTime");
         }
 
-        if (targetStartTime.isBefore(Instant.now())){
+        if (targetStartTime.isBefore(Instant.now())) {
             throw new IllegalArgumentException("targetStartTime must be future");
         }
         var v = new VacancyAlertRequest();
@@ -86,7 +86,7 @@ public class VacancyAlertRequest {
         ensureActive();
 
         // 본인만 신청 취소하도록 함
-        if(!this.userId.equals(requestUserId)){
+        if (!this.userId.equals(requestUserId)) {
             throw new IllegalArgumentException("본인만 취소 가능");
         }
 
