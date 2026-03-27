@@ -128,13 +128,19 @@ public class EventRelayCoreAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(EventListenerRegistrar.class)
+    @ConditionalOnMissingBean({
+            EventListenerRegistry.class,
+            EventListenerRegistrar.class
+    })
     EventListenerRegistrar eventListenerRegistrar(DefaultEventListenerRegistry registry) {
         return registry;
     }
 
     @Bean
-    @ConditionalOnMissingBean(EventListenerRegistry.class)
+    @ConditionalOnMissingBean({
+            EventListenerRegistry.class,
+            EventListenerRegistrar.class
+    })
     EventListenerRegistry eventListenerRegistry(DefaultEventListenerRegistry registry) {
         return registry;
     }
@@ -149,13 +155,19 @@ public class EventRelayCoreAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(EventDefinitionRegistrar.class)
+    @ConditionalOnMissingBean({
+            EventDefinitionRegistrar.class,
+            EventDefinitionRegistry.class,
+    })
     EventDefinitionRegistrar eventDefinitionRegistrar(DefaultEventDefinitionRegistry registry) {
         return registry;
     }
 
     @Bean
-    @ConditionalOnMissingBean(EventDefinitionRegistry.class)
+    @ConditionalOnMissingBean({
+            EventDefinitionRegistrar.class,
+            EventDefinitionRegistry.class,
+    })
     EventDefinitionRegistry eventDefinitionRegistry(DefaultEventDefinitionRegistry registry) {
         return registry;
     }
