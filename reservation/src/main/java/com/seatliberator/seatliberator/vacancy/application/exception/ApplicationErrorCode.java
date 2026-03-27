@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ApplicationErrorCode {
-    DUPLICATED_REQUEST("RVC001", "동일한 알람을 중복해서 등록할 수 없습니다.");
+    DUPLICATED_REQUEST("RVC001", "Duplicated vacancy alert request."),
+    NOTIFICATION_ACCESS_DENIED("RVC002", "Only own notifications can be read.");
 
     private final String code;
     private final String message;
