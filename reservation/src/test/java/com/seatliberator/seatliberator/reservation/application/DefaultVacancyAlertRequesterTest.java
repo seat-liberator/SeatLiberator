@@ -2,6 +2,7 @@ package com.seatliberator.seatliberator.reservation.application;
 
 import com.seatliberator.seatliberator.vacancy.application.exception.ApplicationException;
 import com.seatliberator.seatliberator.vacancy.application.port.in.VacancyAlertRequester;
+import com.seatliberator.seatliberator.vacancy.application.port.in.command.VacancyAlertCancelCommand;
 import com.seatliberator.seatliberator.vacancy.application.port.in.command.VacancyAlertRequestCommand;
 import com.seatliberator.seatliberator.vacancy.application.port.out.VacancyAlertRequestReader;
 import com.seatliberator.seatliberator.vacancy.application.port.out.VacancyAlertRequestStore;
@@ -142,4 +143,33 @@ public class DefaultVacancyAlertRequesterTest {
         assertThat(r2.getSeatId()).isEqualTo(seatId);
         assertThat(r2.getStatus()).isEqualTo(VacancyAlertStatus.ACTIVE);
     }
+
+    @Test
+    @DisplayName("본인이_알람을_취소할_수_있다")
+    void 본인이_알람을_취소할_수_있다(){
+
+        // given
+        var command = requestCommand();
+        var saved = requester.request(command);
+
+        // when
+        requester.cancelVacancyAlert(new VacancyAlertCancelCommand(command.userId(), saved.getId()));
+
+        // then
+        var result = reader.findById(saved.getId()).orElseThrow();
+        assertThat(result.getStatus()).isEqualTo(VacancyAlertStatus.CANCELLED);
+    }
+
+    private VacancyAlertRequestCommand requestCommand() {
+        var now = Instant.now();
+        return new VacancyAlertRequestCommand(
+                "user1",
+                "room1",
+                "seat1",
+                now.plusSeconds(60),
+                now.plusSeconds(120),
+                now
+        );
+    }
+
 }
