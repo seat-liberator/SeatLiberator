@@ -2,6 +2,7 @@ package com.seatliberator.seatliberator.identity.application.service;
 
 import com.seatliberator.seatliberator.identity.application.exception.IdentityApplicationErrorCode;
 import com.seatliberator.seatliberator.identity.application.exception.IdentityApplicationException;
+import com.seatliberator.seatliberator.identity.application.factory.AuthEntryFactory;
 import com.seatliberator.seatliberator.identity.application.port.in.UserRegistrar;
 import com.seatliberator.seatliberator.identity.application.port.in.command.RegistrationCommand;
 import com.seatliberator.seatliberator.identity.application.port.in.result.AuthEntry;
@@ -24,6 +25,7 @@ public class UserRegistrarService implements UserRegistrar {
     private final FederatedAccountStore federatedAccountStore;
     private final UserStore userStore;
 
+    private final AuthEntryFactory authEntryFactory;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -81,10 +83,7 @@ public class UserRegistrarService implements UserRegistrar {
                 savedUser.getNickname()
         );
 
-        return new AuthEntry(
-                savedUser.getId(),
-                savedUser.getNickname()
-        );
+        return authEntryFactory.create(savedUser.getId(), savedUser.getNickname());
     }
 
     @Override
@@ -145,9 +144,6 @@ public class UserRegistrarService implements UserRegistrar {
                 savedUser.getNickname()
         );
 
-        return new AuthEntry(
-                savedUser.getId(),
-                savedUser.getNickname()
-        );
+        return authEntryFactory.create(savedUser.getId(), savedUser.getNickname());
     }
 }

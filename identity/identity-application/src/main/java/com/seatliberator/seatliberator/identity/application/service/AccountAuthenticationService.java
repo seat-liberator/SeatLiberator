@@ -2,6 +2,7 @@ package com.seatliberator.seatliberator.identity.application.service;
 
 import com.seatliberator.seatliberator.identity.application.exception.IdentityApplicationErrorCode;
 import com.seatliberator.seatliberator.identity.application.exception.IdentityApplicationException;
+import com.seatliberator.seatliberator.identity.application.factory.AuthEntryFactory;
 import com.seatliberator.seatliberator.identity.application.port.in.AccountAuthenticator;
 import com.seatliberator.seatliberator.identity.application.port.in.command.AuthenticationCommand;
 import com.seatliberator.seatliberator.identity.application.port.in.result.AuthEntry;
@@ -19,6 +20,7 @@ public class AccountAuthenticationService implements AccountAuthenticator {
     private final CredentialAccountStore credentialAccountStore;
     private final FederatedAccountStore federatedAccountStore;
 
+    private final AuthEntryFactory authEntryFactory;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -52,10 +54,7 @@ public class AccountAuthenticationService implements AccountAuthenticator {
                 auth.userId()
         );
 
-        return new AuthEntry(
-                auth.userId(),
-                auth.nickname()
-        );
+        return authEntryFactory.create(auth.userId(), auth.nickname());
     }
 
     @Override
@@ -90,9 +89,6 @@ public class AccountAuthenticationService implements AccountAuthenticator {
                 auth.userId()
         );
 
-        return new AuthEntry(
-                auth.userId(),
-                auth.nickname()
-        );
+        return authEntryFactory.create(auth.userId(), auth.nickname());
     }
 }
