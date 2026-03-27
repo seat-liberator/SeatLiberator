@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.token.handler;
 
-import com.seatliberator.seatliberator.identity.core.token.TokenProvider;
+import com.seatliberator.seatliberator.jwks.application.port.in.TokenProvider;
 import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.token.IssuedTokenEntry;
 import lombok.RequiredArgsConstructor;
 

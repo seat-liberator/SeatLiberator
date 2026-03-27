@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.core.token;
+package com.seatliberator.seatliberator.jwks.application.port.in;
 
 import java.util.Map;
 
