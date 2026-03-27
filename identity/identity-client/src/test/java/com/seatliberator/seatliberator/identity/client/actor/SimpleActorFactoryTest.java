@@ -1,15 +1,15 @@
-package actor;
+package com.seatliberator.seatliberator.identity.client.actor;
 
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
-import com.seatliberator.seatliberator.identity.core.actor.ActorFactory;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
-import com.seatliberator.seatliberator.identity.core.actor.SimpleActorFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class SimpleActorFactoryTest {
     @Test
