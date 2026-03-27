@@ -71,7 +71,7 @@ public class KafkaDynamicEventSubscriber {
         endpointRegistry.registerListenerContainer(endpoint, containerFactory, true);
     }
 
-    void onMessage(ConsumerRecord<String, String> record) {
+    public void onMessage(ConsumerRecord<String, String> record) {
         endpointHandler.onMessage(record);
     }
 }
