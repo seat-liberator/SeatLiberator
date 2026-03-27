@@ -1,16 +1,15 @@
 package com.seatliberator.seatliberator.vacancy.infrastructure.web.controller;
 
 import com.seatliberator.seatliberator.vacancy.application.port.in.VacancyAlertRequester;
+import com.seatliberator.seatliberator.vacancy.application.port.in.command.VacancyAlertCancelCommand;
 import com.seatliberator.seatliberator.vacancy.application.port.in.command.VacancyAlertRequestCommand;
 import com.seatliberator.seatliberator.vacancy.infrastructure.web.request.VacancyAlertCreateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,4 +39,17 @@ public class VacancyAlertController {
         return ResponseEntity.ok().build();
     }
 
+    // 알람 취소
+    @DeleteMapping("/{alertId}")
+    public ResponseEntity<Void> cancel(
+            @RequestHeader("userId") String userId,
+            @PathVariable UUID alertId
+    ) {
+
+        VacancyAlertCancelCommand command = new VacancyAlertCancelCommand(userId, alertId);
+
+        requester.cancelVacancyAlert(command);
+
+        return ResponseEntity.noContent().build();
+    }
 }
