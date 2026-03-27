@@ -1,4 +1,4 @@
-package actor;
+package com.seatliberator.seatliberator.identity.core.actor;
 
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;

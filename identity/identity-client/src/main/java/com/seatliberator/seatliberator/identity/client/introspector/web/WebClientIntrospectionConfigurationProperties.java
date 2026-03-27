@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.client.validate.introspection.web;
+package com.seatliberator.seatliberator.identity.client.introspector.web;
 
 import com.seatliberator.seatliberator.identity.client.ServerProperties;
 import jakarta.validation.Valid;

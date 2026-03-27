@@ -1,11 +1,9 @@
-package com.seatliberator.seatliberator.identity.client.validate.introspection.web;
+package com.seatliberator.seatliberator.identity.client.introspector.web;
 
-import com.seatliberator.seatliberator.identity.core.IdentityAutoConfiguration;
-import com.seatliberator.seatliberator.identity.core.introspect.Introspector;
+import com.seatliberator.seatliberator.identity.client.introspector.Introspector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -13,7 +11,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.reactive.function.client.WebClient;
 
-@AutoConfiguration(before = IdentityAutoConfiguration.class)
 @ConditionalOnClass(WebClient.class)
 @ConditionalOnProperty(
         prefix = "identity.validate.introspection.web",

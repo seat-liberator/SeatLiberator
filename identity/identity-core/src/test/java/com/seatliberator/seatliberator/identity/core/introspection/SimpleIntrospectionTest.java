@@ -1,9 +1,7 @@
-package introspection;
+package com.seatliberator.seatliberator.identity.core.introspection;
 
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
-import com.seatliberator.seatliberator.identity.core.introspect.Introspection;
-import com.seatliberator.seatliberator.identity.core.introspect.SimpleIntrospection;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
