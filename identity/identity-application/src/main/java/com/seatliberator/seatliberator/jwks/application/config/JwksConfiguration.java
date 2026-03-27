@@ -4,7 +4,7 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import com.seatliberator.seatliberator.identity.core.token.TokenProvider;
+import com.seatliberator.seatliberator.jwks.application.port.in.TokenProvider;
 import com.seatliberator.seatliberator.jwks.application.port.in.KeyProvider;
 import com.seatliberator.seatliberator.jwks.application.port.out.ByteEncoder;
 import com.seatliberator.seatliberator.jwks.application.service.JwtProvider;
