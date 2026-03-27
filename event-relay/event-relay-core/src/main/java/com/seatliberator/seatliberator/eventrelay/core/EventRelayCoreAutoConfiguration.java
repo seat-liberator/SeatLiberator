@@ -1,7 +1,10 @@
 package com.seatliberator.seatliberator.eventrelay.core;
 
 import com.seatliberator.seatliberator.eventrelay.core.codec.*;
-import com.seatliberator.seatliberator.eventrelay.core.definition.*;
+import com.seatliberator.seatliberator.eventrelay.core.definition.DefaultEventDefinitionRegistry;
+import com.seatliberator.seatliberator.eventrelay.core.definition.EventDefinitionCollection;
+import com.seatliberator.seatliberator.eventrelay.core.definition.EventDefinitionRegistrar;
+import com.seatliberator.seatliberator.eventrelay.core.definition.EventDefinitionRegistry;
 import com.seatliberator.seatliberator.eventrelay.core.factory.EventTraceFactory;
 import com.seatliberator.seatliberator.eventrelay.core.factory.EventTraceHolder;
 import com.seatliberator.seatliberator.eventrelay.core.factory.ImmutableEventTraceFactory;
