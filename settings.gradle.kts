@@ -7,6 +7,7 @@ include("identity:identity-application")
 include("identity:identity-client")
 
 include("kernel")
+include("idempotency:idempotency-core")
 include("event-relay:event-relay-core")
 include("event-relay:event-relay-support-jpa")
 include("event-relay:event-relay-support-kafka")
