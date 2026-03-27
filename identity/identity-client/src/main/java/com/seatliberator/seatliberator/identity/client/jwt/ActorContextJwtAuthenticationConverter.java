@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.client.validate.jwt;
+package com.seatliberator.seatliberator.identity.client.jwt;
 
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
