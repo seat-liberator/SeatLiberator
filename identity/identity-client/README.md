@@ -73,6 +73,7 @@ public class SecurityConfig {
 추가로 JWT 인증 결과를 `identity-core`의 `ActorContext` 스펙으로 변환하고 싶다면, 소비자 서비스에서 `jwtAuthenticationConverter`를 직접 구성할 수 있습니다.
 
 ```java
+
 @Configuration
 public class SecurityConfig {
     @Bean
