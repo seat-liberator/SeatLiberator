@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.board.infrastructure.security;
 
-import com.seatliberator.seatliberator.identity.client.validate.jwt.ActorContextJwtAuthenticationConverter;
+import com.seatliberator.seatliberator.identity.client.jwt.ActorContextJwtAuthenticationConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
