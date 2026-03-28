@@ -7,7 +7,6 @@ import com.seatliberator.seatliberator.eventrelay.core.store.EventStore;
 import com.seatliberator.seatliberator.eventrelay.core.store.exception.EventNotFoundException;
 import com.seatliberator.seatliberator.eventrelay.core.store.model.EventStatus;
 import org.jspecify.annotations.NonNull;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -16,19 +15,19 @@ import java.util.Comparator;
 import java.util.List;
 
 public class JpaEventStore implements EventStore {
-    private final JpaStoredEventRepository repository;
+    private final JpaStoredEventPersistencePort persistence;
     private final EventAcceptor acceptor;
     private final int batchSize;
 
     public JpaEventStore(
-            @NonNull JpaStoredEventRepository repository,
+            @NonNull JpaStoredEventPersistencePort persistence,
             @NonNull EventAcceptor acceptor,
             int batchSize
     ) {
         if (batchSize < 1) {
             throw new IllegalArgumentException("batchSize는 1보다 작을 수 없습니다");
         }
-        this.repository = repository;
+        this.persistence = persistence;
         this.acceptor = acceptor;
         this.batchSize = batchSize;
     }
@@ -42,11 +41,11 @@ public class JpaEventStore implements EventStore {
     @Transactional
     @Override
     public List<EventEnvelope> claimBatch(@NonNull EventFlow flow, @NonNull Instant claimedAt) {
-        var candidates = repository.claim(List.of(EventStatus.PENDING, EventStatus.FAILED), flow, PageRequest.of(0, batchSize));
+        var candidates = persistence.claim(List.of(EventStatus.PENDING, EventStatus.FAILED), flow, batchSize);
         var claimedIds = new ArrayList<String>();
 
         for (var candidate : candidates) {
-            int updated = repository.markProcessing(candidate.getId(), claimedAt);
+            int updated = persistence.markProcessing(candidate.getId(), claimedAt);
             if (updated == 1) {
                 claimedIds.add(candidate.getId());
             }
@@ -54,7 +53,7 @@ public class JpaEventStore implements EventStore {
 
         if (claimedIds.isEmpty()) return List.of();
 
-        return repository.findAllById(claimedIds).stream()
+        return persistence.findAllByIds(claimedIds).stream()
                 .<EventEnvelope>map(ImmutableEventEnvelope::copyOf)
                 .sorted(Comparator.comparing(e -> e.trace().createdAt()))
                 .toList();
@@ -63,7 +62,7 @@ public class JpaEventStore implements EventStore {
     @Transactional
     @Override
     public void reportCompleted(@NonNull String eventId, @NonNull Instant resolvedAt) {
-        int updated = repository.markResolved(eventId, EventStatus.COMPLETED, resolvedAt);
+        int updated = persistence.markResolved(eventId, EventStatus.COMPLETED, resolvedAt);
         if (updated == 0) {
             throw new EventNotFoundException(eventId);
         }
@@ -72,7 +71,7 @@ public class JpaEventStore implements EventStore {
     @Transactional
     @Override
     public void reportFailed(@NonNull String eventId, @NonNull Instant resolvedAt) {
-        int updated = repository.markResolved(eventId, EventStatus.FAILED, resolvedAt);
+        int updated = persistence.markResolved(eventId, EventStatus.FAILED, resolvedAt);
         if (updated == 0) {
             throw new EventNotFoundException(eventId);
         }

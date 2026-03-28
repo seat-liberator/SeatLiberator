@@ -9,11 +9,11 @@ import com.seatliberator.seatliberator.eventrelay.core.store.model.EventStatus;
 import com.seatliberator.seatliberator.eventrelay.support.jpa.EventAcceptor;
 import com.seatliberator.seatliberator.eventrelay.support.jpa.JpaEventStore;
 import com.seatliberator.seatliberator.eventrelay.support.jpa.JpaStoredEvent;
-import com.seatliberator.seatliberator.eventrelay.support.jpa.JpaStoredEventRepository;
+import com.seatliberator.seatliberator.eventrelay.support.jpa.JpaStoredEventPersistencePort;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.springframework.data.domain.Pageable;
 
 import java.time.Instant;
 import java.util.List;
@@ -25,13 +25,20 @@ import static org.mockito.Mockito.*;
 @DisplayName("Jpa Event Store")
 public class JpaEventStoreTest {
 
+    private JpaStoredEventPersistencePort persistence;
+
+    private EventAcceptor acceptor;
+
+    @BeforeEach
+    void run() {
+        persistence = mock(JpaStoredEventPersistencePort.class);
+        acceptor = mock(EventAcceptor.class);
+    }
+
     @Test
     @DisplayName("batchSize는 1보다 작을 수 없다")
     void batchSize_arg() {
-        JpaStoredEventRepository repository = mock(JpaStoredEventRepository.class);
-        EventAcceptor acceptor = mock(EventAcceptor.class);
-
-        assertThatThrownBy(() -> new JpaEventStore(repository, acceptor, 0))
+        assertThatThrownBy(() -> new JpaEventStore(persistence, acceptor, 0))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("batchSize");
     }
@@ -39,9 +46,7 @@ public class JpaEventStoreTest {
     @Test
     @DisplayName("accept는 acceptor에게 위임한다")
     void acceptor() {
-        JpaStoredEventRepository repository = mock(JpaStoredEventRepository.class);
-        EventAcceptor acceptor = mock(EventAcceptor.class);
-        JpaEventStore store = new JpaEventStore(repository, acceptor, 10);
+        JpaEventStore store = new JpaEventStore(persistence, acceptor, 10);
 
         EventEnvelope envelope = mock(EventEnvelope.class);
         Instant acceptedAt = Instant.parse("2026-03-26T10:00:00Z");
@@ -49,26 +54,24 @@ public class JpaEventStoreTest {
         store.accept(envelope, EventFlow.OUTBOUND, acceptedAt);
 
         verify(acceptor).accept(envelope, EventFlow.OUTBOUND, acceptedAt);
-        verifyNoInteractions(repository);
+        verifyNoInteractions(persistence);
     }
 
     @Test
     @DisplayName("claimBatch는 markProcessing에 성공한 이벤트만 반환한다")
     void claimBatch_return_markProcessing_success_only() {
-        JpaStoredEventRepository repository = mock(JpaStoredEventRepository.class);
-        EventAcceptor acceptor = mock(EventAcceptor.class);
-        JpaEventStore store = new JpaEventStore(repository, acceptor, 10);
+        JpaEventStore store = new JpaEventStore(persistence, acceptor, 10);
 
         JpaStoredEvent first = stored("e-1", EventStatus.PENDING);
         JpaStoredEvent second = stored("e-2", EventStatus.FAILED);
 
-        when(repository.claim(anyList(), eq(EventFlow.OUTBOUND), any(Pageable.class)))
+        when(persistence.claim(anyList(), eq(EventFlow.OUTBOUND), any(Integer.class)))
                 .thenReturn(List.of(first, second));
 
-        when(repository.markProcessing("e-1", Instant.parse("2026-03-26T10:05:00Z"))).thenReturn(1);
-        when(repository.markProcessing("e-2", Instant.parse("2026-03-26T10:05:00Z"))).thenReturn(0);
+        when(persistence.markProcessing("e-1", Instant.parse("2026-03-26T10:05:00Z"))).thenReturn(1);
+        when(persistence.markProcessing("e-2", Instant.parse("2026-03-26T10:05:00Z"))).thenReturn(0);
 
-        when(repository.findAllById(List.of("e-1"))).thenReturn(List.of(first));
+        when(persistence.findAllByIds(List.of("e-1"))).thenReturn(List.of(first));
 
         List<EventEnvelope> result = store.claimBatch(
                 EventFlow.OUTBOUND,
@@ -77,21 +80,19 @@ public class JpaEventStoreTest {
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).trace().eventId()).isEqualTo("e-1");
-        verify(repository).findAllById(List.of("e-1"));
+        verify(persistence).findAllByIds(List.of("e-1"));
     }
 
     @Test
     @DisplayName("claimBatch는 선점에 모두 실패하면 빈 리스트를 반환한다")
     void claimBatch_return_empty_list() {
-        JpaStoredEventRepository repository = mock(JpaStoredEventRepository.class);
-        EventAcceptor acceptor = mock(EventAcceptor.class);
-        JpaEventStore store = new JpaEventStore(repository, acceptor, 10);
+        JpaEventStore store = new JpaEventStore(persistence, acceptor, 10);
 
         JpaStoredEvent first = stored("e-1", EventStatus.PENDING);
 
-        when(repository.claim(anyList(), eq(EventFlow.OUTBOUND), any(Pageable.class)))
+        when(persistence.claim(anyList(), eq(EventFlow.OUTBOUND), any(Integer.class)))
                 .thenReturn(List.of(first));
-        when(repository.markProcessing(anyString(), any())).thenReturn(0);
+        when(persistence.markProcessing(anyString(), any())).thenReturn(0);
 
         List<EventEnvelope> result = store.claimBatch(
                 EventFlow.OUTBOUND,
@@ -99,53 +100,49 @@ public class JpaEventStoreTest {
         );
 
         assertThat(result).isEmpty();
-        verify(repository, never()).findAllById(any());
+        verify(persistence, never()).findAllByIds(any());
     }
 
     @Test
     @DisplayName("claimBatch는 batchSize로 첫 페이지를 조회한다")
     void claimBatch_find() {
-        JpaStoredEventRepository repository = mock(JpaStoredEventRepository.class);
-        EventAcceptor acceptor = mock(EventAcceptor.class);
-        JpaEventStore store = new JpaEventStore(repository, acceptor, 7);
+        int batchSize = 7;
+        JpaEventStore store = new JpaEventStore(persistence, acceptor, batchSize);
 
-        when(repository.claim(anyList(), eq(EventFlow.INBOUND), any(Pageable.class)))
+        when(persistence.claim(anyList(), eq(EventFlow.INBOUND), any(Integer.class)))
                 .thenReturn(List.of());
 
         store.claimBatch(EventFlow.INBOUND, Instant.parse("2026-03-26T10:05:00Z"));
 
-        ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
-        verify(repository).claim(anyList(), eq(EventFlow.INBOUND), pageableCaptor.capture());
+        ArgumentCaptor<Integer> batchSizeCaptor = ArgumentCaptor.forClass(Integer.class);
+        verify(persistence).claim(anyList(), eq(EventFlow.INBOUND), batchSizeCaptor.capture());
 
-        Pageable pageable = pageableCaptor.getValue();
-        assertThat(pageable.getPageNumber()).isZero();
-        assertThat(pageable.getPageSize()).isEqualTo(7);
+        Integer batchSizeCaptorValue = batchSizeCaptor.getValue();
+        assertThat(batchSizeCaptorValue).isEqualTo(7);
     }
 
     @Test
     @DisplayName("reportCompleted는 COMPLETED로 markResolved를 호출한다")
     void reportCompleted() {
-        JpaStoredEventRepository repository = mock(JpaStoredEventRepository.class);
-        EventAcceptor acceptor = mock(EventAcceptor.class);
-        JpaEventStore store = new JpaEventStore(repository, acceptor, 10);
+        JpaEventStore store = new JpaEventStore(persistence, acceptor, 10);
 
         Instant resolvedAt = Instant.parse("2026-03-26T10:10:00Z");
+        when(persistence.markResolved("e-1", EventStatus.COMPLETED, resolvedAt)).thenReturn(1);
         store.reportCompleted("e-1", resolvedAt);
 
-        verify(repository).markResolved("e-1", EventStatus.COMPLETED, resolvedAt);
+        verify(persistence).markResolved("e-1", EventStatus.COMPLETED, resolvedAt);
     }
 
     @Test
     @DisplayName("reportFailed는 FAILED로 markResolved를 호출한다")
     void reportFailed() {
-        JpaStoredEventRepository repository = mock(JpaStoredEventRepository.class);
-        EventAcceptor acceptor = mock(EventAcceptor.class);
-        JpaEventStore store = new JpaEventStore(repository, acceptor, 10);
+        JpaEventStore store = new JpaEventStore(persistence, acceptor, 10);
 
         Instant resolvedAt = Instant.parse("2026-03-26T10:11:00Z");
+        when(persistence.markResolved("e-2", EventStatus.FAILED, resolvedAt)).thenReturn(1);
         store.reportFailed("e-2", resolvedAt);
 
-        verify(repository).markResolved("e-2", EventStatus.FAILED, resolvedAt);
+        verify(persistence).markResolved("e-2", EventStatus.FAILED, resolvedAt);
     }
 
     private JpaStoredEvent stored(String eventId, EventStatus status) {

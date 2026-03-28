@@ -36,6 +36,7 @@ public class JpaPostgresqlEventAcceptor implements EventAcceptor {
                     aggregate_id,
                     created_at,
                     raw_payload,
+                    flow,
                     accepted_at,
                     status,
                     started_at,
@@ -52,6 +53,7 @@ public class JpaPostgresqlEventAcceptor implements EventAcceptor {
                     :aggregateId,
                     :createdAt,
                     :rawPayload,
+                    :flow,
                     :acceptedAt,
                     :status,
                     :startedAt,
@@ -70,6 +72,7 @@ public class JpaPostgresqlEventAcceptor implements EventAcceptor {
         query.setParameter("aggregateId", aggregateId);
         query.setParameter("createdAt", e.trace().createdAt());
         query.setParameter("rawPayload", e.rawPayload());
+        query.setParameter("flow", e.flow().name());
         query.setParameter("acceptedAt", e.acceptedAt());
         query.setParameter("status", e.status().name());
         query.setParameter("startedAt", e.startedAt());

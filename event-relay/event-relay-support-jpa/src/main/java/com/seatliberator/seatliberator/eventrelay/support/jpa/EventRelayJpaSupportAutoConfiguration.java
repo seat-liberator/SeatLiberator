@@ -21,21 +21,26 @@ import org.springframework.data.jpa.repository.JpaRepository;
 @ConditionalOnClass({EntityManager.class, JpaRepository.class})
 @EnableConfigurationProperties(EventStoreConfigurationProperties.class)
 public class EventRelayJpaSupportAutoConfiguration {
-
     @Bean
     @ConditionalOnMissingBean(EventStore.class)
     EventStore eventStore(
-            JpaStoredEventRepository jpaStoredEventRepository,
+            JpaStoredEventPersistencePort jpaStoredEventPersistencePort,
             EventAcceptor eventAcceptor,
             EventStoreConfigurationProperties properties
     ) {
-        return new JpaEventStore(jpaStoredEventRepository, eventAcceptor, properties.batchSize());
+        return new JpaEventStore(jpaStoredEventPersistencePort, eventAcceptor, properties.batchSize());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(JpaStoredEventPersistencePort.class)
+    JpaStoredEventPersistence jpaStoredEventPersistence(EntityManager entityManager) {
+        return new JpaStoredEventPersistence(entityManager);
     }
 
     @Bean
     @Qualifier("postgres")
     @ConditionalOnMissingBean(EventAcceptor.class)
-    EventAcceptor eventAcceptor(EntityManager entityManager) {
+    JpaPostgresqlEventAcceptor eventAcceptor(EntityManager entityManager) {
         return new JpaPostgresqlEventAcceptor(entityManager);
     }
 }
