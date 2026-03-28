@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation(project(":kernel"))
+    implementation(project(":identity:identity-api"))
     implementation(project(":identity:identity-core"))
 
     // Web
