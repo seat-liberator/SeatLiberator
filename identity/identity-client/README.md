@@ -228,3 +228,10 @@ public class SensitiveActionAuthorizer {
 - introspection을 별도로 활성화하지 않으면 `identity-core`의 기본 `DenyAllIntrospector`가 사용됩니다.
 - `identity-client`는 `JwtDecoder`까지만 자동 구성합니다. Spring Security `SecurityFilterChain` 및 `jwtAuthenticationConverter` 구성은
   소비자 서비스가 직접 결정합니다.
+
+## 7. NamespaceRole 기반 capability 확장
+
+`namespace:ROLE` 스코프를 소비자 서비스의 capability authority로 확장하려면 별도 서비스 설정이 필요합니다.
+
+- 적용 가이드: [docs/NAMESPACE_ROLE_CAPABILITY_EXPANSION_GUIDE.md](docs/NAMESPACE_ROLE_CAPABILITY_EXPANSION_GUIDE.md)
+- 핵심 작업: `NamespaceProvider` 등록, `RoleCapabilities` 매핑 등록, `ActorContextJwtAuthenticationConverter` 연결
