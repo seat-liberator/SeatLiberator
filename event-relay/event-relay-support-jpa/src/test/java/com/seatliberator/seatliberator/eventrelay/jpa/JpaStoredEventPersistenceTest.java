@@ -5,21 +5,23 @@ import com.seatliberator.seatliberator.eventrelay.core.model.EventTrace;
 import com.seatliberator.seatliberator.eventrelay.core.model.ImmutableEventType;
 import com.seatliberator.seatliberator.eventrelay.core.relay.EventFlow;
 import com.seatliberator.seatliberator.eventrelay.core.store.model.EventStatus;
+import com.seatliberator.seatliberator.eventrelay.support.jpa.JpaPostgresqlEventAcceptor;
 import com.seatliberator.seatliberator.eventrelay.support.jpa.JpaStoredEvent;
-import com.seatliberator.seatliberator.eventrelay.support.jpa.JpaStoredEventRepository;
+import com.seatliberator.seatliberator.eventrelay.support.jpa.JpaStoredEventPersistencePort;
+import com.seatliberator.seatliberator.eventrelay.test.EventFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
 
@@ -29,18 +31,16 @@ import static org.mockito.Mockito.when;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(TestApplication.class)
+@Import({TestApplication.class, TestConfig.class})
 @Testcontainers
-@DisplayName("Jpa Stored Event Repository")
-public class JpaStoredEventRepositoryTest {
+@DisplayName("Jpa Stored Event Persistence")
+public class JpaStoredEventPersistenceTest {
 
     @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:18-alpine")
             .withDatabaseName("event-relay-jpa-test")
             .withUsername("test")
             .withPassword("test");
-    @Autowired
-    private JpaStoredEventRepository repository;
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
@@ -52,36 +52,53 @@ public class JpaStoredEventRepositoryTest {
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
     }
 
-    @Test
-    @DisplayName("claim은 flow와 status로 필터링하고 acceptedAt 오름차순으로 가져온다")
-    void claim_filters_and_orders() {
-        repository.saveAndFlush(stored("e-3", EventFlow.OUTBOUND, EventStatus.FAILED, Instant.parse("2026-03-26T10:03:00Z")));
-        repository.saveAndFlush(stored("e-1", EventFlow.OUTBOUND, EventStatus.PENDING, Instant.parse("2026-03-26T10:01:00Z")));
-        repository.saveAndFlush(stored("e-2", EventFlow.OUTBOUND, EventStatus.PENDING, Instant.parse("2026-03-26T10:02:00Z")));
-        repository.saveAndFlush(stored("e-4", EventFlow.INBOUND, EventStatus.PENDING, Instant.parse("2026-03-26T10:00:00Z")));
-        repository.saveAndFlush(stored("e-5", EventFlow.OUTBOUND, EventStatus.PROCESSING, Instant.parse("2026-03-26T10:00:30Z")));
+    @Autowired
+    private JpaStoredEventPersistencePort persistence;
 
-        List<JpaStoredEvent> result = repository.claim(
+    @Autowired
+    private JpaPostgresqlEventAcceptor acceptor;
+
+    private final Clock clock = EventFixture.createFixedClock();
+
+    @Test
+    @DisplayName("claim은 flow와 status로 필터링하고 createdAt 오름차순으로 가져온다")
+    void claim_filters_and_orders() {
+        var envelope1 = EventFixture.createEnvelope(EventFixture.createFixedClock(Instant.parse("2026-03-26T00:00:05Z")));
+        var envelope2 = EventFixture.createEnvelope(EventFixture.createFixedClock(Instant.parse("2026-03-26T00:00:01Z")));
+        var envelope3 = EventFixture.createEnvelope(EventFixture.createFixedClock(Instant.parse("2026-03-26T00:00:04Z")));
+        var envelope4 = EventFixture.createEnvelope(EventFixture.createFixedClock(Instant.parse("2026-03-26T00:00:03Z")));
+
+        acceptor.accept(envelope1, EventFlow.OUTBOUND, Instant.parse("2026-03-26T00:00:02Z"));
+        acceptor.accept(envelope2, EventFlow.INBOUND, Instant.parse("2026-03-26T00:00:01Z"));
+        acceptor.accept(envelope3, EventFlow.OUTBOUND, Instant.parse("2026-03-26T00:00:03Z"));
+        acceptor.accept(envelope4, EventFlow.OUTBOUND, Instant.parse("2026-03-26T00:00:05Z"));
+
+        List<JpaStoredEvent> result = persistence.claim(
                 List.of(EventStatus.PENDING, EventStatus.FAILED),
                 EventFlow.OUTBOUND,
-                PageRequest.of(0, 2)
+                2
         );
 
         assertThat(result).extracting(JpaStoredEvent::getId)
-                .containsExactly("e-1", "e-2");
+                .containsExactly(
+                        envelope4.trace().eventId(),
+                        envelope3.trace().eventId()
+                );
     }
 
     @Test
     @DisplayName("markProcessing은 PENDING 상태를 PROCESSING으로 바꾼다")
     void markProcessing_from_pending() {
-        Instant acceptedAt = Instant.parse("2026-03-26T10:00:00Z");
-        Instant startedAt = Instant.parse("2026-03-26T10:05:00Z");
+        Instant acceptedAt = clock.instant();
+        Instant startedAt = acceptedAt.plusSeconds(5);
 
-        repository.saveAndFlush(stored("e-1", EventFlow.OUTBOUND, EventStatus.PENDING, acceptedAt));
+        var envelope = EventFixture.createEnvelope(clock);
+        var eventId = envelope.trace().eventId();
+        acceptor.accept(envelope, EventFlow.OUTBOUND, acceptedAt);
 
-        int updated = repository.markProcessing("e-1", startedAt);
+        int updated = persistence.markProcessing(eventId, startedAt);
 
-        JpaStoredEvent reloaded = repository.findById("e-1").orElseThrow();
+        JpaStoredEvent reloaded = persistence.findAllByIds(List.of(eventId)).getFirst();
         assertThat(updated).isEqualTo(1);
         assertThat(reloaded.startedAt()).isEqualTo(startedAt);
         assertThat(reloaded.status()).isEqualTo(EventStatus.PROCESSING);
@@ -90,67 +107,61 @@ public class JpaStoredEventRepositoryTest {
     @Test
     @DisplayName("markProcessing은 FAILED 상태도 다시 PROCESSING으로 바꾼다")
     void markProcessing_from_failed() {
-        Instant acceptedAt = Instant.parse("2026-03-26T10:00:00Z");
-        Instant startedAt = Instant.parse("2026-03-26T10:05:00Z");
+        Instant acceptedAt = clock.instant();
+        Instant firstStartedAt = acceptedAt.plusSeconds(5);
+        Instant failedAt = firstStartedAt.plusSeconds(5);
+        Instant retriedAt = failedAt.plusSeconds(5);
 
-        repository.saveAndFlush(stored("e-2", EventFlow.OUTBOUND, EventStatus.FAILED, acceptedAt));
+        var envelope = EventFixture.createEnvelope(clock);
+        var eventId = envelope.trace().eventId();
+        acceptor.accept(envelope, EventFlow.OUTBOUND, acceptedAt);
+        persistence.markProcessing(eventId, firstStartedAt);
+        persistence.markResolved(eventId, EventStatus.FAILED, failedAt);
 
-        int updated = repository.markProcessing("e-2", startedAt);
+        int updated = persistence.markProcessing(eventId, retriedAt);
 
-        JpaStoredEvent reloaded = repository.findById("e-2").orElseThrow();
+        JpaStoredEvent reloaded = persistence.findAllByIds(List.of(eventId)).getFirst();
         assertThat(updated).isEqualTo(1);
         assertThat(reloaded.status()).isEqualTo(EventStatus.PROCESSING);
-        assertThat(reloaded.startedAt()).isEqualTo(startedAt);
+        assertThat(reloaded.startedAt()).isEqualTo(retriedAt);
     }
 
     @Test
     @DisplayName("markProcessing은 이미 PROCESSING이면 아무것도 하지 않는다")
     void markProcessing_when_already_processing() {
-        Instant acceptedAt = Instant.parse("2026-03-26T10:00:00Z");
+        Instant acceptedAt = clock.instant();
+        Instant startedAt = acceptedAt.plusSeconds(5);
 
-        repository.saveAndFlush(
-                JpaStoredEvent.from(
-                        mockHeader("seat.reserved"),
-                        mockTrace("e-3", Instant.parse("2026-03-26T09:59:00Z")),
-                        "{\"seatId\":\"A-1\"}",
-                        EventFlow.OUTBOUND,
-                        EventStatus.PROCESSING,
-                        acceptedAt,
-                        Instant.parse("2026-03-26T10:01:00Z"),
-                        null
-                )
-        );
+        var envelope = EventFixture.createEnvelope(clock);
+        var eventId = envelope.trace().eventId();
+        acceptor.accept(envelope, EventFlow.OUTBOUND, acceptedAt);
 
-        int updated = repository.markProcessing("e-3", Instant.parse("2026-03-26T10:05:00Z"));
+        persistence.markProcessing(eventId, startedAt);
 
-        JpaStoredEvent reloaded = repository.findById("e-3").orElseThrow();
+        int updated = persistence.markProcessing(eventId, startedAt.plusSeconds(1));
+
+        JpaStoredEvent reloaded = persistence.findAllByIds(List.of(eventId)).getFirst();
         assertThat(updated).isZero();
         assertThat(reloaded.status()).isEqualTo(EventStatus.PROCESSING);
-        assertThat(reloaded.startedAt()).isEqualTo(Instant.parse("2026-03-26T10:01:00Z"));
+        assertThat(reloaded.startedAt()).isEqualTo(startedAt);
     }
 
     @Test
     @DisplayName("markResolved는 PROCESSING 상태를 COMPLETED로 바꾼다")
     void markResolved_to_completed() {
-        Instant acceptedAt = Instant.parse("2026-03-26T10:00:00Z");
+        Instant acceptedAt = clock.instant();
+        Instant startedAt = acceptedAt.plusSeconds(5);
+        Instant resolvedAt = startedAt.plusSeconds(5);
 
-        repository.saveAndFlush(
-                JpaStoredEvent.from(
-                        mockHeader("seat.reserved"),
-                        mockTrace("e-4", Instant.parse("2026-03-26T09:59:00Z")),
-                        "{\"seatId\":\"A-1\"}",
-                        EventFlow.OUTBOUND,
-                        EventStatus.PROCESSING,
-                        acceptedAt,
-                        Instant.parse("2026-03-26T10:01:00Z"),
-                        null
-                )
-        );
+        var envelope = EventFixture.createEnvelope(clock);
+        var eventId = envelope.trace().eventId();
+        acceptor.accept(envelope, EventFlow.OUTBOUND, acceptedAt);
 
-        Instant resolvedAt = Instant.parse("2026-03-26T10:07:00Z");
-        int updated = repository.markResolved("e-4", EventStatus.COMPLETED, resolvedAt);
+        persistence.markProcessing(eventId, startedAt);
 
-        JpaStoredEvent reloaded = repository.findById("e-4").orElseThrow();
+        int updated = persistence.markResolved(eventId, EventStatus.COMPLETED, resolvedAt);
+
+        JpaStoredEvent reloaded = persistence.findAllByIds(List.of(eventId)).getFirst();
         assertThat(updated).isEqualTo(1);
         assertThat(reloaded.status()).isEqualTo(EventStatus.COMPLETED);
         assertThat(reloaded.resolvedAt()).isEqualTo(resolvedAt);
@@ -159,15 +170,18 @@ public class JpaStoredEventRepositoryTest {
     @Test
     @DisplayName("markResolved는 PROCESSING 상태가 아니면 아무것도 하지 않는다")
     void markResolved_only_from_processing() {
-        repository.saveAndFlush(stored("e-5", EventFlow.OUTBOUND, EventStatus.PENDING, Instant.parse("2026-03-26T10:00:00Z")));
+        Instant acceptedAt = clock.instant();
+        Instant startedAt = acceptedAt.plusSeconds(5);
+        Instant resolvedAt = startedAt.plusSeconds(5);
 
-        int updated = repository.markResolved(
-                "e-5",
-                EventStatus.FAILED,
-                Instant.parse("2026-03-26T10:09:00Z")
-        );
+        var envelope = EventFixture.createEnvelope(clock);
+        var eventId = envelope.trace().eventId();
 
-        JpaStoredEvent reloaded = repository.findById("e-5").orElseThrow();
+        acceptor.accept(envelope, EventFlow.OUTBOUND, acceptedAt);
+
+        int updated = persistence.markResolved(eventId, EventStatus.COMPLETED, resolvedAt);
+
+        JpaStoredEvent reloaded = persistence.findAllByIds(List.of(eventId)).getFirst();
         assertThat(updated).isZero();
         assertThat(reloaded.status()).isEqualTo(EventStatus.PENDING);
         assertThat(reloaded.resolvedAt()).isNull();
