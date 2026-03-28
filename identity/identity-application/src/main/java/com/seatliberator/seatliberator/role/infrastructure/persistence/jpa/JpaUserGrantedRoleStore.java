@@ -19,6 +19,11 @@ public class JpaUserGrantedRoleStore implements UserGrantedRoleStore {
     }
 
     @Override
+    public List<UserGrantedRole> saveAll(List<UserGrantedRole> userGrantedRoles) {
+        return repository.saveAll(userGrantedRoles);
+    }
+
+    @Override
     public List<UserGrantedRole> findByUserId(String userId) {
         return repository.findByUserId(userId);
     }
