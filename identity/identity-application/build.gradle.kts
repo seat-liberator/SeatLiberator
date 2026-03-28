@@ -14,6 +14,9 @@ dependencies {
     implementation(project(":identity:identity-api"))
     implementation(project(":identity:identity-core"))
 
+    // Authorization Registration
+    implementation(project(":reservation:reservation-authorization-registration"))
+
     // Web
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
 
