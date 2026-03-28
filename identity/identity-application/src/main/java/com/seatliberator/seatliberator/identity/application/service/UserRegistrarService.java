@@ -12,6 +12,7 @@ import com.seatliberator.seatliberator.identity.application.port.out.UserStore;
 import com.seatliberator.seatliberator.identity.domain.CredentialAccount;
 import com.seatliberator.seatliberator.identity.domain.FederatedAccount;
 import com.seatliberator.seatliberator.identity.domain.User;
+import com.seatliberator.seatliberator.role.application.port.in.RoleGrantor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +26,8 @@ public class UserRegistrarService implements UserRegistrar {
     private final FederatedAccountStore federatedAccountStore;
     private final UserStore userStore;
 
+    private final BootstrapDefaultGrantRegistry bootstrapDefaultGrantRegistry;
+    private final RoleGrantor roleGrantor;
     private final AuthEntryFactory authEntryFactory;
     private final PasswordEncoder passwordEncoder;
 
@@ -82,6 +85,10 @@ public class UserRegistrarService implements UserRegistrar {
                 savedUser.getId(),
                 savedUser.getNickname()
         );
+
+
+        var defaultRoles = bootstrapDefaultGrantRegistry.getDefaultNamespaceRole();
+        roleGrantor.grantAll(savedUser.getId().toString(), defaultRoles);
 
         return authEntryFactory.create(savedUser.getId(), savedUser.getNickname());
     }
@@ -143,6 +150,9 @@ public class UserRegistrarService implements UserRegistrar {
                 savedUser.getId(),
                 savedUser.getNickname()
         );
+
+        var defaultRoles = bootstrapDefaultGrantRegistry.getDefaultNamespaceRole();
+        roleGrantor.grantAll(savedUser.getId().toString(), defaultRoles);
 
         return authEntryFactory.create(savedUser.getId(), savedUser.getNickname());
     }
