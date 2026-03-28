@@ -2,9 +2,7 @@ package com.seatliberator.seatliberator.identity.core;
 
 import com.seatliberator.seatliberator.identity.core.introspection.IntrospectionFactory;
 import com.seatliberator.seatliberator.identity.core.introspection.SimpleIntrospectionFactory;
-import com.seatliberator.seatliberator.identity.core.role.IdentityRoleConfigurationProperties;
-import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleFormatter;
-import com.seatliberator.seatliberator.identity.core.role.SeparatorNamespaceRoleFormatter;
+import com.seatliberator.seatliberator.identity.core.role.*;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,5 +23,13 @@ public class IdentityCoreAutoConfiguration {
             IdentityRoleConfigurationProperties properties
     ) {
         return new SeparatorNamespaceRoleFormatter(properties.separator());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(NamespaceRoleDeserializer.class)
+    SeparatorNamespaceRoleDeserializer separatorNamespaceRoleDeserializer(
+            IdentityRoleConfigurationProperties properties
+    ) {
+        return new SeparatorNamespaceRoleDeserializer(properties.separator());
     }
 }
