@@ -1,6 +1,8 @@
 rootProject.name = "seatliberator"
 
 include("board")
+include("board:board-authorization-registration")
+
 include("reservation")
 include("reservation:reservation-authorization-registration")
 
