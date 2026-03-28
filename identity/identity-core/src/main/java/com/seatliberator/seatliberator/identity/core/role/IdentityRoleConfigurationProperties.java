@@ -1,14 +1,14 @@
-package com.seatliberator.seatliberator.role.application.config;
+package com.seatliberator.seatliberator.identity.core.role;
 
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "identity.role")
-public record IdentityRoleApplicationConfigurationProperties(
+public record IdentityRoleConfigurationProperties(
         @NotBlank String separator
 ) {
-    public IdentityRoleApplicationConfigurationProperties(@DefaultValue(":") String separator) {
+    public IdentityRoleConfigurationProperties(@DefaultValue(":") String separator) {
         this.separator = separator;
     }
 }

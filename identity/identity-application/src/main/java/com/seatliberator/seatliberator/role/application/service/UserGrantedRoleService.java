@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.role.application.service;
 
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
-import com.seatliberator.seatliberator.role.application.formatter.NamespaceRoleFormatter;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleFormatter;
 import com.seatliberator.seatliberator.role.application.port.in.*;
 import com.seatliberator.seatliberator.role.application.port.out.UserGrantedRoleStore;
 import com.seatliberator.seatliberator.role.domain.UserGrantedRole;
