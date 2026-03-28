@@ -1,6 +1,8 @@
 package com.seatliberator.seatliberator.board.infrastructure.security;
 
 import com.seatliberator.seatliberator.identity.client.jwt.ActorContextJwtAuthenticationConverter;
+import com.seatliberator.seatliberator.identity.client.role.NamespaceRoleCapabilitiesRegistry;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -13,16 +15,20 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.http.HttpMethod;
 
-import static com.seatliberator.seatliberator.board.infrastructure.security.BoardAuthorities.CATEGORY_MANAGE;
-import static com.seatliberator.seatliberator.board.infrastructure.security.BoardAuthorities.POST_CREATE;
+import static com.seatliberator.seatliberator.board.infrastructure.security.BoardCapability.CATEGORY_MANAGE;
+import static com.seatliberator.seatliberator.board.infrastructure.security.BoardCapability.POST_CREATE;
+
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
 
     @Bean
-    Converter<Jwt, ? extends AbstractAuthenticationToken> jwtAuthenticationConverter() {
-        return new ActorContextJwtAuthenticationConverter();
+    Converter<Jwt, ? extends AbstractAuthenticationToken> jwtAuthenticationConverter(
+            NamespaceRoleDeserializer namespaceRoleDeserializer,
+            NamespaceRoleCapabilitiesRegistry namespaceRoleCapabilitiesRegistry
+    ) {
+        return new ActorContextJwtAuthenticationConverter(namespaceRoleDeserializer, namespaceRoleCapabilitiesRegistry);
     }
 
     @Bean
@@ -34,10 +40,10 @@ public class SecurityConfiguration {
         http
                 .csrf(CsrfConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/board/*/categories").hasAuthority(CATEGORY_MANAGE)
-                        .requestMatchers(HttpMethod.PATCH, "/board/*/categories/*").hasAuthority(CATEGORY_MANAGE)
-                        .requestMatchers(HttpMethod.DELETE, "/board/*/categories/*").hasAuthority(CATEGORY_MANAGE)
-                        .requestMatchers(HttpMethod.POST, "/board/*/posts").hasAuthority(POST_CREATE)
+                        .requestMatchers(HttpMethod.POST, "/board/*/categories").hasAuthority(CATEGORY_MANAGE.scope())
+                        .requestMatchers(HttpMethod.PATCH, "/board/*/categories/*").hasAuthority(CATEGORY_MANAGE.scope())
+                        .requestMatchers(HttpMethod.DELETE, "/board/*/categories/*").hasAuthority(CATEGORY_MANAGE.scope())
+                        .requestMatchers(HttpMethod.POST, "/board/*/posts").hasAuthority(POST_CREATE.scope())
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
