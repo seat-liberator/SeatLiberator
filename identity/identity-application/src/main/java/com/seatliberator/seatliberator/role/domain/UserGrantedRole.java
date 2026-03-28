@@ -47,6 +47,13 @@ public class UserGrantedRole implements NamespaceRole {
         return new UserGrantedRole(userId, namespace, role);
     }
 
+    public static UserGrantedRole from(
+            String userId,
+            NamespaceRole namespaceRole
+    ) {
+        return new UserGrantedRole(userId, namespaceRole.namespace(), namespaceRole.role());
+    }
+
     public static UserGrantedRole copyOf(String userId, NamespaceRole namespaceRole) {
         return new UserGrantedRole(userId, namespaceRole.namespace(), namespaceRole.role());
     }

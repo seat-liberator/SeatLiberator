@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.role.application.service;
 
-import com.seatliberator.seatliberator.identity.core.role.Role;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
 import com.seatliberator.seatliberator.role.application.formatter.NamespaceRoleFormatter;
 import com.seatliberator.seatliberator.role.application.port.in.*;
 import com.seatliberator.seatliberator.role.application.port.out.UserGrantedRoleStore;
@@ -19,8 +19,19 @@ public class UserGrantedRoleService implements RoleGrantor, RoleReader, RoleRevo
     private final NamespaceRoleFormatter formatter;
 
     @Override
-    public UserGrantedRoleEntry grant(String userId, String namespace, Role role) {
-        var grant = UserGrantedRole.from(userId, namespace, role);
+    public List<UserGrantedRoleEntry> grantAll(String userId, List<NamespaceRole> namespaceRoles) {
+        var grants = namespaceRoles.stream()
+                .map(e -> UserGrantedRole.from(userId, e))
+                .toList();
+
+        var saved = userGrantedRoleStore.saveAll(grants);
+
+        return saved.stream().map(UserGrantedRoleEntry::from).toList();
+    }
+
+    @Override
+    public UserGrantedRoleEntry grant(String userId, NamespaceRole namespaceRole) {
+        var grant = UserGrantedRole.from(userId, namespaceRole);
         var saved = userGrantedRoleStore.save(grant);
         return UserGrantedRoleEntry.from(saved);
     }
