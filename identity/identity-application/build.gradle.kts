@@ -28,9 +28,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-security")
 
-    // Validation
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-
     // Lombok
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("org.postgresql:postgresql")

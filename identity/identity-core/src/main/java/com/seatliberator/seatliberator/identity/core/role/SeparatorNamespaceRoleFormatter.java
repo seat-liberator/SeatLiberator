@@ -1,6 +1,4 @@
-package com.seatliberator.seatliberator.role.application.formatter;
-
-import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
+package com.seatliberator.seatliberator.identity.core.role;
 
 public class SeparatorNamespaceRoleFormatter implements NamespaceRoleFormatter {
     private final String separator;
