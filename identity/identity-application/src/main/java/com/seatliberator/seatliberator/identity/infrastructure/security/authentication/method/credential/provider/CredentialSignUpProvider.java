@@ -17,7 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -77,10 +77,15 @@ public class CredentialSignUpProvider implements AuthenticationProvider {
                 authEntry.userId()
         );
 
+        var authorities = trustedUserPrincipal.scopes().stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toUnmodifiableSet());
+
         var trustedAuthentication = new TrustedAuthenticationToken(
                 trustedUserPrincipal,
-                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                authorities
         );
+
         log.debug(
                 "Credential sign-up trusted authentication token created. email={}, userId={}",
                 email,
