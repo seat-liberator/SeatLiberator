@@ -1,5 +1,7 @@
 package com.seatliberator.seatliberator.identity.core.role;
 
+import com.seatliberator.seatliberator.kernel.SimpleApplicationNamespace;
+
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -18,8 +20,9 @@ public class SeparatorNamespaceRoleDeserializer implements NamespaceRoleDeserial
         }
 
         try {
+            var namespace = SimpleApplicationNamespace.of(parts[0]);
             var role = Role.valueOf(parts[1]);
-            return Optional.of(SimpleNamespaceRole.from(parts[0], role));
+            return Optional.of(SimpleNamespaceRole.from(namespace, role));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }

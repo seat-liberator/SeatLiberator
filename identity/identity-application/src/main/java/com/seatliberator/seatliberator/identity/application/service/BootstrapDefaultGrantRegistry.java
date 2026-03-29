@@ -3,7 +3,8 @@ package com.seatliberator.seatliberator.identity.application.service;
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
 import com.seatliberator.seatliberator.identity.core.role.Role;
 import com.seatliberator.seatliberator.identity.core.role.SimpleNamespaceRole;
-import com.seatliberator.seatliberator.role.api.DefaultNamespaceRoleGrant;
+import com.seatliberator.seatliberator.kernel.ApplicationNamespace;
+import com.seatliberator.seatliberator.kernel.SimpleApplicationNamespace;
 import com.seatliberator.seatliberator.role.api.DefaultNamespaceRoleGrantProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class BootstrapDefaultGrantRegistry {
-    private final Map<String, NamespaceRole> grants;
+    private final Map<SimpleApplicationNamespace, NamespaceRole> grants;
 
     public BootstrapDefaultGrantRegistry() {
         this.grants = ServiceLoader.load(DefaultNamespaceRoleGrantProvider.class)
@@ -25,7 +26,7 @@ public class BootstrapDefaultGrantRegistry {
                 .map(ServiceLoader.Provider::get)
                 .flatMap(provider -> provider.grants().stream())
                 .collect(Collectors.toUnmodifiableMap(
-                        DefaultNamespaceRoleGrant::namespace,
+                        e -> SimpleApplicationNamespace.from(e.namespace()),
                         Function.identity()
                 ));
     }
@@ -34,7 +35,10 @@ public class BootstrapDefaultGrantRegistry {
         return List.copyOf(grants.values());
     }
 
-    public NamespaceRole getDefaultRole(String namespace) {
-        return grants.getOrDefault(namespace, SimpleNamespaceRole.from(namespace, Role.GUEST));
+    public NamespaceRole getDefaultRole(ApplicationNamespace namespace) {
+        return grants.getOrDefault(
+                SimpleApplicationNamespace.from(namespace),
+                SimpleNamespaceRole.from(namespace, Role.GUEST)
+        );
     }
 }

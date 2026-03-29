@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.identity.client.role;
 
+import com.seatliberator.seatliberator.kernel.CurrentApplicationNamespaceProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
 import java.util.List;
@@ -10,16 +10,10 @@ import java.util.List;
 public class IdentityClientNamespaceRoleAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(NamespaceProvider.class)
-    NamespaceProvider namespaceProvider() {
-        return new NamespaceProvider("unknown-namespace");
-    }
-
-    @Bean
     NamespaceRoleCapabilitiesRegistry namespaceRoleCapabilitiesRegistry(
-            NamespaceProvider namespaceProvider,
+            CurrentApplicationNamespaceProvider namespaceProvider,
             List<RoleCapabilities> roleCapabilities
     ) {
-        return new NamespaceRoleCapabilitiesRegistry(namespaceProvider.namespace(), roleCapabilities);
+        return new NamespaceRoleCapabilitiesRegistry(namespaceProvider.current(), roleCapabilities);
     }
 }
