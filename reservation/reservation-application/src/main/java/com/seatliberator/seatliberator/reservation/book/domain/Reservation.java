@@ -64,7 +64,7 @@ public class Reservation {
         this.endTime = endTime;
     }
 
-    public void markUsed() {
+    public void markUsed(Instant usedAt) {
         if (this.status == ReservationStatus.USED) {
             throw new IllegalStateException("이미 사용된 예약입니다.");
         }
@@ -73,7 +73,7 @@ public class Reservation {
             throw new IllegalStateException("만료된 예약입니다.");
         }
 
-        if (!Instant.now().isBefore(this.endTime)) {
+        if (!usedAt.isBefore(this.endTime)) {
             this.status = ReservationStatus.EXPIRED;
             throw new IllegalStateException("만료된 예약입니다.");
         }

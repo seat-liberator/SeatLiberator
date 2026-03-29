@@ -66,7 +66,7 @@ public class VacancyAlertRequest {
             throw new IllegalArgumentException("targetStartTime is must be before targetEndTime");
         }
 
-        if (targetStartTime.isBefore(Instant.now())) {
+        if (targetStartTime.isBefore(requestedAt)) {
             throw new IllegalArgumentException("targetStartTime must be future");
         }
         var v = new VacancyAlertRequest();
