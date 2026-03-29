@@ -16,7 +16,7 @@ dependencies {
 
     // Authorization Registration
     implementation(project(":reservation:reservation-authorization-registration"))
-    implementation(project(":board:board-authorization-registration"))
+    implementation(project(":board:board-api"))
 
     // Web
     implementation("org.springframework.boot:spring-boot-starter-webmvc")

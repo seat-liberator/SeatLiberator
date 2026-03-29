@@ -10,6 +10,9 @@ repositories {
 }
 
 dependencies {
+    // API
+    implementation(project(":board:board-api"))
+
     // Identity
     implementation(project(":identity:identity-client"))
 
