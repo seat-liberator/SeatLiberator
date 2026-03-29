@@ -1,18 +1,20 @@
 rootProject.name = "seatliberator"
 
-include("board")
 include("board:board-api")
+include("board")
 
-include("reservation")
 include("reservation:reservation-api")
+include("reservation:reservation-application")
 
-include("identity:identity-api")
 include("identity:identity-core")
-include("identity:identity-application")
 include("identity:identity-client")
+include("identity:identity-api")
+include("identity:identity-application")
 
 include("kernel")
+
 include("idempotency:idempotency-core")
+
 include("event-relay:event-relay-core")
 include("event-relay:event-relay-test")
 include("event-relay:event-relay-support-jpa")
