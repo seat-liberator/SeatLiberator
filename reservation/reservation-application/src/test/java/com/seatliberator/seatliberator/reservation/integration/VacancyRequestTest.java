@@ -10,9 +10,6 @@ import com.seatliberator.seatliberator.reservation.vacancy.domain.VacancyAlertSt
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -20,11 +17,10 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Transactional
+@TransactionalReservationIntegrationTest
 @DisplayName("Integration: Vacancy Alert")
 public class VacancyRequestTest {
+    private static final Instant BASE_TIME = Instant.parse("2026-01-01T00:00:00Z");
 
     @Autowired
     VacancyAlertRequester requester;
@@ -44,7 +40,7 @@ public class VacancyRequestTest {
         var roomId = "room-1";
         var seatId = "seat-1";
 
-        var now = Instant.now();
+        var now = BASE_TIME;
         var startTime = now.plusSeconds(60);
         var endTime = now.plusSeconds(120);
 
@@ -77,7 +73,7 @@ public class VacancyRequestTest {
         var roomId = "room-1";
         var seatId = "seat-1";
 
-        var now = Instant.now();
+        var now = BASE_TIME;
         var startTime = now.plusSeconds(60);
         var endTime = now.plusSeconds(120);
 
@@ -107,7 +103,7 @@ public class VacancyRequestTest {
         var roomId = "room-1";
         var seatId = "seat-1";
 
-        var now = Instant.now();
+        var now = BASE_TIME;
         var startTime1 = now.plusSeconds(60);
         var endTime1 = now.plusSeconds(120);
         var startTime2 = now.plusSeconds(70);
@@ -204,7 +200,7 @@ public class VacancyRequestTest {
     }
 
     private VacancyAlertRequestCommand requestCommand() {
-        var now = Instant.now();
+        var now = BASE_TIME;
         return new VacancyAlertRequestCommand(
                 "user1",
                 "room1",

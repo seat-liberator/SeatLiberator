@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
 import java.util.concurrent.CountDownLatch;
@@ -21,10 +19,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@ReservationIntegrationTest
 @DisplayName("Integration Reservation Concurrency")
-public class ReservationConcurrencyTest {
+public class ReservationConcurrencyTest extends ReservationDatabaseCleanupSupport {
 
     private static final Logger log = LoggerFactory.getLogger(ReservationConcurrencyTest.class);
 

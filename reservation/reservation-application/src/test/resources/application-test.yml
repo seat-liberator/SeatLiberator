@@ -1,11 +1,17 @@
 spring:
+  autoconfigure:
+    exclude:
+      - com.seatliberator.seatliberator.eventrelay.core.EventRelayCoreAutoConfiguration
+
   datasource:
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_SCHEMA}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    url: ${TEST_DB_URL:${SPRING_DATASOURCE_URL:jdbc:h2:mem:reservation-test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}}
+    username: ${TEST_DB_USERNAME:${SPRING_DATASOURCE_USERNAME:sa}}
+    password: ${TEST_DB_PASSWORD:${SPRING_DATASOURCE_PASSWORD:}}
+    driver-class-name: ${TEST_DB_DRIVER:${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.h2.Driver}}
 
   jpa:
+    properties:
+      hibernate:
+        dialect: ${TEST_DB_DIALECT:${SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT:org.hibernate.dialect.H2Dialect}}
     hibernate:
       ddl-auto: create-drop
-      dialect: org.hibernate.dialect.PostgreSQLDialect
