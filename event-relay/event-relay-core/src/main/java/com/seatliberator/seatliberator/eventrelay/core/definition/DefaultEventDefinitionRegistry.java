@@ -1,6 +1,7 @@
 package com.seatliberator.seatliberator.eventrelay.core.definition;
 
 import com.seatliberator.seatliberator.eventrelay.core.model.EventType;
+import com.seatliberator.seatliberator.kernel.ApplicationNamespace;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DefaultEventDefinitionRegistry implements EventDefinitionRegistry, EventDefinitionRegistrar {
-    private final Map<EventDefinitionNamespace, EventDefinitionCollection> collections;
+    private final Map<ApplicationNamespace, EventDefinitionCollection> collections;
     private final Map<String, RegisteredEventDefinition> definitionsByType;
 
     public DefaultEventDefinitionRegistry() {
@@ -51,7 +52,7 @@ public class DefaultEventDefinitionRegistry implements EventDefinitionRegistry, 
     }
 
     @Override
-    public @Nullable EventDefinitionCollection resolve(@NonNull EventDefinitionNamespace namespace) {
+    public @Nullable EventDefinitionCollection resolve(@NonNull ApplicationNamespace namespace) {
         return collections.get(namespace);
     }
 
