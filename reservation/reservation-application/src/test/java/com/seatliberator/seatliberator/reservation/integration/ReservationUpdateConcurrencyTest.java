@@ -6,16 +6,12 @@ import com.seatliberator.seatliberator.reservation.book.application.port.in.comm
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.book.application.service.ReservationService;
 import com.seatliberator.seatliberator.reservation.book.application.service.SeatService;
-import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -27,10 +23,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@ReservationIntegrationTest
 @DisplayName("Integration Reservation Update Concurrency")
-public class ReservationUpdateConcurrencyTest {
+public class ReservationUpdateConcurrencyTest extends ReservationDatabaseCleanupSupport {
 
     private static final Logger log = LoggerFactory.getLogger(ReservationUpdateConcurrencyTest.class);
 
@@ -40,20 +35,12 @@ public class ReservationUpdateConcurrencyTest {
     ReservationService reservationService;
     @Autowired
     SeatService seatService;
-    @Autowired
-    EntityManager em;
 
     int threadCount;
 
     @BeforeEach
     void run() {
         this.threadCount = 500;
-    }
-
-    @AfterEach
-    void cleanUp() {
-        em.createQuery("DELETE FROM Reservation").executeUpdate();
-        em.createQuery("DELETE FROM Seat").executeUpdate();
     }
 
     @Test

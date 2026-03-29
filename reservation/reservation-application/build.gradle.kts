@@ -29,6 +29,7 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
     testImplementation("org.testcontainers:postgresql:1.21.3")
     testImplementation("org.testcontainers:jdbc")
+    testRuntimeOnly("com.h2database:h2")
 
     // PostgreSQL
     runtimeOnly("org.postgresql:postgresql")

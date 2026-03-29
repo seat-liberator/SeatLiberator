@@ -7,20 +7,16 @@ import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Transactional
+@TransactionalReservationIntegrationTest
 @DisplayName("Integration Jpa Vacancy Alert Request Repository")
 public class JpaVacancyAlertRequestRepositoryTest {
+    private static final Instant BASE_TIME = Instant.parse("2026-01-01T00:00:00Z");
 
     @Autowired
     VacancyAlertRequestStore store;
@@ -36,8 +32,8 @@ public class JpaVacancyAlertRequestRepositoryTest {
     void 동일_요청_저장_시_예외_발생한다() {
 
         // given
-        var r1 = create();
-        var r2 = create();
+        var r1 = create(BASE_TIME);
+        var r2 = create(BASE_TIME);
 
         // when
         store.save(r1);
@@ -53,7 +49,7 @@ public class JpaVacancyAlertRequestRepositoryTest {
     @DisplayName("시간이 다르면 동일 좌석도 저장된다")
     void 시간_다르면_저장_성공() {
         // given
-        var now = Instant.now();
+        var now = BASE_TIME;
 
         var r1 = VacancyAlertRequest.of(
                 "user1",
@@ -98,9 +94,7 @@ public class JpaVacancyAlertRequestRepositoryTest {
         assertThat(exists2).isTrue();
     }
 
-    private VacancyAlertRequest create() {
-        Instant now = Instant.now();
-
+    private VacancyAlertRequest create(Instant now) {
         return VacancyAlertRequest.of(
                 "user1",
                 "room1",
