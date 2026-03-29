@@ -41,6 +41,12 @@ public class JpaStoredEventPersistenceTest {
             .withDatabaseName("event-relay-jpa-test")
             .withUsername("test")
             .withPassword("test");
+    private final Clock clock = EventFixture.createFixedClock();
+    @Autowired
+    private JpaStoredEventPersistencePort persistence;
+
+    @Autowired
+    private JpaPostgresqlEventAcceptor acceptor;
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
@@ -51,14 +57,6 @@ public class JpaStoredEventPersistenceTest {
 
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
     }
-
-    @Autowired
-    private JpaStoredEventPersistencePort persistence;
-
-    @Autowired
-    private JpaPostgresqlEventAcceptor acceptor;
-
-    private final Clock clock = EventFixture.createFixedClock();
 
     @Test
     @DisplayName("claim은 flow와 status로 필터링하고 createdAt 오름차순으로 가져온다")
