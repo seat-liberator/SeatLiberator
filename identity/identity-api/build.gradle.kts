@@ -10,7 +10,11 @@ repositories {
 }
 
 dependencies {
+    api(project(":kernel"))
     api(project(":identity:identity-core"))
+    api(project(":event-relay:event-relay-core"))
+
+    implementation("org.springframework:spring-context")
 }
 
 tasks.test {
