@@ -28,7 +28,7 @@ public class DefaultReservationOwnershipCheckerTest {
 
     @Test
     @DisplayName("예약의 userId와 요청 userId가 같으면 true를 반환한다.")
-    void 예약의_userId와_요청_userId가_같으면_true를_반환한다() {
+    void return_true_when_request_user_matches_reservation_owner() {
         var reservation = createReservation();
 
         when(reservationStore.findById(1L)).thenReturn(Optional.of(reservation));
@@ -38,7 +38,7 @@ public class DefaultReservationOwnershipCheckerTest {
 
     @Test
     @DisplayName("예약의 userId와 요청 userId가 다르면 false를 반환한다.")
-    void 예약의_userId와_요청_userId가_다르면_false를_반환한다() {
+    void return_false_when_request_user_differs_from_reservation_owner() {
         var reservation = createReservation();
 
         when(reservationStore.findById(1L)).thenReturn(Optional.of(reservation));
@@ -49,7 +49,7 @@ public class DefaultReservationOwnershipCheckerTest {
 
     @Test
     @DisplayName("예약이 존재하지 않으면 false를 반환한다.")
-    void 예약이_존재하지_않으면_false를_반환한다() {
+    void return_false_when_reservation_does_not_exist() {
         when(reservationStore.findById(1L)).thenReturn(Optional.empty());
 
         assertFalse(checker.hasOwnership(1L, INITIAL_USER_ID));
