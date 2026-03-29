@@ -29,7 +29,7 @@ public class JpaVacancyAlertRequestRepositoryTest {
 
     @Test
     @DisplayName("동일 요청 저장 시 예외 발생한다")
-    void 동일_요청_저장_시_예외_발생한다() {
+    void throw_exception_when_saving_duplicate_request() {
 
         // given
         var r1 = create(BASE_TIME);
@@ -47,7 +47,7 @@ public class JpaVacancyAlertRequestRepositoryTest {
 
     @Test
     @DisplayName("시간이 다르면 동일 좌석도 저장된다")
-    void 시간_다르면_저장_성공() {
+    void save_requests_when_request_times_differ() {
         // given
         var now = BASE_TIME;
 
