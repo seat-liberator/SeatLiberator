@@ -9,11 +9,13 @@ import com.seatliberator.seatliberator.eventrelay.core.relay.inbound.EventListen
 import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.EventSender;
 import com.seatliberator.seatliberator.eventrelay.core.store.EventStore;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -24,13 +26,14 @@ import java.time.Clock;
 
 @AutoConfiguration
 @ConditionalOnClass(KafkaTemplate.class)
-@AutoConfigureBefore(EventRelayCoreAutoConfiguration.class)
+@AutoConfigureAfter(EventRelayCoreAutoConfiguration.class)
 @EnableConfigurationProperties(EventRelayKafkaSupportConfigurationProperties.class)
+@EnableKafka
 public class EventRelayKafkaSupportAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(EventSender.class)
-    EventSender eventSender(
+    KafkaEventSender eventSender(
             KafkaTemplate<String, String> kafkaTemplate,
             EventDefinitionRegistry eventDefinitionRegistry,
             EventEnvelopeSerializer eventEnvelopeSerializer,
@@ -41,6 +44,10 @@ public class EventRelayKafkaSupportAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnBean({
+            KafkaListenerEndpointRegistry.class,
+            ConcurrentKafkaListenerContainerFactory.class
+    })
     KafkaDynamicEventSubscriber kafkaDynamicEventSubscriber(
             EventListenerRegistry eventListenerRegistry,
             EventDefinitionRegistry eventDefinitionRegistry,

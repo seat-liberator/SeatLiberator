@@ -24,6 +24,6 @@ public class NamespaceTopicFactory implements TopicFactory {
 
     @Override
     public @NonNull String fromRegistration(@NonNull RegisteredEventDefinition registeredEventDefinition) {
-        return String.join(topicDelimiter, registeredEventDefinition.namespace().name(), subscribePrefix);
+        return String.join(topicDelimiter, registeredEventDefinition.namespace().value(), subscribePrefix);
     }
 }

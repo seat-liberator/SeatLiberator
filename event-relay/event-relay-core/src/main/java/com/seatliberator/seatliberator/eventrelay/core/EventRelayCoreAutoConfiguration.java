@@ -16,15 +16,18 @@ import com.seatliberator.seatliberator.eventrelay.core.relay.inbound.*;
 import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.DefaultEventPublisher;
 import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.EventPublisher;
 import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.EventSender;
-import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.NoOpEventSender;
 import com.seatliberator.seatliberator.eventrelay.core.scheduler.EventScheduler;
 import com.seatliberator.seatliberator.eventrelay.core.scheduler.FixedDelayEventScheduler;
-import com.seatliberator.seatliberator.eventrelay.core.store.*;
+import com.seatliberator.seatliberator.eventrelay.core.store.DefaultEventStateTransitionPolicy;
+import com.seatliberator.seatliberator.eventrelay.core.store.EventStateTransitionPolicy;
+import com.seatliberator.seatliberator.eventrelay.core.store.EventStore;
+import com.seatliberator.seatliberator.eventrelay.core.store.EventStoreConfigurationProperties;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.Clock;
@@ -33,6 +36,7 @@ import java.util.UUID;
 
 @AutoConfiguration
 @EnableConfigurationProperties(EventStoreConfigurationProperties.class)
+@EnableScheduling
 public class EventRelayCoreAutoConfiguration {
 
     @Bean
@@ -74,21 +78,6 @@ public class EventRelayCoreAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(EventSender.class)
-    NoOpEventSender eventSender() {
-        return new NoOpEventSender();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(EventStore.class)
-    DefaultEventStore eventStore(
-            EventStateTransitionPolicy eventStateTransitionPolicy,
-            EventStoreConfigurationProperties properties
-    ) {
-        return new DefaultEventStore(eventStateTransitionPolicy, properties.batchSize());
-    }
-
-    @Bean
     @ConditionalOnMissingBean(EventStateTransitionPolicy.class)
     DefaultEventStateTransitionPolicy eventStateTransitionPolicy() {
         return new DefaultEventStateTransitionPolicy();
@@ -110,6 +99,12 @@ public class EventRelayCoreAutoConfiguration {
     @ConditionalOnMissingBean(EventTraceHolder.class)
     ThreadLocalEventTraceHolder eventTraceHolder() {
         return new ThreadLocalEventTraceHolder();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(EventEnvelopeDeserializer.class)
+    JacksonEventEnvelopeDeserializer jacksonEventEnvelopeDeserializer(ObjectMapper objectMapper) {
+        return new JacksonEventEnvelopeDeserializer(objectMapper);
     }
 
     @Bean
