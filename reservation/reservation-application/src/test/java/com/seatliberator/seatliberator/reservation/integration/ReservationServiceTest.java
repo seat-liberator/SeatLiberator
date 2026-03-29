@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.application;
+package com.seatliberator.seatliberator.reservation.integration;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationCreateCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.SeatCreateCommand;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@DisplayName("Application: Reservation Service")
+@DisplayName("Integration: Reservation Service")
 public class ReservationServiceTest {
 
     @Autowired

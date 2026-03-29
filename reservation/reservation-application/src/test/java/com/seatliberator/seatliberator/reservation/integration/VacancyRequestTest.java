@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.application;
+package com.seatliberator.seatliberator.reservation.integration;
 
 import com.seatliberator.seatliberator.reservation.vacancy.application.exception.VacancyApplicationException;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.VacancyAlertRequester;
@@ -23,8 +23,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-@DisplayName("Application: Default Vacancy Alert Request")
-public class DefaultVacancyAlertRequesterTest {
+@DisplayName("Integration: Vacancy Alert")
+public class VacancyRequestTest {
 
     @Autowired
     VacancyAlertRequester requester;
