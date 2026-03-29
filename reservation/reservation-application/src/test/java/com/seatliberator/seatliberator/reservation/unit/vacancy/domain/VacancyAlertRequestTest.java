@@ -17,7 +17,7 @@ public class VacancyAlertRequestTest {
 
     @Test
     @DisplayName("정상 생성")
-    void 정상_생성() {
+    void create_active_request_when_arguments_are_valid() {
 
         // given
         Instant start = now.plusSeconds(60);
@@ -41,7 +41,7 @@ public class VacancyAlertRequestTest {
 
     @Test
     @DisplayName("endTime이_startTime보다_이전이면_예외")
-    void endTime이_startTime보다_이전이면_예외() {
+    void throw_exception_when_end_time_is_before_start_time() {
 
         //given
         Instant start = now.plusSeconds(60);
@@ -55,7 +55,7 @@ public class VacancyAlertRequestTest {
 
     @Test
     @DisplayName("취소")
-    void 취소() {
+    void cancel_request_when_request_is_active() {
 
 
         // given
@@ -70,7 +70,7 @@ public class VacancyAlertRequestTest {
 
     @Test
     @DisplayName("만료")
-    void 만료() {
+    void expire_request_when_request_is_active() {
 
         // given
         VacancyAlertRequest request = create();
@@ -84,7 +84,7 @@ public class VacancyAlertRequestTest {
 
     @Test
     @DisplayName("충족")
-    void 충족() {
+    void fulfill_request_when_request_is_active() {
 
         // given
         VacancyAlertRequest request = create();
@@ -98,7 +98,7 @@ public class VacancyAlertRequestTest {
 
     @Test
     @DisplayName("ACTIVE 상태 아니면 상태 변경 실패")
-    void ACTIVE_상태_아니면_상태_변경_실패() {
+    void throw_exception_when_transitioning_non_active_request() {
 
         // given
         VacancyAlertRequest request = create();

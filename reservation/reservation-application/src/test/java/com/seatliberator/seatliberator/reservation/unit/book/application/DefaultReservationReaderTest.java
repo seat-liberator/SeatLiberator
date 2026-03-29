@@ -32,7 +32,7 @@ public class DefaultReservationReaderTest {
 
     @Test
     @DisplayName("reservationId 기반 locator로 예약을 조회할 수 있다")
-    void reservationId_기반_locator로_예약을_조회할_수_있다() {
+    void read_reservation_by_id_locator_when_reservation_exists() {
         var reservation = createReservation();
 
         stubReservationId(reservation, 1L);
@@ -52,7 +52,7 @@ public class DefaultReservationReaderTest {
 
     @Test
     @DisplayName("reservationId 기반 조회 결과가 없으면 RESERVATION_NOT_FOUND 예외를 던진다")
-    void reservationId_기반_조회_결과가_없으면_예외를_던진다() {
+    void throw_not_found_exception_when_reservation_missing_for_id_locator() {
         when(reservationStore.findById(1L)).thenReturn(Optional.empty());
 
         var exception = assertThrows(
@@ -65,7 +65,7 @@ public class DefaultReservationReaderTest {
 
     @Test
     @DisplayName("seat 기반 locator로 예약을 조회할 수 있다")
-    void seat_기반_locator로_예약을_조회할_수_있다() {
+    void read_reservation_by_seat_locator_when_reservation_exists() {
         var reservation = createReservation();
 
         stubReservationId(reservation, 1L);
@@ -108,7 +108,7 @@ public class DefaultReservationReaderTest {
 
     @Test
     @DisplayName("seat 기반 조회 결과가 없으면 RESERVATION_NOT_FOUND 예외를 던진다")
-    void seat_기반_조회_결과가_없으면_예외를_던진다() {
+    void throw_not_found_exception_when_reservation_missing_for_seat_locator() {
         Instant startTime = Instant.parse("2026-01-01T00:00:00Z");
         Instant endTime = startTime.plusSeconds(5);
 
