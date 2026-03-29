@@ -10,6 +10,9 @@ repositories {
 }
 
 dependencies {
+    // API
+    implementation(project(":reservation:reservation-api"))
+
     // Web application
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
 
