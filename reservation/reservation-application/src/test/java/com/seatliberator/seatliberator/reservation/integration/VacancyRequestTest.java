@@ -33,7 +33,7 @@ public class VacancyRequestTest {
 
     @Test
     @DisplayName("VacancyAlert 요청 생성 시 정상 저장된다.")
-    void VacancyAlert_요청_생성_시_정상_저장된다() {
+    void save_request_when_vacancy_alert_is_created() {
 
         //given
         var userId = "user-1";
@@ -65,7 +65,7 @@ public class VacancyRequestTest {
 
     @Test
     @DisplayName("VacancyAlert 동일 요청 시 예외 발생")
-    void VacancyAlert_동일_요청_시_예외_발생() {
+    void throw_exception_when_duplicate_vacancy_alert_request_is_created() {
 
         //given
         //given
@@ -95,7 +95,7 @@ public class VacancyRequestTest {
 
     @Test
     @DisplayName("VacancyAlert 다른 시간 요청 가능")
-    void VacancyAlert_다른_시간_요청_가능() {
+    void save_requests_when_vacancy_alert_times_differ() {
 
         //given
         //given
@@ -144,7 +144,7 @@ public class VacancyRequestTest {
 
     @Test
     @DisplayName("본인이_알람을_취소할_수_있다")
-    void 본인이_알람을_취소할_수_있다() {
+    void cancel_alert_when_request_user_is_owner() {
 
         // given
         var command = requestCommand();
@@ -160,7 +160,7 @@ public class VacancyRequestTest {
 
     @Test
     @DisplayName("타인은_알람을_취소할_수_없다")
-    void 타인은_알람을_취소할_수_없다() {
+    void throw_exception_when_other_user_cancels_alert() {
 
         // given
         var command = requestCommand();
@@ -174,7 +174,7 @@ public class VacancyRequestTest {
 
     @Test
     @DisplayName("존재하지_않는_알람_취소_시_예외_발생")
-    void 존재하지_않는_알람_취소_시_예외_발생() {
+    void throw_exception_when_canceling_nonexistent_alert() {
 
         // when & then
         assertThatThrownBy(() ->
@@ -184,7 +184,7 @@ public class VacancyRequestTest {
 
     @Test
     @DisplayName("취소된_알람은_다시_신청할_수_있다")
-    void 취소된_알람은_다시_신청할_수_있다() {
+    void save_request_again_when_alert_was_cancelled() {
 
         // given
         var command = requestCommand();

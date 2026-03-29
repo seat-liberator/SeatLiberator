@@ -38,7 +38,7 @@ public class ReservationConcurrencyTest extends ReservationDatabaseCleanupSuppor
 
     @Test
     @DisplayName("하나의 좌석에 동시에 여러 명이 같은 시간에 예약해도 한 명만 성공하고 나머지는 실패한다.")
-    void 하나의_좌석에_동시에_여러_명이_같은_시간에_예약해도_한_명만_성공하고_나머지는_실패한다() throws Exception {
+    void allow_only_one_success_when_multiple_users_reserve_same_seat_concurrently() throws Exception {
         // Given
 
         var givenRoomId = "room-1";

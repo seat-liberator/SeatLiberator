@@ -45,7 +45,7 @@ public class ReservationUpdateConcurrencyTest extends ReservationDatabaseCleanup
 
     @Test
     @DisplayName("여러 좌석 예약이 동시에 하나의 좌석으로 변경되면 하나만 성공한다")
-    void 여러_좌석_예약이_동시에_하나의_좌석으로_변경되면_하나만_성공한다() throws Exception {
+    void allow_only_one_success_when_multiple_reservations_update_to_same_seat_concurrently() throws Exception {
 
         // Given
         var givenRoomId = "room-1";

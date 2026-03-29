@@ -33,7 +33,7 @@ public class ReservationServiceTest {
 
     @Test
     @DisplayName("Seat 생성 시 true 반환한다.")
-    void Seat_생성_시_true_반환한다() {
+    void return_true_when_seat_is_created() {
         var givenRoomId = "room-1";
         var givenSeatId = "seat-1";
 
@@ -61,7 +61,7 @@ public class ReservationServiceTest {
 
     @Test
     @DisplayName("Reservation 생성 시 true 반환한다.")
-    void Reservation_생성_시_true_반환한다() {
+    void return_true_when_reservation_is_created() {
         var givenRoomId = "room-1";
         var givenSeatId = "seat-1";
         var givenUserId = "user-1";
