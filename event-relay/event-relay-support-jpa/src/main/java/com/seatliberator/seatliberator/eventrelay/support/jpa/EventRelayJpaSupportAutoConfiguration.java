@@ -6,14 +6,17 @@ import com.seatliberator.seatliberator.eventrelay.core.store.EventStoreConfigura
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
-@AutoConfigureBefore(EventRelayCoreAutoConfiguration.class)
+@AutoConfigurationPackage(basePackageClasses = JpaStoredEvent.class)
+@AutoConfigureBefore({HibernateJpaAutoConfiguration.class, EventRelayCoreAutoConfiguration.class})
 @ConditionalOnClass(EntityManager.class)
 @EnableConfigurationProperties(EventStoreConfigurationProperties.class)
 public class EventRelayJpaSupportAutoConfiguration {
