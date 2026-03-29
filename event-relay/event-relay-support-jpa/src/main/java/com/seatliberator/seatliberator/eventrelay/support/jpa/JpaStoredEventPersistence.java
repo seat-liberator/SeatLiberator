@@ -50,10 +50,10 @@ public class JpaStoredEventPersistence implements JpaStoredEventPersistencePort 
     @Override
     public int markResolved(String id, EventStatus status, Instant resolvedAt) {
         return em.createQuery("""
-                UPDATE JpaStoredEvent e
-                SET e.status = :status, e.resolvedAt = :resolvedAt
-                WHERE e.id = :id
-                    AND e.status = :processing""")
+                        UPDATE JpaStoredEvent e
+                        SET e.status = :status, e.resolvedAt = :resolvedAt
+                        WHERE e.id = :id
+                            AND e.status = :processing""")
                 .setParameter("id", id)
                 .setParameter("status", status)
                 .setParameter("resolvedAt", resolvedAt)
@@ -68,9 +68,9 @@ public class JpaStoredEventPersistence implements JpaStoredEventPersistencePort 
         }
 
         return em.createQuery("""
-                SELECT e
-                FROM JpaStoredEvent e
-                WHERE e.id IN :ids""", JpaStoredEvent.class)
+                        SELECT e
+                        FROM JpaStoredEvent e
+                        WHERE e.id IN :ids""", JpaStoredEvent.class)
                 .setParameter("ids", ids)
                 .getResultList();
     }

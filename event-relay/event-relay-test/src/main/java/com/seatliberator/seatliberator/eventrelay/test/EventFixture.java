@@ -77,5 +77,6 @@ public class EventFixture {
         return objectMapper.writeValueAsString(createPayload(count));
     }
 
-    public record TestEventPayload(String title, String description) implements EventPayload {}
+    public record TestEventPayload(String title, String description) implements EventPayload {
+    }
 }
