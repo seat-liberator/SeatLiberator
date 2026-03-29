@@ -1,6 +1,7 @@
 package com.seatliberator.seatliberator.reservation.api.authorization.registration;
 
 import com.seatliberator.seatliberator.identity.core.role.Role;
+import com.seatliberator.seatliberator.reservation.api.ReservationApi;
 import com.seatliberator.seatliberator.role.api.DefaultNamespaceRoleGrant;
 import com.seatliberator.seatliberator.role.api.DefaultNamespaceRoleGrantProvider;
 
@@ -10,6 +11,6 @@ public class ReservationDefaultNamespaceRoleRoleGrantProvider implements Default
 
     @Override
     public List<DefaultNamespaceRoleGrant> grants() {
-        return List.of(new DefaultNamespaceRoleGrant("reservation", Role.USER));
+        return List.of(new DefaultNamespaceRoleGrant(ReservationApi.NAMESPACE, Role.USER));
     }
 }

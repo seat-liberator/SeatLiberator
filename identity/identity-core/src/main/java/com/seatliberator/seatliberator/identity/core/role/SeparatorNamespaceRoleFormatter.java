@@ -11,6 +11,6 @@ public class SeparatorNamespaceRoleFormatter implements NamespaceRoleFormatter {
 
     @Override
     public String format(NamespaceRole namespaceRole) {
-        return namespaceRole.namespace() + separator + namespaceRole.role().name();
+        return namespaceRole.namespace().value() + separator + namespaceRole.role().name();
     }
 }

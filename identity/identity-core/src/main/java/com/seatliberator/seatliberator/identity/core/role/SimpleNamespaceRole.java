@@ -1,12 +1,14 @@
 package com.seatliberator.seatliberator.identity.core.role;
 
+import com.seatliberator.seatliberator.kernel.ApplicationNamespace;
+
 public record SimpleNamespaceRole(
-        String namespace,
+        ApplicationNamespace namespace,
         Role role
 ) implements NamespaceRole {
     public SimpleNamespaceRole {
-        if (namespace == null || namespace.isBlank()) {
-            throw new IllegalArgumentException("namespace must not be null or blank.");
+        if (namespace == null) {
+            throw new IllegalArgumentException("namespace must not be null.");
         }
 
         if (role == null) {
@@ -14,7 +16,7 @@ public record SimpleNamespaceRole(
         }
     }
 
-    public static SimpleNamespaceRole from(String namespace, Role role) {
+    public static SimpleNamespaceRole from(ApplicationNamespace namespace, Role role) {
         return new SimpleNamespaceRole(namespace, role);
     }
 

@@ -1,7 +1,9 @@
 package com.seatliberator.seatliberator.identity.core.role;
 
+import com.seatliberator.seatliberator.kernel.ApplicationNamespace;
+
 public interface NamespaceRole {
-    String namespace();
+    ApplicationNamespace namespace();
 
     Role role();
 }

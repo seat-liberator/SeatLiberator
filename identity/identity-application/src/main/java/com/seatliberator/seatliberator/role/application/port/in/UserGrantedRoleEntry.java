@@ -2,11 +2,12 @@ package com.seatliberator.seatliberator.role.application.port.in;
 
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
 import com.seatliberator.seatliberator.identity.core.role.Role;
+import com.seatliberator.seatliberator.kernel.ApplicationNamespace;
 import com.seatliberator.seatliberator.role.domain.UserGrantedRole;
 
 public record UserGrantedRoleEntry(
         String userId,
-        String namespace,
+        ApplicationNamespace namespace,
         Role role
 ) implements NamespaceRole {
     public static UserGrantedRoleEntry from(UserGrantedRole userGrantedRole) {

@@ -2,6 +2,8 @@ package com.seatliberator.seatliberator.role.domain;
 
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
 import com.seatliberator.seatliberator.identity.core.role.Role;
+import com.seatliberator.seatliberator.kernel.ApplicationNamespace;
+import com.seatliberator.seatliberator.kernel.SimpleApplicationNamespace;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -51,16 +53,16 @@ public class UserGrantedRole implements NamespaceRole {
             String userId,
             NamespaceRole namespaceRole
     ) {
-        return new UserGrantedRole(userId, namespaceRole.namespace(), namespaceRole.role());
+        return new UserGrantedRole(userId, namespaceRole.namespace().value(), namespaceRole.role());
     }
 
     public static UserGrantedRole copyOf(String userId, NamespaceRole namespaceRole) {
-        return new UserGrantedRole(userId, namespaceRole.namespace(), namespaceRole.role());
+        return new UserGrantedRole(userId, namespaceRole.namespace().value(), namespaceRole.role());
     }
 
     @Override
-    public String namespace() {
-        return namespace;
+    public ApplicationNamespace namespace() {
+        return SimpleApplicationNamespace.of(namespace);
     }
 
     @Override
