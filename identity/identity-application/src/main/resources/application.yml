@@ -2,6 +2,7 @@ logging:
   level:
     com.seatliberator.seatliberator.jwks: debug
     com.seatliberator.seatliberator.identity: debug
+    com.seatliberator.seatliberator.eventrelay: debug
 
 identity:
   jwks:
