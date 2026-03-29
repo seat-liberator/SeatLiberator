@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.authorization.registration;
+package com.seatliberator.seatliberator.reservation.api.authorization.registration;
 
 import com.seatliberator.seatliberator.identity.core.role.Role;
 import com.seatliberator.seatliberator.role.api.DefaultNamespaceRoleGrant;

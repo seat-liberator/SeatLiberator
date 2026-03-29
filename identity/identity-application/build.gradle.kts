@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":identity:identity-core"))
 
     // Authorization Registration
-    implementation(project(":reservation:reservation-authorization-registration"))
+    implementation(project(":reservation:reservation-api"))
     implementation(project(":board:board-api"))
 
     // Web

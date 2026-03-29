@@ -4,7 +4,7 @@ include("board")
 include("board:board-api")
 
 include("reservation")
-include("reservation:reservation-authorization-registration")
+include("reservation:reservation-api")
 
 include("identity:identity-api")
 include("identity:identity-core")
