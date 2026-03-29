@@ -9,10 +9,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
+
 @Service
 @RequiredArgsConstructor
 public class DefaultReservationUsageMarker implements ReservationUsageMarker {
     private final ReservationStore reservationStore;
+    private final Clock clock;
 
     @Override
     @Transactional
@@ -21,7 +24,7 @@ public class DefaultReservationUsageMarker implements ReservationUsageMarker {
                 .orElseThrow(() -> new BookApplicationException(BookApplicationErrorCode.RESERVATION_NOT_FOUND));
 
         try {
-            reservation.markUsed();
+            reservation.markUsed(clock.instant());
             return ReservationStatusTransitionEntry.markSuccess(reservation.getStatus());
         } catch (IllegalStateException e) {
             return ReservationStatusTransitionEntry.markFail(e.getMessage(), reservation.getStatus());
