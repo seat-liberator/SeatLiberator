@@ -1,5 +1,9 @@
 package com.seatliberator.seatliberator.identity.application.service;
 
+import com.seatliberator.seatliberator.eventrelay.core.factory.EventTraceHolder;
+import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.EventPublisher;
+import com.seatliberator.seatliberator.identity.api.event.IdentityEventType;
+import com.seatliberator.seatliberator.identity.api.event.payload.UserRegisteredEventPayload;
 import com.seatliberator.seatliberator.identity.application.exception.IdentityApplicationErrorCode;
 import com.seatliberator.seatliberator.identity.application.exception.IdentityApplicationException;
 import com.seatliberator.seatliberator.identity.application.factory.AuthEntryFactory;
@@ -18,6 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -30,6 +36,9 @@ public class UserRegistrarService implements UserRegistrar {
     private final RoleGrantor roleGrantor;
     private final AuthEntryFactory authEntryFactory;
     private final PasswordEncoder passwordEncoder;
+    private final EventPublisher eventPublisher;
+    private final EventTraceHolder eventTraceHolder;
+    private final Clock clock;
 
     @Override
     public AuthEntry register(RegistrationCommand.Credential command) {
@@ -89,6 +98,12 @@ public class UserRegistrarService implements UserRegistrar {
 
         var defaultRoles = bootstrapDefaultGrantRegistry.getDefaultNamespaceRole();
         roleGrantor.grantAll(savedUser.getId().toString(), defaultRoles);
+
+        eventTraceHolder.with(
+                () -> eventPublisher.publish(IdentityEventType.USER_REGISTERED, new UserRegisteredEventPayload(savedUser.getId().toString(), clock.instant())),
+                state -> state
+                        .withAggregate("user", savedUser.getId().toString())
+        );
 
         return authEntryFactory.create(savedUser.getId(), savedUser.getNickname());
     }

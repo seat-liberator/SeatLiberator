@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation(project(":kernel"))
+
     implementation(project(":identity:identity-api"))
     implementation(project(":identity:identity-core"))
 
@@ -21,8 +22,13 @@ dependencies {
     // Web
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
 
-    // Spring Data JPA
+    // Persistence
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+    // Event
+    implementation(project(":event-relay:event-relay-support-jpa"))
+    implementation(project(":event-relay:event-relay-support-kafka"))
+    implementation("org.springframework.boot:spring-boot-starter-kafka")
 
     // Security
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")

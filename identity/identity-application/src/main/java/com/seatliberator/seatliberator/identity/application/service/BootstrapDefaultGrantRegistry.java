@@ -1,11 +1,11 @@
 package com.seatliberator.seatliberator.identity.application.service;
 
+import com.seatliberator.seatliberator.identity.api.DefaultNamespaceRoleGrantProvider;
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
 import com.seatliberator.seatliberator.identity.core.role.Role;
 import com.seatliberator.seatliberator.identity.core.role.SimpleNamespaceRole;
 import com.seatliberator.seatliberator.kernel.ApplicationNamespace;
 import com.seatliberator.seatliberator.kernel.SimpleApplicationNamespace;
-import com.seatliberator.seatliberator.role.api.DefaultNamespaceRoleGrantProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
