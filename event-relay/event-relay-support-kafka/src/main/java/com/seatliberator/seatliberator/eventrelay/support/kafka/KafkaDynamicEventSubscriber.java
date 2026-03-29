@@ -66,12 +66,8 @@ public class KafkaDynamicEventSubscriber {
 
         endpoint.setBean(endpointHandler);
         endpoint.setMessageHandlerMethodFactory(methodFactory);
-        endpoint.setMethod(this.getClass().getMethod("onMessage", ConsumerRecord.class));
+        endpoint.setMethod(DefaultEndpointHandler.class.getMethod("onMessage", ConsumerRecord.class));
 
         endpointRegistry.registerListenerContainer(endpoint, containerFactory, true);
-    }
-
-    public void onMessage(ConsumerRecord<String, String> record) {
-        endpointHandler.onMessage(record);
     }
 }
