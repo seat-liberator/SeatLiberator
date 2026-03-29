@@ -59,7 +59,7 @@ public class JpaPostgresqlEventAcceptor implements EventAcceptor {
                     :startedAt,
                     :resolvedAt
                 )
-                ON CONFLICT (id) DO NOTHING
+                ON CONFLICT DO NOTHING
                 """);
 
         query.setParameter("id", e.getId());
