@@ -13,25 +13,45 @@ public class SimpleApplicationNamespaceTest {
     @Test
     @DisplayName("문자열 value를 전달해서 동일한 value의 SimpleApplicationNamespace를 생성한다")
     void can_create_with_string_value() {
-        var namespace = SimpleApplicationNamespace.from(TEST_NAMESPACE);
+        var namespace = SimpleApplicationNamespace.of(TEST_NAMESPACE);
 
         assertThat(namespace.value()).isEqualTo(TEST_NAMESPACE);
         assertThat(namespace).isInstanceOf(ApplicationNamespace.class);
     }
 
     @Test
+    @DisplayName("ApplicationNamespace 인터페이스로 동일한 value의 SimpleApplicationNamespace를 생성한다")
+    void can_create_with_application_namespace_interface() {
+        var otherNamespace = new ApplicationNamespace() {
+            @Override
+            public String value() {
+                return TEST_NAMESPACE;
+            }
+        };
+
+        var namespace = SimpleApplicationNamespace.from(otherNamespace);
+
+        assertThat(namespace.value()).isEqualTo(otherNamespace.value());
+        assertThat(namespace).isInstanceOf(ApplicationNamespace.class);
+    }
+
+    @Test
     @DisplayName("공백이나 null을 전달하면 예외가 발생한다")
     void throw_if_null_or_blank_value() {
+        assertThatThrownBy(() -> SimpleApplicationNamespace.of(null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("application namespace must not be blank.");
+
+        assertThatThrownBy(() -> SimpleApplicationNamespace.of(""))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("application namespace must not be blank.");
+
+        assertThatThrownBy(() -> SimpleApplicationNamespace.of("   "))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("application namespace must not be blank.");
+
         assertThatThrownBy(() -> SimpleApplicationNamespace.from(null))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("application namespace must not be blank.");
-
-        assertThatThrownBy(() -> SimpleApplicationNamespace.from(""))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("application namespace must not be blank.");
-
-        assertThatThrownBy(() -> SimpleApplicationNamespace.from("   "))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("application namespace must not be blank.");
+                .hasMessage("application namespace must not be null.");
     }
 }
