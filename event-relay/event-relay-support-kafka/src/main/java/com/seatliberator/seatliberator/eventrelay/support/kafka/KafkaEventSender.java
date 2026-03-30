@@ -5,11 +5,14 @@ import com.seatliberator.seatliberator.eventrelay.core.definition.EventDefinitio
 import com.seatliberator.seatliberator.eventrelay.core.model.EventEnvelope;
 import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.EventSender;
 import org.jspecify.annotations.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 
 import java.util.concurrent.TimeUnit;
 
 public class KafkaEventSender implements EventSender {
+    private static final Logger log = LoggerFactory.getLogger(KafkaEventSender.class);
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final EventDefinitionRegistry definitionRegistry;
     private final EventEnvelopeSerializer serializer;
@@ -40,6 +43,8 @@ public class KafkaEventSender implements EventSender {
         var topic = topicFactory.fromRegistration(definition);
         var data = serializer.stringify(envelope);
         var key = envelope.trace().eventId();
+
+        log.debug("event send. topic={}, key={}, data={}", topic, key, data);
 
         kafkaTemplate.send(topic, key, data).get(sendTimeout, TimeUnit.SECONDS);
     }
