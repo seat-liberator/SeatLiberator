@@ -1,6 +1,5 @@
 package com.seatliberator.seatliberator.eventrelay.support.kafka;
 
-import com.seatliberator.seatliberator.eventrelay.core.EventRelayCoreAutoConfiguration;
 import com.seatliberator.seatliberator.eventrelay.core.codec.EventEnvelopeDeserializer;
 import com.seatliberator.seatliberator.eventrelay.core.codec.EventEnvelopeSerializer;
 import com.seatliberator.seatliberator.eventrelay.core.definition.EventDefinitionRegistry;
@@ -15,7 +14,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -26,9 +24,11 @@ import java.time.Clock;
 
 @AutoConfiguration
 @ConditionalOnClass(KafkaTemplate.class)
-@AutoConfigureAfter(EventRelayCoreAutoConfiguration.class)
+@AutoConfigureAfter(name = {
+        "org.springframework.boot.kafka.autoconfigure.KafkaAutoConfiguration",
+        "com.seatliberator.seatliberator.eventrelay.core.EventRelayCoreAutoConfiguration"
+})
 @EnableConfigurationProperties(EventRelayKafkaSupportConfigurationProperties.class)
-@EnableKafka
 public class EventRelayKafkaSupportAutoConfiguration {
 
     @Bean
