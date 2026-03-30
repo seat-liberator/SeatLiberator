@@ -13,32 +13,37 @@ dependencies {
     // API
     implementation(project(":board:board-api"))
 
-    // Identity
-    implementation(project(":identity:identity-client"))
-
-    // Spring Web MVC
+    // Web
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
 
-    // Spring Data Jpa
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-
-    // Bean Validation (Jakarta)
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-
-    // Spring Security
+    // Web Security
+    implementation(project(":identity:identity-client"))
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
+    // Persistence
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    runtimeOnly("org.postgresql:postgresql")
+
+    // Event
+    implementation(project(":event-relay:event-relay-support-jpa"))
+    implementation(project(":event-relay:event-relay-support-kafka"))
+    implementation("org.springframework.boot:spring-boot-starter-kafka")
+
+    // Validation
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
     // Lombok
     compileOnly("org.projectlombok:lombok")
-    runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.projectlombok:lombok")
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.springframework.security:spring-security-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.testcontainers:testcontainers-junit-jupiter")
+    testImplementation("org.testcontainers:postgresql:1.21.3")
+    testImplementation("org.testcontainers:jdbc")
     testRuntimeOnly("com.h2database:h2")
 }
 
