@@ -27,7 +27,12 @@ public class NotificationEventListener implements EventListener<NotificationCrea
 
     @Override
     public void handle(@NonNull EventEnvelope envelope, @NonNull NotificationCreateRequestEventPayload payload) {
-        var level = NotificationLevel.valueOf(payload.level());
+        NotificationLevel level;
+        try {
+            level = NotificationLevel.valueOf(payload.level());
+        } catch (IllegalArgumentException e) {
+            return;
+        }
         var command = new NotificationRegisterCommand(
                 payload.targetUserId(),
                 level,
