@@ -34,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@DisplayName("E2E: Board Authorization")
 class BoardAuthorizationE2ETest {
     @Autowired
     private MockMvc mockMvc;
@@ -77,7 +78,8 @@ class BoardAuthorizationE2ETest {
     }
 
     @Test
-    void shouldReturn403WhenCreatingCategoryWithoutCategoryManageAuthority() throws Exception {
+    @DisplayName("카테고리 관리 권한이 없으면 카테고리 생성 시 403을 반환한다")
+    void return_403_when_creating_category_without_category_manage_authority() throws Exception {
         mockMvc.perform(post("/board/{boardId}/categories", boardId)
                         .with(auth())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -86,7 +88,8 @@ class BoardAuthorizationE2ETest {
     }
 
     @Test
-    void shouldReturn201WhenCreatingCategoryWithCategoryManageAuthority() throws Exception {
+    @DisplayName("카테고리 관리 권한이 있으면 카테고리 생성 시 201을 반환한다")
+    void return_201_when_creating_category_with_category_manage_authority() throws Exception {
         mockMvc.perform(post("/board/{boardId}/categories", boardId)
                         .with(auth(CATEGORY_MANAGE.scope()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -95,7 +98,8 @@ class BoardAuthorizationE2ETest {
     }
 
     @Test
-    void shouldReturn403WhenCreatingPostWithoutPostCreateAuthority() throws Exception {
+    @DisplayName("게시글 작성 권한이 없으면 게시글 생성 시 403을 반환한다")
+    void return_403_when_creating_post_without_post_create_authority() throws Exception {
         mockMvc.perform(post("/board/{boardId}/posts", boardId)
                         .with(auth())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -104,7 +108,8 @@ class BoardAuthorizationE2ETest {
     }
 
     @Test
-    void shouldReturn201WhenCreatingPostWithPostCreateAuthority() throws Exception {
+    @DisplayName("게시글 작성 권한이 있으면 게시글 생성 시 201을 반환한다")
+    void return_201_when_creating_post_with_post_create_authority() throws Exception {
         mockMvc.perform(post("/board/{boardId}/posts", boardId)
                         .with(auth(POST_CREATE.scope()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -113,7 +118,8 @@ class BoardAuthorizationE2ETest {
     }
 
     @Test
-    void shouldReturn404WhenCreatingPostWithNonExistingCategoryId() throws Exception {
+    @DisplayName("존재하지 않는 카테고리로 게시글을 생성하면 404를 반환한다")
+    void return_404_when_creating_post_with_non_existing_category_id() throws Exception {
         mockMvc.perform(post("/board/{boardId}/posts", boardId)
                         .with(auth(POST_CREATE.scope()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -122,7 +128,8 @@ class BoardAuthorizationE2ETest {
     }
 
     @Test
-    void shouldReturn404WhenCreatingPostWithCategoryFromAnotherBoard() throws Exception {
+    @DisplayName("다른 보드의 카테고리로 게시글을 생성하면 404를 반환한다")
+    void return_404_when_creating_post_with_category_from_another_board() throws Exception {
         mockMvc.perform(post("/board/{boardId}/posts", boardId)
                         .with(auth(POST_CREATE.scope()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -131,8 +138,8 @@ class BoardAuthorizationE2ETest {
     }
 
     @Test
-    @DisplayName("board:USER 스코프는 게시글 작성을 할 수 있다")
-    void USER_role_can_post() throws Exception {
+    @DisplayName("board:USER 스코프가 있으면 게시글을 작성할 수 있다")
+    void create_post_when_user_scope_is_present() throws Exception {
         given(jwtDecoder.decode(TOKEN))
                 .willReturn(mockJwt(SUBJECT, List.of("board:USER")));
 
@@ -147,8 +154,8 @@ class BoardAuthorizationE2ETest {
     }
 
     @Test
-    @DisplayName("board:USER 스코프는 카테고리 생성 및 관리를 할 수 없다")
-    void USER_role_can_not_manage_category() throws Exception {
+    @DisplayName("board:USER 스코프만 있으면 카테고리를 생성할 수 없다")
+    void return_403_when_user_scope_creates_category() throws Exception {
         given(jwtDecoder.decode(TOKEN))
                 .willReturn(mockJwt(SUBJECT, List.of("board:USER")));
 
@@ -163,8 +170,8 @@ class BoardAuthorizationE2ETest {
     }
 
     @Test
-    @DisplayName("board:USER 스코프와 유효하지 않은 스코프가 함께 들어와도 게시글을 작성할 수 있다")
-    void USER_role_can_post_with_invalid_scope() throws Exception {
+    @DisplayName("board:USER 스코프와 유효하지 않은 스코프가 함께 있어도 게시글을 작성할 수 있다")
+    void create_post_when_user_scope_is_present_with_invalid_scope() throws Exception {
         given(jwtDecoder.decode(TOKEN))
                 .willReturn(mockJwt(SUBJECT, List.of("board:USER", "boom")));
 
@@ -179,8 +186,8 @@ class BoardAuthorizationE2ETest {
     }
 
     @Test
-    @DisplayName("board:MAINTAINER 스코프는 카테고리 생성 및 관리를 할 수 있다")
-    void MAINTAINER_role_can_manage_category() throws Exception {
+    @DisplayName("board:MAINTAINER 스코프가 있으면 카테고리를 생성할 수 있다")
+    void create_category_when_maintainer_scope_is_present() throws Exception {
         given(jwtDecoder.decode(TOKEN))
                 .willReturn(mockJwt(SUBJECT, List.of("board:MAINTAINER")));
 
