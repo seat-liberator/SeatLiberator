@@ -13,26 +13,38 @@ dependencies {
     // API
     implementation(project(":reservation:reservation-api"))
 
-    // Web application
+    // Web
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
 
-    // Util
-    compileOnly("org.projectlombok:lombok")
-    runtimeOnly("org.postgresql:postgresql")
-    annotationProcessor("org.projectlombok:lombok")
+    // Web Security
+    implementation(project(":identity:identity-client"))
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("org.springframework.boot:spring-boot-starter-security")
 
-    // Spring Data Jpa
+    // Persistence
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    runtimeOnly("org.postgresql:postgresql")
+
+    // Event
+    implementation(project(":event-relay:event-relay-support-jpa"))
+    implementation(project(":event-relay:event-relay-support-kafka"))
+    implementation("org.springframework.boot:spring-boot-starter-kafka")
+
+    // Validation
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    // Lombok
+    compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+    testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
     testImplementation("org.testcontainers:postgresql:1.21.3")
     testImplementation("org.testcontainers:jdbc")
     testRuntimeOnly("com.h2database:h2")
-
-    // PostgreSQL
-    runtimeOnly("org.postgresql:postgresql")
 }
 tasks.test {
     useJUnitPlatform()
