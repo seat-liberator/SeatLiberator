@@ -13,17 +13,21 @@ dependencies {
     // API
     implementation(project(":reservation:reservation-api"))
 
+    // External API
+    implementation(project(":notification:notification-api"))
+
     // Web
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
 
     // Web Security
     implementation(project(":identity:identity-client"))
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.springframework.boot:spring-boot-starter-security")
 
     // Persistence
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("com.h2database:h2")
 
     // Event
     implementation(project(":event-relay:event-relay-support-jpa"))
@@ -46,6 +50,7 @@ dependencies {
     testImplementation("org.testcontainers:jdbc")
     testRuntimeOnly("com.h2database:h2")
 }
+
 tasks.test {
     useJUnitPlatform()
 }
