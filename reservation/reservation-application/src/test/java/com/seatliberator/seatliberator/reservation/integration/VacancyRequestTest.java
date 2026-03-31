@@ -1,6 +1,8 @@
 package com.seatliberator.seatliberator.reservation.integration;
 
 import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
+import com.seatliberator.seatliberator.reservation.shared.domain.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.shared.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.vacancy.application.exception.VacancyApplicationException;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.VacancyAlertRequester;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertCancelCommand;
@@ -99,10 +101,8 @@ public class VacancyRequestTest {
     void save_requests_when_vacancy_alert_times_differ() {
 
         //given
-        //given
         var userId = "user-1";
-        var roomId = "room-1";
-        var seatId = "seat-1";
+        var locator = SimpleSeatLocator.from("room1", "seat1");
 
         var now = BASE_TIME;
         var startTime1 = now.plusSeconds(60);
@@ -110,21 +110,11 @@ public class VacancyRequestTest {
         var startTime2 = now.plusSeconds(70);
         var endTime2 = now.plusSeconds(130);
 
-        var command1 = new VacancyAlertRequestCommand(
-                userId,
-                roomId,
-                seatId,
-                startTime1,
-                endTime1
-        );
+        var range1 = SimpleTimeRange.from(startTime1, endTime1);
+        var range2 = SimpleTimeRange.from(startTime2, endTime2);
 
-        var command2 = new VacancyAlertRequestCommand(
-                userId,
-                roomId,
-                seatId,
-                startTime2,
-                endTime2
-        );
+        var command1 = VacancyAlertRequestCommand.from(userId, locator, range1);
+        var command2 = VacancyAlertRequestCommand.from(userId, locator, range2);
 
         // when
         var r1 = requester.request(command1);
@@ -134,12 +124,13 @@ public class VacancyRequestTest {
         assertThat(r1).isNotNull();
         assertThat(r2).isNotNull();
         assertThat(r1.getUserId()).isEqualTo(userId);
-        assertThat(r1.getLocator().roomId()).isEqualTo(roomId);
-        assertThat(r1.getLocator().seatId()).isEqualTo(seatId);
+        assertThat(r1.getLocator().roomId()).isEqualTo(locator.roomId());
+        assertThat(r1.getLocator().seatId()).isEqualTo(locator.seatId());
         assertThat(r1.getStatus()).isEqualTo(VacancyAlertStatus.ACTIVE);
+
         assertThat(r2.getUserId()).isEqualTo(userId);
-        assertThat(r2.getLocator().roomId()).isEqualTo(roomId);
-        assertThat(r2.getLocator().seatId()).isEqualTo(seatId);
+        assertThat(r2.getLocator().roomId()).isEqualTo(locator.roomId());
+        assertThat(r2.getLocator().seatId()).isEqualTo(locator.seatId());
         assertThat(r2.getStatus()).isEqualTo(VacancyAlertStatus.ACTIVE);
     }
 

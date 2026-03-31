@@ -10,6 +10,20 @@ import java.time.Instant;
 import java.util.function.Function;
 
 public class TimeRangePredicates {
+    public static <T> PredicateSpecification<T> eq(
+            TimeRange range,
+            Function<From<?, T>, Path<EmbeddableTimeRange>> pathFunction
+    ) {
+        return (from, cb) -> {
+            var path = pathFunction.apply(from);
+
+            return cb.and(
+                    cb.equal(path.get("startAt"), range.startAt()),
+                    cb.equal(path.get("endAt"), range.endAt())
+            );
+        };
+    }
+
     public static <T> PredicateSpecification<T> withIn(
             TimeRange range,
             Function<From<?, T>, Path<EmbeddableTimeRange>> pathFunction

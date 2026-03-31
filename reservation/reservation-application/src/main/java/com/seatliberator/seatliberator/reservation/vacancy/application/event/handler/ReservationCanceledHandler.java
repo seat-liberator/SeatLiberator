@@ -5,6 +5,7 @@ import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.EventPubli
 import com.seatliberator.seatliberator.notification.api.event.NotificationCreateRequestEventPayload;
 import com.seatliberator.seatliberator.notification.api.event.NotificationEventType;
 import com.seatliberator.seatliberator.reservation.api.event.VacancyAlertNotificationPayload;
+import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationCanceled;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestReader;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class ReservationCanceledHandler {
     public void handle(ReservationCanceled event) {
         var locator = event.locator();
         var range = event.range();
-        var requests = reader.findActiveRequest(locator.roomId(), locator.seatId(), range.startAt(), range.endAt());
+        var requests = reader.findByLocatorAndRangeAndStatus(locator, range, VacancyAlertStatus.ACTIVE);
 
         for (var request : requests) {
             var targetLocator = request.getLocator();
