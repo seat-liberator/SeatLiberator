@@ -72,8 +72,9 @@ public class DefaultReservationReaderTest {
 
         var locatorRoomId = INITIAL_ROOM_ID;
         var locatorSeatId = INITIAL_SEAT_ID;
-        var locatorStartTime = reservation.getStartTime();
-        var locatorEndTime = reservation.getEndTime();
+        var range = reservation.getRange();
+        var locatorStartTime = range.startAt();
+        var locatorEndTime = range.endAt();
 
         when(reservationStore.findReservationBySeatAt(
                 locatorRoomId,

@@ -1,6 +1,7 @@
 package com.seatliberator.seatliberator.reservation;
 
 import com.seatliberator.seatliberator.reservation.book.domain.Reservation;
+import com.seatliberator.seatliberator.reservation.book.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCommand;
 
 import java.time.Clock;
@@ -17,14 +18,20 @@ public class TestFixture {
     public static final Clock fixedClock = Clock.fixed(Instant.parse("2026-01-01T00:00:00Z"), ZoneOffset.UTC);
     public static final Duration INITIAL_DURATION = Duration.ofMinutes(30);
 
-    public static Reservation createReservation(Instant startTime, Instant endTime) {
-        return Reservation.create(INITIAL_USER_ID, INITIAL_ROOM_ID, INITIAL_SEAT_ID, startTime, endTime);
-    }
-
     public static Reservation createReservation() {
         var startTime = fixedClock.instant();
         var endTime = startTime.plus(INITIAL_DURATION);
-        return createReservation(startTime, endTime);
+        return createReservation(startTime, endTime, ReservationStatus.RESERVED);
+    }
+
+    public static Reservation createReservation(ReservationStatus status) {
+        var startTime = fixedClock.instant();
+        var endTime = startTime.plus(INITIAL_DURATION);
+        return createReservation(startTime, endTime, status);
+    }
+
+    public static Reservation createReservation(Instant startTime, Instant endTime, ReservationStatus status) {
+        return Reservation.of(INITIAL_USER_ID, INITIAL_ROOM_ID, INITIAL_SEAT_ID, startTime, endTime, status);
     }
 
     public static void stubReservationId(Reservation reservation, Long id) {
@@ -37,13 +44,13 @@ public class TestFixture {
         }
     }
 
-    public static VacancyAlertRequestCommand createVacancyAlertRequestCommand(Instant startTime, Instant endTime, Instant requestedAt) {
-        return new VacancyAlertRequestCommand(INITIAL_USER_ID, INITIAL_ROOM_ID, INITIAL_SEAT_ID, startTime, endTime, requestedAt);
+    public static VacancyAlertRequestCommand createVacancyAlertRequestCommand(Instant startTime, Instant endTime) {
+        return new VacancyAlertRequestCommand(INITIAL_USER_ID, INITIAL_ROOM_ID, INITIAL_SEAT_ID, startTime, endTime);
     }
 
     public static VacancyAlertRequestCommand createVacancyAlertRequestCommand(Instant requestedAt) {
         var startTime = fixedClock.instant();
         var endTime = startTime.plus(INITIAL_DURATION);
-        return createVacancyAlertRequestCommand(startTime, endTime, requestedAt);
+        return createVacancyAlertRequestCommand(startTime, endTime);
     }
 }

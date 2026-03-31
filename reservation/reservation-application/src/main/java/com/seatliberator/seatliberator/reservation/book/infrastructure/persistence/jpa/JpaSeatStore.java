@@ -3,6 +3,7 @@ package com.seatliberator.seatliberator.reservation.book.infrastructure.persiste
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.book.domain.Seat;
 import com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa.repository.SeatRepository;
+import com.seatliberator.seatliberator.reservation.shared.domain.SeatLocator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,12 @@ public class JpaSeatStore implements SeatStore {
 
     @Override
     public Optional<Seat> findByRoomIdAndSeatId(String roomId, String seatId) {
-        return repository.findByRoomIdAndSeatId(roomId, seatId);
+        return repository.findByLocator_RoomIdAndLocator_SeatId(roomId, seatId);
+    }
+
+    @Override
+    public Optional<Seat> findByLocator(SeatLocator locator) {
+        return repository.findByLocator_RoomIdAndLocator_SeatId(locator.roomId(), locator.seatId());
     }
 
     @Override
@@ -31,7 +37,7 @@ public class JpaSeatStore implements SeatStore {
 
     @Override
     public void deleteByRoomIdAndSeatId(String roomId, String seatId) {
-        repository.deleteByRoomIdAndSeatId(roomId, seatId);
+        repository.deleteByLocator_RoomIdAndLocator_SeatId(roomId, seatId);
     }
 
     @Override

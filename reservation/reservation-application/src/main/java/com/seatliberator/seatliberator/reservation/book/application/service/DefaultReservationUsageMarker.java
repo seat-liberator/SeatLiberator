@@ -24,7 +24,7 @@ public class DefaultReservationUsageMarker implements ReservationUsageMarker {
                 .orElseThrow(() -> new BookApplicationException(BookApplicationErrorCode.RESERVATION_NOT_FOUND));
 
         try {
-            reservation.markUsed(clock.instant());
+            reservation.use(clock.instant());
             return ReservationStatusTransitionEntry.markSuccess(reservation.getStatus());
         } catch (IllegalStateException e) {
             return ReservationStatusTransitionEntry.markFail(e.getMessage(), reservation.getStatus());

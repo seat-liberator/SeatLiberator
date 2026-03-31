@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ReservationIntegrationTest
-@DisplayName("Integration Reservation Update Concurrency")
+@DisplayName("Integration: Reservation Update Concurrency")
 public class ReservationUpdateConcurrencyTest extends ReservationDatabaseCleanupSupport {
 
     private static final Logger log = LoggerFactory.getLogger(ReservationUpdateConcurrencyTest.class);
@@ -71,12 +71,11 @@ public class ReservationUpdateConcurrencyTest extends ReservationDatabaseCleanup
                     seatId,
                     startTime,
                     endTime
-
             );
 
             reservationService.create(command);
 
-            String reservation = reservationStore.findByUserId(command.userId()).orElseThrow().getUserId();
+            String reservation = reservationStore.findByUserId(userId).orElseThrow().getUserId();
 
             reservationIds.add(reservation);
         }
@@ -101,9 +100,9 @@ public class ReservationUpdateConcurrencyTest extends ReservationDatabaseCleanup
                     try {
                         start.await();
 
-                        boolean result = reservationService.update(
+                        reservationService.update(
                                 new ReservationUpdateCommand(
-                                        reservationIds.get(idx),   // 각자의 예약
+                                        reservationIds.get(idx),
                                         givenRoomId,
                                         givenTargetSeatId,        // 하나의 좌석으로 몰림
                                         startTime,
@@ -111,14 +110,8 @@ public class ReservationUpdateConcurrencyTest extends ReservationDatabaseCleanup
                                 )
                         );
 
-                        if (result) {
-                            log.debug("Thread {} report run command successfully.", idx);
-                            success.incrementAndGet();
-                        } else {
-                            log.debug("Thread {} report exception occurred.", idx);
-                            fail.incrementAndGet();
-                        }
-
+                        log.debug("Thread {} report run command successfully.", idx);
+                        success.incrementAndGet();
                     } catch (Exception e) {
                         fail.incrementAndGet();
                     } finally {

@@ -15,41 +15,41 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Query("""
             SELECT r
             FROM Reservation r
-            WHERE r.roomId = :roomId
-                AND r.seatId = :seatId
-                AND r.startTime <= :startTime
-                AND :endTime < r.endTime""")
+            WHERE r.locator.roomId = :roomId
+                AND r.locator.seatId = :seatId
+                AND r.range.startAt <= :startAt
+                AND :endAt < r.range.endAt""")
     Optional<Reservation> findReservationBySeatAt(
             @Param("roomId") String roomId,
             @Param("seatId") String seatId,
-            @Param("startTime") Instant startTime,
-            @Param("endTime") Instant endTime
+            @Param("startAt") Instant startAt,
+            @Param("endAt") Instant endAt
     );
 
     @Query("""
             SELECT COUNT(r) > 0
             FROM Reservation r
-            WHERE r.roomId = :roomId
-            AND r.seatId = :seatId
-            AND r.startTime < :endTime
-            AND r.endTime > :startTime
+            WHERE r.locator.roomId = :roomId
+            AND r.locator.seatId = :seatId
+            AND r.range.startAt < :endAt
+            AND r.range.endAt > :startAt
             """)
-    boolean existsReservationConflict(String roomId, String seatId, Instant startTime, Instant endTime);
+    boolean existsReservationConflict(String roomId, String seatId, Instant startAt, Instant endAt);
 
     @Query("""
                 SELECT COUNT(r) > 0
                 FROM Reservation r
                 WHERE r.id <> :id
-                AND r.roomId = :roomId
-                AND r.seatId = :seatId
-                AND r.startTime < :endTime
-                AND r.endTime > :startTime
+                AND r.locator.roomId = :roomId
+                AND r.locator.seatId = :seatId
+                AND r.range.startAt < :endAt
+                AND r.range.endAt > :startAt
             """)
     boolean existsReservationConflictExceptId(
             Long id,
             String roomId,
             String seatId,
-            Instant startTime,
-            Instant endTime
+            Instant startAt,
+            Instant endAt
     );
 }

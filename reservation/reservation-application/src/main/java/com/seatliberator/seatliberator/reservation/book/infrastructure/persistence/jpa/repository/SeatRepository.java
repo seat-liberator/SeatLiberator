@@ -10,24 +10,24 @@ import java.util.Optional;
 
 public interface SeatRepository extends JpaRepository<Seat, Long> {
 
-    Optional<Seat> findByRoomIdAndSeatId(String roomId, String seatId);
+    Optional<Seat> findByLocator_RoomIdAndLocator_SeatId(String roomId, String seatId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
                 SELECT s
                 FROM Seat s
-                WHERE s.roomId = :roomId
-                AND s.seatId = :seatId
+                WHERE s.locator.roomId = :roomId
+                AND s.locator.seatId = :seatId
             """)
     Optional<Seat> findForUpdate(String roomId, String seatId);
 
-    void deleteByRoomIdAndSeatId(String roomId, String seatId);
+    void deleteByLocator_RoomIdAndLocator_SeatId(String roomId, String seatId);
 
     @Query("""
             SELECT COUNT(s) > 0
             FROM Seat s
-            WHERE s.roomId = :roomId
-            AND s.seatId = :seatId
+            WHERE s.locator.roomId = :roomId
+            AND s.locator.seatId = :seatId
             """)
     boolean existsSeatConflict(String roomId, String seatId);
 
@@ -35,8 +35,8 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
             SELECT COUNT(s) > 0
             FROM Seat s
             WHERE s.id <> :id
-            AND s.roomId = :roomId
-            AND s.seatId = :seatId
+            AND s.locator.roomId = :roomId
+            AND s.locator.seatId = :seatId
             """)
     boolean existsSeatConflictExcept(Long id, String roomId, String seatId);
 }

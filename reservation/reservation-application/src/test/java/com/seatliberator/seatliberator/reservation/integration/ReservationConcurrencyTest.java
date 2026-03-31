@@ -43,7 +43,6 @@ public class ReservationConcurrencyTest extends ReservationDatabaseCleanupSuppor
 
         var givenRoomId = "room-1";
         var givenSeatId = "seat-1";
-        var givenUserId = "user-1";
         var startTime = Instant.parse("2025-06-01T01:00:00Z");
         var endTime = Instant.parse("2025-06-01T02:00:00Z");
 
@@ -53,14 +52,6 @@ public class ReservationConcurrencyTest extends ReservationDatabaseCleanupSuppor
         );
 
         seatService.create(seatCreateCommand);
-
-        var reservationCommand = new ReservationCreateCommand(
-                givenUserId,
-                givenRoomId,
-                givenSeatId,
-                startTime,
-                endTime
-        );
 
         // Then
         var ready = new CountDownLatch(threadCount);
@@ -81,15 +72,19 @@ public class ReservationConcurrencyTest extends ReservationDatabaseCleanupSuppor
 
                     try {
                         start.await();
+                        var userId = "user-" + threadId;
 
-                        var isSuccess = reservationService.create(reservationCommand);
-                        if (isSuccess) {
-                            log.debug("Thread {} report run command successfully.", threadId);
-                            success.incrementAndGet();
-                        } else {
-                            log.debug("Thread {} report exception occurred.", threadId);
-                            fail.incrementAndGet();
-                        }
+                        var reservationCommand = new ReservationCreateCommand(
+                                userId,
+                                givenRoomId,
+                                givenSeatId,
+                                startTime,
+                                endTime
+                        );
+
+                        reservationService.create(reservationCommand);
+                        log.debug("Thread {} report run command successfully.", threadId);
+                        success.incrementAndGet();
                     } catch (Exception e) {
                         fail.incrementAndGet();
                     } finally {

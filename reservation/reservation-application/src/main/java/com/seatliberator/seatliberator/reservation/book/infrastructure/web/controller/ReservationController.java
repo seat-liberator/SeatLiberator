@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.book.infrastructure.web.controller;
 
+import com.seatliberator.seatliberator.identity.client.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.ReservationManager;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationCreateCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationUpdateCommand;
@@ -7,9 +8,8 @@ import com.seatliberator.seatliberator.reservation.book.infrastructure.web.reque
 import com.seatliberator.seatliberator.reservation.book.infrastructure.web.request.ReservationUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -19,46 +19,49 @@ public class ReservationController {
 
     private final ReservationManager reservationManager;
 
+    private final ActorContextHolder actorContextHolder;
+
     @PostMapping
-    public Map<String, Boolean> create(
+    public ResponseEntity<?> create(
             @RequestBody ReservationCreateRequest request
     ) {
-        boolean result = reservationManager.create(
-                new ReservationCreateCommand(
-                        request.userId(),
-                        request.roomId(),
-                        request.seatId(),
-                        request.startTime(),
-                        request.endTime()
-                )
-        );
+        var userId = actorContextHolder.getActor().subject();
 
-        return Map.of("success", result);
+        var command = new ReservationCreateCommand(
+                userId,
+                request.roomId(),
+                request.seatId(),
+                request.startAt(),
+                request.endAt()
+        );
+        var result = reservationManager.create(command);
+
+        return ResponseEntity.ok(result);
     }
 
     @PutMapping
-    public Map<String, Boolean> update(
+    public ResponseEntity<?> update(
             @RequestBody ReservationUpdateRequest request
     ) {
-        boolean result = reservationManager.update(
-                new ReservationUpdateCommand(
-                        request.userId(),
-                        request.roomId(),
-                        request.seatId(),
-                        request.startTime(),
-                        request.endTime()
-                )
-        );
+        var userId = actorContextHolder.getActor().subject();
 
-        return Map.of("success", result);
+        var command = new ReservationUpdateCommand(
+                userId,
+                request.roomId(),
+                request.seatId(),
+                request.startAt(),
+                request.endAt()
+        );
+        var result = reservationManager.update(command);
+
+        return ResponseEntity.ok(result);
     }
 
-    @DeleteMapping("/{userId}")
-    public Map<String, Boolean> delete(
-            @PathVariable String userId
-    ) {
-        boolean result = reservationManager.cancel(userId);
-        return Map.of("success", result);
+    @DeleteMapping
+    public ResponseEntity<?> delete() {
+        var userId = actorContextHolder.getActor().subject();
+        var result = reservationManager.cancel(userId);
+        return ResponseEntity.ok(result);
     }
 
 }

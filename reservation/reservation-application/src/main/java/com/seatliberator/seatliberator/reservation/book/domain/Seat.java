@@ -1,5 +1,7 @@
 package com.seatliberator.seatliberator.reservation.book.domain;
 
+import com.seatliberator.seatliberator.reservation.shared.domain.EmbeddableSeatLocator;
+import com.seatliberator.seatliberator.reservation.shared.domain.SeatLocator;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,23 +21,22 @@ public class Seat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "room_id", nullable = false)
-    private String roomId;
+    @Embedded
+    private EmbeddableSeatLocator locator;
 
-    @Column(name = "seat_id", nullable = false)
-    private String seatId;
-
-    private Seat(String roomId, String seatId) {
-        this.roomId = roomId;
-        this.seatId = seatId;
+    private Seat(EmbeddableSeatLocator locator) {
+        this.locator = locator;
     }
 
     public static Seat create(String roomId, String seatId) {
-        return new Seat(roomId, seatId);
+        return new Seat(EmbeddableSeatLocator.from(roomId, seatId));
+    }
+
+    public static Seat create(SeatLocator locator) {
+        return new Seat(EmbeddableSeatLocator.of(locator));
     }
 
     public void update(String roomId, String seatId) {
-        this.roomId = roomId;
-        this.seatId = seatId;
+        this.locator.setLocate(roomId, seatId);
     }
 }
