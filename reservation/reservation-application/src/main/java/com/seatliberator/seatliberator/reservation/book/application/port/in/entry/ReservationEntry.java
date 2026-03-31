@@ -9,11 +9,12 @@ public record ReservationEntry(
         String seatId
 ) {
     public static ReservationEntry of(Reservation reservation) {
+        var locator = reservation.getLocator();
         return new ReservationEntry(
                 reservation.getId(),
                 reservation.getUserId(),
-                reservation.getRoomId(),
-                reservation.getSeatId()
+                locator.roomId(),
+                locator.seatId()
         );
     }
 }

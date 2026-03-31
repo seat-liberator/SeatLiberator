@@ -1,6 +1,7 @@
 package com.seatliberator.seatliberator.reservation.book.application.port.out;
 
 import com.seatliberator.seatliberator.reservation.book.domain.Seat;
+import com.seatliberator.seatliberator.reservation.shared.domain.SeatLocator;
 
 import java.util.Optional;
 
@@ -9,6 +10,8 @@ public interface SeatStore {
     void save(Seat seat);
 
     Optional<Seat> findByRoomIdAndSeatId(String roomId, String seatId);
+
+    Optional<Seat> findByLocator(SeatLocator locator);
 
     Optional<Seat> findForUpdate(String roomId, String seatId);
 

@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TransactionalReservationIntegrationTest
 @DisplayName("Integration: Reservation Service")
-public class ReservationServiceTest {
+public class ReservationServiceTest extends ReservationDatabaseCleanupSupport {
 
     @Autowired
     SeatService seatService;
@@ -55,13 +55,13 @@ public class ReservationServiceTest {
         var storedSeat = optStoreSeat.get();
 
         assertThat(result).isTrue();
-        assertThat(storedSeat.getRoomId()).isEqualTo(givenRoomId);
-        assertThat(storedSeat.getSeatId()).isEqualTo(givenSeatId);
+        assertThat(storedSeat.getLocator().roomId()).isEqualTo(givenRoomId);
+        assertThat(storedSeat.getLocator().seatId()).isEqualTo(givenSeatId);
     }
 
     @Test
-    @DisplayName("Reservation 생성 시 true 반환한다.")
-    void return_true_when_reservation_is_created() {
+    @DisplayName("Reservation 생성 시 예약 정보를 반환한다.")
+    void return_entry_when_reservation_is_created() {
         var givenRoomId = "room-1";
         var givenSeatId = "seat-1";
         var givenUserId = "user-1";
@@ -85,7 +85,7 @@ public class ReservationServiceTest {
         );
 
         // Then
-        boolean result = reservationService.create(reservationCreateCommand);
+        var result = reservationService.create(reservationCreateCommand);
 
         Optional<Reservation> optStoredReservation = reservationStore.findByUserId(
                 givenUserId
@@ -95,9 +95,12 @@ public class ReservationServiceTest {
 
         var storedReservation = optStoredReservation.get();
 
-        assertThat(result).isTrue();
+        assertThat(result).isNotNull();
+        assertThat(result.actorId()).isEqualTo(givenUserId);
+        assertThat(result.roomId()).isEqualTo(givenRoomId);
+        assertThat(result.seatId()).isEqualTo(givenSeatId);
         assertThat(storedReservation.getUserId()).isEqualTo(givenUserId);
-        assertThat(storedReservation.getRoomId()).isEqualTo(givenRoomId);
-        assertThat(storedReservation.getSeatId()).isEqualTo(givenSeatId);
+        assertThat(storedReservation.getLocator().roomId()).isEqualTo(givenRoomId);
+        assertThat(storedReservation.getLocator().seatId()).isEqualTo(givenSeatId);
     }
 }

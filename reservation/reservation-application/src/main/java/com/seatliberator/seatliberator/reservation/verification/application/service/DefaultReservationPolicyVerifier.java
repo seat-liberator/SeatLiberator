@@ -46,6 +46,7 @@ public class DefaultReservationPolicyVerifier implements ReservationVerifier {
             case EXPIRED -> VerificationApplicationErrorCode.RESERVATION_EXPIRED;
             case USED -> VerificationApplicationErrorCode.RESERVATION_ALREADY_USED;
             case RESERVED -> VerificationApplicationErrorCode.RESERVATION_USAGE_FORBIDDEN;
+            case CANCELED -> VerificationApplicationErrorCode.RESERVATION_ALREADY_CANCELED;
         };
     }
 }

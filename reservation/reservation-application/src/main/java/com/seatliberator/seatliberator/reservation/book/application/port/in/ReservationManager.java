@@ -2,12 +2,13 @@ package com.seatliberator.seatliberator.reservation.book.application.port.in;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationCreateCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationUpdateCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.entry.ReservationEntry;
 
 public interface ReservationManager {
 
-    boolean create(ReservationCreateCommand command);
+    ReservationEntry create(ReservationCreateCommand command);
 
-    boolean update(ReservationUpdateCommand command);
+    ReservationEntry update(ReservationUpdateCommand command);
 
-    boolean cancel(String userId);
+    ReservationEntry cancel(String userId);
 }

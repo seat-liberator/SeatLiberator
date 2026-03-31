@@ -3,10 +3,9 @@ package com.seatliberator.seatliberator.reservation.book.infrastructure.web.requ
 import java.time.Instant;
 
 public record ReservationUpdateRequest(
-        String userId,
         String roomId,
         String seatId,
-        Instant startTime,
-        Instant endTime
+        Instant startAt,
+        Instant endAt
 ) {
 }
