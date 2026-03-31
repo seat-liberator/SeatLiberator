@@ -31,7 +31,7 @@ public class TestFixture {
     }
 
     public static Reservation createReservation(Instant startTime, Instant endTime, ReservationStatus status) {
-        return Reservation.of(INITIAL_USER_ID, INITIAL_ROOM_ID, INITIAL_SEAT_ID, startTime, endTime, status);
+        return Reservation.create(INITIAL_USER_ID, INITIAL_ROOM_ID, INITIAL_SEAT_ID, startTime, endTime, status);
     }
 
     public static void stubReservationId(Reservation reservation, Long id) {
