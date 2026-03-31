@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.integration;
 
+import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequest;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestReader;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestStore;
-import com.seatliberator.seatliberator.reservation.vacancy.domain.VacancyAlertRequest;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;

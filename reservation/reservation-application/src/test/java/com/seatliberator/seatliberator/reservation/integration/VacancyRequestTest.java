@@ -1,12 +1,12 @@
 package com.seatliberator.seatliberator.reservation.integration;
 
+import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
 import com.seatliberator.seatliberator.reservation.vacancy.application.exception.VacancyApplicationException;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.VacancyAlertRequester;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertCancelCommand;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCommand;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestReader;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestStore;
-import com.seatliberator.seatliberator.reservation.vacancy.domain.VacancyAlertStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.reservation.vacancy.infrastructure.persistence.jpa;
 
+import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequest;
+import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestReader;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestStore;
-import com.seatliberator.seatliberator.reservation.vacancy.domain.VacancyAlertRequest;
-import com.seatliberator.seatliberator.reservation.vacancy.domain.VacancyAlertStatus;
 import com.seatliberator.seatliberator.reservation.vacancy.infrastructure.persistence.jpa.repository.VacancyAlertRequestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

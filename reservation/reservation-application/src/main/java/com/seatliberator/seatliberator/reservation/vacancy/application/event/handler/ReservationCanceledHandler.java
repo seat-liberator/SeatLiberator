@@ -5,7 +5,7 @@ import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.EventPubli
 import com.seatliberator.seatliberator.notification.api.event.NotificationCreateRequestEventPayload;
 import com.seatliberator.seatliberator.notification.api.event.NotificationEventType;
 import com.seatliberator.seatliberator.reservation.api.event.VacancyAlertNotificationPayload;
-import com.seatliberator.seatliberator.reservation.book.domain.event.ReservationCanceled;
+import com.seatliberator.seatliberator.reservation.domain.event.ReservationCanceled;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;

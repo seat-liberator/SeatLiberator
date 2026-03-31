@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.reservation.api.authorization.registration;
 
-import com.seatliberator.seatliberator.identity.core.role.Role;
-import com.seatliberator.seatliberator.reservation.api.ReservationApi;
 import com.seatliberator.seatliberator.identity.api.DefaultNamespaceRoleGrant;
 import com.seatliberator.seatliberator.identity.api.DefaultNamespaceRoleGrantProvider;
+import com.seatliberator.seatliberator.identity.core.role.Role;
+import com.seatliberator.seatliberator.reservation.api.ReservationApi;
 
 import java.util.List;
 

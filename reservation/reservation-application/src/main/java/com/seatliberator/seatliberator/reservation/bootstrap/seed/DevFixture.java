@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.bootstrap.seed;
 
-import com.seatliberator.seatliberator.reservation.book.domain.Seat;
+import com.seatliberator.seatliberator.reservation.domain.Seat;
 
 import java.util.ArrayList;
 import java.util.List;

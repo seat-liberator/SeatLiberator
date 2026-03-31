@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
-import com.seatliberator.seatliberator.reservation.book.domain.Seat;
 import com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa.repository.SeatRepository;
+import com.seatliberator.seatliberator.reservation.domain.Seat;
 import com.seatliberator.seatliberator.reservation.shared.domain.SeatLocator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

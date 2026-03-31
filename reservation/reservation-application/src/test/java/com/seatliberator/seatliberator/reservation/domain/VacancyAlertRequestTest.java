@@ -1,7 +1,5 @@
-package com.seatliberator.seatliberator.reservation.vacancy.domain;
+package com.seatliberator.seatliberator.reservation.domain;
 
-import com.seatliberator.seatliberator.reservation.vacancy.domain.VacancyAlertRequest;
-import com.seatliberator.seatliberator.reservation.vacancy.domain.VacancyAlertStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

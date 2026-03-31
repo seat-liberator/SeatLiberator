@@ -8,7 +8,7 @@ public interface TimeRange {
     Instant endAt();
 
     default boolean contains(Instant time) {
-        return !time.isBefore(startAt()) &&  time.isBefore(endAt());
+        return !time.isBefore(startAt()) && time.isBefore(endAt());
     }
 
     default boolean isEnded(Instant time) {

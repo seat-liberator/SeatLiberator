@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.book.application.port.in.entry;
 
-import com.seatliberator.seatliberator.reservation.book.domain.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import org.jspecify.annotations.Nullable;
 
 public record ReservationStatusTransitionEntry(
