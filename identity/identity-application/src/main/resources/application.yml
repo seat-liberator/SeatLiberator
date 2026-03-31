@@ -15,6 +15,9 @@ identity:
         private-key: "classpath:keys/key-20260308-214756/private.pem"
         public-key: "classpath:keys/key-20260308-214756/public.pem"
 
+server:
+  port: 9090
+
 spring:
   jpa:
     hibernate:

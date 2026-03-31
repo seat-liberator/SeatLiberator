@@ -1,0 +1,20 @@
+identity:
+  validate:
+    jwt:
+      enabled: true
+      jwks-server:
+        base-url: ${JWKS_BASE_URL}
+        uri: /.well-known/jwks.json
+
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: ${DB_DIALECT}
