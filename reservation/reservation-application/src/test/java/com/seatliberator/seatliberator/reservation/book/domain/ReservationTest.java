@@ -1,6 +1,5 @@
-package com.seatliberator.seatliberator.reservation.unit.book.domain;
+package com.seatliberator.seatliberator.reservation.book.domain;
 
-import com.seatliberator.seatliberator.reservation.book.domain.ReservationStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

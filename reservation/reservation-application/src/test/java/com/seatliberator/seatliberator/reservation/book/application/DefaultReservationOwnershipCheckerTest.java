@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.unit.book.application;
+package com.seatliberator.seatliberator.reservation.book.application;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.book.application.service.DefaultReservationOwnershipChecker;

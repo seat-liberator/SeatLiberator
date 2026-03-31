@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.unit.book.application;
+package com.seatliberator.seatliberator.reservation.book.application;
 
 import com.seatliberator.seatliberator.reservation.vacancy.application.exception.VacancyApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.vacancy.application.exception.VacancyApplicationException;
