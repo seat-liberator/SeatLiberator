@@ -6,19 +6,19 @@
 
 ## 개요
 
-| 기능 | 설명 | 외부 노출 방식 |
-| --- | --- | --- |
-| `book` | 좌석 생성/수정/삭제, 예약 생성/수정/취소 | REST API |
-| `vacancy` | 특정 좌석/시간대에 대한 빈자리 알림 신청 및 취소 | REST API |
-| `verification` | 예약 조회 권한 확인, 예약 사용 처리 정책 검증 | 애플리케이션 포트 |
+| 기능             | 설명                           | 외부 노출 방식  |
+|----------------|------------------------------|-----------|
+| `book`         | 좌석 생성/수정/삭제, 예약 생성/수정/취소     | REST API  |
+| `vacancy`      | 특정 좌석/시간대에 대한 빈자리 알림 신청 및 취소 | REST API  |
+| `verification` | 예약 조회 권한 확인, 예약 사용 처리 정책 검증  | 애플리케이션 포트 |
 
 ## 패키지 구성
 
-| 패키지 | 역할 |
-| --- | --- |
-| `com.seatliberator.seatliberator.reservation.book` | `Seat`, `Reservation` 도메인과 예약/좌석 관리 유스케이스 |
-| `com.seatliberator.seatliberator.reservation.vacancy` | 빈자리 알림 요청 도메인과 알림 신청/취소 유스케이스 |
-| `com.seatliberator.seatliberator.reservation.verification` | 예약 조회/검증 권한 정책, 사용 처리 유스케이스 |
+| 패키지                                                        | 역할                                        |
+|------------------------------------------------------------|-------------------------------------------|
+| `com.seatliberator.seatliberator.reservation.book`         | `Seat`, `Reservation` 도메인과 예약/좌석 관리 유스케이스 |
+| `com.seatliberator.seatliberator.reservation.vacancy`      | 빈자리 알림 요청 도메인과 알림 신청/취소 유스케이스             |
+| `com.seatliberator.seatliberator.reservation.verification` | 예약 조회/검증 권한 정책, 사용 처리 유스케이스               |
 
 ## 핵심 정책
 
@@ -39,11 +39,11 @@
 
 #### Seat API
 
-| Method | Path | 설명 |
-| --- | --- | --- |
-| `POST` | `/seat` | 좌석 생성 |
-| `PUT` | `/seat` | 좌석 식별자 변경 |
-| `DELETE` | `/seat/{roomId}/{seatId}` | 좌석 삭제 |
+| Method   | Path                      | 설명        |
+|----------|---------------------------|-----------|
+| `POST`   | `/seat`                   | 좌석 생성     |
+| `PUT`    | `/seat`                   | 좌석 식별자 변경 |
+| `DELETE` | `/seat/{roomId}/{seatId}` | 좌석 삭제     |
 
 **`POST /seat`**
 
@@ -88,10 +88,10 @@
 
 #### Reservation API
 
-| Method | Path | 설명 |
-| --- | --- | --- |
-| `POST` | `/reservation` | 예약 생성 |
-| `PUT` | `/reservation` | 예약 수정 |
+| Method   | Path                    | 설명        |
+|----------|-------------------------|-----------|
+| `POST`   | `/reservation`          | 예약 생성     |
+| `PUT`    | `/reservation`          | 예약 수정     |
 | `DELETE` | `/reservation/{userId}` | 사용자 예약 취소 |
 
 시간 필드는 `Instant` 로 매핑되므로 요청 본문에는 UTC ISO-8601 문자열을 사용합니다.
@@ -156,9 +156,9 @@
 
 ### Vacancy API
 
-| Method | Path | 설명 |
-| --- | --- | --- |
-| `POST` | `/vacancy-alert` | 빈자리 알림 신청 |
+| Method   | Path                       | 설명        |
+|----------|----------------------------|-----------|
+| `POST`   | `/vacancy-alert`           | 빈자리 알림 신청 |
 | `DELETE` | `/vacancy-alert/{alertId}` | 빈자리 알림 취소 |
 
 **`POST /vacancy-alert`**
@@ -202,27 +202,27 @@ userId: user-1
 
 `verification` 패키지에는 현재 REST 컨트롤러가 없습니다. 대신 다른 모듈 또는 상위 계층에서 호출할 수 있는 애플리케이션 포트를 제공합니다.
 
-| 포트 | 설명 |
-| --- | --- |
-| `ReservationPolicyReader.read(locator, requester)` | 예약 조회 가능 여부를 검증한 뒤 예약 정보를 반환 |
-| `ReservationVerifier.verify(locator, requester)` | 예약 사용 가능 여부를 검증한 뒤 예약을 `USED` 로 전이 |
+| 포트                                                 | 설명                                 |
+|----------------------------------------------------|------------------------------------|
+| `ReservationPolicyReader.read(locator, requester)` | 예약 조회 가능 여부를 검증한 뒤 예약 정보를 반환       |
+| `ReservationVerifier.verify(locator, requester)`   | 예약 사용 가능 여부를 검증한 뒤 예약을 `USED` 로 전이 |
 
 #### 지원 Locator
 
-| 타입 | 설명 |
-| --- | --- |
-| `IdBasedReservationLocator` | 예약 ID 기준 조회 |
+| 타입                            | 설명              |
+|-------------------------------|-----------------|
+| `IdBasedReservationLocator`   | 예약 ID 기준 조회     |
 | `SeatBasedReservationLocator` | 좌석과 시간 범위 기준 조회 |
 
 `SeatBasedReservationLocator` 는 전달된 시간 범위를 완전히 포함하는 예약을 찾습니다.
 
 #### Requester 정책
 
-| RequesterType | 조회 권한 | 사용 처리 권한 |
-| --- | --- | --- |
-| `USER` | 본인 예약만 가능 | 불가 |
-| `ADMIN` | 가능 | 가능 |
-| `SYSTEM` | 가능 | 가능 |
+| RequesterType | 조회 권한     | 사용 처리 권한 |
+|---------------|-----------|----------|
+| `USER`        | 본인 예약만 가능 | 불가       |
+| `ADMIN`       | 가능        | 가능       |
+| `SYSTEM`      | 가능        | 가능       |
 
 #### 상태 전이
 
@@ -325,23 +325,23 @@ flowchart LR
 
 주요 설정:
 
-| 속성 | 설명 |
-| --- | --- |
-| `spring.datasource.url` | PostgreSQL 연결 URL |
-| `spring.datasource.username` | DB 사용자 |
-| `spring.datasource.password` | DB 비밀번호 |
-| `spring.jpa.hibernate.ddl-auto` | 현재 `update` |
+| 속성                                        | 설명                |
+|-------------------------------------------|-------------------|
+| `spring.datasource.url`                   | PostgreSQL 연결 URL |
+| `spring.datasource.username`              | DB 사용자            |
+| `spring.datasource.password`              | DB 비밀번호           |
+| `spring.jpa.hibernate.ddl-auto`           | 현재 `update`       |
 | `spring.jpa.properties.hibernate.dialect` | PostgreSQLDialect |
 
 필수 환경 변수:
 
-| 환경 변수 | 설명 |
-| --- | --- |
-| `DB_HOST` | DB 호스트 |
-| `DB_PORT` | DB 포트 |
-| `DB_SCHEMA` | DB 스키마/데이터베이스명 |
-| `DB_USERNAME` | DB 사용자 |
-| `DB_PASSWORD` | DB 비밀번호 |
+| 환경 변수         | 설명             |
+|---------------|----------------|
+| `DB_HOST`     | DB 호스트         |
+| `DB_PORT`     | DB 포트          |
+| `DB_SCHEMA`   | DB 스키마/데이터베이스명 |
+| `DB_USERNAME` | DB 사용자         |
+| `DB_PASSWORD` | DB 비밀번호        |
 
 ## 참고
 
