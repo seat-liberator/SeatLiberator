@@ -36,7 +36,7 @@ public interface VacancyAlertRequestRepository extends JpaRepository<VacancyAler
             WHERE v.locator.roomId = :targetRoomId
                 AND v.locator.seatId = :targetSeatId
                 AND v.status = :status
-                AND v.range.startAt <= :targetEndAt
+                AND v.range.startAt < :targetEndAt
                 AND v.range.endAt > :targetStartAt""")
     List<VacancyAlertRequest> findAllRequestsByRoomAndSeatAndTimeRange(
             @Param("targetRoomId") String targetRoomId,
