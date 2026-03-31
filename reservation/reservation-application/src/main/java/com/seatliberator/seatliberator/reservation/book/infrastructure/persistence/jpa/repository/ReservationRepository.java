@@ -2,13 +2,14 @@ package com.seatliberator.seatliberator.reservation.book.infrastructure.persiste
 
 import com.seatliberator.seatliberator.reservation.domain.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.Instant;
 import java.util.Optional;
 
-public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+public interface ReservationRepository extends JpaRepository<Reservation, Long>, JpaSpecificationExecutor<Reservation> {
 
     Optional<Reservation> findByUserId(String userId);
 
@@ -24,32 +25,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("seatId") String seatId,
             @Param("startAt") Instant startAt,
             @Param("endAt") Instant endAt
-    );
-
-    @Query("""
-            SELECT COUNT(r) > 0
-            FROM Reservation r
-            WHERE r.locator.roomId = :roomId
-            AND r.locator.seatId = :seatId
-            AND r.range.startAt < :endAt
-            AND r.range.endAt > :startAt
-            """)
-    boolean existsReservationConflict(String roomId, String seatId, Instant startAt, Instant endAt);
-
-    @Query("""
-                SELECT COUNT(r) > 0
-                FROM Reservation r
-                WHERE r.id <> :id
-                AND r.locator.roomId = :roomId
-                AND r.locator.seatId = :seatId
-                AND r.range.startAt < :endAt
-                AND r.range.endAt > :startAt
-            """)
-    boolean existsReservationConflictExceptId(
-            Long id,
-            String roomId,
-            String seatId,
-            Instant startAt,
-            Instant endAt
     );
 }

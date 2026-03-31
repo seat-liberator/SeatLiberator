@@ -61,4 +61,28 @@ public class SimpleSeatLocatorTest {
             assertThat(copied.seatId()).isEqualTo(seatId);
         }
     }
+
+    @Nested
+    @DisplayName("Equality")
+    class Equality {
+        @Test
+        @DisplayName("같은 값, 같은 타입끼리는 인터페이스의 동등성 검사 통과")
+        void is_equal_with_same_type_and_value() {
+            var locator = SimpleSeatLocator.from(roomId, seatId);
+            var other = SimpleSeatLocator.from(roomId, seatId);
+
+            assertThat(locator).isEqualTo(other);
+            assertThat(locator.isSame(other)).isTrue();
+        }
+
+        @Test
+        @DisplayName("다른 값, 같은 타입끼리는 인터페이스의 동등성 검사 실패")
+        void is_not_equal_with_same_type_and_diff_value() {
+            var locator = SimpleSeatLocator.from(roomId, seatId);
+            var other = SimpleSeatLocator.from("other-" + roomId, "other-" + seatId);
+
+            assertThat(locator).isNotEqualTo(other);
+            assertThat(locator.isSame(other)).isFalse();
+        }
+    }
 }

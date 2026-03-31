@@ -1,8 +1,12 @@
 package com.seatliberator.seatliberator.reservation.book.application.port.out;
 
 import com.seatliberator.seatliberator.reservation.domain.Reservation;
+import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.shared.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.shared.domain.TimeRange;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Optional;
 
 public interface ReservationStore {
@@ -14,9 +18,11 @@ public interface ReservationStore {
 
     Optional<Reservation> findReservationBySeatAt(String roomId, String seatId, Instant startTime, Instant endTime);
 
+    Optional<Reservation> findByLocatorAndRangeAndStatus(SeatLocator locator, TimeRange range, ReservationStatus status);
+
     void delete(Reservation reservation);
 
-    boolean existsReservationConflict(String roomId, String seatId, Instant startTime, Instant endTime);
+    boolean existsByLocatorAndRange(SeatLocator locator, TimeRange range);
 
-    boolean existsReservationConflictExceptId(Long id, String roomId, String seatId, Instant startTime, Instant endTime);
+    boolean existsByLocatorAndRangeWithExcludeIds(SeatLocator locator, TimeRange range, Collection<Long> ids);
 }
