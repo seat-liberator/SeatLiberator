@@ -1,12 +1,15 @@
 package com.seatliberator.seatliberator.reservation.book.domain;
 
-import com.seatliberator.seatliberator.reservation.book.application.event.payload.BookDomainEventPayload;
+import com.seatliberator.seatliberator.reservation.book.domain.event.ReservationCanceled;
+import com.seatliberator.seatliberator.reservation.book.domain.event.ReservationCreated;
+import com.seatliberator.seatliberator.reservation.shared.domain.DomainEvent;
 import com.seatliberator.seatliberator.reservation.shared.domain.EmbeddableSeatLocator;
 import com.seatliberator.seatliberator.reservation.shared.domain.EmbeddableTimeRange;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.AfterDomainEventPublication;
 import org.springframework.data.domain.DomainEvents;
 
 import java.time.Instant;
@@ -21,7 +24,7 @@ import java.util.List;
 public class Reservation {
 
     @Transient
-    private final List<BookDomainEventPayload> events = new ArrayList<>();
+    private final List<DomainEvent> events = new ArrayList<>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,17 +57,28 @@ public class Reservation {
     public static Reservation create(String userId, String roomId, String seatId, Instant startAt, Instant endAt) {
         var locator = EmbeddableSeatLocator.from(roomId, seatId);
         var range = EmbeddableTimeRange.from(startAt, endAt);
-        return new Reservation(userId, locator, range, ReservationStatus.RESERVED);
+        var reservation = new Reservation(userId, locator, range, ReservationStatus.RESERVED);
+
+        reservation.registerCreatedEvent();
+        return reservation;
     }
 
-    public static Reservation of(String userId, String roomId, String seatId, Instant startAt, Instant endAt, ReservationStatus status) {
+    public static Reservation create(String userId, String roomId, String seatId, Instant startAt, Instant endAt, ReservationStatus status) {
         var locator = EmbeddableSeatLocator.from(roomId, seatId);
         var range = EmbeddableTimeRange.from(startAt, endAt);
-        return new Reservation(userId, locator, range, status);
+        var reservation = new Reservation(userId, locator, range, status);
+
+        reservation.registerCreatedEvent();
+        return reservation;
+    }
+
+    @AfterDomainEventPublication
+    private void afterDomainEventPublication() {
+        this.events.clear();
     }
 
     @DomainEvents
-    private Collection<Object> event() {
+    Collection<Object> domainEvents() {
         return Collections.unmodifiableList(events);
     }
 
@@ -100,6 +114,7 @@ public class Reservation {
         expireIfEnded(canceledAt);
         ensureCancelableAt();
         status = ReservationStatus.CANCELED;
+        registerCanceledEvent(canceledAt);
     }
 
     private void ensureUsableAt(Instant at) {
@@ -124,5 +139,15 @@ public class Reservation {
             case EXPIRED -> throw new IllegalStateException("이미 만료된 예약입니다.");
             case CANCELED -> throw new IllegalStateException("이미 취소된 예약입니다.");
         }
+    }
+
+    private void registerCreatedEvent() {
+        var event = new ReservationCreated(locator, range);
+        events.add(event);
+    }
+
+    private void registerCanceledEvent(Instant canceledAt) {
+        var event = new ReservationCanceled(locator, range, canceledAt);
+        events.add(event);
     }
 }

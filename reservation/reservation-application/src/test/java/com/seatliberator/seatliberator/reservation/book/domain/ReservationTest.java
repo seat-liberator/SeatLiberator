@@ -1,11 +1,14 @@
 package com.seatliberator.seatliberator.reservation.book.domain;
 
+import com.seatliberator.seatliberator.reservation.book.domain.event.ReservationCanceled;
+import com.seatliberator.seatliberator.reservation.book.domain.event.ReservationCreated;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static com.seatliberator.seatliberator.reservation.TestFixture.createReservation;
-import static com.seatliberator.seatliberator.reservation.TestFixture.fixedClock;
+import java.util.ArrayList;
+
+import static com.seatliberator.seatliberator.reservation.TestFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -190,6 +193,67 @@ public class ReservationTest {
                 assertThat(r.getStatus()).isEqualTo(ReservationStatus.EXPIRED);
                 assertThat(r.isExpired()).isTrue();
             }
+        }
+    }
+
+    @Nested
+    @DisplayName("Event")
+    class Event {
+        @Test
+        @DisplayName("예약 생성 시 ReservationCreated 이벤트도 만들어진다")
+        void create_reservation_event() {
+            var r = createReservation();
+
+            assertThat(r.domainEvents())
+                    .singleElement()
+                    .isInstanceOfSatisfying(ReservationCreated.class, e -> {
+                        assertThat(e.locator().roomId()).isEqualTo(INITIAL_ROOM_ID);
+                        assertThat(e.locator().seatId()).isEqualTo(INITIAL_SEAT_ID);
+                        assertThat(e.range().startAt()).isEqualTo(fixedClock.instant());
+                        assertThat(e.range().endAt()).isEqualTo(fixedClock.instant().plus(INITIAL_DURATION));
+                    });
+        }
+
+        @Test
+        @DisplayName("예약 취소 시 ReservationCanceled 이벤트도 만들어진다")
+        void create_canceled_event() {
+            var r = createReservation();
+            var canceledAt = fixedClock.instant();
+            r.cancel(canceledAt);
+
+            var events = new ArrayList<>(r.domainEvents());
+
+            assertThat(events).hasSize(2);
+
+            assertThat(events.get(0))
+                    .isInstanceOfSatisfying(ReservationCreated.class, e -> {
+                        assertThat(e.locator()).isEqualTo(r.getLocator());
+                        assertThat(e.range()).isEqualTo(r.getRange());
+                    });
+
+            assertThat(events.get(1))
+                    .isInstanceOfSatisfying(ReservationCanceled.class, e -> {
+                        assertThat(e.locator()).isEqualTo(r.getLocator());
+                        assertThat(e.range()).isEqualTo(r.getRange());
+                        assertThat(e.canceledAt()).isEqualTo(canceledAt);
+                    });
+        }
+
+        @Test
+        @DisplayName("예약 취소에 실패하면 ReservationCanceled 이벤트는 생성되지 않는다")
+        void does_not_create_canceled_event_when_cancel_fail() {
+            var r = createReservation();
+            var afterEndAt = r.getRange().endAt();
+
+            assertThatThrownBy(() -> r.cancel(afterEndAt))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("이미 만료된 예약입니다.");
+
+            var events = new ArrayList<>(r.domainEvents());
+
+            assertThat(events)
+                    .singleElement()
+                    .isInstanceOf(ReservationCreated.class);
         }
     }
 }
