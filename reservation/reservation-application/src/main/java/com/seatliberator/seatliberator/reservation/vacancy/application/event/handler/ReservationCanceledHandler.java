@@ -5,7 +5,7 @@ import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.EventPubli
 import com.seatliberator.seatliberator.notification.api.event.NotificationCreateRequestEventPayload;
 import com.seatliberator.seatliberator.notification.api.event.NotificationEventType;
 import com.seatliberator.seatliberator.reservation.api.event.VacancyAlertNotificationPayload;
-import com.seatliberator.seatliberator.reservation.book.application.event.payload.ReservationCanceledEvent;
+import com.seatliberator.seatliberator.reservation.book.domain.event.ReservationCanceled;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -24,21 +24,19 @@ public class ReservationCanceledHandler {
     private final Clock clock;
 
     @EventListener
-    public void handle(ReservationCanceledEvent event) {
-        var requests = reader.findActiveRequest(
-                event.roomId(),
-                event.seatId(),
-                event.startAt(),
-                event.endAt());
+    public void handle(ReservationCanceled event) {
+        var locator = event.locator();
+        var range = event.range();
+        var requests = reader.findActiveRequest(locator.roomId(), locator.seatId(), range.startAt(), range.endAt());
 
         for (var request : requests) {
-            var locator = request.getLocator();
-            var range = request.getRange();
+            var targetLocator = request.getLocator();
+            var targetRange = request.getRange();
             var payloadBody = new VacancyAlertNotificationPayload(
-                    locator.roomId(),
-                    locator.seatId(),
-                    range.startAt(),
-                    range.endAt()
+                    targetLocator.roomId(),
+                    targetLocator.seatId(),
+                    targetRange.startAt(),
+                    targetRange.endAt()
             );
             var stringifiedBody = objectMapper.writeValueAsString(payloadBody);
             var notificationEventPayload = new NotificationCreateRequestEventPayload(request.getUserId(), "INFO", "빈자리 발생!", stringifiedBody);
