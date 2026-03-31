@@ -1,6 +1,9 @@
 package com.seatliberator.seatliberator.reservation.vacancy.application.service;
 
 import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequest;
+import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
+import com.seatliberator.seatliberator.reservation.shared.domain.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.shared.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.vacancy.application.exception.VacancyApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.vacancy.application.exception.VacancyApplicationException;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.VacancyAlertRequester;
@@ -24,26 +27,16 @@ public class DefaultVacancyAlertRequester implements VacancyAlertRequester {
 
     @Override
     public VacancyAlertRequest request(VacancyAlertRequestCommand command) {
-        var exists = reader.existsActiveRequestFor(
-                command.userId(),
-                command.roomId(),
-                command.seatId(),
-                command.startTime(),
-                command.endTime()
-        );
+        var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
+        var range = SimpleTimeRange.from(command.startTime(), command.endTime());
+
+        var exists = reader.existsByUserIdAndLocatorAndRangeAndStatus(command.userId(), locator, range, VacancyAlertStatus.ACTIVE);
 
         if (exists) throw new VacancyApplicationException(VacancyApplicationErrorCode.DUPLICATED_REQUEST);
 
         var now = clock.instant();
 
-        var request = VacancyAlertRequest.of(
-                command.userId(),
-                command.roomId(),
-                command.seatId(),
-                command.startTime(),
-                command.endTime(),
-                now
-        );
+        var request = VacancyAlertRequest.create(command.userId(), locator, range, now);
 
         try {
             return store.save(request);

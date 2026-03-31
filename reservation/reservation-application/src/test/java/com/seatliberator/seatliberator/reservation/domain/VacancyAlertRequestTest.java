@@ -1,5 +1,7 @@
 package com.seatliberator.seatliberator.reservation.domain;
 
+import com.seatliberator.seatliberator.reservation.shared.domain.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.shared.domain.SimpleTimeRange;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -20,16 +22,11 @@ public class VacancyAlertRequestTest {
         // given
         Instant start = now.plusSeconds(60);
         Instant end = now.plusSeconds(120);
+        var locator = SimpleSeatLocator.from("room1", "seat1");
+        var range = SimpleTimeRange.from(start, end);
 
         // when
-        VacancyAlertRequest request = VacancyAlertRequest.of(
-                "user1",
-                "room1",
-                "seat1",
-                start,
-                end,
-                now
-        );
+        VacancyAlertRequest request = VacancyAlertRequest.create("user1", locator, range, now);
 
         // then
         assertThat(request.getStatus()).isEqualTo(VacancyAlertStatus.ACTIVE);
@@ -38,24 +35,8 @@ public class VacancyAlertRequestTest {
     }
 
     @Test
-    @DisplayName("endTime이_startTime보다_이전이면_예외")
-    void throw_exception_when_end_time_is_before_start_time() {
-
-        //given
-        Instant start = now.plusSeconds(60);
-        Instant end = now.minusSeconds(60);
-
-        // when & then
-        assertThatThrownBy(() ->
-                VacancyAlertRequest.of("u", "r", "s", start, end, now)
-        ).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     @DisplayName("취소")
     void cancel_request_when_request_is_active() {
-
-
         // given
         VacancyAlertRequest request = create();
 
@@ -107,13 +88,8 @@ public class VacancyAlertRequestTest {
     }
 
     private VacancyAlertRequest create() {
-        return VacancyAlertRequest.of(
-                "user1",
-                "room1",
-                "seat1",
-                now.plusSeconds(60),
-                now.plusSeconds(120),
-                now
-        );
+        var locator = SimpleSeatLocator.from("room1", "seat1");
+        var range = SimpleTimeRange.from(now.plusSeconds(60), now.plusSeconds(120));
+        return VacancyAlertRequest.create("user1", locator, range, now);
     }
 }

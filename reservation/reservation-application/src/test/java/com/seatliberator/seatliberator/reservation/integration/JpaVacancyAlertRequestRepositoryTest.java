@@ -1,6 +1,9 @@
 package com.seatliberator.seatliberator.reservation.integration;
 
 import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequest;
+import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
+import com.seatliberator.seatliberator.reservation.shared.domain.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.shared.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestReader;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestStore;
 import jakarta.persistence.EntityManager;
@@ -52,58 +55,36 @@ public class JpaVacancyAlertRequestRepositoryTest {
     void save_requests_when_request_times_differ() {
         // given
         var now = BASE_TIME;
-
-        var r1 = VacancyAlertRequest.of(
-                "user1",
-                "room1",
-                "seat1",
+        var userId = "user1";
+        var locator = SimpleSeatLocator.from("room1", "seat1");
+        var range1 = SimpleTimeRange.from(
                 now.plusSeconds(60),
-                now.plusSeconds(120),
-                now
+                now.plusSeconds(120)
+        );
+        var range2 = SimpleTimeRange.from(
+                now.plusSeconds(90),
+                now.plusSeconds(150)
         );
 
-        var r2 = VacancyAlertRequest.of(
-                "user1",
-                "room1",
-                "seat1",
-                now.plusSeconds(180),
-                now.plusSeconds(240),
-                now
-        );
+        var r1 = VacancyAlertRequest.create(userId, locator, range1, now);
+
+        var r2 = VacancyAlertRequest.create(userId, locator, range2, now);
 
         // when
         store.save(r1);
         store.save(r2);
 
         // then
-        boolean exists1 = reader.existsActiveRequestFor(
-                "user1",
-                "room1",
-                "seat1",
-                r1.getRange().startAt(),
-                r1.getRange().endAt()
-        );
-        boolean exists2 = reader.existsActiveRequestFor(
-                "user1",
-                "room1",
-                "seat1",
-                r2.getRange().startAt(),
-                r2.getRange().endAt()
-        );
-
+        boolean exists1 = reader.existsByUserIdAndLocatorAndRangeAndStatus(userId, locator, range1, VacancyAlertStatus.ACTIVE);
+        boolean exists2 = reader.existsByUserIdAndLocatorAndRangeAndStatus(userId, locator, range2, VacancyAlertStatus.ACTIVE);
 
         assertThat(exists1).isTrue();
         assertThat(exists2).isTrue();
     }
 
     private VacancyAlertRequest create(Instant now) {
-        return VacancyAlertRequest.of(
-                "user1",
-                "room1",
-                "seat1",
-                now.plusSeconds(60),
-                now.plusSeconds(120),
-                now
-        );
+        var locator = SimpleSeatLocator.from("room1", "seat1");
+        var range = SimpleTimeRange.from(now.plusSeconds(60), now.plusSeconds(120));
+        return VacancyAlertRequest.create("user1", locator, range, now);
     }
 }

@@ -1,6 +1,9 @@
 package com.seatliberator.seatliberator.reservation.book.application;
 
 import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequest;
+import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
+import com.seatliberator.seatliberator.reservation.shared.domain.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.shared.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.vacancy.application.exception.VacancyApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.vacancy.application.exception.VacancyApplicationException;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCommand;
@@ -74,12 +77,9 @@ public class DefaultVacancyAlertRequesterTest {
     }
 
     private void whenCheckAlertRequestExists(VacancyAlertRequestCommand command, boolean value) {
-        when(reader.existsActiveRequestFor(
-                command.userId(),
-                command.roomId(),
-                command.seatId(),
-                command.startTime(),
-                command.endTime()
-        )).thenReturn(value);
+        var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
+        var range = SimpleTimeRange.from(command.startTime(), command.endTime());
+        when(reader.existsByUserIdAndLocatorAndRangeAndStatus(command.userId(), locator, range, VacancyAlertStatus.ACTIVE))
+                .thenReturn(value);
     }
 }

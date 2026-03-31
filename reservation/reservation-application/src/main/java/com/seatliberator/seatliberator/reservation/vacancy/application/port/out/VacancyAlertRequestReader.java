@@ -1,27 +1,20 @@
 package com.seatliberator.seatliberator.reservation.vacancy.application.port.out;
 
 import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequest;
+import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
+import com.seatliberator.seatliberator.reservation.shared.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.shared.domain.TimeRange;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface VacancyAlertRequestReader {
-    boolean existsActiveRequestFor(
-            String userId,
-            String roomId,
-            String seatId,
-            Instant targetStartTime,
-            Instant targetEndTime
-    );
+    boolean existsByUserIdAndLocatorAndRangeAndStatus(String userId, SeatLocator locator, TimeRange range, VacancyAlertStatus status);
 
     Optional<VacancyAlertRequest> findById(UUID id);
 
-    List<VacancyAlertRequest> findActiveRequest(
-            String roomId,
-            String seatId,
-            Instant startTime,
-            Instant endTime
-    );
+    List<VacancyAlertRequest> findByLocatorAndRange(SeatLocator locator, TimeRange range);
+
+    List<VacancyAlertRequest> findByLocatorAndRangeAndStatus(SeatLocator locator, TimeRange range, VacancyAlertStatus status);
 }

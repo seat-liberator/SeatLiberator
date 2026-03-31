@@ -2,6 +2,8 @@ package com.seatliberator.seatliberator.reservation.domain;
 
 import com.seatliberator.seatliberator.reservation.shared.domain.EmbeddableSeatLocator;
 import com.seatliberator.seatliberator.reservation.shared.domain.EmbeddableTimeRange;
+import com.seatliberator.seatliberator.reservation.shared.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.shared.domain.TimeRange;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -58,29 +60,21 @@ public class VacancyAlertRequest {
     @Embedded
     private VacancyAlertLifecycle lifecycle;
 
-    public static VacancyAlertRequest of(
-            @NonNull String userId,
-            @NonNull String targetRoomId,
-            @NonNull String targetSeatId,
-            @NonNull Instant targetStartTime,
-            @NonNull Instant targetEndTime,
-            @NonNull Instant requestedAt
+    public static VacancyAlertRequest create(
+            String userId,
+            SeatLocator locator,
+            TimeRange range,
+            Instant requestedAt
     ) {
-        if (!targetStartTime.isBefore(targetEndTime)) {
-            throw new IllegalArgumentException("targetStartTime is must be before targetEndTime");
+        if (requestedAt.isAfter(range.endAt())) {
+            throw new IllegalArgumentException("requestedAt is must be before endAt");
         }
 
-        if (targetStartTime.isBefore(requestedAt)) {
-            throw new IllegalArgumentException("targetStartTime must be future");
-        }
-
-        var locator = EmbeddableSeatLocator.from(targetRoomId, targetSeatId);
-        var range = EmbeddableTimeRange.from(targetStartTime, targetEndTime);
         var v = new VacancyAlertRequest();
 
         v.userId = userId;
-        v.locator = locator;
-        v.range = range;
+        v.locator = EmbeddableSeatLocator.of(locator);
+        v.range = EmbeddableTimeRange.of(range);
         v.status = VacancyAlertStatus.ACTIVE;
         v.lifecycle = VacancyAlertLifecycle.requestedAt(requestedAt);
 
