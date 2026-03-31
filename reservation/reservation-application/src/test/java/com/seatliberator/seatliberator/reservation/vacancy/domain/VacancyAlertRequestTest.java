@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.unit.vacancy.domain;
+package com.seatliberator.seatliberator.reservation.vacancy.domain;
 
 import com.seatliberator.seatliberator.reservation.vacancy.domain.VacancyAlertRequest;
 import com.seatliberator.seatliberator.reservation.vacancy.domain.VacancyAlertStatus;

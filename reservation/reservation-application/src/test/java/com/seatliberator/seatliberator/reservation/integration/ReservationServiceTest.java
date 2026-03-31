@@ -9,6 +9,7 @@ import com.seatliberator.seatliberator.reservation.book.application.service.Seat
 import com.seatliberator.seatliberator.reservation.book.domain.Reservation;
 import com.seatliberator.seatliberator.reservation.book.domain.Seat;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("integration")
 @TransactionalReservationIntegrationTest
 @DisplayName("Integration: Reservation Service")
 public class ReservationServiceTest extends ReservationDatabaseCleanupSupport {

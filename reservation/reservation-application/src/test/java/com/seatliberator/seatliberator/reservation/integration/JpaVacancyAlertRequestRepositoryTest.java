@@ -5,6 +5,7 @@ import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.
 import com.seatliberator.seatliberator.reservation.vacancy.domain.VacancyAlertRequest;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,6 +14,7 @@ import java.time.Instant;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@Tag("integration")
 @TransactionalReservationIntegrationTest
 @DisplayName("Integration: Jpa Vacancy Alert Request Repository")
 public class JpaVacancyAlertRequestRepositoryTest {

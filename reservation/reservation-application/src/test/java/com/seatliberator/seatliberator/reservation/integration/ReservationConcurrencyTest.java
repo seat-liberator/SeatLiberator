@@ -6,6 +6,7 @@ import com.seatliberator.seatliberator.reservation.book.application.service.Rese
 import com.seatliberator.seatliberator.reservation.book.application.service.SeatService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("integration")
 @ReservationIntegrationTest
 @DisplayName("Integration Reservation Concurrency")
 public class ReservationConcurrencyTest extends ReservationDatabaseCleanupSupport {
