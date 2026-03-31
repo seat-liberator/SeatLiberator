@@ -49,8 +49,7 @@ public class VacancyRequestTest {
                 roomId,
                 seatId,
                 startTime,
-                endTime,
-                now
+                endTime
         );
 
         // when
@@ -59,7 +58,8 @@ public class VacancyRequestTest {
         // then
         assertThat(result).isNotNull();
         assertThat(result.getUserId()).isEqualTo(userId);
-        assertThat(result.getSeatId()).isEqualTo(seatId);
+        assertThat(result.getLocator().roomId()).isEqualTo(roomId);
+        assertThat(result.getLocator().seatId()).isEqualTo(seatId);
         assertThat(result.getStatus()).isEqualTo(VacancyAlertStatus.ACTIVE);
     }
 
@@ -82,8 +82,7 @@ public class VacancyRequestTest {
                 roomId,
                 seatId,
                 startTime,
-                endTime,
-                now
+                endTime
         );
 
         // 선 저장
@@ -114,8 +113,7 @@ public class VacancyRequestTest {
                 roomId,
                 seatId,
                 startTime1,
-                endTime1,
-                now
+                endTime1
         );
 
         var command2 = new VacancyAlertRequestCommand(
@@ -123,8 +121,7 @@ public class VacancyRequestTest {
                 roomId,
                 seatId,
                 startTime2,
-                endTime2,
-                now
+                endTime2
         );
 
         // when
@@ -135,10 +132,12 @@ public class VacancyRequestTest {
         assertThat(r1).isNotNull();
         assertThat(r2).isNotNull();
         assertThat(r1.getUserId()).isEqualTo(userId);
-        assertThat(r1.getSeatId()).isEqualTo(seatId);
+        assertThat(r1.getLocator().roomId()).isEqualTo(roomId);
+        assertThat(r1.getLocator().seatId()).isEqualTo(seatId);
         assertThat(r1.getStatus()).isEqualTo(VacancyAlertStatus.ACTIVE);
         assertThat(r2.getUserId()).isEqualTo(userId);
-        assertThat(r2.getSeatId()).isEqualTo(seatId);
+        assertThat(r2.getLocator().roomId()).isEqualTo(roomId);
+        assertThat(r2.getLocator().seatId()).isEqualTo(seatId);
         assertThat(r2.getStatus()).isEqualTo(VacancyAlertStatus.ACTIVE);
     }
 
@@ -206,8 +205,7 @@ public class VacancyRequestTest {
                 "room1",
                 "seat1",
                 now.plusSeconds(60),
-                now.plusSeconds(120),
-                now
+                now.plusSeconds(120)
         );
     }
 

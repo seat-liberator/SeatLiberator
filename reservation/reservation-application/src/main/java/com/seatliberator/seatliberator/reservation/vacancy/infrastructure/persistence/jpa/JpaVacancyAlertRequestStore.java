@@ -38,8 +38,9 @@ public class JpaVacancyAlertRequestStore implements
     }
 
     @Override
-    public List<VacancyAlertRequest> findActiveBySeatAndTimeRange(String seatId, Instant startTime, Instant endTime) {
-        return repository.findAllRequestsBySeatAndTimeRange(
+    public List<VacancyAlertRequest> findActiveRequest(String roomId, String seatId, Instant startTime, Instant endTime) {
+        return repository.findAllRequestsByRoomAndSeatAndTimeRange(
+                roomId,
                 seatId,
                 startTime,
                 endTime,

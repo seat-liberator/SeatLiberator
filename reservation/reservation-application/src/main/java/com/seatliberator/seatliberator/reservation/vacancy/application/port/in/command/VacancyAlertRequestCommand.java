@@ -7,7 +7,6 @@ public record VacancyAlertRequestCommand(
         String roomId,
         String seatId,
         Instant startTime,
-        Instant endTime,
-        Instant requestedAt
+        Instant endTime
 ) {
 }

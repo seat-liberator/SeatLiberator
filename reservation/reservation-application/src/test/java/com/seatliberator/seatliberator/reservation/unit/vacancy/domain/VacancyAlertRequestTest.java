@@ -35,8 +35,8 @@ public class VacancyAlertRequestTest {
 
         // then
         assertThat(request.getStatus()).isEqualTo(VacancyAlertStatus.ACTIVE);
-        assertThat(request.getTargetStartTime()).isEqualTo(start);
-        assertThat(request.getTargetEndTime()).isEqualTo(end);
+        assertThat(request.getRange().startAt()).isEqualTo(start);
+        assertThat(request.getRange().endAt()).isEqualTo(end);
     }
 
     @Test
