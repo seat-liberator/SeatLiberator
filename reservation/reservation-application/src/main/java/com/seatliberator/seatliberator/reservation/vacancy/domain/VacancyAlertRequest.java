@@ -66,6 +66,14 @@ public class VacancyAlertRequest {
             @NonNull Instant targetEndTime,
             @NonNull Instant requestedAt
     ) {
+        if (!targetStartTime.isBefore(targetEndTime)) {
+            throw new IllegalArgumentException("targetStartTime is must be before targetEndTime");
+        }
+
+        if (targetStartTime.isBefore(requestedAt)) {
+            throw new IllegalArgumentException("targetStartTime must be future");
+        }
+
         var locator = EmbeddableSeatLocator.from(targetRoomId, targetSeatId);
         var range = EmbeddableTimeRange.from(targetStartTime, targetEndTime);
         var v = new VacancyAlertRequest();
