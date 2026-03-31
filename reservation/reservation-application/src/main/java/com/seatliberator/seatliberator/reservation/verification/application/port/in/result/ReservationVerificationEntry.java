@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.verification.application.port.in.result;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.in.entry.ReservationEntry;
-import com.seatliberator.seatliberator.reservation.book.domain.Reservation;
+import com.seatliberator.seatliberator.reservation.domain.Reservation;
 
 public record ReservationVerificationEntry(
         ReservationEntry entry

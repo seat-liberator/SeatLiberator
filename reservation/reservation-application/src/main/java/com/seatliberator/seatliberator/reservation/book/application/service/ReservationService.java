@@ -8,7 +8,7 @@ import com.seatliberator.seatliberator.reservation.book.application.port.in.comm
 import com.seatliberator.seatliberator.reservation.book.application.port.in.entry.ReservationEntry;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
-import com.seatliberator.seatliberator.reservation.book.domain.Reservation;
+import com.seatliberator.seatliberator.reservation.domain.Reservation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;

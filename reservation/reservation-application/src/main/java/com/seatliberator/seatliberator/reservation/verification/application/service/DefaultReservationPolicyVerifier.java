@@ -4,7 +4,7 @@ import com.seatliberator.seatliberator.reservation.book.application.port.in.Rese
 import com.seatliberator.seatliberator.reservation.book.application.port.in.ReservationUsageMarker;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationLocator;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.entry.ReservationEntry;
-import com.seatliberator.seatliberator.reservation.book.domain.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.verification.application.exception.VerificationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.verification.application.exception.VerificationApplicationException;
 import com.seatliberator.seatliberator.reservation.verification.application.policy.ReservationPolicyEngine;

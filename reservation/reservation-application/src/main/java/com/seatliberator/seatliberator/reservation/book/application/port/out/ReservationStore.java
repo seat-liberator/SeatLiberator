@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.book.application.port.out;
 
-import com.seatliberator.seatliberator.reservation.book.domain.Reservation;
+import com.seatliberator.seatliberator.reservation.domain.Reservation;
 
 import java.time.Instant;
 import java.util.Optional;

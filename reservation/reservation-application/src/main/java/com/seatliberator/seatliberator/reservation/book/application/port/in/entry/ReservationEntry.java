@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.book.application.port.in.entry;
 
-import com.seatliberator.seatliberator.reservation.book.domain.Reservation;
+import com.seatliberator.seatliberator.reservation.domain.Reservation;
 
 public record ReservationEntry(
         Long reservationId,

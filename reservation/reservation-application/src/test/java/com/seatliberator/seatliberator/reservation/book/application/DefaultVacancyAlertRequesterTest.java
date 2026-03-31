@@ -1,12 +1,12 @@
 package com.seatliberator.seatliberator.reservation.book.application;
 
+import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequest;
 import com.seatliberator.seatliberator.reservation.vacancy.application.exception.VacancyApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.vacancy.application.exception.VacancyApplicationException;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCommand;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestReader;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestStore;
 import com.seatliberator.seatliberator.reservation.vacancy.application.service.DefaultVacancyAlertRequester;
-import com.seatliberator.seatliberator.reservation.vacancy.domain.VacancyAlertRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

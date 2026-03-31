@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.bootstrap.seed;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
-import com.seatliberator.seatliberator.reservation.book.domain.Seat;
+import com.seatliberator.seatliberator.reservation.domain.Seat;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

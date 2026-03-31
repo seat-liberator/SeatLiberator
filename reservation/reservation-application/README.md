@@ -1,6 +1,7 @@
 # Reservation Application
 
-`reservation:reservation-application` 모듈은 좌석 예약, 빈자리 알림, 예약 검증 정책과 예약 취소 이후의 빈자리 알림 생성 연계 흐름을 담당하는 Spring Boot 기반 애플리케이션입니다.
+`reservation:reservation-application` 모듈은 좌석 예약, 빈자리 알림, 예약 검증 정책과 예약 취소 이후의 빈자리 알림 생성 연계 흐름을 담당하는 Spring Boot 기반
+애플리케이션입니다.
 
 패키지는 기능 단위로 `book`, `vacancy`, `verification` 으로 분리되어 있고, 좌석/시간 범위와 이벤트 같은 공통 모델은 `shared` 패키지에서 재사용합니다.
 
@@ -14,12 +15,12 @@
 
 ## 패키지 구성
 
-| 패키지                                                        | 역할                                        |
-|------------------------------------------------------------|-------------------------------------------|
-| `com.seatliberator.seatliberator.reservation.book`         | `Seat`, `Reservation` 도메인과 예약/좌석 관리 유스케이스 |
+| 패키지                                                        | 역할                                                     |
+|------------------------------------------------------------|--------------------------------------------------------|
+| `com.seatliberator.seatliberator.reservation.book`         | `Seat`, `Reservation` 도메인과 예약/좌석 관리 유스케이스              |
 | `com.seatliberator.seatliberator.reservation.shared`       | `SeatLocator`, `TimeRange`, domain event 등 예약/알림 공통 모델 |
-| `com.seatliberator.seatliberator.reservation.vacancy`      | 빈자리 알림 요청 도메인과 알림 신청/취소 유스케이스             |
-| `com.seatliberator.seatliberator.reservation.verification` | 예약 조회/검증 권한 정책, 사용 처리 유스케이스               |
+| `com.seatliberator.seatliberator.reservation.vacancy`      | 빈자리 알림 요청 도메인과 알림 신청/취소 유스케이스                          |
+| `com.seatliberator.seatliberator.reservation.verification` | 예약 조회/검증 권한 정책, 사용 처리 유스케이스                            |
 
 ## 핵심 정책
 
@@ -114,11 +115,11 @@
 
 #### Reservation API
 
-| Method   | Path                    | 설명        |
-|----------|-------------------------|-----------|
-| `POST`   | `/reservation`          | 예약 생성     |
-| `PUT`    | `/reservation`          | 예약 수정     |
-| `DELETE` | `/reservation`          | 현재 사용자 예약 취소 |
+| Method   | Path           | 설명           |
+|----------|----------------|--------------|
+| `POST`   | `/reservation` | 예약 생성        |
+| `PUT`    | `/reservation` | 예약 수정        |
+| `DELETE` | `/reservation` | 현재 사용자 예약 취소 |
 
 시간 필드는 `Instant` 로 매핑되므로 요청 본문에는 UTC ISO-8601 문자열을 사용합니다.
 

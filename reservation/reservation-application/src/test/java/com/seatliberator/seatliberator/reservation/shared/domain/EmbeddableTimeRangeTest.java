@@ -1,7 +1,5 @@
 package com.seatliberator.seatliberator.reservation.shared.domain;
 
-import com.seatliberator.seatliberator.reservation.shared.domain.EmbeddableTimeRange;
-import com.seatliberator.seatliberator.reservation.shared.domain.SimpleTimeRange;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

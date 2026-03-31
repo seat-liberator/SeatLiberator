@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.book.domain;
+package com.seatliberator.seatliberator.reservation.domain;
 
 import com.seatliberator.seatliberator.reservation.shared.domain.EmbeddableSeatLocator;
 import com.seatliberator.seatliberator.reservation.shared.domain.SeatLocator;

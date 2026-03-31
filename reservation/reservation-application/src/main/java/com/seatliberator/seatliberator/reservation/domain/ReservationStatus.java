@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.book.domain;
+package com.seatliberator.seatliberator.reservation.domain;
 
 public enum ReservationStatus {
     RESERVED,

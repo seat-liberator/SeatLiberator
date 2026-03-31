@@ -7,11 +7,11 @@ import com.seatliberator.seatliberator.reservation.book.application.port.in.Rese
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationCreateCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.SeatCreateCommand;
 import com.seatliberator.seatliberator.reservation.book.application.service.SeatService;
+import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.VacancyAlertRequester;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertCancelCommand;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCommand;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestReader;
-import com.seatliberator.seatliberator.reservation.vacancy.domain.VacancyAlertStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;

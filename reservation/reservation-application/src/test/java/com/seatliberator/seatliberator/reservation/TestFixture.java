@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation;
 
-import com.seatliberator.seatliberator.reservation.book.domain.Reservation;
-import com.seatliberator.seatliberator.reservation.book.domain.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.domain.Reservation;
+import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCommand;
 
 import java.time.Clock;
