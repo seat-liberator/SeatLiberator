@@ -16,31 +16,33 @@ public interface VacancyAlertRequestRepository extends JpaRepository<VacancyAler
             SELECT COUNT(v) > 0
             FROM VacancyAlertRequest v
             WHERE v.userId = :userId
-                        AND v.roomId = :roomId
-                AND v.seatId = :seatId
-                AND v.targetStartTime = :targetStartTime
-                AND v.targetEndTime = :targetEndTime
+                AND v.locator.roomId = :targetRoomId
+                AND v.locator.seatId = :targetSeatId
+                AND v.range.startAt = :targetStartAt
+                AND v.range.endAt = :targetEndAt
                 AND v.status = :status""")
     boolean existsRequestFor(
             @Param("userId") String userId,
-            @Param("roomId") String roomId,
-            @Param("seatId") String seatId,
-            @Param("targetStartTime") Instant targetStartTime,
-            @Param("targetEndTime") Instant targetEndTime,
+            @Param("targetRoomId") String targetRoomId,
+            @Param("targetSeatId") String targetSeatId,
+            @Param("targetStartAt") Instant targetStartAt,
+            @Param("targetEndAt") Instant targetEndAt,
             @Param("status") VacancyAlertStatus status
     );
 
     @Query("""
             SELECT v
             FROM VacancyAlertRequest v
-            WHERE v.seatId = :seatId
+            WHERE v.locator.roomId = :targetRoomId
+                AND v.locator.seatId = :targetSeatId
                 AND v.status = :status
-                AND v.targetStartTime <= :endTime
-                AND v.targetEndTime > :startTime""")
-    List<VacancyAlertRequest> findAllRequestsBySeatAndTimeRange(
-            @Param("seatId") String seatId,
-            @Param("startTime") Instant startTime,
-            @Param("endTime") Instant endTime,
+                AND v.range.startAt <= :targetEndAt
+                AND v.range.endAt > :targetStartAt""")
+    List<VacancyAlertRequest> findAllRequestsByRoomAndSeatAndTimeRange(
+            @Param("targetRoomId") String targetRoomId,
+            @Param("targetSeatId") String targetSeatId,
+            @Param("targetStartAt") Instant targetStartAt,
+            @Param("targetEndAt") Instant targetEndAt,
             @Param("status") VacancyAlertStatus status
     );
 }

@@ -1,5 +1,7 @@
 package com.seatliberator.seatliberator.reservation.vacancy.domain;
 
+import com.seatliberator.seatliberator.reservation.shared.domain.EmbeddableSeatLocator;
+import com.seatliberator.seatliberator.reservation.shared.domain.EmbeddableTimeRange;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,10 +19,10 @@ import java.util.UUID;
                         name = "uk_vacancy_alert_active_request",
                         columnNames = {
                                 "user_id",
-                                "room_id",
-                                "seat_id",
-                                "target_start_time",
-                                "target_end_time"
+                                "target_room_id",
+                                "target_seat_id",
+                                "target_start_at",
+                                "target_end_at"
                         }
                 )
         }
@@ -35,17 +37,19 @@ public class VacancyAlertRequest {
     @Column(name = "user_id", nullable = false, updatable = false)
     private String userId;
 
-    @Column(name = "room_id", nullable = false, updatable = false)
-    private String roomId;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "roomId", column = @Column(name = "target_room_id")),
+            @AttributeOverride(name = "seatId", column = @Column(name = "target_seat_id"))
+    })
+    private EmbeddableSeatLocator locator;
 
-    @Column(name = "seat_id", nullable = false, updatable = false)
-    private String seatId;
-
-    @Column(name = "target_start_time", nullable = false)
-    private Instant targetStartTime;
-
-    @Column(name = "target_end_time", nullable = false)
-    private Instant targetEndTime;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "startAt", column = @Column(name = "target_start_at")),
+            @AttributeOverride(name = "endAt", column = @Column(name = "target_end_at"))
+    })
+    private EmbeddableTimeRange range;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -56,26 +60,19 @@ public class VacancyAlertRequest {
 
     public static VacancyAlertRequest of(
             @NonNull String userId,
-            @NonNull String roomId,
-            @NonNull String seatId,
+            @NonNull String targetRoomId,
+            @NonNull String targetSeatId,
             @NonNull Instant targetStartTime,
             @NonNull Instant targetEndTime,
             @NonNull Instant requestedAt
     ) {
-        if (!targetStartTime.isBefore(targetEndTime)) {
-            throw new IllegalArgumentException("targetStartTime is must be before targetEndTime");
-        }
-
-        if (targetStartTime.isBefore(requestedAt)) {
-            throw new IllegalArgumentException("targetStartTime must be future");
-        }
+        var locator = EmbeddableSeatLocator.from(targetRoomId, targetSeatId);
+        var range = EmbeddableTimeRange.from(targetStartTime, targetEndTime);
         var v = new VacancyAlertRequest();
 
         v.userId = userId;
-        v.roomId = roomId;
-        v.seatId = seatId;
-        v.targetStartTime = targetStartTime;
-        v.targetEndTime = targetEndTime;
+        v.locator = locator;
+        v.range = range;
         v.status = VacancyAlertStatus.ACTIVE;
         v.lifecycle = VacancyAlertLifecycle.requestedAt(requestedAt);
 

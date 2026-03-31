@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @TransactionalReservationIntegrationTest
-@DisplayName("Integration Jpa Vacancy Alert Request Repository")
+@DisplayName("Integration: Jpa Vacancy Alert Request Repository")
 public class JpaVacancyAlertRequestRepositoryTest {
     private static final Instant BASE_TIME = Instant.parse("2026-01-01T00:00:00Z");
 
@@ -78,15 +78,15 @@ public class JpaVacancyAlertRequestRepositoryTest {
                 "user1",
                 "room1",
                 "seat1",
-                r1.getTargetStartTime(),
-                r1.getTargetEndTime()
+                r1.getRange().startAt(),
+                r1.getRange().endAt()
         );
         boolean exists2 = reader.existsActiveRequestFor(
                 "user1",
                 "room1",
                 "seat1",
-                r2.getTargetStartTime(),
-                r2.getTargetEndTime()
+                r2.getRange().startAt(),
+                r2.getRange().endAt()
         );
 
 

@@ -18,7 +18,8 @@ public interface VacancyAlertRequestReader {
 
     Optional<VacancyAlertRequest> findById(UUID id);
 
-    List<VacancyAlertRequest> findActiveBySeatAndTimeRange(
+    List<VacancyAlertRequest> findActiveRequest(
+            String roomId,
             String seatId,
             Instant startTime,
             Instant endTime

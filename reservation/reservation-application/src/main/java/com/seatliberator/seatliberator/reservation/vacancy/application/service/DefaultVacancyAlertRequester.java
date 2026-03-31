@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
+import java.time.Clock;
 
 @Service
 @RequiredArgsConstructor
@@ -20,17 +20,21 @@ public class DefaultVacancyAlertRequester implements VacancyAlertRequester {
     private final VacancyAlertRequestReader reader;
     private final VacancyAlertRequestStore store;
 
+    private final Clock clock;
+
     @Override
     public VacancyAlertRequest request(VacancyAlertRequestCommand command) {
-        if (reader.existsActiveRequestFor(
+        var exists = reader.existsActiveRequestFor(
                 command.userId(),
                 command.roomId(),
                 command.seatId(),
                 command.startTime(),
                 command.endTime()
-        )) {
-            throw new VacancyApplicationException(VacancyApplicationErrorCode.DUPLICATED_REQUEST);
-        }
+        );
+
+        if (exists) throw new VacancyApplicationException(VacancyApplicationErrorCode.DUPLICATED_REQUEST);
+
+        var now = clock.instant();
 
         var request = VacancyAlertRequest.of(
                 command.userId(),
@@ -38,7 +42,7 @@ public class DefaultVacancyAlertRequester implements VacancyAlertRequester {
                 command.seatId(),
                 command.startTime(),
                 command.endTime(),
-                command.requestedAt()
+                now
         );
 
         try {
@@ -50,11 +54,12 @@ public class DefaultVacancyAlertRequester implements VacancyAlertRequester {
 
     @Override
     public void cancelVacancyAlert(VacancyAlertCancelCommand command) {
+        var now = clock.instant();
 
         VacancyAlertRequest alert = reader.findById(command.alertId())
                 .orElseThrow(() -> new VacancyApplicationException(VacancyApplicationErrorCode.NOT_FOUND));
 
-        alert.cancel(command.userId(), Instant.now());
+        alert.cancel(command.userId(), now);
 
         store.save(alert);
     }

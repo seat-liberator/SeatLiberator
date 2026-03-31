@@ -7,12 +7,14 @@ import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestStore;
 import com.seatliberator.seatliberator.reservation.vacancy.application.service.DefaultVacancyAlertRequester;
 import com.seatliberator.seatliberator.reservation.vacancy.domain.VacancyAlertRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.Clock;
 
 import static com.seatliberator.seatliberator.reservation.TestFixture.createVacancyAlertRequestCommand;
 import static com.seatliberator.seatliberator.reservation.TestFixture.fixedClock;
@@ -31,8 +33,14 @@ public class DefaultVacancyAlertRequesterTest {
     @Mock
     VacancyAlertRequestStore store;
 
-    @InjectMocks
+    Clock clock = fixedClock;
+
     DefaultVacancyAlertRequester requester;
+
+    @BeforeEach
+    void setup() {
+        requester = new DefaultVacancyAlertRequester(reader, store, clock);
+    }
 
     @Test
     @DisplayName("이미 동일 시간 / 좌석에 알람 요청이 존재하면 중복 요청 시 DUPLICATED_REQUEST 예외를 던진다.")

@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.vacancy.infrastructure.web.controller;
 
+import com.seatliberator.seatliberator.identity.client.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.VacancyAlertRequester;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertCancelCommand;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCommand;
@@ -8,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @RestController
@@ -18,20 +18,21 @@ public class VacancyAlertController {
 
     private final VacancyAlertRequester requester;
 
+    private final ActorContextHolder actorContextHolder;
+
     // 알람 신청
     @PostMapping
     public ResponseEntity<Void> create(
-            //@RequestHeader("userId") String userId,
             @RequestBody VacancyAlertCreateRequest request
     ) {
+        var userId = actorContextHolder.getActor().subject();
 
         VacancyAlertRequestCommand command = new VacancyAlertRequestCommand(
-                request.userId(),
+                userId,
                 request.roomId(),
                 request.seatId(),
-                request.targetStartTime(),
-                request.targetEndTime(),
-                Instant.now()
+                request.startAt(),
+                request.endAt()
         );
 
         requester.request(command);
@@ -42,9 +43,9 @@ public class VacancyAlertController {
     // 알람 취소
     @DeleteMapping("/{alertId}")
     public ResponseEntity<Void> cancel(
-            @RequestHeader("userId") String userId,
             @PathVariable UUID alertId
     ) {
+        var userId = actorContextHolder.getActor().subject();
 
         VacancyAlertCancelCommand command = new VacancyAlertCancelCommand(userId, alertId);
 
