@@ -4,8 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 @DisplayName("Domain: Embeddable Seat Locator")
 public class EmbeddableSeatLocatorTest {
@@ -67,6 +66,50 @@ public class EmbeddableSeatLocatorTest {
 
             assertThat(locator.roomId()).isEqualTo(newRoomId);
             assertThat(locator.seatId()).isEqualTo(newSeatId);
+        }
+    }
+
+    @Nested
+    @DisplayName("Equality")
+    class Equality {
+        @Test
+        @DisplayName("같은 값, 같은 타입끼리는 인터페이스의 동등성 검사 통과")
+        void is_equal_with_same_value_and_type() {
+            var locator = EmbeddableSeatLocator.from(roomId, seatId);
+            var other = EmbeddableSeatLocator.from(roomId, seatId);
+
+            assertThat(locator).isNotEqualTo(other);
+            assertThat(locator.isSame(other)).isTrue();
+        }
+
+        @Test
+        @DisplayName("같은 값, 다른 타입끼리도 인터페이스의 동등성 검사 통과")
+        void is_equal_with_same_value_and_diff_type() {
+            var locator = EmbeddableSeatLocator.from(roomId, seatId);
+            var other = SimpleSeatLocator.from(roomId, seatId);
+
+            assertThat(locator).isNotEqualTo(other);
+            assertThat(locator.isSame(other)).isTrue();
+        }
+
+        @Test
+        @DisplayName("다른 값, 같은 타입끼리는 인터페이스의 동등성 검사 실패")
+        void is_not_equal_with_diff_value_and_same_type() {
+            var locator = EmbeddableSeatLocator.from(roomId, seatId);
+            var other = EmbeddableSeatLocator.from("other-" + roomId, "other" + seatId);
+
+            assertThat(locator).isNotEqualTo(other);
+            assertThat(locator.isSame(other)).isFalse();
+        }
+
+        @Test
+        @DisplayName("다른 값, 다른 타입끼리는 인터페이스의 동등성 검사 실패")
+        void is_not_equal_with_diff_value_and_diff_type() {
+            var locator = EmbeddableSeatLocator.from(roomId, seatId);
+            var other = SimpleSeatLocator.from("other-" + roomId, "other" + seatId);
+
+            assertThat(locator).isNotEqualTo(other);
+            assertThat(locator.isSame(other)).isFalse();
         }
     }
 }

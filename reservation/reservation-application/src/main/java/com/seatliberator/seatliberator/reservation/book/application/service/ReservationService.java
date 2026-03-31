@@ -9,12 +9,15 @@ import com.seatliberator.seatliberator.reservation.book.application.port.in.entr
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.domain.Reservation;
+import com.seatliberator.seatliberator.reservation.shared.domain.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.shared.domain.SimpleTimeRange;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,12 +38,10 @@ public class ReservationService implements ReservationManager {
             throw new BookApplicationException(BookApplicationErrorCode.RESERVATION_ALREADY_EXISTS);
         });
 
-        var conflict = reservationStore.existsReservationConflict(
-                command.roomId(),
-                command.seatId(),
-                command.startTime(),
-                command.endTime()
-        );
+        var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
+        var range = SimpleTimeRange.from(command.startTime(), command.endTime());
+
+        var conflict = reservationStore.existsByLocatorAndRange(locator, range);
 
         if (conflict) throw new BookApplicationException(BookApplicationErrorCode.RESERVATION_TIME_CONFLICT);
 
@@ -61,21 +62,22 @@ public class ReservationService implements ReservationManager {
     @Override
     public ReservationEntry update(ReservationUpdateCommand command) {
         Reservation reservation = reservationStore.findByUserId(command.userId()).orElseThrow();
-        var locator = reservation.getLocator();
+        var previousLocator = reservation.getLocator();
 
         lockSeats(
-                locator.roomId(),
-                locator.seatId(),
+                previousLocator.roomId(),
+                previousLocator.seatId(),
                 command.roomId(),
                 command.seatId()
         );
 
-        var conflict = reservationStore.existsReservationConflictExceptId(
-                reservation.getId(),
-                command.roomId(),
-                command.seatId(),
-                command.startTime(),
-                command.endTime()
+        var currentLocator = SimpleSeatLocator.from(command.roomId(), command.seatId());
+        var currentRange = SimpleTimeRange.from(command.startTime(), command.endTime());
+
+        var conflict = reservationStore.existsByLocatorAndRangeWithExcludeIds(
+                currentLocator,
+                currentRange,
+                List.of(reservation.getId())
         );
 
         if (conflict) throw new BookApplicationException(BookApplicationErrorCode.RESERVATION_TIME_CONFLICT);
