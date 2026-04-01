@@ -1,5 +1,19 @@
 rootProject.name = "seatliberator"
 
+pluginManagement {
+    includeBuild("build-include")
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+}
+
 include("kernel")
 
 include("identity:identity-core")
