@@ -25,7 +25,7 @@ public class EmbeddableTimeRange implements TimeRange {
         if (endAt == null) {
             throw new IllegalArgumentException("endAt must not be null.");
         }
-        if (startAt.isAfter(endAt)) {
+        if (!startAt.isBefore(endAt)) {
             throw new IllegalArgumentException("startAt must be before endAt");
         }
         this.startAt = startAt;

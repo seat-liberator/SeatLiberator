@@ -7,7 +7,7 @@ public record SimpleTimeRange(
         Instant endAt
 ) implements TimeRange {
     public SimpleTimeRange {
-        if (startAt.isAfter(endAt)) {
+        if (!startAt.isBefore(endAt)) {
             throw new IllegalArgumentException("startAt must be before endAt");
         }
     }

@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -66,8 +65,8 @@ public class VacancyAlertRequest {
             TimeRange range,
             Instant requestedAt
     ) {
-        if (requestedAt.isAfter(range.endAt())) {
-            throw new IllegalArgumentException("requestedAt is must be before endAt");
+        if (requestedAt.isAfter(range.startAt())) {
+            throw new IllegalArgumentException("requestedAt is must be before startAt");
         }
 
         var v = new VacancyAlertRequest();

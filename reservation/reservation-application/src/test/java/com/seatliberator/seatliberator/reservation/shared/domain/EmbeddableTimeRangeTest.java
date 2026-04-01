@@ -53,6 +53,14 @@ public class EmbeddableTimeRangeTest {
         }
 
         @Test
+        @DisplayName("시작 시간과 종료 시간이 같으면 예외를 던진다")
+        void throw_exception_when_start_at_equals_end_at() {
+            assertThatThrownBy(() -> new EmbeddableTimeRange(startAt, startAt))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("startAt must be before endAt");
+        }
+
+        @Test
         @DisplayName("of 팩토리로 다른 TimeRange를 복사할 수 있다")
         void copy_range_with_of_factory() {
             var source = SimpleTimeRange.from(startAt, endAt);

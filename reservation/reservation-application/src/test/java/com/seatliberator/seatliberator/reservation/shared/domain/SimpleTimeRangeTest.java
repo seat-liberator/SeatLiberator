@@ -20,12 +20,11 @@ public class SimpleTimeRangeTest {
     @DisplayName("Creation")
     class Creation {
         @Test
-        @DisplayName("시작 시간과 종료 시간이 같아도 생성할 수 있다")
-        void create_range_when_start_at_equals_end_at() {
-            var range = new SimpleTimeRange(startAt, startAt);
-
-            assertThat(range.startAt()).isEqualTo(startAt);
-            assertThat(range.endAt()).isEqualTo(startAt);
+        @DisplayName("시작 시간과 종료 시간이 같으면 예외를 던진다")
+        void throw_exception_when_start_at_equals_end_at() {
+            assertThatThrownBy(() -> new SimpleTimeRange(startAt, startAt))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("startAt must be before endAt");
         }
 
         @Test
