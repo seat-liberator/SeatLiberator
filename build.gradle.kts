@@ -26,6 +26,12 @@ subprojects {
     apply(plugin = "java-library")
     apply(plugin = "io.spring.dependency-management")
 
+    dependencies {
+        "implementation"(platform("org.springframework.boot:spring-boot-dependencies:4.0.2"))
+        "annotationProcessor"(platform("org.springframework.boot:spring-boot-dependencies:4.0.2"))
+        "testImplementation"(platform("org.springframework.boot:spring-boot-dependencies:4.0.2"))
+    }
+
     tasks.withType<Test> {
         useJUnitPlatform()
     }
