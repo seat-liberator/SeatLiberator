@@ -11,7 +11,7 @@
 
 - 이 모듈은 더 이상 `JwtDecoder` 를 자동 구성하지 않습니다.
 - resource server JWT 검증은 `bootstrap:resource-application-starter` 의
-  `seatliberator.bootstrap.resource-server.security.jwk-set-uri` 설정이 담당합니다.
+  `seatliberator.resource-server.security.authorize.jwk-set-uri` 설정이 담당합니다.
 
 ## 의존성
 
@@ -87,9 +87,9 @@ identity:
 ### resource server 앱에서의 권장 조합
 
 - 앱에 `seatliberator.resource-application` plugin 적용
-- `seatliberator.bootstrap.resource-server.security.jwk-set-uri` 설정
+- `seatliberator.resource-server.security.authorize.jwk-set-uri` 설정
 - 필요한 `RoleCapabilities` 빈 정의
-- 필요 시 `ResourceServerSecurityCustomizer` 로 앱 전용 인가 규칙 추가
+- 필요 시 `ResourceServerAuthorizeRequestMatcherCustomizer` 로 앱 전용 인가 규칙 추가
 
 즉, JWT 검증은 bootstrap starter가 맡고, `identity-client` 는 actor / role / introspection 지원을 맡습니다.
 

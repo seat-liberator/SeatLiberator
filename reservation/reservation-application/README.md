@@ -29,7 +29,7 @@ resource-server 보안, JPA, 공통 웹 설정은 bootstrap starter가 맡고, �
 
 핵심 설정:
 
-- `seatliberator.bootstrap.resource-server.security.jwk-set-uri`
+- `seatliberator.resource-server.security.authorize.jwk-set-uri`
 - `spring.datasource.*`
 - `spring.jpa.*`
 - `app.seed.enabled`
