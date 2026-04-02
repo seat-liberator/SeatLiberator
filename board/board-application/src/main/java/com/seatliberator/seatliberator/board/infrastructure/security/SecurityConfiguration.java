@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.board.infrastructure.security;
 
-import com.seatliberator.seatliberator.bootstrap.ResourceServerSecurityCustomizer;
+import com.seatliberator.seatliberator.bootstrap.security.customizer.ResourceServerAuthorizeRequestMatcherCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,14 +13,11 @@ import static com.seatliberator.seatliberator.board.infrastructure.security.Boar
 @EnableWebSecurity
 public class SecurityConfiguration {
     @Bean
-    ResourceServerSecurityCustomizer resourceServerSecurityCustomizer() {
-        return http -> http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/board/*/categories").hasAuthority(CATEGORY_MANAGE.scope())
-                        .requestMatchers(HttpMethod.PATCH, "/board/*/categories/*").hasAuthority(CATEGORY_MANAGE.scope())
-                        .requestMatchers(HttpMethod.DELETE, "/board/*/categories/*").hasAuthority(CATEGORY_MANAGE.scope())
-                        .requestMatchers(HttpMethod.POST, "/board/*/posts").hasAuthority(POST_CREATE.scope())
-                        .anyRequest().authenticated()
-                );
+    ResourceServerAuthorizeRequestMatcherCustomizer resourceServerAuthorizeCustomizer() {
+        return auth -> auth
+                .requestMatchers(HttpMethod.POST, "/board/*/categories").hasAuthority(CATEGORY_MANAGE.scope())
+                .requestMatchers(HttpMethod.PATCH, "/board/*/categories/*").hasAuthority(CATEGORY_MANAGE.scope())
+                .requestMatchers(HttpMethod.DELETE, "/board/*/categories/*").hasAuthority(CATEGORY_MANAGE.scope())
+                .requestMatchers(HttpMethod.POST, "/board/*/posts").hasAuthority(POST_CREATE.scope());
     }
 }

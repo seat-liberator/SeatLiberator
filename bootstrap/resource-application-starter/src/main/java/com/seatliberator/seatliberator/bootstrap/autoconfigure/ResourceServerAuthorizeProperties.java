@@ -1,4 +1,5 @@
-package com.seatliberator.seatliberator.bootstrap;
+package com.seatliberator.seatliberator.bootstrap.autoconfigure;
+
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -9,14 +10,11 @@ import org.springframework.validation.annotation.Validated;
 import java.net.URI;
 import java.util.List;
 
-@ConfigurationProperties(prefix = "seatliberator.bootstrap.resource-server.security")
 @Validated
-public record ResourceServerSecurityConfigurationProperties(
+@ConfigurationProperties(prefix = "seatliberator.resource-server.security.authorize")
+public record ResourceServerAuthorizeProperties(
         @DefaultValue("true")
         boolean enabled,
-
-        @DefaultValue("false")
-        boolean csrfEnabled,
 
         URI jwkSetUri,
 
@@ -24,10 +22,11 @@ public record ResourceServerSecurityConfigurationProperties(
         @NotEmpty
         List<@NotBlank String> permits,
 
-        @DefaultValue("true")
-        boolean actorContextEnabled
+        @DefaultValue("ALL")
+        AuthorizeMode requireAuthorizeAny
 ) {
-    public ResourceServerSecurityConfigurationProperties {
-        permits = List.copyOf(permits);
+    public enum AuthorizeMode {
+        NEVER,
+        ALL
     }
 }
