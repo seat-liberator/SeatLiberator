@@ -21,6 +21,18 @@ public class JwtProvider implements TokenProvider {
     private final Duration expiration;
     private final Clock clock;
 
+    private static Set<String> resolveScopes(Object rawScopes) {
+        if (rawScopes instanceof Collection<?> scopes) {
+            return scopes.stream()
+                    .filter(String.class::isInstance)
+                    .map(String.class::cast)
+                    .map(String::trim)
+                    .filter(StringUtils::hasText)
+                    .collect(Collectors.toUnmodifiableSet());
+        }
+        return Set.of();
+    }
+
     @Override
     public String issue(Map<String, Object> attributes) {
         var now = clock.instant();
@@ -43,17 +55,5 @@ public class JwtProvider implements TokenProvider {
 
         var parameters = JwtEncoderParameters.from(claimsSet);
         return jwtEncoder.encode(parameters).getTokenValue();
-    }
-
-    private static Set<String> resolveScopes(Object rawScopes) {
-        if (rawScopes instanceof Collection<?> scopes) {
-            return scopes.stream()
-                    .filter(String.class::isInstance)
-                    .map(String.class::cast)
-                    .map(String::trim)
-                    .filter(StringUtils::hasText)
-                    .collect(Collectors.toUnmodifiableSet());
-        }
-        return Set.of();
     }
 }

@@ -5,9 +5,9 @@ import com.seatliberator.seatliberator.board.application.exception.CategoryNotFo
 import com.seatliberator.seatliberator.board.application.exception.PostNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @RestControllerAdvice
 public class BoardControllerAdvice {

@@ -36,24 +36,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @DisplayName("E2E: Board Authorization")
 class BoardAuthorizationE2ETest {
+    private static final String TOKEN = "test-token-digest";
+    private static final String SUBJECT = "test-user";
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private BoardManager boardManager;
-
     @Autowired
     private CategoryManager categoryManager;
-
     @MockitoBean
     private JwtDecoder jwtDecoder;
-
     private UUID boardId;
     private UUID categoryId;
     private UUID otherBoardCategoryId;
-
-    private static final String TOKEN = "test-token-digest";
-    private static final String SUBJECT = "test-user";
 
     @BeforeEach
     void setUp() {
@@ -146,10 +141,10 @@ class BoardAuthorizationE2ETest {
         var payload = TestPayloadFixture.createPostPayload(categoryId.toString());
 
         mockMvc.perform(
-                post("/board/{boardId}/posts", boardId)
-                        .header("Authorization", "Bearer " + TOKEN)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(TestPayloadFixture.stringifyPayload(payload)))
+                        post("/board/{boardId}/posts", boardId)
+                                .header("Authorization", "Bearer " + TOKEN)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(TestPayloadFixture.stringifyPayload(payload)))
                 .andExpect(status().isCreated());
     }
 
@@ -162,10 +157,10 @@ class BoardAuthorizationE2ETest {
         var payload = TestPayloadFixture.createCategoryPayload();
 
         mockMvc.perform(
-                post("/board/{boardId}/categories", boardId)
-                        .header("Authorization", "Bearer " + TOKEN)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(TestPayloadFixture.stringifyPayload(payload)))
+                        post("/board/{boardId}/categories", boardId)
+                                .header("Authorization", "Bearer " + TOKEN)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(TestPayloadFixture.stringifyPayload(payload)))
                 .andExpect(status().isForbidden());
     }
 
@@ -178,10 +173,10 @@ class BoardAuthorizationE2ETest {
         var payload = TestPayloadFixture.createPostPayload(categoryId.toString());
 
         mockMvc.perform(
-                post("/board/{boardId}/posts", boardId)
-                        .header("Authorization", "Bearer " + TOKEN)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(TestPayloadFixture.stringifyPayload(payload)))
+                        post("/board/{boardId}/posts", boardId)
+                                .header("Authorization", "Bearer " + TOKEN)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(TestPayloadFixture.stringifyPayload(payload)))
                 .andExpect(status().isCreated());
     }
 
@@ -194,10 +189,10 @@ class BoardAuthorizationE2ETest {
         var payload = TestPayloadFixture.createCategoryPayload();
 
         mockMvc.perform(
-                post("/board/{boardId}/categories", boardId)
-                        .header("Authorization", "Bearer " + TOKEN)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(TestPayloadFixture.stringifyPayload(payload)))
+                        post("/board/{boardId}/categories", boardId)
+                                .header("Authorization", "Bearer " + TOKEN)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(TestPayloadFixture.stringifyPayload(payload)))
                 .andExpect(status().isCreated());
     }
 

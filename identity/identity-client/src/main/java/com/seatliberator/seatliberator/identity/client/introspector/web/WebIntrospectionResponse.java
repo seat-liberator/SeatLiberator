@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.identity.client.introspector.web;
 
+import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
 import com.seatliberator.seatliberator.identity.core.introspection.Introspection;
 import com.seatliberator.seatliberator.identity.core.introspection.SimpleIntrospection;
-import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
 
 public record WebIntrospectionResponse(
         boolean active,

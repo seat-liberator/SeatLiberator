@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.token;
 
-import com.seatliberator.seatliberator.jwks.application.port.in.TokenProvider;
 import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.token.handler.DefaultTokenIssueProcessor;
 import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.token.handler.TokenIssueProcessor;
+import com.seatliberator.seatliberator.jwks.application.port.in.TokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

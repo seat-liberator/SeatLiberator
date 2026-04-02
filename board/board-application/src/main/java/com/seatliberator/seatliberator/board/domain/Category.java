@@ -14,25 +14,21 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category {
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    private final List<Post> posts = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
     @Setter
     @Column(nullable = false)
     private String name;
-
     @Setter
     @Column
     private String description;
-
     @Setter(AccessLevel.PROTECTED)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
-
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
-    private final List<Post> posts = new ArrayList<>();
 
     private Category(String name, String description) {
         this.name = name;
