@@ -10,7 +10,7 @@ identity:
         public-key: "classpath:keys/key-20260308-214756/public.pem"
 
 server:
-  port: ${PORT:8080}
+  port: ${PORT:9090}
 
 spring:
   profiles:
