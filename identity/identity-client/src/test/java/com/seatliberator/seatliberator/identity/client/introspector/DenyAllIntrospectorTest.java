@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.identity.client.introspection;
 
 import com.seatliberator.seatliberator.identity.client.introspector.DenyAllIntrospector;
-import com.seatliberator.seatliberator.identity.core.introspection.IntrospectionFactory;
 import com.seatliberator.seatliberator.identity.client.introspector.Introspector;
+import com.seatliberator.seatliberator.identity.core.introspection.IntrospectionFactory;
 import com.seatliberator.seatliberator.identity.core.introspection.SimpleIntrospectionFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

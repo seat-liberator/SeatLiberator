@@ -8,11 +8,6 @@ public class TestPayloadFixture {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final AtomicInteger atomicInteger = new AtomicInteger();
 
-    public interface TestPayload {}
-
-    public record TestCreatePostPayload(String categoryId, String title, String content) implements TestPayload {}
-    public record TestCreateCategoryPayload(String name, String description) implements TestPayload {}
-
     public static TestCreatePostPayload createPostPayload(String categoryId) {
         int cur = atomicInteger.incrementAndGet();
         return createPostPayload(categoryId, "test-post-title-" + cur, "test-post-content-" + cur);
@@ -33,5 +28,14 @@ public class TestPayloadFixture {
 
     public static String stringifyPayload(TestPayload payload) {
         return objectMapper.writeValueAsString(payload);
+    }
+
+    public interface TestPayload {
+    }
+
+    public record TestCreatePostPayload(String categoryId, String title, String content) implements TestPayload {
+    }
+
+    public record TestCreateCategoryPayload(String name, String description) implements TestPayload {
     }
 }
