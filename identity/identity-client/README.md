@@ -1,107 +1,66 @@
-# identity-client README
+# Identity Client
 
-`identity-client`는 소비자 서비스가 `identity-application`의 공개키 목록과 원격 introspection, 그리고 Spring Security 연동용 인증 변환 구성을 재사용할 수
-있도록 감싼 클라이언트 모듈입니다.
+`identity:identity-client` 는 다른 서비스가 identity 도메인의 actor / role / introspection 기능을 재사용할 수 있게 해주는 클라이언트 모듈입니다.
 
-이 모듈이 제공하는 기본 기능은 두 가지입니다.
+현재 이 모듈이 자동 구성으로 제공하는 것은 두 가지입니다.
 
-- `identity.validate.jwt.*` 설정을 기반으로 `JwtDecoder`를 자동 등록합니다.
-- `identity.validate.introspection.web.*` 설정을 기반으로 원격 `Introspector`를 자동 등록합니다.
+- 웹 기반 token introspection용 `Introspector`
+- 현재 애플리케이션 namespace 기준 `NamespaceRoleCapabilitiesRegistry`
 
-## 1. 의존성 추가
+중요:
 
-소비자 모듈 `build.gradle.kts` 예시입니다.
+- 이 모듈은 더 이상 `JwtDecoder` 를 자동 구성하지 않습니다.
+- resource server JWT 검증은 `bootstrap:resource-application-starter` 의
+  `seatliberator.bootstrap.resource-server.security.jwk-set-uri` 설정이 담당합니다.
+
+## 의존성
 
 ```kotlin
 dependencies {
     implementation(project(":identity:identity-client"))
-
-    // JWT 기반 Resource Server를 함께 쓸 경우
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 }
 ```
 
-`identity-client`는 `identity-core`를 함께 가져오므로, 별도 설정이 없더라도 `Introspector` 기본 구현은 제공됩니다. 다만 기본 구현은 `DenyAllIntrospector`
-이므로 토큰을 항상 비활성으로 판단합니다.
+## 제공 타입
 
-## 2. JWT 검증 사용
+- `ActorContextHolder`
+- `ThreadLocalActorContextHolder`
+- `Capability`
+- `RoleCapabilities`
+- `NamespaceRoleCapabilitiesRegistry`
+- `Introspector`
 
-JWT 검증을 쓰려면 `JWKS` 엔드포인트 위치를 설정합니다.
+## Auto Configuration
 
-```yaml
-identity:
-  validate:
-    jwt:
-      enabled: true
-      jwks-server:
-        base-url: http://localhost:8080
-        uri: /.well-known/jwks.json
-```
+등록된 auto-configuration:
 
-활성화되면 `NimbusJwtDecoder` 기반 `JwtDecoder` 빈이 자동 등록됩니다.
+- `IdentityClientNamespaceRoleAutoConfiguration`
+- `WebIntrospectionAutoConfiguration`
 
-- `enabled=true`일 때 `jwks-server.base-url`, `jwks-server.uri` 둘 다 필요합니다.
-- 이미 다른 `JwtDecoder` 빈이 있으면 이 모듈은 덮어쓰지 않습니다.
+### Namespace role registry
 
-Spring Security Resource Server에서 사용하는 예시는 다음과 같습니다.
+`IdentityClientNamespaceRoleAutoConfiguration` 은 현재 애플리케이션 namespace 와 `RoleCapabilities` 목록을 받아
+`NamespaceRoleCapabilitiesRegistry` 를 생성합니다.
+
+즉, 소비자 서비스는 자기 namespace 에 대한 capability 매핑만 정의하면 됩니다.
+
+예:
 
 ```java
-package com.example.demo.config;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
-
-@Configuration
-public class SecurityConfig {
-    @Bean
-    SecurityFilterChain apiSecurity(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
-
-        return http.build();
-    }
+@Bean
+RoleCapabilities userRoleCapabilities() {
+    return new RoleCapabilities(Role.USER, Set.of(
+            new SimpleCapability("post.read"),
+            new SimpleCapability("post.create")
+    ));
 }
 ```
 
-기본적으로는 `identity-client`가 제공하는 `JwtDecoder`를 그대로 사용하면 됩니다.
+resource server bootstrap은 이 registry 를 사용해 `namespace:ROLE` authority 를 현재 앱 capability 로 확장할 수 있습니다.
 
-추가로 JWT 인증 결과를 `identity-core`의 `ActorContext` 스펙으로 변환하고 싶다면, 소비자 서비스에서 `jwtAuthenticationConverter`를 직접 구성할 수 있습니다.
+### Web introspection
 
-```java
-
-@Configuration
-public class SecurityConfig {
-    @Bean
-    SecurityFilterChain apiSecurity(
-            HttpSecurity http,
-            JwtDecoder jwtDecoder,
-            Converter<Jwt, ? extends AbstractAuthenticationToken> jwtAuthenticationConverter
-    ) throws Exception {
-        http
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt
-                                .decoder(jwtDecoder)
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter)
-                        )
-                );
-
-        return http.build();
-    }
-}
-```
-
-이 경우 소비자 서비스는 `spring.security.oauth2.resourceserver.jwt.jwk-set-uri`를 직접 적지 않아도 됩니다. `identity-client`가 만든 `JwtDecoder`
-를 그대로 사용하면 됩니다.
-
-## 3. 원격 Introspection 사용
-
-보안이 중요한 작업에서 원격 검증이 필요하다면 introspection을 활성화합니다.
+웹 introspection 자동 구성을 쓰려면 아래 설정을 켭니다.
 
 ```yaml
 identity:
@@ -114,124 +73,28 @@ identity:
           uri: /introspect
 ```
 
-현재 구현 기준으로 introspection 자동 구성은 애플리케이션 컨텍스트에 `WebClient` 빈이 이미 있을 때만 활성화됩니다. 따라서 소비자 서비스에서 `WebClient` 빈을 하나 제공해야 합니다.
+핵심 설정:
 
-```java
-package com.example.demo.config;
+- `identity.validate.introspection.web.enabled`
+- `identity.validate.introspection.web.server.base-url`
+- `identity.validate.introspection.web.server.uri`
+- `identity.introspection.expiration-ms`
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.reactive.function.client.WebClient;
+활성화되면 `WebClient` 기반 `Introspector` 가 등록됩니다.
 
-@Configuration
-public class IdentityClientWebConfig {
-    @Bean
-    WebClient identityWebClient() {
-        return WebClient.builder().build();
-    }
-}
-```
+## 사용 방향
 
-그다음 `Introspector`를 주입받아 직접 사용하면 됩니다.
+### resource server 앱에서의 권장 조합
 
-```java
-package com.example.demo.application;
+- 앱에 `seatliberator.resource-application` plugin 적용
+- `seatliberator.bootstrap.resource-server.security.jwk-set-uri` 설정
+- 필요한 `RoleCapabilities` 빈 정의
+- 필요 시 `ResourceServerSecurityCustomizer` 로 앱 전용 인가 규칙 추가
 
-import com.seatliberator.seatliberator.identity.core.introspect.Introspection;
-import com.seatliberator.seatliberator.identity.core.introspect.Introspector;
-import org.springframework.stereotype.Service;
+즉, JWT 검증은 bootstrap starter가 맡고, `identity-client` 는 actor / role / introspection 지원을 맡습니다.
 
-@Service
-public class SensitiveActionAuthorizer {
-    private final Introspector introspector;
+## 주의점
 
-    public SensitiveActionAuthorizer(Introspector introspector) {
-        this.introspector = introspector;
-    }
-
-    public boolean authorize(String token) {
-        Introspection result = introspector.introspect(token);
-        return result != null && result.active();
-    }
-}
-```
-
-`Introspection`에서 확인할 수 있는 값은 다음과 같습니다.
-
-- `active()`: 토큰 활성 여부
-- `expiration()`: 만료 시각 epoch milliseconds
-- `actor()`: 식별된 사용자 정보
-
-`actor()`는 다음 값을 가집니다.
-
-- `subject()`: 사용자 식별자
-- `scopes()`: 권한 스코프 집합
-
-## 4. 원격 서버와의 계약
-
-현재 클라이언트 구현 기준으로 기대하는 원격 API 계약은 아래와 같습니다.
-
-### JWKS
-
-- `GET /.well-known/jwks.json`
-- 표준 JWK Set JSON 응답
-
-### Introspection
-
-- `POST /introspect`
-- 요청 바디
-
-```json
-{
-  "token": "<access-token>"
-}
-```
-
-- 응답 예시
-
-```json
-{
-  "active": true,
-  "expiration": 1741852800000,
-  "actor": {
-    "subject": "user-123",
-    "scopes": ["reservation:read", "reservation:write"]
-  }
-}
-```
-
-비활성 토큰은 아래처럼 응답되면 됩니다.
-
-```json
-{
-  "active": false,
-  "expiration": null,
-  "actor": null
-}
-```
-
-## 5. 권장 사용 방식
-
-- 일반적인 API 인증은 JWT + JWKS 기반 `JwtDecoder`로 처리합니다.
-- 결제, 좌석 확정, 관리자 기능처럼 신뢰 수준이 더 필요한 작업만 `Introspector`로 원격 재검증합니다.
-- JWT 검증과 introspection을 동시에 켜도 됩니다. 둘은 용도가 다릅니다.
--
-    - Spring Security와 함께 사용할 경우, `identity-client`가 제공하는 `JwtDecoder`를 Resource Server 설정에 연결합니다.
-- 애플리케이션 레이어에서 Spring Security의 `Authentication` 타입을 직접 사용하고 싶지 않다면, 소비자 서비스에서 `jwtAuthenticationConverter`를 구현해
-  `ActorContext` 기반 인증 객체로 변환하는 방식을 권장합니다.
-
-## 6. 주의할 점
-
-- `identity.validate.jwt.enabled=true`이면 `jwks-server.base-url`, `jwks-server.uri`가 모두 필요합니다.
-- `identity.validate.introspection.web.enabled=true`이면 `server.base-url`, `server.uri`가 모두 필요합니다.
-- 현재 구현상 `WebClient` 빈이 없으면 원격 `Introspector` 자동 구성이 활성화되지 않습니다.
-- introspection을 별도로 활성화하지 않으면 `identity-core`의 기본 `DenyAllIntrospector`가 사용됩니다.
-- `identity-client`는 `JwtDecoder`까지만 자동 구성합니다. Spring Security `SecurityFilterChain` 및 `jwtAuthenticationConverter` 구성은
-  소비자 서비스가 직접 결정합니다.
-
-## 7. NamespaceRole 기반 capability 확장
-
-`namespace:ROLE` 스코프를 소비자 서비스의 capability authority로 확장하려면 별도 서비스 설정이 필요합니다.
-
-- 적용 가이드: [docs/NAMESPACE_ROLE_CAPABILITY_EXPANSION_GUIDE.md](docs/NAMESPACE_ROLE_CAPABILITY_EXPANSION_GUIDE.md)
-- 핵심 작업: `NamespaceProvider` 등록, `RoleCapabilities` 매핑 등록, `ActorContextJwtAuthenticationConverter` 연결
+- `identity-client` 만 추가한다고 resource server 보안 구성이 완성되지는 않습니다.
+- `Introspector` 는 `identity.validate.introspection.web.enabled=true` 일 때만 웹 구현이 등록됩니다.
+- `NamespaceRoleCapabilitiesRegistry` 는 현재 앱 namespace 기준으로 동작하므로, 각 앱이 자기 capability 매핑을 직접 제공해야 합니다.
