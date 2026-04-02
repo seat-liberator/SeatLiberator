@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.bootstrap;
+package com.seatliberator.seatliberator.bootstrap.security;
 
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import org.jspecify.annotations.NullMarked;
