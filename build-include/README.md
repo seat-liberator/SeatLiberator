@@ -81,7 +81,7 @@ convention plugin 은 bootstrap starter를 "다시 export" 하지 않습니다.
 - `spring-boot-starter-data-jpa`
 - `event-relay:event-relay-core`
 - `Clock` 기본 빈
-- `seatliberator.bootstrap.application.*` 설정 바인딩
+- `seatliberator.application.*` 설정 바인딩
 
 ### `bootstrap:resource-application-starter`
 
@@ -92,9 +92,19 @@ resource server 보안 부트스트랩을 담당합니다.
 - `identity:identity-client`
 - 기본 `JwtDecoder`
 - 기본 `SecurityFilterChain`
-- actor context binding auto-configuration
-- `ResourceServerSecurityCustomizer` SPI
-- `seatliberator.bootstrap.resource-server.security.*` 설정 바인딩
+- actor context binding과 actor-aware authentication converter
+- `ResourceServerHttpSecurityCustomizer`
+- `ResourceServerOAuth2Customizer`
+- `ResourceServerAuthorizeRequestMatcherCustomizer`
+- `seatliberator.resource-server.security.*`
+- `seatliberator.resource-server.security.authorize.*`
+
+현재 auto-configuration 책임은 아래처럼 나뉩니다.
+
+- `ResourceServerSecurityAutoConfiguration`:
+  stateless resource server filter chain 생성과 공통 `HttpSecurity` 조립
+- `ResourceServerAuthorizeAutoConfiguration`:
+  JWT decoder, OAuth2 resource server wiring, actor context binding, authorize rule 조립
 
 ## 앱 모듈이 직접 선언하는 것
 

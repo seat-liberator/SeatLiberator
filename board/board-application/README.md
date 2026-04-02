@@ -29,7 +29,7 @@
 
 resource server 실행에 필요한 핵심 속성:
 
-- `seatliberator.bootstrap.resource-server.security.jwk-set-uri`
+- `seatliberator.resource-server.security.authorize.jwk-set-uri`
 - `spring.datasource.*`
 - `spring.jpa.*`
 
@@ -63,7 +63,7 @@ resource server 실행에 필요한 핵심 속성:
 
 이 모듈은 bootstrap starter가 만드는 기본 `SecurityFilterChain`
 위에 [SecurityConfiguration.java](/home/lilamaris/IdeaProjects/SeatLiberator/board/board-application/src/main/java/com/seatliberator/seatliberator/board/infrastructure/security/SecurityConfiguration.java)
-의 `ResourceServerSecurityCustomizer` 로 board 전용 권한 규칙을 추가합니다.
+의 `ResourceServerAuthorizeRequestMatcherCustomizer` 로 board 전용 권한 규칙을 추가합니다.
 
 주요 권한 규칙:
 
@@ -71,7 +71,7 @@ resource server 실행에 필요한 핵심 속성:
 - `PATCH /board/{boardId}/categories/{categoryId}`: `category.manage`
 - `DELETE /board/{boardId}/categories/{categoryId}`: `category.manage`
 - `POST /board/{boardId}/posts`: `post.create`
-- 그 외 요청: 인증 필요
+- 그 외 요청: bootstrap 기본 규칙에 따라 인증 필요
 
 ## 테스트
 

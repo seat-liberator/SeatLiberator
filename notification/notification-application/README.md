@@ -20,7 +20,6 @@
 - `notification.infrastructure.persistence`: JPA 저장소 구현
 - `notification.infrastructure.event`: event-relay listener
 - `notification.infrastructure.web`: 알림 조회 컨트롤러
-- `notification.infrastructure.security`: JWT resource-server 보안 구성
 
 ## 실행 설정
 
@@ -32,7 +31,7 @@
 
 핵심 설정:
 
-- `seatliberator.bootstrap.resource-server.security.jwk-set-uri`
+- `seatliberator.resource-server.security.authorize.jwk-set-uri`
 - `spring.datasource.*`
 - `spring.jpa.*`
 
@@ -43,6 +42,8 @@
 현재 로그인한 사용자의 알림 목록을 반환합니다. 사용자
 식별자는 [NotificationController.java](/home/lilamaris/IdeaProjects/SeatLiberator/notification/notification-application/src/main/java/com/seatliberator/seatliberator/notification/infrastructure/web/controller/NotificationController.java)
 에서 `ActorContextHolder` 로 가져옵니다.
+
+이 모듈은 별도 보안 설정 클래스를 두지 않고, bootstrap starter가 제공하는 기본 resource server 보안 구성을 그대로 사용합니다.
 
 ## 이벤트 소비
 
