@@ -11,7 +11,7 @@ repositories {
 
 dependencies {
     api(project(":kernel"))
-    implementation(project(":identity:identity-api"))
+    api(project(":identity:identity-api"))
 }
 
 tasks.test {

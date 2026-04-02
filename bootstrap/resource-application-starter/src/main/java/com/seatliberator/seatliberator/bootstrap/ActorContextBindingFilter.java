@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.notification.infrastructure.security;
+package com.seatliberator.seatliberator.bootstrap;
 
 import com.seatliberator.seatliberator.identity.client.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
