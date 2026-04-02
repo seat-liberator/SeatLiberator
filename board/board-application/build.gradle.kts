@@ -1,5 +1,5 @@
 plugins {
-    id("seatliberator.spring-resource-server-application")
+    id("seatliberator.resource-application")
 }
 
 group = "com.seatliberator.seatliberator"

@@ -16,6 +16,9 @@ dependencyResolutionManagement {
 
 include("kernel")
 
+include("bootstrap:web-application-starter")
+include("bootstrap:resource-application-starter")
+
 include("identity:identity-core")
 include("identity:identity-client")
 include("identity:identity-api")

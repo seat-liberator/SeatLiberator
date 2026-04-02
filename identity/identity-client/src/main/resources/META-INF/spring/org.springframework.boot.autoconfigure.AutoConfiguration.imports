@@ -1,3 +1,2 @@
-com.seatliberator.seatliberator.identity.client.jwt.JwtValidateAutoConfiguration
 com.seatliberator.seatliberator.identity.client.introspector.web.WebIntrospectionAutoConfiguration
 com.seatliberator.seatliberator.identity.client.role.IdentityClientNamespaceRoleAutoConfiguration
