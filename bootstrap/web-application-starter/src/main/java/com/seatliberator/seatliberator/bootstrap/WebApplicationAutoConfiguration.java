@@ -7,19 +7,20 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 
 import java.time.Clock;
+import java.time.ZoneId;
 
 @AutoConfiguration
 @ConditionalOnProperty(
-        prefix = "seatliberator.bootstrap.application",
+        prefix = "seatliberator.application",
         name = "enabled",
         havingValue = "true",
         matchIfMissing = true
 )
-@EnableConfigurationProperties(WebApplicationConfigurationProperties.class)
+@EnableConfigurationProperties(WebApplicationProperties.class)
 public class WebApplicationAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(Clock.class)
-    Clock clock() {
-        return Clock.systemUTC();
+    Clock clock(WebApplicationProperties properties) {
+        return Clock.system(ZoneId.of(properties.zoneId()));
     }
 }

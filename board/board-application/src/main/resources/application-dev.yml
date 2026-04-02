@@ -1,7 +1,7 @@
 seatliberator:
-  bootstrap:
-    resource-server:
-      security:
+  resource-server:
+    security:
+      authorize:
         jwk-set-uri: ${JWKS_BASE_URL:http}/.well-known/jwks.json
 
 spring:
