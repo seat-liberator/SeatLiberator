@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":event-relay:event-relay-core"))
+    api(project(":event-relay:event-relay-core"))
     implementation("tools.jackson.core:jackson-databind")
 }
 

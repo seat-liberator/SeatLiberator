@@ -13,14 +13,14 @@ import org.springframework.test.context.TestPropertySource;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 
-@SpringBootTest(classes = EventRelayJpaSupportAutoConfigurationTest.ConsumerApplication.class)
+@SpringBootTest(classes = EventRelayJpaAutoConfigurationTest.ConsumerApplication.class)
 @TestPropertySource(properties = {
         "spring.autoconfigure.exclude=com.seatliberator.seatliberator.eventrelay.core.EventRelayCoreAutoConfiguration",
         "spring.datasource.url=jdbc:tc:postgresql:18-alpine:///event-relay-auto-config-test",
         "spring.datasource.driver-class-name=org.testcontainers.jdbc.ContainerDatabaseDriver",
         "spring.jpa.hibernate.ddl-auto=create-drop"
 })
-class EventRelayJpaSupportAutoConfigurationTest {
+class EventRelayJpaAutoConfigurationTest {
 
     @Autowired
     private EntityManagerFactory entityManagerFactory;

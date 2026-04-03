@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.eventrelay.core.provider;
+package com.seatliberator.seatliberator.eventrelay.autoconfigure.provider;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
