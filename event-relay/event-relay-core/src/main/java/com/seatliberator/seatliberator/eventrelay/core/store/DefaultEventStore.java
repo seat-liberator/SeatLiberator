@@ -18,18 +18,12 @@ import java.util.Map;
 public class DefaultEventStore implements EventStore {
     private final Map<String, StoredEvent> repository = new HashMap<>();
     private final EventStateTransitionPolicy transitionPolicy;
-    private final int batchSize;
     private final Object lock = new Object();
 
     public DefaultEventStore(
-            @NonNull EventStateTransitionPolicy transitionPolicy,
-            int batchSize
+            @NonNull EventStateTransitionPolicy transitionPolicy
     ) {
-        if (batchSize < 1) {
-            throw new IllegalArgumentException("batchSize는 1보다 작을 수 없습니다.");
-        }
         this.transitionPolicy = transitionPolicy;
-        this.batchSize = batchSize;
     }
 
     @Override
@@ -52,8 +46,8 @@ public class DefaultEventStore implements EventStore {
     @Override
     public List<EventEnvelope> claimBatch(
             @NonNull EventFlow flow,
-            @NonNull Instant claimedAt
-    ) {
+            @NonNull Instant claimedAt,
+            int batchSize) {
         synchronized (lock) {
             var candidate = repository.values().stream()
                     .filter(e -> e.status() == EventStatus.PENDING || e.status() == EventStatus.FAILED)

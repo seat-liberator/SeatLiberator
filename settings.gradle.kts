@@ -30,6 +30,7 @@ include("event-relay:event-relay-core")
 include("event-relay:event-relay-test")
 include("event-relay:event-relay-support-jpa")
 include("event-relay:event-relay-support-kafka")
+include("event-relay:event-relay-starter")
 
 include("board:board-api")
 include("board:board-application")

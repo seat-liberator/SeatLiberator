@@ -17,19 +17,13 @@ import java.util.List;
 public class JpaEventStore implements EventStore {
     private final JpaStoredEventPersistencePort persistence;
     private final EventAcceptor acceptor;
-    private final int batchSize;
 
     public JpaEventStore(
             @NonNull JpaStoredEventPersistencePort persistence,
-            @NonNull EventAcceptor acceptor,
-            int batchSize
+            @NonNull EventAcceptor acceptor
     ) {
-        if (batchSize < 1) {
-            throw new IllegalArgumentException("batchSize는 1보다 작을 수 없습니다");
-        }
         this.persistence = persistence;
         this.acceptor = acceptor;
-        this.batchSize = batchSize;
     }
 
     @Transactional
@@ -40,7 +34,7 @@ public class JpaEventStore implements EventStore {
 
     @Transactional
     @Override
-    public List<EventEnvelope> claimBatch(@NonNull EventFlow flow, @NonNull Instant claimedAt) {
+    public List<EventEnvelope> claimBatch(@NonNull EventFlow flow, @NonNull Instant claimedAt, int batchSize) {
         var candidates = persistence.claim(List.of(EventStatus.PENDING, EventStatus.FAILED), flow, batchSize);
         var claimedIds = new ArrayList<String>();
 

@@ -1,5 +1,10 @@
-package com.seatliberator.seatliberator.eventrelay.core;
+package com.seatliberator.seatliberator.eventrelay.autoconfigure;
 
+import com.seatliberator.seatliberator.eventrelay.autoconfigure.properties.EventRelayOptionsMapper;
+import com.seatliberator.seatliberator.eventrelay.autoconfigure.properties.EventRelayProperties;
+import com.seatliberator.seatliberator.eventrelay.autoconfigure.provider.SpringApplicationNameProducerProvider;
+import com.seatliberator.seatliberator.eventrelay.autoconfigure.scheduler.EventScheduler;
+import com.seatliberator.seatliberator.eventrelay.autoconfigure.scheduler.FixedDelayEventScheduler;
 import com.seatliberator.seatliberator.eventrelay.core.codec.*;
 import com.seatliberator.seatliberator.eventrelay.core.definition.DefaultEventDefinitionRegistry;
 import com.seatliberator.seatliberator.eventrelay.core.definition.EventDefinitionCollection;
@@ -16,14 +21,18 @@ import com.seatliberator.seatliberator.eventrelay.core.relay.inbound.*;
 import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.DefaultEventPublisher;
 import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.EventPublisher;
 import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.EventSender;
-import com.seatliberator.seatliberator.eventrelay.core.scheduler.EventScheduler;
-import com.seatliberator.seatliberator.eventrelay.core.scheduler.FixedDelayEventScheduler;
+import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.NoOpEventSender;
 import com.seatliberator.seatliberator.eventrelay.core.store.DefaultEventStateTransitionPolicy;
+import com.seatliberator.seatliberator.eventrelay.core.store.DefaultEventStore;
 import com.seatliberator.seatliberator.eventrelay.core.store.EventStateTransitionPolicy;
 import com.seatliberator.seatliberator.eventrelay.core.store.EventStore;
-import com.seatliberator.seatliberator.eventrelay.core.store.EventStoreConfigurationProperties;
+import com.seatliberator.seatliberator.eventrelay.support.jpa.autoconfigure.EventRelayJpaAutoConfiguration;
+import com.seatliberator.seatliberator.eventrelay.support.kafka.autoconfigure.EventRelayKafkaAutoConfiguration;
+import com.seatliberator.seatliberator.kernel.CurrentApplicationNamespaceProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -34,10 +43,21 @@ import java.time.Clock;
 import java.util.List;
 import java.util.UUID;
 
-@AutoConfiguration
-@EnableConfigurationProperties(EventStoreConfigurationProperties.class)
+@AutoConfiguration(
+        after = {
+                EventRelayJpaAutoConfiguration.class,
+                EventRelayKafkaAutoConfiguration.class
+        }
+)
+@ConditionalOnProperty(
+        prefix = "event-relay",
+        name = "enabled",
+        havingValue = "true",
+        matchIfMissing = true
+)
+@EnableConfigurationProperties(EventRelayProperties.class)
 @EnableScheduling
-public class EventRelayCoreAutoConfiguration {
+public class EventRelayAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(EventScheduler.class)
@@ -51,9 +71,11 @@ public class EventRelayCoreAutoConfiguration {
             EventRouter eventRouter,
             EventSender eventSender,
             EventStore eventStore,
-            Clock clock
+            Clock clock,
+            EventRelayProperties properties
     ) {
-        return new SimpleEventRelay(clock, eventStore, eventRouter, eventSender);
+        var options = EventRelayOptionsMapper.toOptions(properties);
+        return new SimpleEventRelay(clock, eventStore, eventRouter, eventSender, options);
     }
 
     @Bean
@@ -78,9 +100,23 @@ public class EventRelayCoreAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(EventSender.class)
+    NoOpEventSender eventSender() {
+        return new NoOpEventSender();
+    }
+
+    @Bean
     @ConditionalOnMissingBean(EventStateTransitionPolicy.class)
     DefaultEventStateTransitionPolicy eventStateTransitionPolicy() {
         return new DefaultEventStateTransitionPolicy();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(EventStore.class)
+    DefaultEventStore defaultEventStore(
+            EventStateTransitionPolicy eventStateTransitionPolicy
+    ) {
+        return new DefaultEventStore(eventStateTransitionPolicy);
     }
 
     @Bean
@@ -157,7 +193,21 @@ public class EventRelayCoreAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(ProducerProvider.class)
-    SpringApplicationNameProducerProvider producerProvider(Environment environment) {
+    @ConditionalOnBean(CurrentApplicationNamespaceProvider.class)
+    ApplicationNamespaceProducerProvider applicationNamespaceProducerProvider(
+            CurrentApplicationNamespaceProvider currentApplicationNamespaceProvider
+    ) {
+        return new ApplicationNamespaceProducerProvider(currentApplicationNamespaceProvider);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean({
+            CurrentApplicationNamespaceProvider.class,
+            ProducerProvider.class
+    })
+    SpringApplicationNameProducerProvider springApplicationNameProducerProvider(
+            Environment environment
+    ) {
         return new SpringApplicationNameProducerProvider(environment);
     }
 

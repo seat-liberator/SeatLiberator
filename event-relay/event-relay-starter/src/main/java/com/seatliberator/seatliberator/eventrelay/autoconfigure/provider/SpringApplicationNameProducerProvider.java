@@ -1,5 +1,6 @@
-package com.seatliberator.seatliberator.eventrelay.core.provider;
+package com.seatliberator.seatliberator.eventrelay.autoconfigure.provider;
 
+import com.seatliberator.seatliberator.eventrelay.core.provider.ProducerProvider;
 import org.jspecify.annotations.NonNull;
 import org.springframework.core.env.Environment;
 

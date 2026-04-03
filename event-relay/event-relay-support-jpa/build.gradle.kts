@@ -10,12 +10,11 @@ repositories {
 }
 
 dependencies {
-    api(project(":event-relay:event-relay-core"))
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation(project(":event-relay:event-relay-core"))
+    api("org.springframework.boot:spring-boot-starter-data-jpa")
 
     // Test
     testImplementation(project(":event-relay:event-relay-test"))
-
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
