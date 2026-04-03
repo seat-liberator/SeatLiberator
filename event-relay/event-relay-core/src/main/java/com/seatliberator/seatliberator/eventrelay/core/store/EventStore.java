@@ -16,7 +16,8 @@ public interface EventStore {
 
     List<EventEnvelope> claimBatch(
             @NonNull EventFlow flow,
-            @NonNull Instant claimedAt
+            @NonNull Instant claimedAt,
+            int batchSize
     );
 
     void reportCompleted(

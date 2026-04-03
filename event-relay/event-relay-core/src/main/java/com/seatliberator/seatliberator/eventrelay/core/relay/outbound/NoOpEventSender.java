@@ -15,5 +15,6 @@ public class NoOpEventSender implements EventSender {
         var rawPayload = envelope.rawPayload();
 
         log.debug("message send. type={}, id={}, raw={}", eventId, eventType, rawPayload);
+        throw new UnsupportedOperationException("NoOpEventSender not support transport event.");
     }
 }

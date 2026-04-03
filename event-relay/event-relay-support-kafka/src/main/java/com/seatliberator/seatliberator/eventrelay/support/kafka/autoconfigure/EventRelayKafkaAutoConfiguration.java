@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.eventrelay.support.kafka;
+package com.seatliberator.seatliberator.eventrelay.support.kafka.autoconfigure;
 
 import com.seatliberator.seatliberator.eventrelay.core.codec.EventEnvelopeDeserializer;
 import com.seatliberator.seatliberator.eventrelay.core.codec.EventEnvelopeSerializer;
@@ -7,11 +7,13 @@ import com.seatliberator.seatliberator.eventrelay.core.provider.ProducerProvider
 import com.seatliberator.seatliberator.eventrelay.core.relay.inbound.EventListenerRegistry;
 import com.seatliberator.seatliberator.eventrelay.core.relay.outbound.EventSender;
 import com.seatliberator.seatliberator.eventrelay.core.store.EventStore;
+import com.seatliberator.seatliberator.eventrelay.support.kafka.*;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -23,13 +25,22 @@ import org.springframework.messaging.handler.annotation.support.MessageHandlerMe
 import java.time.Clock;
 
 @AutoConfiguration
+@AutoConfigureAfter(name = "org.springframework.boot.kafka.autoconfigure.KafkaAutoConfiguration")
 @ConditionalOnClass(KafkaTemplate.class)
-@AutoConfigureAfter(name = {
-        "org.springframework.boot.kafka.autoconfigure.KafkaAutoConfiguration",
-        "com.seatliberator.seatliberator.eventrelay.core.EventRelayCoreAutoConfiguration"
-})
-@EnableConfigurationProperties(EventRelayKafkaSupportConfigurationProperties.class)
-public class EventRelayKafkaSupportAutoConfiguration {
+@ConditionalOnProperty(
+        prefix = "event-relay",
+        name = "enabled",
+        havingValue = "true",
+        matchIfMissing = true
+)
+@ConditionalOnProperty(
+        prefix = "event-relay.kafka",
+        name = "enabled",
+        havingValue = "true",
+        matchIfMissing = true
+)
+@EnableConfigurationProperties(EventRelayKafkaProperties.class)
+public class EventRelayKafkaAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(EventSender.class)
@@ -38,7 +49,7 @@ public class EventRelayKafkaSupportAutoConfiguration {
             EventDefinitionRegistry eventDefinitionRegistry,
             EventEnvelopeSerializer eventEnvelopeSerializer,
             TopicFactory topicFactory,
-            EventRelayKafkaSupportConfigurationProperties properties
+            EventRelayKafkaProperties properties
     ) {
         return new KafkaEventSender(kafkaTemplate, eventDefinitionRegistry, eventEnvelopeSerializer, topicFactory, properties.sendTimeout());
     }
@@ -87,7 +98,7 @@ public class EventRelayKafkaSupportAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(TopicFactory.class)
-    TopicFactory topicFactory(EventRelayKafkaSupportConfigurationProperties properties) {
+    TopicFactory topicFactory(EventRelayKafkaProperties properties) {
         return new NamespaceTopicFactory(properties.topicSuffix(), properties.topicDelimiter());
     }
 }

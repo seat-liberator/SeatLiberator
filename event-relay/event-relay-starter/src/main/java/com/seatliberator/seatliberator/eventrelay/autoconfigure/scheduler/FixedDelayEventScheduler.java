@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.eventrelay.core.scheduler;
+package com.seatliberator.seatliberator.eventrelay.autoconfigure.scheduler;
 
 import com.seatliberator.seatliberator.eventrelay.core.relay.EventRelay;
 import org.jspecify.annotations.NonNull;

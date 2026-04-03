@@ -20,8 +20,6 @@ dependencies {
     testRuntimeOnly("com.h2database:h2")
 
     // Event
-    api(project(":event-relay:event-relay-core"))
-    implementation(project(":event-relay:event-relay-support-jpa"))
-    implementation(project(":event-relay:event-relay-support-kafka"))
+    api(project(":event-relay:event-relay-starter"))
     implementation("org.springframework.boot:spring-boot-starter-kafka")
 }

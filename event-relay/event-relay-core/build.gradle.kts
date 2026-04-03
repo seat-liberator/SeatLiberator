@@ -12,11 +12,10 @@ repositories {
 dependencies {
     api(project(":kernel"))
 
-    implementation("org.springframework:spring-context")
-    implementation("tools.jackson.core:jackson-databind")
-    implementation("org.springframework.boot:spring-boot-autoconfigure")
+    api("tools.jackson.core:jackson-databind")
 
     implementation("org.slf4j:slf4j-api")
+    implementation("org.jspecify:jspecify:1.0.0")
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")

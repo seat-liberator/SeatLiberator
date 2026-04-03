@@ -14,17 +14,20 @@ public class SimpleEventRelay implements EventRelay {
     private final EventStore store;
     private final EventRouter router;
     private final EventSender sender;
+    private final EventRelayOptions options;
 
     public SimpleEventRelay(
             @NonNull Clock clock,
             @NonNull EventStore store,
             @NonNull EventRouter router,
-            @NonNull EventSender sender
+            @NonNull EventSender sender,
+            @NonNull EventRelayOptions options
     ) {
         this.clock = clock;
         this.store = store;
         this.router = router;
         this.sender = sender;
+        this.options = options;
     }
 
     @Override
@@ -40,7 +43,7 @@ public class SimpleEventRelay implements EventRelay {
     }
 
     private void runSingleFlow(EventFlow flow, Consumer<EventEnvelope> action) {
-        var envelopes = store.claimBatch(flow, clock.instant());
+        var envelopes = store.claimBatch(flow, clock.instant(), options.batchSize());
 
         for (var e : envelopes) {
             var eventId = e.trace().eventId();
