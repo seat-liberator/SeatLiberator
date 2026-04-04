@@ -4,7 +4,10 @@ import com.seatliberator.seatliberator.identity.client.role.Capability;
 import com.seatliberator.seatliberator.identity.client.role.NamespaceRoleCapabilitiesRegistry;
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleDeserializer;
+import com.seatliberator.seatliberator.identity.core.role.Role;
+import com.seatliberator.seatliberator.kernel.CurrentApplicationNamespaceProvider;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -18,13 +21,16 @@ public class ActorContextJwtAuthenticationConverter implements JwtAuthentication
     private static final String SCOPES_CLAIM = "scopes";
     private final NamespaceRoleDeserializer deserializer;
     private final NamespaceRoleCapabilitiesRegistry registry;
+    private final CurrentApplicationNamespaceProvider currentApplicationNamespaceProvider;
 
     public ActorContextJwtAuthenticationConverter(
             NamespaceRoleDeserializer deserializer,
-            NamespaceRoleCapabilitiesRegistry registry
+            NamespaceRoleCapabilitiesRegistry registry,
+            CurrentApplicationNamespaceProvider currentApplicationNamespaceProvider
     ) {
         this.deserializer = deserializer;
         this.registry = registry;
+        this.currentApplicationNamespaceProvider = currentApplicationNamespaceProvider;
     }
 
     @Override
@@ -54,14 +60,24 @@ public class ActorContextJwtAuthenticationConverter implements JwtAuthentication
         scopes.addAll(readScopesClaim(source.getClaim(SCOPES_CLAIM)));
         scopes.addAll(readScopesClaim(source.getClaim(SCOPE_CLAIM)));
 
-        var capabilities = scopes.stream()
+        var namespaceRoles = scopes.stream()
                 .map(deserializer::tryMaterialize)
                 .flatMap(Optional::stream)
-                .map(registry::resolve)
-                .flatMap(Collection::stream)
-                .map(Capability::scope)
+                .filter(r -> r.namespace().value().equals(currentApplicationNamespaceProvider.current().value()))
+                .findFirst();
+
+        var roles = namespaceRoles.stream()
+                .map(NamespaceRole::role)
+                .map(Role::name)
                 .collect(Collectors.toUnmodifiableSet());
 
+        var capabilities = namespaceRoles.stream()
+                        .map(registry::resolve)
+                        .flatMap(Collection::stream)
+                        .map(Capability::scope)
+                        .collect(Collectors.toUnmodifiableSet());
+
+        scopes.addAll(roles);
         scopes.addAll(capabilities);
 
         return Set.copyOf(scopes);

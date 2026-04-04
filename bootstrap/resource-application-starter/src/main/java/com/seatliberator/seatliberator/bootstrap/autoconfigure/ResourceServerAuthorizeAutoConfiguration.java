@@ -10,6 +10,7 @@ import com.seatliberator.seatliberator.identity.client.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.identity.client.actor.ThreadLocalActorContextHolder;
 import com.seatliberator.seatliberator.identity.client.role.NamespaceRoleCapabilitiesRegistry;
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleDeserializer;
+import com.seatliberator.seatliberator.kernel.CurrentApplicationNamespaceProvider;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -72,9 +73,10 @@ public class ResourceServerAuthorizeAutoConfiguration {
     @ConditionalOnMissingBean
     ActorContextJwtAuthenticationConverter actorContextJwtAuthenticationConverter(
             NamespaceRoleDeserializer namespaceRoleDeserializer,
-            NamespaceRoleCapabilitiesRegistry namespaceRoleCapabilitiesRegistry
+            NamespaceRoleCapabilitiesRegistry namespaceRoleCapabilitiesRegistry,
+            CurrentApplicationNamespaceProvider currentApplicationNamespaceProvider
     ) {
-        return new ActorContextJwtAuthenticationConverter(namespaceRoleDeserializer, namespaceRoleCapabilitiesRegistry);
+        return new ActorContextJwtAuthenticationConverter(namespaceRoleDeserializer, namespaceRoleCapabilitiesRegistry, currentApplicationNamespaceProvider);
     }
 
     @Bean
