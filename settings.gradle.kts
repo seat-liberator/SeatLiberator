@@ -37,6 +37,7 @@ include("board:board-application")
 
 include("reservation:reservation-api")
 include("reservation:reservation-application")
+include("reservation:reservation-domain")
 
 include("notification:notification-api")
 include("notification:notification-application")

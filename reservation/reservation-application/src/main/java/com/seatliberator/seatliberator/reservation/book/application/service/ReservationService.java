@@ -1,16 +1,16 @@
 package com.seatliberator.seatliberator.reservation.book.application.service;
 
-import com.seatliberator.seatliberator.reservation.book.application.exception.BookApplicationErrorCode;
-import com.seatliberator.seatliberator.reservation.book.application.exception.BookApplicationException;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.ReservationManager;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationCreateCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationUpdateCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.entry.ReservationEntry;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
-import com.seatliberator.seatliberator.reservation.domain.Reservation;
-import com.seatliberator.seatliberator.reservation.shared.domain.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.shared.domain.SimpleTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -32,10 +32,10 @@ public class ReservationService implements ReservationManager {
     @Override
     public ReservationEntry create(ReservationCreateCommand command) {
         seatStore.findForUpdate(command.roomId(), command.seatId())
-                .orElseThrow(() -> new BookApplicationException(BookApplicationErrorCode.SEAT_NOT_FOUND));
+                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND));
 
         reservationStore.findByUserId(command.userId()).ifPresent(e -> {
-            throw new BookApplicationException(BookApplicationErrorCode.RESERVATION_ALREADY_EXISTS);
+            throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_ALREADY_EXISTS);
         });
 
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
@@ -43,7 +43,8 @@ public class ReservationService implements ReservationManager {
 
         var conflict = reservationStore.existsByLocatorAndRange(locator, range);
 
-        if (conflict) throw new BookApplicationException(BookApplicationErrorCode.RESERVATION_TIME_CONFLICT);
+        if (conflict)
+            throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_TIME_CONFLICT);
 
         var reservation = Reservation.create(
                 command.userId(),
@@ -80,7 +81,8 @@ public class ReservationService implements ReservationManager {
                 List.of(reservation.getId())
         );
 
-        if (conflict) throw new BookApplicationException(BookApplicationErrorCode.RESERVATION_TIME_CONFLICT);
+        if (conflict)
+            throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_TIME_CONFLICT);
 
         reservation.update(command.userId(), command.roomId(), command.seatId(), command.startTime(), command.endTime());
 
@@ -91,7 +93,7 @@ public class ReservationService implements ReservationManager {
     @Override
     public ReservationEntry cancel(String userId) {
         Reservation reservation = reservationStore.findByUserId(userId)
-                .orElseThrow(() -> new BookApplicationException(BookApplicationErrorCode.RESERVATION_NOT_FOUND));
+                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_NOT_FOUND));
 
         var locator = reservation.getLocator();
         seatStore.findForUpdate(

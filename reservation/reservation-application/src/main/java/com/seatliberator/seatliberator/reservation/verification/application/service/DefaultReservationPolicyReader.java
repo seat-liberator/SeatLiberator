@@ -3,8 +3,8 @@ package com.seatliberator.seatliberator.reservation.verification.application.ser
 import com.seatliberator.seatliberator.reservation.book.application.port.in.ReservationReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationLocator;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.entry.ReservationEntry;
-import com.seatliberator.seatliberator.reservation.verification.application.exception.VerificationApplicationErrorCode;
-import com.seatliberator.seatliberator.reservation.verification.application.exception.VerificationApplicationException;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.verification.application.policy.ReservationPolicyEngine;
 import com.seatliberator.seatliberator.reservation.verification.application.port.in.ReservationPolicyReader;
 import com.seatliberator.seatliberator.reservation.verification.application.port.in.command.Requester;
@@ -22,7 +22,7 @@ public class DefaultReservationPolicyReader implements ReservationPolicyReader {
         var reservation = reservationReader.read(reservationLocator);
 
         if (!reservationPolicyEngine.canRead(reservation.reservationId(), requester)) {
-            throw new VerificationApplicationException(VerificationApplicationErrorCode.RESERVATION_READ_FORBIDDEN);
+            throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_READ_FORBIDDEN);
         }
 
         return reservation;

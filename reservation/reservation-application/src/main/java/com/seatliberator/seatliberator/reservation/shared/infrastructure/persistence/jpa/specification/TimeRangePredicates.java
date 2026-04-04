@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification;
 
-import com.seatliberator.seatliberator.reservation.shared.domain.EmbeddableTimeRange;
-import com.seatliberator.seatliberator.reservation.shared.domain.TimeRange;
+import com.seatliberator.seatliberator.reservation.domain.EmbeddableTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.TimeRange;
 import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Path;
 import org.springframework.data.jpa.domain.PredicateSpecification;

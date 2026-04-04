@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command;
 
-import com.seatliberator.seatliberator.reservation.shared.domain.SeatLocator;
-import com.seatliberator.seatliberator.reservation.shared.domain.TimeRange;
+import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.TimeRange;
 
 import java.time.Instant;
 
