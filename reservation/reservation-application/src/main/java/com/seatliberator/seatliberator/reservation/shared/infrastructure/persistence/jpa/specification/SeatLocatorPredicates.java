@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification;
 
-import com.seatliberator.seatliberator.reservation.shared.domain.EmbeddableSeatLocator;
-import com.seatliberator.seatliberator.reservation.shared.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.EmbeddableSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Path;
 import org.springframework.data.jpa.domain.PredicateSpecification;

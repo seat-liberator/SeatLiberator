@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.book.application.port.out;
 
-import com.seatliberator.seatliberator.reservation.domain.Seat;
-import com.seatliberator.seatliberator.reservation.shared.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
 
 import java.util.Collection;
 import java.util.Optional;

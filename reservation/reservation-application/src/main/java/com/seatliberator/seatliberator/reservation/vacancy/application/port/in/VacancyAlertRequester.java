@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.vacancy.application.port.in;
 
-import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequest;
+import com.seatliberator.seatliberator.reservation.domain.persistence.VacancyAlertRequest;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertCancelCommand;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCommand;
 

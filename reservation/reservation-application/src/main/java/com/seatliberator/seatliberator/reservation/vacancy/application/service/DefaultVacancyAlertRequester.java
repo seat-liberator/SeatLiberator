@@ -1,11 +1,11 @@
 package com.seatliberator.seatliberator.reservation.vacancy.application.service;
 
-import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequest;
+import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
-import com.seatliberator.seatliberator.reservation.shared.domain.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.shared.domain.SimpleTimeRange;
-import com.seatliberator.seatliberator.reservation.vacancy.application.exception.VacancyApplicationErrorCode;
-import com.seatliberator.seatliberator.reservation.vacancy.application.exception.VacancyApplicationException;
+import com.seatliberator.seatliberator.reservation.domain.persistence.VacancyAlertRequest;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.VacancyAlertRequester;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertCancelCommand;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCommand;
@@ -32,7 +32,7 @@ public class DefaultVacancyAlertRequester implements VacancyAlertRequester {
 
         var exists = reader.existsByUserIdAndLocatorAndRangeAndStatus(command.userId(), locator, range, VacancyAlertStatus.ACTIVE);
 
-        if (exists) throw new VacancyApplicationException(VacancyApplicationErrorCode.DUPLICATED_REQUEST);
+        if (exists) throw new ReservationApplicationException(ReservationApplicationErrorCode.DUPLICATED_REQUEST);
 
         var now = clock.instant();
 
@@ -41,7 +41,7 @@ public class DefaultVacancyAlertRequester implements VacancyAlertRequester {
         try {
             return store.save(request);
         } catch (DataIntegrityViolationException e) {
-            throw new VacancyApplicationException(VacancyApplicationErrorCode.DUPLICATED_REQUEST);
+            throw new ReservationApplicationException(ReservationApplicationErrorCode.DUPLICATED_REQUEST);
         }
     }
 
@@ -50,7 +50,7 @@ public class DefaultVacancyAlertRequester implements VacancyAlertRequester {
         var now = clock.instant();
 
         VacancyAlertRequest alert = reader.findById(command.alertId())
-                .orElseThrow(() -> new VacancyApplicationException(VacancyApplicationErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.NOT_FOUND));
 
         alert.cancel(command.userId(), now);
 

@@ -2,10 +2,10 @@ package com.seatliberator.seatliberator.reservation.book.infrastructure.persiste
 
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa.repository.ReservationRepository;
-import com.seatliberator.seatliberator.reservation.domain.Reservation;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
-import com.seatliberator.seatliberator.reservation.shared.domain.SeatLocator;
-import com.seatliberator.seatliberator.reservation.shared.domain.TimeRange;
+import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.TimeRange;
+import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
 import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.CommonPredicates;
 import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.SeatLocatorPredicates;
 import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.TimeRangePredicates;

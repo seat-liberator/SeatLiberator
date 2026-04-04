@@ -2,8 +2,8 @@ package com.seatliberator.seatliberator.reservation.book.infrastructure.persiste
 
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa.repository.SeatRepository;
-import com.seatliberator.seatliberator.reservation.domain.Seat;
-import com.seatliberator.seatliberator.reservation.shared.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
 import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.CommonPredicates;
 import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.SeatLocatorPredicates;
 import lombok.RequiredArgsConstructor;

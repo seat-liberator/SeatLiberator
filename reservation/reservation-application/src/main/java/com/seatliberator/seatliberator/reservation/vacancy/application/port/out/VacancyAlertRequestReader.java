@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.reservation.vacancy.application.port.out;
 
-import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequest;
+import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.TimeRange;
 import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
-import com.seatliberator.seatliberator.reservation.shared.domain.SeatLocator;
-import com.seatliberator.seatliberator.reservation.shared.domain.TimeRange;
+import com.seatliberator.seatliberator.reservation.domain.persistence.VacancyAlertRequest;
 
 import java.util.List;
 import java.util.Optional;

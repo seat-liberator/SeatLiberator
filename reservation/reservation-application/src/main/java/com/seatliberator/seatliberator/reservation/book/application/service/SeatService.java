@@ -4,7 +4,7 @@ import com.seatliberator.seatliberator.reservation.book.application.port.in.Seat
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.SeatCreateCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.SeatUpdateCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
-import com.seatliberator.seatliberator.reservation.domain.Seat;
+import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

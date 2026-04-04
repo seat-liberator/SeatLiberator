@@ -5,8 +5,8 @@ import com.seatliberator.seatliberator.reservation.book.application.port.in.Rese
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationLocator;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.entry.ReservationEntry;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
-import com.seatliberator.seatliberator.reservation.verification.application.exception.VerificationApplicationErrorCode;
-import com.seatliberator.seatliberator.reservation.verification.application.exception.VerificationApplicationException;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.verification.application.policy.ReservationPolicyEngine;
 import com.seatliberator.seatliberator.reservation.verification.application.port.in.ReservationVerifier;
 import com.seatliberator.seatliberator.reservation.verification.application.port.in.command.Requester;
@@ -29,24 +29,24 @@ public class DefaultReservationPolicyVerifier implements ReservationVerifier {
         var reservation = reservationReader.read(reservationLocator);
 
         if (!reservationPolicyEngine.canVerify(reservation.reservationId(), requester)) {
-            throw new VerificationApplicationException(VerificationApplicationErrorCode.RESERVATION_VERIFY_FORBIDDEN);
+            throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_VERIFY_FORBIDDEN);
         }
 
         var transition = reservationUsageMarker.markUsed(reservation.reservationId());
 
         if (!transition.success()) {
-            throw new VerificationApplicationException(resolveErrorCode(transition.status()));
+            throw new ReservationApplicationException(resolveErrorCode(transition.status()));
         }
 
         return reservation;
     }
 
-    private VerificationApplicationErrorCode resolveErrorCode(ReservationStatus status) {
+    private ReservationApplicationErrorCode resolveErrorCode(ReservationStatus status) {
         return switch (status) {
-            case EXPIRED -> VerificationApplicationErrorCode.RESERVATION_EXPIRED;
-            case USED -> VerificationApplicationErrorCode.RESERVATION_ALREADY_USED;
-            case RESERVED -> VerificationApplicationErrorCode.RESERVATION_USAGE_FORBIDDEN;
-            case CANCELED -> VerificationApplicationErrorCode.RESERVATION_ALREADY_CANCELED;
+            case EXPIRED -> ReservationApplicationErrorCode.RESERVATION_EXPIRED;
+            case USED -> ReservationApplicationErrorCode.RESERVATION_ALREADY_USED;
+            case RESERVED -> ReservationApplicationErrorCode.RESERVATION_USAGE_FORBIDDEN;
+            case CANCELED -> ReservationApplicationErrorCode.RESERVATION_ALREADY_CANCELED;
         };
     }
 }

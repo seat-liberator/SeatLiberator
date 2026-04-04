@@ -1,10 +1,10 @@
 package com.seatliberator.seatliberator.reservation.book.application.service;
 
-import com.seatliberator.seatliberator.reservation.book.application.exception.BookApplicationErrorCode;
-import com.seatliberator.seatliberator.reservation.book.application.exception.BookApplicationException;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.ReservationUsageMarker;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.entry.ReservationStatusTransitionEntry;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +21,7 @@ public class DefaultReservationUsageMarker implements ReservationUsageMarker {
     @Transactional
     public ReservationStatusTransitionEntry markUsed(Long reservationId) {
         var reservation = reservationStore.findById(reservationId)
-                .orElseThrow(() -> new BookApplicationException(BookApplicationErrorCode.RESERVATION_NOT_FOUND));
+                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_NOT_FOUND));
 
         try {
             reservation.use(clock.instant());

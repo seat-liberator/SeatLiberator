@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.vacancy.infrastructure.persistence.jpa.repository;
 
-import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequest;
+import com.seatliberator.seatliberator.reservation.domain.persistence.VacancyAlertRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
