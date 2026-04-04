@@ -6,8 +6,8 @@ import com.seatliberator.seatliberator.reservation.book.application.port.out.Res
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.book.application.service.ReservationService;
 import com.seatliberator.seatliberator.reservation.book.application.service.SeatService;
-import com.seatliberator.seatliberator.reservation.domain.Reservation;
-import com.seatliberator.seatliberator.reservation.domain.Seat;
+import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
+import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

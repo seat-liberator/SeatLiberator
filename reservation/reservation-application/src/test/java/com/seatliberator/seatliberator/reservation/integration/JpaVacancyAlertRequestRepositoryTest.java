@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.reservation.integration;
 
-import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequest;
+import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
-import com.seatliberator.seatliberator.reservation.shared.domain.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.shared.domain.SimpleTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.persistence.VacancyAlertRequest;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestReader;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestStore;
 import jakarta.persistence.EntityManager;

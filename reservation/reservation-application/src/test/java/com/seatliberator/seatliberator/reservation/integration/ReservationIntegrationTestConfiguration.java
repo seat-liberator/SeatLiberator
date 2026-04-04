@@ -13,7 +13,7 @@ import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.seatliberator.seatliberator.reservation.TestFixture.fixedClock;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 
 @TestConfiguration
 public class ReservationIntegrationTestConfiguration {

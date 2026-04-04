@@ -1,5 +1,6 @@
-package com.seatliberator.seatliberator.reservation.shared.domain;
+package com.seatliberator.seatliberator.reservation.domain;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -48,8 +49,8 @@ public class EmbeddableSeatLocatorTest {
 
             var copied = EmbeddableSeatLocator.of(source);
 
-            assertThat(copied.roomId()).isEqualTo(roomId);
-            assertThat(copied.seatId()).isEqualTo(seatId);
+            Assertions.assertThat(copied.roomId()).isEqualTo(roomId);
+            Assertions.assertThat(copied.seatId()).isEqualTo(seatId);
         }
     }
 
@@ -79,8 +80,8 @@ public class EmbeddableSeatLocatorTest {
             var locator = EmbeddableSeatLocator.from(roomId, seatId);
             var other = EmbeddableSeatLocator.from(roomId, seatId);
 
-            assertThat(locator).isNotEqualTo(other);
-            assertThat(locator.isSame(other)).isTrue();
+            Assertions.assertThat(locator).isNotEqualTo(other);
+            Assertions.assertThat(locator.isSame(other)).isTrue();
         }
 
         @Test
@@ -89,8 +90,8 @@ public class EmbeddableSeatLocatorTest {
             var locator = EmbeddableSeatLocator.from(roomId, seatId);
             var other = SimpleSeatLocator.from(roomId, seatId);
 
-            assertThat(locator).isNotEqualTo(other);
-            assertThat(locator.isSame(other)).isTrue();
+            Assertions.assertThat(locator).isNotEqualTo(other);
+            Assertions.assertThat(locator.isSame(other)).isTrue();
         }
 
         @Test
@@ -99,8 +100,8 @@ public class EmbeddableSeatLocatorTest {
             var locator = EmbeddableSeatLocator.from(roomId, seatId);
             var other = EmbeddableSeatLocator.from("other-" + roomId, "other" + seatId);
 
-            assertThat(locator).isNotEqualTo(other);
-            assertThat(locator.isSame(other)).isFalse();
+            Assertions.assertThat(locator).isNotEqualTo(other);
+            Assertions.assertThat(locator.isSame(other)).isFalse();
         }
 
         @Test
@@ -109,8 +110,8 @@ public class EmbeddableSeatLocatorTest {
             var locator = EmbeddableSeatLocator.from(roomId, seatId);
             var other = SimpleSeatLocator.from("other-" + roomId, "other" + seatId);
 
-            assertThat(locator).isNotEqualTo(other);
-            assertThat(locator.isSame(other)).isFalse();
+            Assertions.assertThat(locator).isNotEqualTo(other);
+            Assertions.assertThat(locator.isSame(other)).isFalse();
         }
     }
 }
