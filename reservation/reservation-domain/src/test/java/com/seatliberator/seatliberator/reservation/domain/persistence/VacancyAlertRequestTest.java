@@ -1,14 +1,15 @@
-package com.seatliberator.seatliberator.reservation.domain;
+package com.seatliberator.seatliberator.reservation.domain.persistence;
 
-import com.seatliberator.seatliberator.reservation.shared.domain.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.shared.domain.SimpleTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("Domain: Vacancy Alert Request")
 public class VacancyAlertRequestTest {
@@ -84,7 +85,7 @@ public class VacancyAlertRequestTest {
         request.cancel(request.getUserId(), now);
 
         // when & then
-        assertThatThrownBy(() -> request.expire(now)).isInstanceOf(IllegalStateException.class);
+        Assertions.assertThatThrownBy(() -> request.expire(now)).isInstanceOf(IllegalStateException.class);
     }
 
     private VacancyAlertRequest create() {

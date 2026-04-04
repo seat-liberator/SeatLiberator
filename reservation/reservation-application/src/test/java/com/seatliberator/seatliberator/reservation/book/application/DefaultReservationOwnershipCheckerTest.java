@@ -11,8 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.seatliberator.seatliberator.reservation.TestFixture.INITIAL_USER_ID;
-import static com.seatliberator.seatliberator.reservation.TestFixture.createReservation;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.ReservationFixture.INITIAL_USER_ID;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.ReservationFixture.createReservation;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;

@@ -1,11 +1,11 @@
 package com.seatliberator.seatliberator.reservation.book.application;
 
-import com.seatliberator.seatliberator.reservation.book.application.exception.BookApplicationErrorCode;
-import com.seatliberator.seatliberator.reservation.book.application.exception.BookApplicationException;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.IdBasedReservationLocator;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.SeatBasedReservationLocator;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.book.application.service.DefaultReservationReader;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Instant;
 import java.util.Optional;
 
-import static com.seatliberator.seatliberator.reservation.TestFixture.*;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.ReservationFixture.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -56,11 +56,11 @@ public class DefaultReservationReaderTest {
         when(reservationStore.findById(1L)).thenReturn(Optional.empty());
 
         var exception = assertThrows(
-                BookApplicationException.class,
+                ReservationApplicationException.class,
                 () -> reservationReader.read(new IdBasedReservationLocator(1L))
         );
 
-        assertEquals(BookApplicationErrorCode.RESERVATION_NOT_FOUND, exception.getErrorCode());
+        assertEquals(ReservationApplicationErrorCode.RESERVATION_NOT_FOUND, exception.getErrorCode());
     }
 
     @Test
@@ -129,10 +129,10 @@ public class DefaultReservationReaderTest {
         );
 
         var exception = assertThrows(
-                BookApplicationException.class,
+                ReservationApplicationException.class,
                 () -> reservationReader.read(locator)
         );
 
-        assertEquals(BookApplicationErrorCode.RESERVATION_NOT_FOUND, exception.getErrorCode());
+        assertEquals(ReservationApplicationErrorCode.RESERVATION_NOT_FOUND, exception.getErrorCode());
     }
 }

@@ -1,11 +1,11 @@
 package com.seatliberator.seatliberator.reservation.book.application;
 
-import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequest;
+import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
-import com.seatliberator.seatliberator.reservation.shared.domain.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.shared.domain.SimpleTimeRange;
-import com.seatliberator.seatliberator.reservation.vacancy.application.exception.VacancyApplicationErrorCode;
-import com.seatliberator.seatliberator.reservation.vacancy.application.exception.VacancyApplicationException;
+import com.seatliberator.seatliberator.reservation.domain.persistence.VacancyAlertRequest;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCommand;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestReader;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestStore;
@@ -17,10 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Clock;
-
-import static com.seatliberator.seatliberator.reservation.TestFixture.createVacancyAlertRequestCommand;
-import static com.seatliberator.seatliberator.reservation.TestFixture.fixedClock;
+import static com.seatliberator.seatliberator.reservation.ReservationApplicationFixture.createVacancyAlertRequestCommand;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,13 +34,11 @@ public class DefaultVacancyAlertRequesterTest {
     @Mock
     VacancyAlertRequestStore store;
 
-    Clock clock = fixedClock;
-
     DefaultVacancyAlertRequester requester;
 
     @BeforeEach
     void setup() {
-        requester = new DefaultVacancyAlertRequester(reader, store, clock);
+        requester = new DefaultVacancyAlertRequester(reader, store, fixedClock);
     }
 
     @Test
@@ -54,9 +50,9 @@ public class DefaultVacancyAlertRequesterTest {
         whenCheckAlertRequestExists(command, true);
 
         assertThatThrownBy(() -> requester.request(command))
-                .isInstanceOf(VacancyApplicationException.class)
+                .isInstanceOf(ReservationApplicationException.class)
                 .extracting("errorCode")
-                .isEqualTo(VacancyApplicationErrorCode.DUPLICATED_REQUEST);
+                .isEqualTo(ReservationApplicationErrorCode.DUPLICATED_REQUEST);
     }
 
     @Test

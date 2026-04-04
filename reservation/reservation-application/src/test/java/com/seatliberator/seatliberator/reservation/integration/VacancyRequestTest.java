@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.reservation.integration;
 
+import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
-import com.seatliberator.seatliberator.reservation.shared.domain.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.shared.domain.SimpleTimeRange;
-import com.seatliberator.seatliberator.reservation.vacancy.application.exception.VacancyApplicationException;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.VacancyAlertRequester;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertCancelCommand;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCommand;
@@ -93,7 +93,7 @@ public class VacancyRequestTest {
         requester.request(command);
 
         // when & then
-        assertThatThrownBy(() -> requester.request(command)).isInstanceOf(VacancyApplicationException.class);
+        assertThatThrownBy(() -> requester.request(command)).isInstanceOf(ReservationApplicationException.class);
     }
 
     @Test
@@ -171,7 +171,7 @@ public class VacancyRequestTest {
         // when & then
         assertThatThrownBy(() ->
                 requester.cancelVacancyAlert(new VacancyAlertCancelCommand("user1", UUID.randomUUID())))
-                .isInstanceOf(VacancyApplicationException.class);
+                .isInstanceOf(ReservationApplicationException.class);
     }
 
     @Test

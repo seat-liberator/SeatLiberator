@@ -1,21 +1,18 @@
-package com.seatliberator.seatliberator.reservation;
+package com.seatliberator.seatliberator.reservation.domain.fixture;
 
-import com.seatliberator.seatliberator.reservation.domain.Reservation;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCommand;
+import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
 
-import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.ZoneOffset;
 
+import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static org.assertj.core.api.Fail.fail;
 
-public class TestFixture {
+public class ReservationFixture {
     public static final String INITIAL_USER_ID = "user-1";
     public static final String INITIAL_ROOM_ID = "room-1";
     public static final String INITIAL_SEAT_ID = "seat-1";
-    public static final Clock fixedClock = Clock.fixed(Instant.parse("2026-01-01T00:00:00Z"), ZoneOffset.UTC);
     public static final Duration INITIAL_DURATION = Duration.ofMinutes(30);
 
     public static Reservation createReservation() {
@@ -42,15 +39,5 @@ public class TestFixture {
         } catch (ReflectiveOperationException e) {
             fail("테스트용 ID 설정 실패");
         }
-    }
-
-    public static VacancyAlertRequestCommand createVacancyAlertRequestCommand(Instant startTime, Instant endTime) {
-        return new VacancyAlertRequestCommand(INITIAL_USER_ID, INITIAL_ROOM_ID, INITIAL_SEAT_ID, startTime, endTime);
-    }
-
-    public static VacancyAlertRequestCommand createVacancyAlertRequestCommand(Instant requestedAt) {
-        var startTime = fixedClock.instant();
-        var endTime = startTime.plus(INITIAL_DURATION);
-        return createVacancyAlertRequestCommand(startTime, endTime);
     }
 }
