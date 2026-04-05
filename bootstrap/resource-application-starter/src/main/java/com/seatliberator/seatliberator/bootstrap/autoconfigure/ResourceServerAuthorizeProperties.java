@@ -18,7 +18,7 @@ public record ResourceServerAuthorizeProperties(
 
         URI jwkSetUri,
 
-        @DefaultValue({"/error", "/actuator/health"})
+        @DefaultValue({"/error", "/actuator/health", "/actuator/health/**"})
         @NotEmpty
         List<@NotBlank String> permits,
 
