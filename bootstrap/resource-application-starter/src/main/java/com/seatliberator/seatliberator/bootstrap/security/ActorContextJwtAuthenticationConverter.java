@@ -69,6 +69,7 @@ public class ActorContextJwtAuthenticationConverter implements JwtAuthentication
         var roles = namespaceRoles.stream()
                 .map(NamespaceRole::role)
                 .map(Role::name)
+                .map(roleName -> "ROLE_" + roleName)
                 .collect(Collectors.toUnmodifiableSet());
 
         var capabilities = namespaceRoles.stream()
