@@ -6,5 +6,5 @@ import org.springframework.security.config.annotation.web.configurers.AuthorizeH
 @FunctionalInterface
 public interface ResourceServerAuthorizeRequestMatcherCustomizer {
     void customize(AuthorizeHttpRequestsConfigurer<HttpSecurity>
-                    .AuthorizationManagerRequestMatcherRegistry auth);
+                           .AuthorizationManagerRequestMatcherRegistry auth);
 }

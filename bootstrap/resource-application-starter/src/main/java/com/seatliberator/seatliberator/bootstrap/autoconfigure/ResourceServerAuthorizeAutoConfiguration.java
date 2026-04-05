@@ -112,14 +112,14 @@ public class ResourceServerAuthorizeAutoConfiguration {
     ) {
         return http -> http
                 .authorizeHttpRequests(auth -> {
-            var customizers = new ArrayList<>(authorizeCustomizerProvider.getIfAvailable(ArrayList::new));
-            AnnotationAwareOrderComparator.sort(customizers);
-            for (var customizer : customizers) customizer.customize(auth);
+                    var customizers = new ArrayList<>(authorizeCustomizerProvider.getIfAvailable(ArrayList::new));
+                    AnnotationAwareOrderComparator.sort(customizers);
+                    for (var customizer : customizers) customizer.customize(auth);
 
-            switch (authorizeProperties.requireAuthorizeAny()) {
-                case ALL -> auth.anyRequest().authenticated();
-                case NEVER -> auth.anyRequest().permitAll();
-            }
-        });
+                    switch (authorizeProperties.requireAuthorizeAny()) {
+                        case ALL -> auth.anyRequest().authenticated();
+                        case NEVER -> auth.anyRequest().permitAll();
+                    }
+                });
     }
 }
