@@ -22,4 +22,7 @@ dependencies {
     // Event
     api(project(":event-relay:event-relay-starter"))
     implementation("org.springframework.boot:spring-boot-starter-kafka")
+
+    // Observability
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 }
