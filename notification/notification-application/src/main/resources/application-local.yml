@@ -20,3 +20,19 @@ spring:
     properties:
       hibernate:
         dialect: ${LOCAL_DB_DIALECT:${SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT:org.hibernate.dialect.H2Dialect}}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+  endpoint:
+    health:
+      roles: ADMIN
+      show-details: when-authorized
+      show-components: when-authorized
+      group:
+        liveness:
+          include: "livenessState"
+        readiness:
+          include: "readinessState,db"

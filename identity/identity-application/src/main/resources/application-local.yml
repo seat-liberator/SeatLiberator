@@ -14,3 +14,18 @@ spring:
     properties:
       hibernate:
         dialect: ${LOCAL_DB_DIALECT:${SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT:org.hibernate.dialect.H2Dialect}}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+  endpoint:
+    health:
+      show-details: never
+      show-components: never
+      group:
+        liveness:
+          include: "livenessState"
+        readiness:
+          include: "readinessState,db"
