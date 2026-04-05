@@ -64,7 +64,7 @@ public class ActorContextJwtAuthenticationConverter implements JwtAuthentication
                 .map(deserializer::tryMaterialize)
                 .flatMap(Optional::stream)
                 .filter(r -> r.namespace().value().equals(currentApplicationNamespaceProvider.current().value()))
-                .findFirst();
+                .collect(Collectors.toUnmodifiableSet());
 
         var roles = namespaceRoles.stream()
                 .map(NamespaceRole::role)
@@ -73,10 +73,10 @@ public class ActorContextJwtAuthenticationConverter implements JwtAuthentication
                 .collect(Collectors.toUnmodifiableSet());
 
         var capabilities = namespaceRoles.stream()
-                        .map(registry::resolve)
-                        .flatMap(Collection::stream)
-                        .map(Capability::scope)
-                        .collect(Collectors.toUnmodifiableSet());
+                .map(registry::resolve)
+                .flatMap(Collection::stream)
+                .map(Capability::scope)
+                .collect(Collectors.toUnmodifiableSet());
 
         scopes.addAll(roles);
         scopes.addAll(capabilities);
