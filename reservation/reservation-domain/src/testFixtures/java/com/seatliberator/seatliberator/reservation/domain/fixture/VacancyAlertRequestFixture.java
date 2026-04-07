@@ -19,7 +19,7 @@ public class VacancyAlertRequestFixture {
     public static final Duration INITIAL_DURATION = Duration.ofMinutes(30);
 
     public static VacancyAlertRequest createAlert() {
-        return createAlert(fixedClock.instant());
+        return createAlert(fixedClock.instant().minusSeconds(1));
     }
 
     public static VacancyAlertRequest createAlert(Instant requestedAt) {
@@ -32,30 +32,30 @@ public class VacancyAlertRequestFixture {
     }
 
     // TODO: TimeRange Test Fixture Support로 빼야함
-    private static TimeRange createRange() {
+    public static TimeRange createRange() {
         var startAt = fixedClock.instant();
         var endAt = startAt.plus(INITIAL_DURATION);
         return createRange(startAt, endAt);
     }
 
     // TODO: TimeRange Test Fixture Support로 빼야함
-    private static TimeRange createRange(Instant startAt) {
+    public static TimeRange createRange(Instant startAt) {
         var endAt = startAt.plus(INITIAL_DURATION);
         return createRange(startAt, endAt);
     }
 
     // TODO: TimeRange Test Fixture Support로 빼야함
-    private static TimeRange createRange(Instant startAt, Instant endAt) {
+    public static TimeRange createRange(Instant startAt, Instant endAt) {
         return SimpleTimeRange.from(startAt, endAt);
     }
 
     // TODO: SeatLocator Test Fixture Support로 빼야함
-    private static SeatLocator createLocator() {
+    public static SeatLocator createLocator() {
         return createLocator(INITIAL_ROOM_ID, INITIAL_SEAT_ID);
     }
 
     // TODO: SeatLocator Test Fixture Support로 빼야함
-    private static SeatLocator createLocator(String roomId, String seatId) {
+    public static SeatLocator createLocator(String roomId, String seatId) {
         return SimpleSeatLocator.from(roomId, seatId);
     }
 }
