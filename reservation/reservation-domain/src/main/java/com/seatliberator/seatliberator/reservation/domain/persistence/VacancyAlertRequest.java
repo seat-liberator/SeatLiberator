@@ -62,7 +62,7 @@ public class VacancyAlertRequest {
             TimeRange range,
             Instant requestedAt
     ) {
-        if (requestedAt.isAfter(range.startAt())) {
+        if (!requestedAt.isBefore(range.startAt())) {
             throw new IllegalArgumentException("requestedAt is must be before startAt");
         }
 
