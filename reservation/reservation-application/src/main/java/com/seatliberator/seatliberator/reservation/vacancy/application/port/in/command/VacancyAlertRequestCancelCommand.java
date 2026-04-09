@@ -2,7 +2,7 @@ package com.seatliberator.seatliberator.reservation.vacancy.application.port.in.
 
 import java.util.UUID;
 
-public record VacancyAlertCancelCommand(
+public record VacancyAlertRequestCancelCommand(
         String userId,
         UUID alertId
 ) {

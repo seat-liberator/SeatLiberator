@@ -2,9 +2,9 @@ package com.seatliberator.seatliberator.reservation.vacancy.infrastructure.web.c
 
 import com.seatliberator.seatliberator.identity.client.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.VacancyAlertRequester;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertCancelCommand;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCommand;
-import com.seatliberator.seatliberator.reservation.vacancy.infrastructure.web.request.VacancyAlertCreateRequest;
+import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCancelCommand;
+import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCreateCommand;
+import com.seatliberator.seatliberator.reservation.vacancy.infrastructure.web.request.VacancyAlertRequestCreateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/vacancy-alert")
-public class VacancyAlertController {
+public class VacancyAlertRequestController {
 
     private final VacancyAlertRequester requester;
 
@@ -23,16 +23,17 @@ public class VacancyAlertController {
     // 알람 신청
     @PostMapping
     public ResponseEntity<Void> create(
-            @RequestBody VacancyAlertCreateRequest request
+            @RequestBody VacancyAlertRequestCreateRequest request
     ) {
         var userId = actorContextHolder.getActor().subject();
 
-        VacancyAlertRequestCommand command = new VacancyAlertRequestCommand(
+        var command = new VacancyAlertRequestCreateCommand(
                 userId,
                 request.roomId(),
                 request.seatId(),
                 request.startAt(),
-                request.endAt()
+                request.endAt(),
+                request.behavior()
         );
 
         requester.request(command);
@@ -47,9 +48,9 @@ public class VacancyAlertController {
     ) {
         var userId = actorContextHolder.getActor().subject();
 
-        VacancyAlertCancelCommand command = new VacancyAlertCancelCommand(userId, alertId);
+        var command = new VacancyAlertRequestCancelCommand(userId, alertId);
 
-        requester.cancelVacancyAlert(command);
+        requester.cancel(command);
 
         return ResponseEntity.noContent().build();
     }

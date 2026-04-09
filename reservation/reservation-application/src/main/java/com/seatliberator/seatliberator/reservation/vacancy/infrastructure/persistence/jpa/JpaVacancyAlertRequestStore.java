@@ -1,13 +1,10 @@
 package com.seatliberator.seatliberator.reservation.vacancy.infrastructure.persistence.jpa;
 
-import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.TimeRange;
-import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
+import com.seatliberator.seatliberator.reservation.domain.*;
 import com.seatliberator.seatliberator.reservation.domain.persistence.VacancyAlertRequest;
 import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.CommonPredicates;
 import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.SeatLocatorPredicates;
 import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.TimeRangePredicates;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestReader;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestStore;
 import com.seatliberator.seatliberator.reservation.vacancy.infrastructure.persistence.jpa.repository.VacancyAlertRequestRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,24 +18,23 @@ import java.util.UUID;
 @Repository
 @RequiredArgsConstructor
 public class JpaVacancyAlertRequestStore implements
-        VacancyAlertRequestStore,
-        VacancyAlertRequestReader {
+        VacancyAlertRequestStore {
     private final VacancyAlertRequestRepository repository;
 
     @Override
-    public List<VacancyAlertRequest> findByLocatorAndRangeAndStatus(SeatLocator locator, TimeRange range, VacancyAlertStatus status) {
+    public List<VacancyAlertRequest> findByLocatorAndRangeAndStatus(SeatLocator locator, TimeRange range, VacancyAlertRequestStatus status) {
         var spec = createLocatorAndRangeSpecification(locator, range)
-                .and(CommonPredicates.eq(status, from -> from.get("status")));
+                .and(CommonPredicates.eq(status, from -> from.get("state").get("status")));
         return repository.findAll(spec);
     }
 
     @Override
-    public boolean existsByUserIdAndLocatorAndRangeAndStatus(String userId, SeatLocator locator, TimeRange range, VacancyAlertStatus status) {
+    public boolean existsByUserIdAndLocatorAndRangeAndStatus(String userId, SeatLocator locator, TimeRange range, VacancyAlertRequestStatus status) {
         var spec = Specification.<VacancyAlertRequest>unrestricted()
                 .and(SeatLocatorPredicates.eq(locator, from -> from.get("locator")))
                 .and(TimeRangePredicates.eq(range, from -> from.get("range")))
                 .and(CommonPredicates.eq(userId, from -> from.get("userId")))
-                .and(CommonPredicates.eq(status, from -> from.get("status")));
+                .and(CommonPredicates.eq(status, from -> from.get("state").get("status")));
         return repository.exists(spec);
     }
 
