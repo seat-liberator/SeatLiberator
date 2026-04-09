@@ -6,6 +6,7 @@ import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.event.DomainEvent;
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationCanceled;
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationCreated;
+import com.seatliberator.seatliberator.reservation.domain.event.ReservationExpired;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -128,7 +129,10 @@ public class Reservation {
     }
 
     private void expireIfEnded(Instant at) {
-        if (range.isEnded(at) && status != ReservationStatus.EXPIRED) status = ReservationStatus.EXPIRED;
+        if (range.isEnded(at) && status != ReservationStatus.EXPIRED) {
+            status = ReservationStatus.EXPIRED;
+            registerExpiredEvent(at);
+        }
     }
 
     private void ensureStateIn(ReservationStatus... allowed) {
@@ -149,6 +153,11 @@ public class Reservation {
 
     private void registerCanceledEvent(Instant canceledAt) {
         var event = new ReservationCanceled(locator, range, canceledAt);
+        events.add(event);
+    }
+
+    private void registerExpiredEvent(Instant detectedAt) {
+        var event = new ReservationExpired(locator, range, detectedAt);
         events.add(event);
     }
 }
