@@ -1,11 +1,11 @@
 package com.seatliberator.seatliberator.reservation.vacancy.application.port.in;
 
 import com.seatliberator.seatliberator.reservation.domain.persistence.VacancyAlertRequest;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertCancelCommand;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCommand;
+import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCancelCommand;
+import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCreateCommand;
 
 public interface VacancyAlertRequester {
-    VacancyAlertRequest request(VacancyAlertRequestCommand command);
+    VacancyAlertRequest request(VacancyAlertRequestCreateCommand command);
 
-    void cancelVacancyAlert(VacancyAlertCancelCommand command);
+    void cancel(VacancyAlertRequestCancelCommand command);
 }

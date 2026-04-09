@@ -20,7 +20,8 @@ public enum ReservationApplicationErrorCode implements ErrorCode {
     RESERVATION_ALREADY_CANCELED("RS105", "이미 취소된 예약입니다."),
 
     DUPLICATED_REQUEST("RS200", "동일한 알람을 중복해서 등록할 수 없습니다."),
-    NOT_FOUND("RS201", "대상을 찾을 수 없습니다.");
+    NOT_FOUND("RS201", "대상을 찾을 수 없습니다."),
+    UNAUTHORIZED_CANCELLATION("RS202", "알람을 취소할 권한이 없습니다.");
 
     private final String code;
     private final String message;
