@@ -7,24 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(
-        name = "vacancy_alert_request",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_vacancy_alert_active_request",
-                        columnNames = {
-                                "user_id",
-                                "target_room_id",
-                                "target_seat_id",
-                                "target_start_at",
-                                "target_end_at"
-                        }
-                )
-        }
-)
+@Table(name = "waitlist")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class VacancyAlertRequest {
@@ -50,58 +37,83 @@ public class VacancyAlertRequest {
     private EmbeddableTimeRange range;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private VacancyAlertStatus status;
+    @Column(name = "behavior", nullable = false)
+    private VacancyAlertRequestBehavior behavior;
 
     @Embedded
-    private VacancyAlertLifecycle lifecycle;
+    private VacancyAlertRequestState state;
+
+    private VacancyAlertRequest(
+            String userId,
+            EmbeddableSeatLocator locator,
+            EmbeddableTimeRange range,
+            VacancyAlertRequestBehavior behavior,
+            VacancyAlertRequestState state
+    ) {
+        if (!state.getRequestedAt().isBefore(range.startAt())) {
+            throw new IllegalArgumentException("requestedAt is must be before startAt");
+        }
+
+        this.userId = Objects.requireNonNull(userId);
+        this.locator = Objects.requireNonNull(locator);
+        this.range = Objects.requireNonNull(range);
+        this.behavior = Objects.requireNonNull(behavior);
+        this.state = Objects.requireNonNull(state);
+    }
 
     public static VacancyAlertRequest create(
             String userId,
             SeatLocator locator,
             TimeRange range,
+            VacancyAlertRequestBehavior actionType,
             Instant requestedAt
     ) {
-        if (!requestedAt.isBefore(range.startAt())) {
-            throw new IllegalArgumentException("requestedAt is must be before startAt");
-        }
-
-        var v = new VacancyAlertRequest();
-
-        v.userId = userId;
-        v.locator = EmbeddableSeatLocator.of(locator);
-        v.range = EmbeddableTimeRange.of(range);
-        v.status = VacancyAlertStatus.ACTIVE;
-        v.lifecycle = VacancyAlertLifecycle.requestedAt(requestedAt);
-
-        return v;
+        return new VacancyAlertRequest(
+                userId,
+                EmbeddableSeatLocator.of(locator),
+                EmbeddableTimeRange.of(range),
+                actionType,
+                VacancyAlertRequestState.requestedAt(requestedAt)
+        );
     }
 
-    public void cancel(String requestUserId, Instant cancelledAt) {
-        ensureActive();
+    public static VacancyAlertRequest notifyOnly(
+            String userId,
+            SeatLocator locator,
+            TimeRange range,
+            Instant requestedAt
+    ) {
+        return create(userId, locator, range, VacancyAlertRequestBehavior.NOTIFY_ONLY, requestedAt);
+    }
 
-        // 본인만 신청 취소하도록 함
-        if (!this.userId.equals(requestUserId)) {
-            throw new IllegalArgumentException("본인만 취소 가능");
-        }
+    public static VacancyAlertRequest autoClaim(
+            String userId,
+            SeatLocator locator,
+            TimeRange range,
+            Instant requestedAt
+    ) {
+        return create(userId, locator, range, VacancyAlertRequestBehavior.AUTO_CLAIM, requestedAt);
+    }
 
-        this.status = VacancyAlertStatus.CANCELLED;
-        this.lifecycle.cancel(cancelledAt);
+    public void cancel(Instant cancelledAt) {
+//        // 본인만 신청 취소하도록 함
+//        // TODO: 이거는 나중에 애플리케이션 레벨 정책으로 빼는 방향이 좋을 것 같음.
+//        // 만약 관리자가 대기열을 건드려야한다면?
+//        if (!this.userId.equals(requestUserId)) {
+//            throw new IllegalArgumentException("본인만 취소 가능");
+//        }
+
+        this.state.cancel(cancelledAt);
     }
 
     public void expire(Instant expiredAt) {
-        ensureActive();
-        this.status = VacancyAlertStatus.EXPIRED;
-        this.lifecycle.expire(expiredAt);
+        this.state.expire(expiredAt);
     }
 
-    public void fulfill(Instant fulfilledAt) {
-        ensureActive();
-        this.status = VacancyAlertStatus.FULFILLED;
-        this.lifecycle.fulfill(fulfilledAt);
-    }
-
-    private void ensureActive() {
-        if (!status.isActive()) throw new IllegalStateException("Only active request can transition");
+    public void complete(Instant completedAt) {
+        switch (behavior) {
+            case NOTIFY_ONLY -> state.completeAsNotified(completedAt);
+            case AUTO_CLAIM -> state.completeAtClaimed(completedAt);
+        }
     }
 }

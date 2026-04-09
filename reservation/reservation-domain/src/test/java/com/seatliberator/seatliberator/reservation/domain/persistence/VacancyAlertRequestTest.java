@@ -1,6 +1,8 @@
 package com.seatliberator.seatliberator.reservation.domain.persistence;
 
-import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
+import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequestBehavior;
+import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequestResolution;
+import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequestStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -8,26 +10,27 @@ import org.junit.jupiter.api.Test;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
-import static com.seatliberator.seatliberator.reservation.domain.fixture.VacancyAlertRequestFixture.*;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.VacancyAlertRequestFixture.INITIAL_USER_ID;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.VacancyAlertRequestFixture.createRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("Domain: Vacancy Alert Request")
 public class VacancyAlertRequestTest {
     @Nested
-    @DisplayName("생성자")
+    @DisplayName("Constructor")
     class Constructor {
         @Test
-        @DisplayName("정상 생성")
-        void create_active_request_when_arguments_are_valid() {
+        @DisplayName("Notify only request 생성")
+        void create_notify_only_request() {
 
             // given
             var locator = createLocator();
             var range = createRange();
-            var requestedAt = range.startAt().minusSeconds(1);
+            var requestedAt = fixedClock.instant();
 
             // when
-            VacancyAlertRequest request = VacancyAlertRequest.create(
+            VacancyAlertRequest request = VacancyAlertRequest.notifyOnly(
                     INITIAL_USER_ID,
                     locator,
                     range,
@@ -35,7 +38,8 @@ public class VacancyAlertRequestTest {
             );
 
             // then
-            assertThat(request.getStatus()).isEqualTo(VacancyAlertStatus.ACTIVE);
+            assertThat(request.getState().getStatus()).isEqualTo(VacancyAlertRequestStatus.ACTIVE);
+            assertThat(request.getBehavior()).isEqualTo(VacancyAlertRequestBehavior.NOTIFY_ONLY);
             assertThat(request.getRange().startAt()).isEqualTo(range.startAt());
             assertThat(request.getRange().endAt()).isEqualTo(range.endAt());
         }
@@ -51,7 +55,7 @@ public class VacancyAlertRequestTest {
             var requestedAtExactSameAsStartAt = range.startAt();
             var requestedAtFutureThanStartAt = range.startAt().plusSeconds(1);
 
-            assertThatThrownBy(() -> VacancyAlertRequest.create(
+            assertThatThrownBy(() -> VacancyAlertRequest.notifyOnly(
                     INITIAL_USER_ID,
                     locator,
                     range,
@@ -60,7 +64,7 @@ public class VacancyAlertRequestTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("requestedAt is must be before startAt");
 
-            assertThatThrownBy(() -> VacancyAlertRequest.create(
+            assertThatThrownBy(() -> VacancyAlertRequest.autoClaim(
                     INITIAL_USER_ID,
                     locator,
                     range,
@@ -72,51 +76,150 @@ public class VacancyAlertRequestTest {
     }
 
     @Nested
-    @DisplayName("상태 전이")
+    @DisplayName("Transition")
     class Transition {
 
-        @Test
-        @DisplayName("취소")
-        void cancel_request_when_request_is_active() {
-            // given
-            VacancyAlertRequest request = createAlert();
-            var now = fixedClock.instant();
+        @Nested
+        @DisplayName("Cancel")
+        class Cancel {
+            @Test
+            @DisplayName("requestedAt 이후 취소 처리 가능")
+            void can_cancel_after_requested_at() {
+                var r = createRequest();
+                var now = r.getState().getRequestedAt();
 
-            // when
-            request.cancel(request.getUserId(), now);
+                r.cancel(now);
 
-            // then
-            assertThat(request.getStatus()).isEqualTo(VacancyAlertStatus.CANCELLED);
+                var lifecycle = r.getState();
+                assertThat(lifecycle.getStatus()).isEqualTo(VacancyAlertRequestStatus.CANCELLED);
+                assertThat(lifecycle.getCancelledAt()).isEqualTo(now);
+                assertThat(lifecycle.getExpiredAt()).isNull();
+                assertThat(lifecycle.getCompletedAt()).isNull();
+            }
+
+            @Test
+            @DisplayName("requestedAt 보다 이른 시각에 취소 처리하면 예외 발생")
+            void throw_exception_when_cancelled_at_is_before_than_requested_at() {
+                var r = createRequest();
+                var now = r.getState().getRequestedAt().minusSeconds(1);
+
+                assertThatThrownBy(() -> r.cancel(now))
+                        .isInstanceOf(IllegalStateException.class)
+                        .hasMessage("cancelledAt must not be before requestedAt");
+            }
         }
 
-        @Test
-        @DisplayName("만료")
-        void expire_request_when_request_is_active() {
+        @Nested
+        @DisplayName("Expire")
+        class Expire {
+            @Test
+            @DisplayName("requestedAt 이후 만료 처리 가능")
+            void can_expire_after_requested_at() {
+                var r = createRequest();
+                var now = r.getState().getRequestedAt();
 
-            // given
-            VacancyAlertRequest request = createAlert();
-            var now = fixedClock.instant();
+                r.expire(now);
 
-            // when
-            request.expire(now);
+                var lifecycle = r.getState();
+                assertThat(lifecycle.getStatus()).isEqualTo(VacancyAlertRequestStatus.EXPIRED);
+                assertThat(lifecycle.getCancelledAt()).isNull();
+                assertThat(lifecycle.getExpiredAt()).isEqualTo(now);
+                assertThat(lifecycle.getCompletedAt()).isNull();
+            }
 
-            //then
-            assertThat(request.getStatus()).isEqualTo(VacancyAlertStatus.EXPIRED);
+            @Test
+            @DisplayName("requestedAt 보다 이른 시각에 만료 처리하면 예외 발생")
+            void throw_exception_when_cancelled_at_is_before_than_requested_at() {
+                var r = createRequest();
+                var now = r.getState().getRequestedAt().minusSeconds(1);
+
+                assertThatThrownBy(() -> r.expire(now))
+                        .isInstanceOf(IllegalStateException.class)
+                        .hasMessage("expiredAt must not be before requestedAt");
+            }
         }
 
-        @Test
-        @DisplayName("충족")
-        void fulfill_request_when_request_is_active() {
+        @Nested
+        @DisplayName("Complete")
+        class Complete {
+            @Test
+            @DisplayName("requestedAt 이후 완료 처리 가능")
+            void can_complete_after_requested_at() {
+                var r = createRequest();
+                var now = r.getState().getRequestedAt();
 
-            // given
-            VacancyAlertRequest request = createAlert();
-            var now = fixedClock.instant();
+                r.complete(now);
 
-            // when
-            request.fulfill(now);
+                var lifecycle = r.getState();
+                assertThat(lifecycle.getStatus()).isEqualTo(VacancyAlertRequestStatus.COMPLETED);
+                assertThat(lifecycle.getCancelledAt()).isNull();
+                assertThat(lifecycle.getExpiredAt()).isNull();
+                assertThat(lifecycle.getCompletedAt()).isEqualTo(now);
+            }
 
-            //then
-            assertThat(request.getStatus()).isEqualTo(VacancyAlertStatus.FULFILLED);
+            @Test
+            @DisplayName("requestedAt 보다 이른 시각에 완료 처리하면 예외 발생")
+            void throw_exception_when_completed_at_is_before_than_requested_at() {
+                var r = createRequest();
+                var now = r.getState().getRequestedAt().minusSeconds(1);
+
+                assertThatThrownBy(() -> r.complete(now))
+                        .isInstanceOf(IllegalStateException.class)
+                        .hasMessage("completedAt must not be before requestedAt");
+            }
+
+            @Test
+            @DisplayName("Action type이 Notify only인 request는 complete 시 Resolution이 NOTIFIED로 전이")
+            void transition_resolution_to_notified_when_action_type_is_notify_only() {
+                var locator = createLocator();
+                var range = createRange();
+                var requestedAt = range.startAt().minusSeconds(1);
+                var now = requestedAt.minusSeconds(1);
+                var r = VacancyAlertRequest.notifyOnly(
+                        INITIAL_USER_ID,
+                        locator,
+                        range,
+                        now
+                );
+
+                r.complete(now);
+
+                var lifecycle = r.getState();
+                assertThat(lifecycle.getStatus()).isEqualTo(VacancyAlertRequestStatus.COMPLETED);
+                assertThat(lifecycle.getResolution()).isEqualTo(VacancyAlertRequestResolution.NOTIFIED);
+            }
+
+            @Test
+            @DisplayName("Action type이 Auto claim인 request는 complete 시 Resolution이 CLAIMED로 전이")
+            void transition_resolution_to_claimed_when_action_type_is_auto_claim() {
+                var locator = createLocator();
+                var range = createRange();
+                var requestedAt = range.startAt().minusSeconds(1);
+                var now = requestedAt.minusSeconds(1);
+                var r = VacancyAlertRequest.autoClaim(
+                        INITIAL_USER_ID,
+                        locator,
+                        range,
+                        now
+                );
+
+                r.complete(now);
+
+                var lifecycle = r.getState();
+                assertThat(lifecycle.getStatus()).isEqualTo(VacancyAlertRequestStatus.COMPLETED);
+                assertThat(lifecycle.getResolution()).isEqualTo(VacancyAlertRequestResolution.CLAIMED);
+            }
+
+            @Test
+            @DisplayName("requestedAt 보다 이른 시각에 만료 처리하면 예외 발생")
+            void throw_exception_when_cancelled_at_is_before_than_requested_at() {
+                var r = createRequest();
+                var now = r.getState().getRequestedAt().minusSeconds(1);
+
+                assertThatThrownBy(() -> r.expire(now))
+                        .isInstanceOf(IllegalStateException.class)
+                        .hasMessage("expiredAt must not be before requestedAt");
+            }
         }
 
         @Test
@@ -124,12 +227,13 @@ public class VacancyAlertRequestTest {
         void throw_exception_when_transitioning_non_active_request() {
 
             // given
-            VacancyAlertRequest request = createAlert();
+            VacancyAlertRequest request = createRequest();
             var now = fixedClock.instant();
-            request.cancel(request.getUserId(), now);
+            request.cancel(now);
 
             // when & then
             assertThatThrownBy(() -> request.expire(now)).isInstanceOf(IllegalStateException.class);
+            assertThatThrownBy(() -> request.complete(now)).isInstanceOf(IllegalStateException.class);
         }
     }
 }
