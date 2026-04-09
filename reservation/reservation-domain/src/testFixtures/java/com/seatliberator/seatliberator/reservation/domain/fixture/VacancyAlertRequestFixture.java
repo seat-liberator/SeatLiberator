@@ -11,12 +11,12 @@ import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRan
 public class VacancyAlertRequestFixture {
     public static final String INITIAL_USER_ID = "user-1";
 
-    public static VacancyAlertRequest createAlert() {
-        return createAlert(fixedClock.instant().minusSeconds(1));
+    public static VacancyAlertRequest createRequest() {
+        return createRequest(fixedClock.instant().minusSeconds(1));
     }
 
-    public static VacancyAlertRequest createAlert(Instant requestedAt) {
-        return VacancyAlertRequest.create(
+    public static VacancyAlertRequest createRequest(Instant requestedAt) {
+        return VacancyAlertRequest.autoClaim(
                 INITIAL_USER_ID,
                 createLocator(),
                 createRange(),
