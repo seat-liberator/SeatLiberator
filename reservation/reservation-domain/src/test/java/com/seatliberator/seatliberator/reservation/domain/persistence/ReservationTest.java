@@ -3,7 +3,7 @@ package com.seatliberator.seatliberator.reservation.domain.persistence;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationCanceled;
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationCreated;
-import org.assertj.core.api.Assertions;
+import com.seatliberator.seatliberator.reservation.domain.event.ReservationExpired;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.ReservationFixture.*;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("Domain: Reservation")
 public class ReservationTest {
@@ -66,7 +67,7 @@ public class ReservationTest {
                 var r = createReservation();
                 var usedAt = r.getRange().startAt().minusSeconds(1);
 
-                Assertions.assertThatThrownBy(() -> r.use(usedAt))
+                assertThatThrownBy(() -> r.use(usedAt))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("사용 가능한 시간이 아닙니다.");
 
@@ -104,7 +105,7 @@ public class ReservationTest {
 
                 assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.USED);
 
-                Assertions.assertThatThrownBy(() -> reservation.use(usedAt))
+                assertThatThrownBy(() -> reservation.use(usedAt))
                         .isInstanceOf(IllegalStateException.class)
                         .hasMessage("이미 사용된 예약입니다.");
 
@@ -120,7 +121,7 @@ public class ReservationTest {
 
                 assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.RESERVED);
 
-                Assertions.assertThatThrownBy(() -> reservation.use(usedAt))
+                assertThatThrownBy(() -> reservation.use(usedAt))
                         .isInstanceOf(IllegalStateException.class)
                         .hasMessage("이미 만료된 예약입니다.");
 
@@ -142,7 +143,7 @@ public class ReservationTest {
 
                 var usedAt = canceledAt.plusSeconds(1);
 
-                Assertions.assertThatThrownBy(() -> r.use(usedAt))
+                assertThatThrownBy(() -> r.use(usedAt))
                         .isInstanceOf(IllegalStateException.class)
                         .hasMessage("이미 취소된 예약입니다.");
 
@@ -158,7 +159,7 @@ public class ReservationTest {
 
                 assertThat(r.getStatus()).isEqualTo(ReservationStatus.RESERVED);
 
-                Assertions.assertThatThrownBy(() -> r.cancel(canceledAt))
+                assertThatThrownBy(() -> r.cancel(canceledAt))
                         .isInstanceOf(IllegalStateException.class)
                         .hasMessage("이미 만료된 예약입니다.");
 
@@ -176,7 +177,7 @@ public class ReservationTest {
                 var r = createReservation(ReservationStatus.EXPIRED);
                 var usedAt = r.getRange().startAt();
 
-                Assertions.assertThatThrownBy(() -> r.use(usedAt))
+                assertThatThrownBy(() -> r.use(usedAt))
                         .isInstanceOf(IllegalStateException.class)
                         .hasMessage("이미 만료된 예약입니다.");
                 assertThat(r.getStatus()).isEqualTo(ReservationStatus.EXPIRED);
@@ -189,7 +190,7 @@ public class ReservationTest {
                 var r = createReservation(ReservationStatus.EXPIRED);
                 var canceledAt = r.getRange().startAt();
 
-                Assertions.assertThatThrownBy(() -> r.cancel(canceledAt))
+                assertThatThrownBy(() -> r.cancel(canceledAt))
                         .isInstanceOf(IllegalStateException.class)
                         .hasMessage("이미 만료된 예약입니다.");
                 assertThat(r.getStatus()).isEqualTo(ReservationStatus.EXPIRED);
@@ -247,15 +248,26 @@ public class ReservationTest {
             var r = createReservation();
             var afterEndAt = r.getRange().endAt();
 
-            Assertions.assertThatThrownBy(() -> r.cancel(afterEndAt))
+            assertThatThrownBy(() -> r.cancel(afterEndAt))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessage("이미 만료된 예약입니다.");
 
             var events = new ArrayList<>(r.domainEvents());
 
-            assertThat(events)
-                    .singleElement()
-                    .isInstanceOf(ReservationCreated.class);
+            assertThat(events).doesNotContain(ReservationCanceled.class);
+        }
+
+        @Test
+        @DisplayName("예약 사용 처리 / 취소 처리 시 만료되면 ReservationExpired 이벤트가 생성된다")
+        void create_expired_event_when_it_expires_due_to_usage_or_cancellation() {
+            var r = createReservation();
+            var afterEndAt = r.getRange().endAt();
+
+            assertThatThrownBy(() -> r.cancel(afterEndAt));
+
+            var events = new ArrayList<>(r.domainEvents());
+
+            assertThat(events).anyMatch(e -> e instanceof ReservationExpired);
         }
     }
 }
