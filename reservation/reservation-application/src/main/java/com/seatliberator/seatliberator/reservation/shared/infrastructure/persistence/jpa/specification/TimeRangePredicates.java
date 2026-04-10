@@ -24,7 +24,7 @@ public class TimeRangePredicates {
         };
     }
 
-    public static <T> PredicateSpecification<T> withIn(
+    public static <T> PredicateSpecification<T> overlap(
             TimeRange range,
             Function<From<?, T>, Path<EmbeddableTimeRange>> pathFunction
     ) {
@@ -38,6 +38,34 @@ public class TimeRangePredicates {
         };
     }
 
+    public static <T> PredicateSpecification<T> containedBy(
+            TimeRange range,
+            Function<From<?, T>, Path<EmbeddableTimeRange>> pathFunction
+    ) {
+        return (from, cb) -> {
+            var path = pathFunction.apply(from);
+
+            return cb.and(
+                    cb.greaterThanOrEqualTo(path.get("startAt"), range.startAt()),
+                    cb.lessThanOrEqualTo(path.get("endAt"), range.endAt())
+            );
+        };
+    }
+
+    public static <T> PredicateSpecification<T> contains(
+            TimeRange range,
+            Function<From<?, T>, Path<EmbeddableTimeRange>> pathFunction
+    ) {
+        return (from, cb) -> {
+            var path = pathFunction.apply(from);
+
+            return cb.and(
+                    cb.lessThanOrEqualTo(path.get("startAt"), range.startAt()),
+                    cb.greaterThanOrEqualTo(path.get("endAt"), range.endAt())
+            );
+        };
+    }
+
     public static <T> PredicateSpecification<T> contain(
             Instant at,
             Function<From<?, T>, Path<EmbeddableTimeRange>> pathFunction
@@ -46,8 +74,8 @@ public class TimeRangePredicates {
             var path = pathFunction.apply(from);
 
             return cb.and(
-                    cb.lessThan(path.get("startAt"), at),
-                    cb.greaterThan(path.get("endAt"), at)
+                    cb.lessThanOrEqualTo(path.get("startAt"), at),
+                    cb.greaterThanOrEqualTo(path.get("endAt"), at)
             );
         };
     }

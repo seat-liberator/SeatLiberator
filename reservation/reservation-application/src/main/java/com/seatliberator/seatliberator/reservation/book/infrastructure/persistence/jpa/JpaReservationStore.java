@@ -71,6 +71,6 @@ public class JpaReservationStore implements ReservationStore {
     private Specification<Reservation> createLocatorAndRangeSpecification(SeatLocator locator, TimeRange range) {
         return Specification.<Reservation>unrestricted()
                 .and(SeatLocatorPredicates.eq(locator, SeatLocatorPredicates.defaultLocatorPathFunction()))
-                .and(TimeRangePredicates.withIn(range, TimeRangePredicates.defaultRangePathFunction()));
+                .and(TimeRangePredicates.overlap(range, TimeRangePredicates.defaultRangePathFunction()));
     }
 }
