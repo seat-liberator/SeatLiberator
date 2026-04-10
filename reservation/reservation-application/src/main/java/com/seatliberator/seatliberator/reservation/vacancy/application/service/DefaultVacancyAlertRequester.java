@@ -1,6 +1,7 @@
 package com.seatliberator.seatliberator.reservation.vacancy.application.service;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.in.ReservationExistenceChecker;
+import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequestStatus;
@@ -30,7 +31,7 @@ public class DefaultVacancyAlertRequester implements VacancyAlertRequester {
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
 
-        var reservationExists = reservationExistenceChecker.isExistsByLocatorAndRange(locator, range);
+        var reservationExists = reservationExistenceChecker.isExistsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED);
         if (!reservationExists) {
             throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_NOT_FOUND);
         }

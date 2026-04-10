@@ -3,6 +3,7 @@ package com.seatliberator.seatliberator.reservation.book.application;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.ReservationExistenceChecker;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.entry.ReservationRejectReason;
 import com.seatliberator.seatliberator.reservation.book.application.service.DefaultReservationPolicyChecker;
+import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,10 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.ReservationFixture.INITIAL_USER_ID;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -35,13 +33,13 @@ public class DefaultReservationPolicyCheckerTest {
         var locator = createLocator();
         var range = createRange();
 
-        when(existenceChecker.isExistsByLocatorAndRange(locator, range)).thenReturn(true);
+        when(existenceChecker.isExistsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED)).thenReturn(true);
 
         var result = checker.check(INITIAL_USER_ID, locator, range);
 
         assertFalse(result.reservable());
-        assertEquals(ReservationRejectReason.SEAT_ALREADY_TAKEN, result.reason());
-        verify(existenceChecker).isExistsByLocatorAndRange(locator, range);
+        assertEquals(ReservationRejectReason.SEAT_ALREADY_TAKEN, result.rejectReason());
+        verify(existenceChecker).isExistsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED);
     }
 
     @Test
@@ -50,12 +48,12 @@ public class DefaultReservationPolicyCheckerTest {
         var locator = createLocator();
         var range = createRange();
 
-        when(existenceChecker.isExistsByLocatorAndRange(locator, range)).thenReturn(false);
+        when(existenceChecker.isExistsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED)).thenReturn(false);
 
         var result = checker.check(INITIAL_USER_ID, locator, range);
 
         assertTrue(result.reservable());
-        assertNull(result.reason());
-        verify(existenceChecker).isExistsByLocatorAndRange(locator, range);
+        assertNull(result.rejectReason());
+        verify(existenceChecker).isExistsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED);
     }
 }

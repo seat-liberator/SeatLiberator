@@ -24,5 +24,7 @@ public interface ReservationStore {
 
     boolean existsByLocatorAndRange(SeatLocator locator, TimeRange range);
 
+    boolean existsByLocatorAndRangeAndStatus(SeatLocator locator, TimeRange range, ReservationStatus status);
+
     boolean existsByLocatorAndRangeWithExcludeIds(SeatLocator locator, TimeRange range, Collection<Long> ids);
 }

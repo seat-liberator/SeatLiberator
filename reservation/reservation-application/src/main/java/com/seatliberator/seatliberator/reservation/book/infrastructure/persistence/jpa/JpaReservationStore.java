@@ -102,6 +102,13 @@ public class JpaReservationStore implements ReservationStore, ReservationQuery {
     }
 
     @Override
+    public boolean existsByLocatorAndRangeAndStatus(SeatLocator locator, TimeRange range, ReservationStatus status) {
+        var spec = createLocatorAndRangeSpecification(locator, range)
+                .and(CommonPredicates.eq(status, from -> from.get("status")));
+        return repository.exists(spec);
+    }
+
+    @Override
     public boolean existsByLocatorAndRangeWithExcludeIds(SeatLocator locator, TimeRange range, Collection<Long> ids) {
         var spec = createLocatorAndRangeSpecification(locator, range)
                 .and(CommonPredicates.excludeIn(ids, from -> from.get("id")));

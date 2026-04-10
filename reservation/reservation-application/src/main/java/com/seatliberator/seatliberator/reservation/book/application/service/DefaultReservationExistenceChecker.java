@@ -2,6 +2,7 @@ package com.seatliberator.seatliberator.reservation.book.application.service;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.in.ReservationExistenceChecker;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
+import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.TimeRange;
 import lombok.RequiredArgsConstructor;
@@ -15,5 +16,10 @@ public class DefaultReservationExistenceChecker implements ReservationExistenceC
     @Override
     public boolean isExistsByLocatorAndRange(SeatLocator locator, TimeRange range) {
         return store.existsByLocatorAndRange(locator, range);
+    }
+
+    @Override
+    public boolean isExistsByLocatorAndRangeAndStatus(SeatLocator locator, TimeRange range, ReservationStatus status) {
+        return store.existsByLocatorAndRangeAndStatus(locator, range, status);
     }
 }

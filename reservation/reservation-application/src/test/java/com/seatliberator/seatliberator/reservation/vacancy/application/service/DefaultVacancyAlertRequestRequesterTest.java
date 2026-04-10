@@ -1,6 +1,7 @@
 package com.seatliberator.seatliberator.reservation.vacancy.application.service;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.in.ReservationExistenceChecker;
+import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequestStatus;
@@ -19,16 +20,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.seatliberator.seatliberator.reservation.VacancyAlertRequestApplicationFixture.createVacancyRequestCreateCommand;
 import static com.seatliberator.seatliberator.reservation.VacancyAlertRequestApplicationFixture.createVacancyAlertRequestCancelCommand;
-import static com.seatliberator.seatliberator.reservation.domain.fixture.VacancyAlertRequestFixture.createRequest;
+import static com.seatliberator.seatliberator.reservation.VacancyAlertRequestApplicationFixture.createVacancyRequestCreateCommand;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.VacancyAlertRequestFixture.createRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Application: Default Vacancy Alert Requester")
@@ -54,7 +53,7 @@ public class DefaultVacancyAlertRequestRequesterTest {
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
 
-        when(checker.isExistsByLocatorAndRange(locator, range)).thenReturn(false);
+        when(checker.isExistsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED)).thenReturn(false);
 
         assertThatThrownBy(() -> requester.request(command))
                 .isInstanceOf(ReservationApplicationException.class)
@@ -69,7 +68,7 @@ public class DefaultVacancyAlertRequestRequesterTest {
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
 
-        when(checker.isExistsByLocatorAndRange(locator, range)).thenReturn(true);
+        when(checker.isExistsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED)).thenReturn(true);
 
         whenCheckAlertRequestExists(command, true);
 
@@ -86,7 +85,7 @@ public class DefaultVacancyAlertRequestRequesterTest {
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
 
-        when(checker.isExistsByLocatorAndRange(locator, range)).thenReturn(true);
+        when(checker.isExistsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED)).thenReturn(true);
 
         whenCheckAlertRequestExists(command, false);
 
