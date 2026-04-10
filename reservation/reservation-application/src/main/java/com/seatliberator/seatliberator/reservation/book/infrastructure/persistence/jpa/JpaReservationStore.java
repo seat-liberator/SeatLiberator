@@ -1,6 +1,10 @@
 package com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa;
 
+import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationQuery;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationCriteria;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationExclusion;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationTarget;
 import com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa.repository.ReservationRepository;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
@@ -15,11 +19,12 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class JpaReservationStore implements ReservationStore {
+public class JpaReservationStore implements ReservationStore, ReservationQuery {
 
     private final ReservationRepository repository;
 
@@ -36,6 +41,41 @@ public class JpaReservationStore implements ReservationStore {
     @Override
     public Optional<Reservation> findByUserId(String userId) {
         return repository.findByUserId(userId);
+    }
+
+    @Override
+    public Optional<Reservation> findOne(ReservationCriteria criteria) {
+        var spec = createLocatorAndRangeSpecification(criteria.locator(), criteria.range())
+                .and(CommonPredicates.eq(criteria.status(), from -> from.get("status")));
+        return repository.findOne(spec);
+    }
+
+    @Override
+    public boolean existsOverlapping(ReservationTarget target) {
+        var spec = createLocatorAndRangeSpecification(target.locator(), target.ranga());
+        return repository.exists(spec);
+    }
+
+    @Override
+    public boolean existsOverlapping(ReservationTarget target, ReservationExclusion exclusion) {
+        var spec = createLocatorAndRangeSpecification(target.locator(), target.ranga())
+                .and(CommonPredicates.excludeIn(exclusion.ids(), from -> from.get("id")));
+        return repository.exists(spec);
+    }
+
+    @Override
+    public List<Reservation> findAllOverlapping(TimeRange range) {
+        var spec = Specification.<Reservation>unrestricted()
+                .and(TimeRangePredicates.overlap(range, TimeRangePredicates.defaultRangePathFunction()));
+        return repository.findAll(spec);
+    }
+
+    @Override
+    public List<Reservation> findAllOverlappingInRoom(String roomId, TimeRange range) {
+        var spec = Specification.<Reservation>unrestricted()
+                .and(TimeRangePredicates.overlap(range, TimeRangePredicates.defaultRangePathFunction()))
+                .and(CommonPredicates.eq(roomId, from -> from.get("locator").get("roomId")));
+        return repository.findAll(spec);
     }
 
     @Override
