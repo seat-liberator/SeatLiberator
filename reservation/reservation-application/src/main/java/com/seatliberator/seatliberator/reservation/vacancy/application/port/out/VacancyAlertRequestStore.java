@@ -20,4 +20,6 @@ public interface VacancyAlertRequestStore {
     List<VacancyAlertRequest> findByLocatorAndRangeAndStatus(SeatLocator locator, TimeRange range, VacancyAlertRequestStatus status);
 
     VacancyAlertRequest save(VacancyAlertRequest vacancyAlertRequest);
+
+    List<VacancyAlertRequest> saveAll(Iterable<VacancyAlertRequest> vacancyAlertRequests);
 }
