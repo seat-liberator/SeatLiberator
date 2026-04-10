@@ -4,6 +4,7 @@ public enum VacancyAlertRequestStatus {
     ACTIVE,
     CANCELLED,
     EXPIRED,
+    FAILED,
     COMPLETED;
 
     public boolean isActive() {
@@ -16,6 +17,10 @@ public enum VacancyAlertRequestStatus {
 
     public boolean isExpired() {
         return this == EXPIRED;
+    }
+
+    public boolean isFailed() {
+        return this == FAILED;
     }
 
     public boolean isCompleted() {

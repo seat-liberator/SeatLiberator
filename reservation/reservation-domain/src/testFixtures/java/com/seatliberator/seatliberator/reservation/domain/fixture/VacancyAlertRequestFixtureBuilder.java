@@ -21,7 +21,28 @@ public class VacancyAlertRequestFixtureBuilder {
 
     private Instant requestedAt = fixedClock.instant();
 
-    private VacancyAlertRequestBehavior actionType = VacancyAlertRequestBehavior.NOTIFY_ONLY;
+    private VacancyAlertRequestBehavior behavior = VacancyAlertRequestBehavior.NOTIFY_ONLY;
+
+    public VacancyAlertRequestFixtureBuilder() {
+    }
+
+    public VacancyAlertRequestFixtureBuilder(
+            String userId,
+            SeatLocator locator,
+            TimeRange range,
+            Instant requestedAt,
+            VacancyAlertRequestBehavior behavior
+    ) {
+        this.userId = userId;
+        this.locator = locator;
+        this.range = range;
+        this.requestedAt = requestedAt;
+        this.behavior = behavior;
+    }
+
+    public VacancyAlertRequestFixtureBuilder copy() {
+        return new VacancyAlertRequestFixtureBuilder(userId, locator, range, requestedAt, behavior);
+    }
 
     public VacancyAlertRequestFixtureBuilder userId(String userId) {
         this.userId = userId;
@@ -43,27 +64,12 @@ public class VacancyAlertRequestFixtureBuilder {
         return this;
     }
 
-    public VacancyAlertRequestFixtureBuilder actionType(VacancyAlertRequestBehavior actionType) {
-        this.actionType = actionType;
-        return this;
-    }
-
-    public VacancyAlertRequestFixtureBuilder notifyOnly() {
-        this.actionType = VacancyAlertRequestBehavior.NOTIFY_ONLY;
-        return this;
-    }
-
-    public VacancyAlertRequestFixtureBuilder queue() {
-        this.actionType = VacancyAlertRequestBehavior.AUTO_CLAIM;
+    public VacancyAlertRequestFixtureBuilder behavior(VacancyAlertRequestBehavior actionType) {
+        this.behavior = actionType;
         return this;
     }
 
     public VacancyAlertRequest build() {
-        return switch(actionType) {
-            case AUTO_CLAIM -> VacancyAlertRequest.autoClaim(userId, locator, range, requestedAt);
-            case NOTIFY_ONLY -> VacancyAlertRequest.notifyOnly(userId, locator, range, requestedAt);
-        };
+        return VacancyAlertRequest.create(userId, locator, range, behavior, requestedAt);
     }
-
-
 }
