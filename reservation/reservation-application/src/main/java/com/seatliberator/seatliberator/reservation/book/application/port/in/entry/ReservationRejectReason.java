@@ -1,9 +1,7 @@
 package com.seatliberator.seatliberator.reservation.book.application.port.in.entry;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Getter
 @RequiredArgsConstructor
 public enum ReservationRejectReason implements RejectReason {
     USER_BLOCKED("사용이 제한된 사용자"),

@@ -1,6 +1,8 @@
 package com.seatliberator.seatliberator.reservation.vacancy.infrastructure.persistence.jpa;
 
-import com.seatliberator.seatliberator.reservation.domain.*;
+import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.TimeRange;
+import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequestStatus;
 import com.seatliberator.seatliberator.reservation.domain.persistence.VacancyAlertRequest;
 import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.CommonPredicates;
 import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.SeatLocatorPredicates;
@@ -52,6 +54,11 @@ public class JpaVacancyAlertRequestStore implements
     @Override
     public VacancyAlertRequest save(VacancyAlertRequest vacancyAlertRequest) {
         return repository.save(vacancyAlertRequest);
+    }
+
+    @Override
+    public List<VacancyAlertRequest> saveAll(Iterable<VacancyAlertRequest> vacancyAlertRequests) {
+        return repository.saveAll(vacancyAlertRequests);
     }
 
     private Specification<VacancyAlertRequest> createLocatorAndRangeSpecification(SeatLocator locator, TimeRange range) {
