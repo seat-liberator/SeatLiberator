@@ -61,6 +61,6 @@ public class JpaVacancyAlertRequestStore implements
     private Specification<VacancyAlertRequest> createLocatorAndRangeSpecification(SeatLocator locator, TimeRange range) {
         return Specification.<VacancyAlertRequest>unrestricted()
                 .and(SeatLocatorPredicates.eq(locator, from -> from.get("locator")))
-                .and(TimeRangePredicates.withIn(range, from -> from.get("range")));
+                .and(TimeRangePredicates.overlap(range, from -> from.get("range")));
     }
 }
