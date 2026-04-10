@@ -7,11 +7,14 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface SeatRepository extends JpaRepository<Seat, Long>, JpaSpecificationExecutor<Seat> {
 
     Optional<Seat> findByLocator_RoomIdAndLocator_SeatId(String roomId, String seatId);
+
+    List<Seat> findByLocator_RoomId(String roomId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
