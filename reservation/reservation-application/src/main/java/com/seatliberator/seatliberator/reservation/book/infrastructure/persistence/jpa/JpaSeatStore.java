@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -38,6 +39,11 @@ public class JpaSeatStore implements SeatStore {
     @Override
     public Optional<Seat> findForUpdate(String roomId, String seatId) {
         return repository.findForUpdate(roomId, seatId);
+    }
+
+    @Override
+    public List<Seat> findByRoomId(String roomId) {
+        return repository.findByLocator_RoomId(roomId);
     }
 
     @Override

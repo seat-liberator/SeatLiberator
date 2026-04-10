@@ -4,6 +4,7 @@ import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface SeatStore {
@@ -15,6 +16,8 @@ public interface SeatStore {
     Optional<Seat> findByLocator(SeatLocator locator);
 
     Optional<Seat> findForUpdate(String roomId, String seatId);
+
+    List<Seat> findByRoomId(String roomId);
 
     void deleteByRoomIdAndSeatId(String roomId, String seatId);
 
