@@ -110,6 +110,10 @@ public class VacancyAlertRequest {
         this.state.expire(expiredAt);
     }
 
+    public void fail(Instant failedAt) {
+        this.state.fail(failedAt);
+    }
+
     public void complete(Instant completedAt) {
         switch (behavior) {
             case NOTIFY_ONLY -> state.completeAsNotified(completedAt);

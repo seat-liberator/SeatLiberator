@@ -79,6 +79,20 @@ public class VacancyAlertRequestTest {
     @DisplayName("Transition")
     class Transition {
 
+        @Test
+        @DisplayName("ACTIVE 상태 아니면 상태 변경 실패")
+        void throw_exception_when_transitioning_non_active_request() {
+
+            // given
+            VacancyAlertRequest request = createRequest();
+            var now = fixedClock.instant();
+            request.cancel(now);
+
+            // when & then
+            assertThatThrownBy(() -> request.expire(now)).isInstanceOf(IllegalStateException.class);
+            assertThatThrownBy(() -> request.complete(now)).isInstanceOf(IllegalStateException.class);
+        }
+
         @Nested
         @DisplayName("Cancel")
         class Cancel {
@@ -90,11 +104,12 @@ public class VacancyAlertRequestTest {
 
                 r.cancel(now);
 
-                var lifecycle = r.getState();
-                assertThat(lifecycle.getStatus()).isEqualTo(VacancyAlertRequestStatus.CANCELLED);
-                assertThat(lifecycle.getCancelledAt()).isEqualTo(now);
-                assertThat(lifecycle.getExpiredAt()).isNull();
-                assertThat(lifecycle.getCompletedAt()).isNull();
+                var state = r.getState();
+                assertThat(state.getStatus()).isEqualTo(VacancyAlertRequestStatus.CANCELLED);
+                assertThat(state.getCancelledAt()).isEqualTo(now);
+                assertThat(state.getExpiredAt()).isNull();
+                assertThat(state.getFailedAt()).isNull();
+                assertThat(state.getCompletedAt()).isNull();
             }
 
             @Test
@@ -120,11 +135,12 @@ public class VacancyAlertRequestTest {
 
                 r.expire(now);
 
-                var lifecycle = r.getState();
-                assertThat(lifecycle.getStatus()).isEqualTo(VacancyAlertRequestStatus.EXPIRED);
-                assertThat(lifecycle.getCancelledAt()).isNull();
-                assertThat(lifecycle.getExpiredAt()).isEqualTo(now);
-                assertThat(lifecycle.getCompletedAt()).isNull();
+                var state = r.getState();
+                assertThat(state.getStatus()).isEqualTo(VacancyAlertRequestStatus.EXPIRED);
+                assertThat(state.getCancelledAt()).isNull();
+                assertThat(state.getExpiredAt()).isEqualTo(now);
+                assertThat(state.getFailedAt()).isNull();
+                assertThat(state.getCompletedAt()).isNull();
             }
 
             @Test
@@ -140,6 +156,37 @@ public class VacancyAlertRequestTest {
         }
 
         @Nested
+        @DisplayName("Fail")
+        class Fail {
+            @Test
+            @DisplayName("requestAt 이후 실패 처리 가능")
+            void can_fail_after_requested_at() {
+                var r = createRequest();
+                var now = r.getState().getRequestedAt();
+
+                r.fail(now);
+
+                var state = r.getState();
+                assertThat(state.getStatus()).isEqualTo(VacancyAlertRequestStatus.FAILED);
+                assertThat(state.getCancelledAt()).isNull();
+                assertThat(state.getExpiredAt()).isNull();
+                assertThat(state.getFailedAt()).isEqualTo(now);
+                assertThat(state.getCompletedAt()).isNull();
+            }
+
+            @Test
+            @DisplayName("requestedAt 보다 이른 시각에 실패 처리하면 예외 발생")
+            void throw_exception_when_failed_at_is_before_than_requested_at() {
+                var r = createRequest();
+                var now = r.getState().getRequestedAt().minusSeconds(1);
+
+                assertThatThrownBy(() -> r.fail(now))
+                        .isInstanceOf(IllegalStateException.class)
+                        .hasMessage("failedAt must not be before requestedAt");
+            }
+        }
+
+        @Nested
         @DisplayName("Complete")
         class Complete {
             @Test
@@ -150,11 +197,12 @@ public class VacancyAlertRequestTest {
 
                 r.complete(now);
 
-                var lifecycle = r.getState();
-                assertThat(lifecycle.getStatus()).isEqualTo(VacancyAlertRequestStatus.COMPLETED);
-                assertThat(lifecycle.getCancelledAt()).isNull();
-                assertThat(lifecycle.getExpiredAt()).isNull();
-                assertThat(lifecycle.getCompletedAt()).isEqualTo(now);
+                var state = r.getState();
+                assertThat(state.getStatus()).isEqualTo(VacancyAlertRequestStatus.COMPLETED);
+                assertThat(state.getCancelledAt()).isNull();
+                assertThat(state.getExpiredAt()).isNull();
+                assertThat(state.getFailedAt()).isNull();
+                assertThat(state.getCompletedAt()).isEqualTo(now);
             }
 
             @Test
@@ -184,9 +232,9 @@ public class VacancyAlertRequestTest {
 
                 r.complete(now);
 
-                var lifecycle = r.getState();
-                assertThat(lifecycle.getStatus()).isEqualTo(VacancyAlertRequestStatus.COMPLETED);
-                assertThat(lifecycle.getResolution()).isEqualTo(VacancyAlertRequestResolution.NOTIFIED);
+                var state = r.getState();
+                assertThat(state.getStatus()).isEqualTo(VacancyAlertRequestStatus.COMPLETED);
+                assertThat(state.getResolution()).isEqualTo(VacancyAlertRequestResolution.NOTIFIED);
             }
 
             @Test
@@ -205,9 +253,9 @@ public class VacancyAlertRequestTest {
 
                 r.complete(now);
 
-                var lifecycle = r.getState();
-                assertThat(lifecycle.getStatus()).isEqualTo(VacancyAlertRequestStatus.COMPLETED);
-                assertThat(lifecycle.getResolution()).isEqualTo(VacancyAlertRequestResolution.CLAIMED);
+                var state = r.getState();
+                assertThat(state.getStatus()).isEqualTo(VacancyAlertRequestStatus.COMPLETED);
+                assertThat(state.getResolution()).isEqualTo(VacancyAlertRequestResolution.CLAIMED);
             }
 
             @Test
@@ -220,20 +268,6 @@ public class VacancyAlertRequestTest {
                         .isInstanceOf(IllegalStateException.class)
                         .hasMessage("expiredAt must not be before requestedAt");
             }
-        }
-
-        @Test
-        @DisplayName("ACTIVE 상태 아니면 상태 변경 실패")
-        void throw_exception_when_transitioning_non_active_request() {
-
-            // given
-            VacancyAlertRequest request = createRequest();
-            var now = fixedClock.instant();
-            request.cancel(now);
-
-            // when & then
-            assertThatThrownBy(() -> request.expire(now)).isInstanceOf(IllegalStateException.class);
-            assertThatThrownBy(() -> request.complete(now)).isInstanceOf(IllegalStateException.class);
         }
     }
 }

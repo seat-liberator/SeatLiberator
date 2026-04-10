@@ -38,6 +38,9 @@ public class VacancyAlertRequestState {
     @Column(name = "expired_at")
     private Instant expiredAt;
 
+    @Column(name = "failed_at")
+    private Instant failedAt;
+
     @Column(name = "completed_at")
     private Instant completedAt;
 
@@ -86,6 +89,15 @@ public class VacancyAlertRequestState {
 
         this.status = VacancyAlertRequestStatus.EXPIRED;
         this.expiredAt = at;
+
+        validate(this);
+    }
+
+    protected void fail(Instant at) {
+        ensureStateIn(this, VacancyAlertRequestStatus.ACTIVE);
+
+        this.status = VacancyAlertRequestStatus.FAILED;
+        this.failedAt = at;
 
         validate(this);
     }
