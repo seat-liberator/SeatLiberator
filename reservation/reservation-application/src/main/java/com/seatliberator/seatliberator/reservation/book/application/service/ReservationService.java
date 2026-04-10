@@ -6,6 +6,7 @@ import com.seatliberator.seatliberator.reservation.book.application.port.in.comm
 import com.seatliberator.seatliberator.reservation.book.application.port.in.entry.ReservationEntry;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
+import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
@@ -41,7 +42,7 @@ public class ReservationService implements ReservationManager {
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
 
-        var conflict = reservationStore.existsByLocatorAndRange(locator, range);
+        var conflict = reservationStore.existsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED);
 
         if (conflict)
             throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_TIME_CONFLICT);

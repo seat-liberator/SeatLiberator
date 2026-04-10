@@ -1,22 +1,27 @@
 package com.seatliberator.seatliberator.reservation.integration;
 
-import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
-import com.seatliberator.seatliberator.reservation.domain.VacancyAlertStatus;
+import com.seatliberator.seatliberator.reservation.VacancyAlertRequestCreateCommandBuilder;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.ReservationManager;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationCreateCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.SeatCreateCommand;
+import com.seatliberator.seatliberator.reservation.book.application.service.SeatService;
+import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequestStatus;
 import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.VacancyAlertRequester;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertCancelCommand;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCommand;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestReader;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestStore;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Instant;
-import java.util.UUID;
 
+import static com.seatliberator.seatliberator.reservation.VacancyAlertRequestApplicationFixture.createVacancyAlertRequestCancelCommand;
+import static com.seatliberator.seatliberator.reservation.VacancyAlertRequestApplicationFixture.createVacancyRequestCreateCommand;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.ReservationFixture.INITIAL_USER_ID;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLocatorFixture.createLocator;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -30,31 +35,33 @@ public class VacancyRequestTest {
     VacancyAlertRequester requester;
 
     @Autowired
-    VacancyAlertRequestStore store;
+    ReservationManager reservationManager;
 
     @Autowired
-    VacancyAlertRequestReader reader;
+    SeatService seatService;
+
+    @Autowired
+    VacancyAlertRequestStore store;
+
+    @BeforeEach
+    void run() {
+        var locator = createLocator();
+        var range = createRange();
+
+        seatService.create(new SeatCreateCommand(locator.roomId(), locator.seatId()));
+        reservationManager.create(new ReservationCreateCommand(INITIAL_USER_ID, locator.roomId(), locator.seatId(), range.startAt(), range.endAt()));
+    }
 
     @Test
     @DisplayName("VacancyAlert 요청 생성 시 정상 저장된다.")
     void save_request_when_vacancy_alert_is_created() {
+        var command = createVacancyRequestCreateCommand();
 
-        //given
-        var userId = "user-1";
-        var roomId = "room-1";
-        var seatId = "seat-1";
-
-        var now = BASE_TIME;
-        var startTime = now.plusSeconds(60);
-        var endTime = now.plusSeconds(120);
-
-        var command = new VacancyAlertRequestCommand(
-                userId,
-                roomId,
-                seatId,
-                startTime,
-                endTime
-        );
+        var userId = command.userId();
+        var roomId = command.roomId();
+        var seatId = command.seatId();
+        var startAt = command.startTime();
+        var endAt = command.endTime();
 
         // when
         var result = requester.request(command);
@@ -64,30 +71,15 @@ public class VacancyRequestTest {
         assertThat(result.getUserId()).isEqualTo(userId);
         assertThat(result.getLocator().roomId()).isEqualTo(roomId);
         assertThat(result.getLocator().seatId()).isEqualTo(seatId);
-        assertThat(result.getStatus()).isEqualTo(VacancyAlertStatus.ACTIVE);
+        assertThat(result.getRange().startAt()).isEqualTo(startAt);
+        assertThat(result.getRange().endAt()).isEqualTo(endAt);
+        assertThat(result.getState().getStatus()).isEqualTo(VacancyAlertRequestStatus.ACTIVE);
     }
 
     @Test
     @DisplayName("VacancyAlert 동일 요청 시 예외 발생")
     void throw_exception_when_duplicate_vacancy_alert_request_is_created() {
-
-        //given
-        //given
-        var userId = "user-1";
-        var roomId = "room-1";
-        var seatId = "seat-1";
-
-        var now = BASE_TIME;
-        var startTime = now.plusSeconds(60);
-        var endTime = now.plusSeconds(120);
-
-        var command = new VacancyAlertRequestCommand(
-                userId,
-                roomId,
-                seatId,
-                startTime,
-                endTime
-        );
+        var command = createVacancyRequestCreateCommand();
 
         // 선 저장
         requester.request(command);
@@ -101,20 +93,22 @@ public class VacancyRequestTest {
     void save_requests_when_vacancy_alert_times_differ() {
 
         //given
-        var userId = "user-1";
-        var locator = SimpleSeatLocator.from("room1", "seat1");
+        var userId = INITIAL_USER_ID;
+        var locator = createLocator();
 
         var now = BASE_TIME;
         var startTime1 = now.plusSeconds(60);
-        var endTime1 = now.plusSeconds(120);
         var startTime2 = now.plusSeconds(70);
-        var endTime2 = now.plusSeconds(130);
 
-        var range1 = SimpleTimeRange.from(startTime1, endTime1);
-        var range2 = SimpleTimeRange.from(startTime2, endTime2);
+        var range1 = createRange(startTime1);
+        var range2 = createRange(startTime2);
 
-        var command1 = VacancyAlertRequestCommand.from(userId, locator, range1);
-        var command2 = VacancyAlertRequestCommand.from(userId, locator, range2);
+        var baseCommandBuilder = new VacancyAlertRequestCreateCommandBuilder()
+                .userId(userId)
+                .locator(locator);
+
+        var command1 = baseCommandBuilder.copy().range(range1).build();
+        var command2 = baseCommandBuilder.copy().range(range2).build();
 
         // when
         var r1 = requester.request(command1);
@@ -126,12 +120,12 @@ public class VacancyRequestTest {
         assertThat(r1.getUserId()).isEqualTo(userId);
         assertThat(r1.getLocator().roomId()).isEqualTo(locator.roomId());
         assertThat(r1.getLocator().seatId()).isEqualTo(locator.seatId());
-        assertThat(r1.getStatus()).isEqualTo(VacancyAlertStatus.ACTIVE);
+        assertThat(r1.getState().getStatus()).isEqualTo(VacancyAlertRequestStatus.ACTIVE);
 
         assertThat(r2.getUserId()).isEqualTo(userId);
         assertThat(r2.getLocator().roomId()).isEqualTo(locator.roomId());
         assertThat(r2.getLocator().seatId()).isEqualTo(locator.seatId());
-        assertThat(r2.getStatus()).isEqualTo(VacancyAlertStatus.ACTIVE);
+        assertThat(r1.getState().getStatus()).isEqualTo(VacancyAlertRequestStatus.ACTIVE);
     }
 
     @Test
@@ -139,15 +133,19 @@ public class VacancyRequestTest {
     void cancel_alert_when_request_user_is_owner() {
 
         // given
-        var command = requestCommand();
+        var command = createVacancyRequestCreateCommand();
         var saved = requester.request(command);
 
         // when
-        requester.cancelVacancyAlert(new VacancyAlertCancelCommand(command.userId(), saved.getId()));
+        var cancelCommand = createVacancyAlertRequestCancelCommand(command.userId(), saved.getId());
+        requester.cancel(cancelCommand);
 
         // then
-        var result = reader.findById(saved.getId()).orElseThrow();
-        assertThat(result.getStatus()).isEqualTo(VacancyAlertStatus.CANCELLED);
+        var result = store.findById(saved.getId());
+        assertThat(result.isPresent()).isTrue();
+        var waitlist = result.get();
+        var state = waitlist.getState();
+        assertThat(state.getStatus()).isEqualTo(VacancyAlertRequestStatus.CANCELLED);
     }
 
     @Test
@@ -155,13 +153,14 @@ public class VacancyRequestTest {
     void throw_exception_when_other_user_cancels_alert() {
 
         // given
-        var command = requestCommand();
+        var command = createVacancyRequestCreateCommand();
         var saved = requester.request(command);
 
         // when & then
-        assertThatThrownBy(() ->
-                requester.cancelVacancyAlert(new VacancyAlertCancelCommand("other-user", saved.getId())))
-                .isInstanceOf(IllegalArgumentException.class);
+        var cancelCommand = createVacancyAlertRequestCancelCommand("other-" + command.userId(), saved.getId());
+        assertThatThrownBy(() -> requester.cancel(cancelCommand))
+                .isInstanceOf(ReservationApplicationException.class)
+                .hasMessage("알람을 취소할 권한이 없습니다.");
     }
 
     @Test
@@ -169,8 +168,8 @@ public class VacancyRequestTest {
     void throw_exception_when_canceling_nonexistent_alert() {
 
         // when & then
-        assertThatThrownBy(() ->
-                requester.cancelVacancyAlert(new VacancyAlertCancelCommand("user1", UUID.randomUUID())))
+        var cancelCommand = createVacancyAlertRequestCancelCommand();
+        assertThatThrownBy(() -> requester.cancel(cancelCommand))
                 .isInstanceOf(ReservationApplicationException.class);
     }
 
@@ -179,10 +178,11 @@ public class VacancyRequestTest {
     void save_request_again_when_alert_was_cancelled() {
 
         // given
-        var command = requestCommand();
+        var command = createVacancyRequestCreateCommand();
         var saved = requester.request(command);
 
-        requester.cancelVacancyAlert(new VacancyAlertCancelCommand(command.userId(), saved.getId()));
+        var cancelCommand = createVacancyAlertRequestCancelCommand(command.userId(), saved.getId());
+        requester.cancel(cancelCommand);
 
         // when
         var result = requester.request(command);
@@ -190,16 +190,4 @@ public class VacancyRequestTest {
         // then
         assertThat(result).isNotNull();
     }
-
-    private VacancyAlertRequestCommand requestCommand() {
-        var now = BASE_TIME;
-        return new VacancyAlertRequestCommand(
-                "user1",
-                "room1",
-                "seat1",
-                now.plusSeconds(60),
-                now.plusSeconds(120)
-        );
-    }
-
 }
