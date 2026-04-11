@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "waitlist")
+@Table(name = "vacancy_alert_request")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class VacancyAlertRequest {
