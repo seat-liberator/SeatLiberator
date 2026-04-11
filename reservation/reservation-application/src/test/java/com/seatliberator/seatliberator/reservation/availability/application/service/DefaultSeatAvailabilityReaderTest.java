@@ -3,6 +3,7 @@ package com.seatliberator.seatliberator.reservation.availability.application.ser
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.entry.AvailabilitySeatEntry;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationQuery;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatQuery;
+import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
@@ -93,5 +94,77 @@ public class DefaultSeatAvailabilityReaderTest {
 
         verify(seatQuery).findByRoomId(roomId);
         verify(reservationQuery, never()).findAllOverlappingInRoom(roomId, range);
+    }
+
+    @Test
+    @DisplayName("취소된 예약은 가용 좌석 계산에서 제외한다")
+    void ignore_canceled_reservation_when_calculating_available_seats() {
+        var now = fixedClock.instant();
+        var roomId = "room-1";
+        var range = SimpleTimeRange.from(now, now.plusSeconds(60));
+        var seatALocator = SimpleSeatLocator.from(roomId, "A");
+        var seatA = Seat.create(seatALocator);
+
+        when(seatQuery.findByRoomId(roomId))
+                .thenReturn(List.of(seatA));
+        when(reservationQuery.findAllOverlappingInRoom(roomId, range))
+                .thenReturn(List.of(createReservation(seatALocator, range, ReservationStatus.CANCELED)));
+
+        var result = reader.findAvailabilitySeats(roomId, range);
+
+        assertThat(result)
+                .extracting(AvailabilitySeatEntry::seatId)
+                .containsExactly("A");
+    }
+
+    @Test
+    @DisplayName("만료된 예약은 가용 좌석 계산에서 제외한다")
+    void ignore_expired_reservation_when_calculating_available_seats() {
+        var now = fixedClock.instant();
+        var roomId = "room-1";
+        var range = SimpleTimeRange.from(now, now.plusSeconds(60));
+        var seatALocator = SimpleSeatLocator.from(roomId, "A");
+        var seatA = Seat.create(seatALocator);
+
+        when(seatQuery.findByRoomId(roomId))
+                .thenReturn(List.of(seatA));
+        when(reservationQuery.findAllOverlappingInRoom(roomId, range))
+                .thenReturn(List.of(createReservation(seatALocator, range, ReservationStatus.EXPIRED)));
+
+        var result = reader.findAvailabilitySeats(roomId, range);
+
+        assertThat(result)
+                .extracting(AvailabilitySeatEntry::seatId)
+                .containsExactly("A");
+    }
+
+    @Test
+    @DisplayName("사용된 예약은 여전히 점유 좌석으로 본다")
+    void treat_used_reservation_as_occupied_seat() {
+        var now = fixedClock.instant();
+        var roomId = "room-1";
+        var range = SimpleTimeRange.from(now, now.plusSeconds(60));
+        var seatALocator = SimpleSeatLocator.from(roomId, "A");
+        var seatA = Seat.create(seatALocator);
+
+        when(seatQuery.findByRoomId(roomId))
+                .thenReturn(List.of(seatA));
+        when(reservationQuery.findAllOverlappingInRoom(roomId, range))
+                .thenReturn(List.of(createReservation(seatALocator, range, ReservationStatus.USED)));
+
+        var result = reader.findAvailabilitySeats(roomId, range);
+
+        assertThat(result).isEmpty();
+    }
+
+    private Reservation createReservation(SimpleSeatLocator locator, SimpleTimeRange range, ReservationStatus status) {
+        return Reservation.create(
+                "user-1",
+                locator.roomId(),
+                locator.seatId(),
+                range.startAt(),
+                range.endAt(),
+                status
+        );
     }
 }
