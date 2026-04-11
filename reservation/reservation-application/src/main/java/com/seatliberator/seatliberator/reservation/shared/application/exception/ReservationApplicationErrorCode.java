@@ -11,6 +11,7 @@ public enum ReservationApplicationErrorCode implements ErrorCode {
     SEAT_NOT_FOUND("RS002", "좌석 정보가 존재하지 않습니다."),
     RESERVATION_ALREADY_EXISTS("RS003", "예약은 두 개 이상 할 수 없습니다."),
     RESERVATION_TIME_CONFLICT("RS004", "다른 예약과 겹치는 시간으로 예약할 수 없습니다."),
+    SEAT_ALREADY_EXISTS("RS005", "좌석이 이미 존재합니다."),
 
     RESERVATION_READ_FORBIDDEN("RS100", "조회할 수 없는 예약입니다."),
     RESERVATION_VERIFY_FORBIDDEN("RS101", "사용 처리 할 수 없는 예약입니다."),

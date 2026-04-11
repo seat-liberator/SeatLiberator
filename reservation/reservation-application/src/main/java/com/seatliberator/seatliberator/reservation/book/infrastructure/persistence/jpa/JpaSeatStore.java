@@ -1,6 +1,8 @@
 package com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa;
 
+import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatQuery;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.SeatExclusion;
 import com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa.repository.SeatRepository;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
@@ -11,13 +13,12 @@ import org.springframework.data.jpa.domain.DeleteSpecification;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class JpaSeatStore implements SeatStore {
+public class JpaSeatStore implements SeatStore, SeatQuery {
 
     private final SeatRepository repository;
 
@@ -47,19 +48,9 @@ public class JpaSeatStore implements SeatStore {
     }
 
     @Override
-    public void deleteByRoomIdAndSeatId(String roomId, String seatId) {
-        repository.deleteByLocator_RoomIdAndLocator_SeatId(roomId, seatId);
-    }
-
-    @Override
     public void deleteByLocator(SeatLocator locator) {
         var spec = createLocatorDeleteSpecification(locator);
         repository.delete(spec);
-    }
-
-    @Override
-    public boolean existsSeatConflict(String roomId, String seatId) {
-        return repository.existsSeatConflict(roomId, seatId);
     }
 
     @Override
@@ -69,14 +60,9 @@ public class JpaSeatStore implements SeatStore {
     }
 
     @Override
-    public boolean existsSeatConflictExcept(Long id, String roomId, String seatId) {
-        return repository.existsSeatConflictExcept(id, roomId, seatId);
-    }
-
-    @Override
-    public boolean existsByLocatorWithExcludeIds(SeatLocator locator, Collection<Long> ids) {
+    public boolean existsByLocator(SeatLocator locator, SeatExclusion exclusion) {
         var spec = createLocatorSpecification(locator)
-                .and(CommonPredicates.excludeIn(ids, from -> from.get("id")));
+                .and(CommonPredicates.excludeIn(exclusion.ids(), from -> from.get("id")));
         return repository.exists(spec);
     }
 

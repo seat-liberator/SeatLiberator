@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.shared.application.seed;
 
+import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatQuery;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SeatSeedService {
     private final SeatStore store;
+    private final SeatQuery query;
 
     public void seed() {
         var seats = DevFixture.createSeats();
@@ -23,7 +25,7 @@ public class SeatSeedService {
     }
 
     private boolean createIfNotExists(Seat seat) {
-        if (store.findByLocator(seat.getLocator()).isPresent()) {
+        if (query.findByLocator(seat.getLocator()).isPresent()) {
             return false;
         }
         store.save(seat);
