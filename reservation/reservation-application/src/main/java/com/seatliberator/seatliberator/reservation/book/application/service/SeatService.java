@@ -47,11 +47,12 @@ public class SeatService implements SeatManager, SeatReader {
     @Override
     public boolean update(SeatUpdateCommand command) {
         var oldLocator = SimpleSeatLocator.from(command.oldRoomId(), command.oldSeatId());
+        var newLocator = SimpleSeatLocator.from(command.newRoomId(), command.newSeatId());
         var oldSeat = query.findByLocator(oldLocator)
                 .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND));
 
         var exclude = SeatExclusion.of(List.of(oldSeat.getId()));
-        var conflict = query.existsByLocator(oldLocator, exclude);
+        var conflict = query.existsByLocator(newLocator, exclude);
         if (conflict) return false;
 
         oldSeat.update(command.newRoomId(), command.newSeatId());
