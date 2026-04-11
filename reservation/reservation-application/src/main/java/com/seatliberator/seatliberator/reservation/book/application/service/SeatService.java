@@ -5,8 +5,11 @@ import com.seatliberator.seatliberator.reservation.book.application.port.in.Seat
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.SeatCreateCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.SeatUpdateCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.entry.SeatEntry;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatQuery;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.SeatExclusion;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
 import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
@@ -21,59 +24,59 @@ import java.util.List;
 @Transactional
 public class SeatService implements SeatManager, SeatReader {
 
-    private final SeatStore seatStore;
+    private final SeatStore store;
+    private final SeatQuery query;
 
     @Override
     public boolean create(SeatCreateCommand command) {
+        var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
 
-        if (seatStore.existsSeatConflict(
-                command.roomId(),
-                command.seatId()
-        )) {
-            return false;
-        }
+        var conflict = query.existsByLocator(locator);
+        if (conflict) return false;
 
         Seat seat = Seat.create(
                 command.roomId(),
                 command.seatId()
         );
 
-        seatStore.save(seat);
+        store.save(seat);
 
         return true;
     }
 
     @Override
     public boolean update(SeatUpdateCommand command) {
-        Seat seat = seatStore.findByRoomIdAndSeatId(command.oldRoomId(), command.oldSeatId()).orElseThrow();
+        var oldLocator = SimpleSeatLocator.from(command.oldRoomId(), command.oldSeatId());
+        var oldSeat = query.findByLocator(oldLocator)
+                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND));
 
-        if (seatStore.existsSeatConflictExcept(seat.getId(), command.newRoomId(), command.newSeatId())) {
-            return false;
-        }
+        var exclude = SeatExclusion.of(List.of(oldSeat.getId()));
+        var conflict = query.existsByLocator(oldLocator, exclude);
+        if (conflict) return false;
 
-        seat.update(command.newRoomId(), command.newSeatId());
+        oldSeat.update(command.newRoomId(), command.newSeatId());
 
         return true;
     }
 
     @Override
     public boolean delete(String roomId, String seatId) {
-
-        seatStore.deleteByRoomIdAndSeatId(roomId, seatId);
+        var locator = SimpleSeatLocator.from(roomId, seatId);
+        store.deleteByLocator(locator);
 
         return true;
     }
 
     @Override
     public SeatEntry read(SeatLocator locator) {
-        return seatStore.findByLocator(locator)
+        return query.findByLocator(locator)
                 .map(SeatEntry::from)
                 .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND));
     }
 
     @Override
     public List<SeatEntry> findAllByRoomId(String roomId) {
-        return seatStore.findByRoomId(roomId).stream()
+        return query.findByRoomId(roomId).stream()
                 .map(SeatEntry::from)
                 .toList();
     }

@@ -3,9 +3,11 @@ package com.seatliberator.seatliberator.reservation.integration;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationCreateCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.SeatCreateCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatQuery;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.book.application.service.ReservationService;
 import com.seatliberator.seatliberator.reservation.book.application.service.SeatService;
+import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
 import org.junit.jupiter.api.DisplayName;
@@ -30,6 +32,8 @@ public class ReservationServiceTest extends ReservationDatabaseCleanupSupport {
     @Autowired
     SeatStore seatStore;
     @Autowired
+    SeatQuery seatQuery;
+    @Autowired
     ReservationStore reservationStore;
 
 
@@ -38,6 +42,7 @@ public class ReservationServiceTest extends ReservationDatabaseCleanupSupport {
     void return_true_when_seat_is_created() {
         var givenRoomId = "room-1";
         var givenSeatId = "seat-1";
+        var locator = SimpleSeatLocator.from(givenRoomId, givenSeatId);
 
         var seatCreateCommand = new SeatCreateCommand(
                 givenRoomId,
@@ -47,10 +52,7 @@ public class ReservationServiceTest extends ReservationDatabaseCleanupSupport {
         // Then
         boolean result = seatService.create(seatCreateCommand);
 
-        Optional<Seat> optStoreSeat = seatStore.findByRoomIdAndSeatId(
-                givenRoomId,
-                givenSeatId
-        );
+        Optional<Seat> optStoreSeat = seatQuery.findByLocator(locator);
 
         assertThat(optStoreSeat.isPresent()).isTrue();
 
