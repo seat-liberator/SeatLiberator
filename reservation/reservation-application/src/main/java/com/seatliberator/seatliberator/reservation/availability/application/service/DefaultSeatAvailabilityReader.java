@@ -26,6 +26,7 @@ public class DefaultSeatAvailabilityReader implements SeatAvailabilityReader {
         if (seats.isEmpty()) return List.of();
 
         var reservedLocators = reservationQuery.findAllOverlappingInRoom(roomId, range).stream()
+                .filter(r -> r.isReserved() || r.isUsed())
                 .<SeatLocator>map(Reservation::getLocator)
                 .toList();
 
