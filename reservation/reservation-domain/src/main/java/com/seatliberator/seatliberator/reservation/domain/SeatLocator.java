@@ -5,7 +5,11 @@ public interface SeatLocator {
 
     String seatId();
 
+    default SeatLocatorKey key() {
+        return SeatLocatorKey.from(this);
+    }
+
     default boolean isSame(SeatLocator other) {
-        return roomId().equals(other.roomId()) && seatId().equals(other.seatId());
+        return key().equals(other.key());
     }
 }
