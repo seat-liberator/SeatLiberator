@@ -56,8 +56,8 @@ JWT resource server 계열 애플리케이션용 convention plugin 입니다.
 
 현재 이 플러그인을 사용하는 모듈:
 
-- `board:board-application`
 - `reservation:reservation-application`
+- `board:board-application`
 - `notification:notification-application`
 
 ## bootstrap 모듈과의 관계

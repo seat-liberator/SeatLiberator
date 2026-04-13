@@ -22,10 +22,10 @@ SeatLiberator 는 좌석 예약과 빈자리 알림, 게시판, 사용자 인증
 
 - `identity:identity-application`
   사용자 가입, 로그인, federated login, JWT 발급, JWKS 공개
-- `board:board-application`
-  게시판, 카테고리, 게시글 관리와 board 권한 규칙
 - `reservation:reservation-application`
   좌석 관리, 예약, 빈자리 알림 신청/취소
+- `board:board-application`
+  게시판, 카테고리, 게시글 관리와 board 권한 규칙
 - `notification:notification-application`
   사용자 알림 조회와 알림 생성 이벤트 소비
 
@@ -99,8 +99,8 @@ resource server 계열 앱은 공통 보안 기본값을 bootstrap 에서 받고
 
 ```sh
 ./gradlew :identity:identity-application:bootRun
-./gradlew :board:board-application:bootRun
 ./gradlew :reservation:reservation-application:bootRun
+./gradlew :board:board-application:bootRun
 ./gradlew :notification:notification-application:bootRun
 ```
 
@@ -109,8 +109,8 @@ resource server 계열 앱은 공통 보안 기본값을 bootstrap 에서 받고
 ## 모듈별 문서
 
 - [identity/identity-application/README.md](/home/lilamaris/IdeaProjects/SeatLiberator/identity/identity-application/README.md)
-- [board/board-application/README.md](/home/lilamaris/IdeaProjects/SeatLiberator/board/board-application/README.md)
 - [reservation/reservation-application/README.md](/home/lilamaris/IdeaProjects/SeatLiberator/reservation/reservation-application/README.md)
+- [board/board-application/README.md](/home/lilamaris/IdeaProjects/SeatLiberator/board/board-application/README.md)
 - [notification/notification-application/README.md](/home/lilamaris/IdeaProjects/SeatLiberator/notification/notification-application/README.md)
 - [identity/identity-client/README.md](/home/lilamaris/IdeaProjects/SeatLiberator/identity/identity-client/README.md)
 
