@@ -6,10 +6,10 @@ import com.seatliberator.seatliberator.reservation.domain.event.ReservationExpir
 import com.seatliberator.seatliberator.reservation.domain.fixture.VacancyAlertRequestFixtureBuilder;
 import com.seatliberator.seatliberator.reservation.domain.persistence.VacancyAlertRequest;
 import com.seatliberator.seatliberator.reservation.shared.application.notifier.Notifier;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.VacancyAlertRequestPromotion;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.entry.VacancyAlertRequestEntry;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.entry.VacancyAlertRequestPromotionResult;
+import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.result.VacancyAlertRequestResult;
+import com.seatliberator.seatliberator.reservation.vacancy.application.internal.VacancyAlertRequestPromotionResult;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestStore;
+import com.seatliberator.seatliberator.reservation.vacancy.application.internal.VacancyAlertRequestPromotion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -134,7 +134,7 @@ class SeatVacancyHandlerTest {
                 eq("user-first"),
                 eq("INFO"),
                 eq("빈 자리를 예약했어요!"),
-                eq(VacancyAlertRequestEntry.from(firstRequest))
+                eq(VacancyAlertRequestResult.from(firstRequest))
         );
     }
 
@@ -174,13 +174,13 @@ class SeatVacancyHandlerTest {
                 eq("user-first"),
                 eq("WARNING"),
                 eq("빈 자리 예약에 실패했어요."),
-                eq(VacancyAlertRequestEntry.from(firstRequest))
+                eq(VacancyAlertRequestResult.from(firstRequest))
         );
         verify(notifier).consume(
                 eq("user-second"),
                 eq("INFO"),
                 eq("빈 자리를 예약했어요!"),
-                eq(VacancyAlertRequestEntry.from(secondRequest))
+                eq(VacancyAlertRequestResult.from(secondRequest))
         );
     }
 
@@ -217,7 +217,7 @@ class SeatVacancyHandlerTest {
                 anyString(),
                 eq("WARNING"),
                 eq("빈 자리 예약에 실패했어요."),
-                any(VacancyAlertRequestEntry.class)
+                any(VacancyAlertRequestResult.class)
         );
         verify(store, never()).save(any(VacancyAlertRequest.class));
     }
@@ -263,7 +263,7 @@ class SeatVacancyHandlerTest {
 
     private void assertInfoNotifications(List<VacancyAlertRequest> requests, String title) {
         var notifierUserIdCaptor = ArgumentCaptor.forClass(String.class);
-        var notifierPayloadCaptor = ArgumentCaptor.forClass(VacancyAlertRequestEntry.class);
+        var notifierPayloadCaptor = ArgumentCaptor.forClass(VacancyAlertRequestResult.class);
 
         verify(notifier, times(requests.size())).consume(
                 notifierUserIdCaptor.capture(),
@@ -277,7 +277,7 @@ class SeatVacancyHandlerTest {
 
         assertThat(notifierPayloadCaptor.getAllValues())
                 .usingRecursiveFieldByFieldElementComparator()
-                .containsExactlyElementsOf(requests.stream().map(VacancyAlertRequestEntry::from).toList());
+                .containsExactlyElementsOf(requests.stream().map(VacancyAlertRequestResult::from).toList());
     }
 
     private void assertPromotionAttemptedFor(String userId) {

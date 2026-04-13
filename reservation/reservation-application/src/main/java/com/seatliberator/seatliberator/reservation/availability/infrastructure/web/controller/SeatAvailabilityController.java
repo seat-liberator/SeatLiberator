@@ -1,6 +1,7 @@
 package com.seatliberator.seatliberator.reservation.availability.infrastructure.web.controller;
 
-import com.seatliberator.seatliberator.reservation.availability.application.port.in.SeatAvailabilityReader;
+import com.seatliberator.seatliberator.reservation.availability.application.port.in.FindAvailableSeatUseCase;
+import com.seatliberator.seatliberator.reservation.availability.application.port.in.query.FindAvailableSeatQuery;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,7 +14,7 @@ import java.time.Instant;
 @RequestMapping("/rooms")
 @RequiredArgsConstructor
 public class SeatAvailabilityController {
-    private final SeatAvailabilityReader reader;
+    private final FindAvailableSeatUseCase reader;
 
     @GetMapping("/{roomId}/available-seats")
     public ResponseEntity<?> getAvailableSeats(
@@ -22,7 +23,8 @@ public class SeatAvailabilityController {
             @RequestParam(name = "end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant end
     ) {
         var range = SimpleTimeRange.from(start, end);
-        var result = reader.findAvailabilitySeats(roomId, range);
+        var query = new FindAvailableSeatQuery(roomId, range);
+        var result = reader.findAvailabilitySeats(query);
         return ResponseEntity.ok(result);
     }
 }

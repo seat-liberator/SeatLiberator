@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa;
 
-import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatQuery;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.SeatExclusion;
 import com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa.repository.SeatRepository;
@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class JpaSeatStore implements SeatStore, SeatQuery {
+public class JpaSeatStore implements SeatStore, SeatReader {
 
     private final SeatRepository repository;
 

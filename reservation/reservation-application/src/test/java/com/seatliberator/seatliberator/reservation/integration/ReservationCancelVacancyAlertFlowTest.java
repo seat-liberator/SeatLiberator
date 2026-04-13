@@ -3,17 +3,19 @@ package com.seatliberator.seatliberator.reservation.integration;
 import com.seatliberator.seatliberator.notification.api.event.NotificationCreateRequestEventPayload;
 import com.seatliberator.seatliberator.notification.api.event.NotificationEventType;
 import com.seatliberator.seatliberator.reservation.VacancyAlertRequestCreateCommandBuilder;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.ReservationManager;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationCreateCommand;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.SeatCreateCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.CancelReservationUseCase;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.CreateReservationUseCase;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CancelReservationCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateSeatCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
-import com.seatliberator.seatliberator.reservation.book.application.service.SeatService;
+import com.seatliberator.seatliberator.reservation.book.application.service.SeatCommandService;
 import com.seatliberator.seatliberator.reservation.domain.*;
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationExpired;
 import com.seatliberator.seatliberator.reservation.domain.persistence.VacancyAlertRequest;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.VacancyAlertRequester;
+import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.RequestVacancyAlertUseCase;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCancelCommand;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.entry.VacancyAlertRequestEntry;
+import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.result.VacancyAlertRequestResult;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestStore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,16 +38,19 @@ public class ReservationCancelVacancyAlertFlowTest extends ReservationDatabaseCl
     private static final Instant BASE_TIME = Instant.parse("2026-01-01T00:00:00Z");
 
     @Autowired
-    SeatService seatService;
+    SeatCommandService seatService;
 
     @Autowired
-    ReservationManager reservationManager;
+    CreateReservationUseCase createReservationUseCase;
+
+    @Autowired
+    CancelReservationUseCase cancelReservationUseCase;
 
     @Autowired
     ReservationStore reservationStore;
 
     @Autowired
-    VacancyAlertRequester vacancyAlertRequester;
+    RequestVacancyAlertUseCase requestVacancyAlertUseCase;
 
     @Autowired
     VacancyAlertRequestStore vacancyAlertRequestStore;
@@ -72,9 +77,10 @@ public class ReservationCancelVacancyAlertFlowTest extends ReservationDatabaseCl
         var activeRequest = requestVacancy(target, "active-user", VacancyAlertRequestBehavior.NOTIFY_ONLY);
         var canceledRequest = requestVacancy(target, "canceled-user", VacancyAlertRequestBehavior.NOTIFY_ONLY);
         var otherSeatRequest = requestVacancy(other, "other-seat-user", VacancyAlertRequestBehavior.NOTIFY_ONLY);
-        vacancyAlertRequester.cancel(new VacancyAlertRequestCancelCommand(canceledRequest.getUserId(), canceledRequest.getId()));
+        requestVacancyAlertUseCase.cancel(new VacancyAlertRequestCancelCommand(canceledRequest.getUserId(), canceledRequest.getId()));
 
-        reservationManager.cancel(target.reservationUserId());
+        var command = new CancelReservationCommand(target.reservationUserId());
+        cancelReservationUseCase.cancel(command);
 
         assertSingleNotification(activeRequest, "active-user", "INFO", "빈 자리가 발생했어요!");
         assertVacancyAlertRequestState(activeRequest, VacancyAlertRequestStatus.COMPLETED, VacancyAlertRequestResolution.NOTIFIED);
@@ -88,7 +94,8 @@ public class ReservationCancelVacancyAlertFlowTest extends ReservationDatabaseCl
         var target = createReservedSeat("cancel-auto-claim", "reservation-user");
         var autoClaimRequest = requestVacancy(target, "auto-claim-user", VacancyAlertRequestBehavior.AUTO_CLAIM);
 
-        reservationManager.cancel(target.reservationUserId());
+        var command = new CancelReservationCommand(target.reservationUserId());
+        cancelReservationUseCase.cancel(command);
 
         assertSingleNotification(autoClaimRequest, "auto-claim-user", "INFO", "빈 자리를 예약했어요!");
         assertVacancyAlertRequestState(autoClaimRequest, VacancyAlertRequestStatus.COMPLETED, VacancyAlertRequestResolution.CLAIMED);
@@ -122,20 +129,22 @@ public class ReservationCancelVacancyAlertFlowTest extends ReservationDatabaseCl
 
     private SeatVacancyTarget createReservedSeat(String name, String reservationUserId) {
         var target = createSeatWithoutReservation(name);
-        reservationManager.create(new ReservationCreateCommand(
+        var command = new CreateReservationCommand(
                 reservationUserId,
                 target.locator().roomId(),
                 target.locator().seatId(),
                 target.range().startAt(),
                 target.range().endAt()
-        ));
+
+        );
+        createReservationUseCase.create(command);
         return new SeatVacancyTarget(reservationUserId, target.locator(), target.range());
     }
 
     private SeatVacancyTarget createSeatWithoutReservation(String name) {
         var locator = createLocator("room-" + name, "seat-" + name);
         var range = createRange(BASE_TIME.plusSeconds(60), BASE_TIME.plusSeconds(120));
-        seatService.create(new SeatCreateCommand(locator.roomId(), locator.seatId()));
+        seatService.create(new CreateSeatCommand(locator.roomId(), locator.seatId()));
         return new SeatVacancyTarget(null, locator, range);
     }
 
@@ -150,7 +159,7 @@ public class ReservationCancelVacancyAlertFlowTest extends ReservationDatabaseCl
                 .range(target.range())
                 .behavior(behavior)
                 .build();
-        return vacancyAlertRequester.request(command);
+        return requestVacancyAlertUseCase.request(command);
     }
 
     private VacancyAlertRequest saveVacancyAlertRequest(
@@ -179,7 +188,7 @@ public class ReservationCancelVacancyAlertFlowTest extends ReservationDatabaseCl
         assertThat(notificationPayload.level()).isEqualTo(level);
         assertThat(notificationPayload.title()).isEqualTo(title);
 
-        var payloadBody = objectMapper.readValue(notificationPayload.body(), VacancyAlertRequestEntry.class);
+        var payloadBody = objectMapper.readValue(notificationPayload.body(), VacancyAlertRequestResult.class);
         assertThat(payloadBody.userId()).isEqualTo(targetUserId);
         assertThat(payloadBody.locator().roomId()).isEqualTo(request.getLocator().roomId());
         assertThat(payloadBody.locator().seatId()).isEqualTo(request.getLocator().seatId());

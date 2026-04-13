@@ -1,11 +1,11 @@
 package com.seatliberator.seatliberator.reservation.integration;
 
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationCreateCommand;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationUpdateCommand;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.SeatCreateCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.UpdateReservationCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateSeatCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
-import com.seatliberator.seatliberator.reservation.book.application.service.ReservationService;
-import com.seatliberator.seatliberator.reservation.book.application.service.SeatService;
+import com.seatliberator.seatliberator.reservation.book.application.service.ReservationCommandService;
+import com.seatliberator.seatliberator.reservation.book.application.service.SeatCommandService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -34,9 +34,9 @@ public class ReservationUpdateConcurrencyTest extends ReservationDatabaseCleanup
     @Autowired
     ReservationStore reservationStore;
     @Autowired
-    ReservationService reservationService;
+    ReservationCommandService reservationCommandService;
     @Autowired
-    SeatService seatService;
+    SeatCommandService seatService;
 
     int threadCount;
 
@@ -56,7 +56,7 @@ public class ReservationUpdateConcurrencyTest extends ReservationDatabaseCleanup
         var endTime = Instant.parse("2025-06-01T02:00:00Z");
 
         // target 좌석 생성
-        seatService.create(new SeatCreateCommand(givenRoomId, givenTargetSeatId));
+        seatService.create(new CreateSeatCommand(givenRoomId, givenTargetSeatId));
 
         List<String> reservationIds = new ArrayList<>();
 
@@ -65,9 +65,9 @@ public class ReservationUpdateConcurrencyTest extends ReservationDatabaseCleanup
             String seatId = "seat-" + (i + 2);
             String userId = "user-" + i;
 
-            seatService.create(new SeatCreateCommand(givenRoomId, seatId));
+            seatService.create(new CreateSeatCommand(givenRoomId, seatId));
 
-            var command = new ReservationCreateCommand(
+            var command = new CreateReservationCommand(
                     userId,
                     givenRoomId,
                     seatId,
@@ -75,7 +75,7 @@ public class ReservationUpdateConcurrencyTest extends ReservationDatabaseCleanup
                     endTime
             );
 
-            reservationService.create(command);
+            reservationCommandService.create(command);
 
             String reservation = reservationStore.findByUserId(userId).orElseThrow().getUserId();
 
@@ -102,8 +102,8 @@ public class ReservationUpdateConcurrencyTest extends ReservationDatabaseCleanup
                     try {
                         start.await();
 
-                        reservationService.update(
-                                new ReservationUpdateCommand(
+                        reservationCommandService.update(
+                                new UpdateReservationCommand(
                                         reservationIds.get(idx),
                                         givenRoomId,
                                         givenTargetSeatId,        // 하나의 좌석으로 몰림

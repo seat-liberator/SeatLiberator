@@ -8,9 +8,9 @@ import com.seatliberator.seatliberator.reservation.domain.event.ReservationCance
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationExpired;
 import com.seatliberator.seatliberator.reservation.domain.persistence.VacancyAlertRequest;
 import com.seatliberator.seatliberator.reservation.shared.application.notifier.Notifier;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.VacancyAlertRequestPromotion;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.entry.VacancyAlertRequestEntry;
+import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.result.VacancyAlertRequestResult;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestStore;
+import com.seatliberator.seatliberator.reservation.vacancy.application.internal.VacancyAlertRequestPromotion;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -70,11 +70,11 @@ public class SeatVacancyHandler {
             var promotionResult = promotion.promote(request.getUserId(), request.getLocator(), request.getRange());
             if (promotionResult.succeed()) {
                 request.complete(now);
-                notifier.consume(request.getUserId(), "INFO", "빈 자리를 예약했어요!", VacancyAlertRequestEntry.from(request));
+                notifier.consume(request.getUserId(), "INFO", "빈 자리를 예약했어요!", VacancyAlertRequestResult.from(request));
                 break;
             } else {
                 request.fail(now);
-                notifier.consume(request.getUserId(), "WARNING", "빈 자리 예약에 실패했어요.", VacancyAlertRequestEntry.from(request));
+                notifier.consume(request.getUserId(), "WARNING", "빈 자리 예약에 실패했어요.", VacancyAlertRequestResult.from(request));
             }
         }
 
@@ -85,7 +85,7 @@ public class SeatVacancyHandler {
         var now = clock.instant();
         for (var request : requests) {
             request.complete(now);
-            notifier.consume(request.getUserId(), "INFO", "빈 자리가 발생했어요!", VacancyAlertRequestEntry.from(request));
+            notifier.consume(request.getUserId(), "INFO", "빈 자리가 발생했어요!", VacancyAlertRequestResult.from(request));
             store.save(request);
         }
     }

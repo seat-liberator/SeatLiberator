@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.vacancy.infrastructure.web.controller;
 
 import com.seatliberator.seatliberator.identity.client.actor.ActorContextHolder;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.VacancyAlertRequester;
+import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.RequestVacancyAlertUseCase;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCancelCommand;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCreateCommand;
 import com.seatliberator.seatliberator.reservation.vacancy.infrastructure.web.request.VacancyAlertRequestCreateRequest;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequestMapping("/vacancy-alert")
 public class VacancyAlertRequestController {
 
-    private final VacancyAlertRequester requester;
+    private final RequestVacancyAlertUseCase requestVacancyAlertUseCase;
 
     private final ActorContextHolder actorContextHolder;
 
@@ -36,7 +36,7 @@ public class VacancyAlertRequestController {
                 request.behavior()
         );
 
-        requester.request(command);
+        requestVacancyAlertUseCase.request(command);
 
         return ResponseEntity.ok().build();
     }
@@ -50,7 +50,7 @@ public class VacancyAlertRequestController {
 
         var command = new VacancyAlertRequestCancelCommand(userId, alertId);
 
-        requester.cancel(command);
+        requestVacancyAlertUseCase.cancel(command);
 
         return ResponseEntity.noContent().build();
     }
