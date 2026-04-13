@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -103,6 +104,26 @@ public class DefaultVacancyAlertRequestRequesterTest {
 
         assertThat(result).isNotNull();
         verify(store).save(any(VacancyAlertRequest.class));
+    }
+
+    @Test
+    @DisplayName("저장 시 무결성 예외가 발생하면 DUPLICATED_REQUEST 예외로 변환한다")
+    void throw_duplicated_request_when_save_raises_data_integrity_violation() {
+        var command = createVacancyRequestCreateCommand();
+        var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
+        var range = SimpleTimeRange.from(command.startTime(), command.endTime());
+
+        var criteria = ReservationOverlapCriteria.of(locator, range)
+                .withStatuses(ReservationStatus.RESERVED);
+        when(reader.existsOverlapping(criteria)).thenReturn(true);
+        whenCheckAlertRequestExists(command, false);
+        when(store.save(any(VacancyAlertRequest.class)))
+                .thenThrow(new DataIntegrityViolationException("duplicated request"));
+
+        assertThatThrownBy(() -> requester.request(command))
+                .isInstanceOf(ReservationApplicationException.class)
+                .extracting("errorCode")
+                .isEqualTo(ReservationApplicationErrorCode.DUPLICATED_REQUEST);
     }
 
     @Test
