@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Tag("integration")
 @TransactionalReservationIntegrationTest
-@DisplayName("Integration: Reservation Service")
+@DisplayName("Integration: Reservation Command Service")
 public class ReservationCommandServiceTest extends ReservationDatabaseCleanupSupport {
 
     @Autowired

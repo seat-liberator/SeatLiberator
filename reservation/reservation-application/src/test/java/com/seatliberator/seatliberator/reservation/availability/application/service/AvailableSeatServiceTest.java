@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("Application.service: DefaultSeatAvailabilityReader")
+@DisplayName("Application.service: AvailableSeatService")
 public class AvailableSeatServiceTest {
     @Mock
     SeatReader seatReader;

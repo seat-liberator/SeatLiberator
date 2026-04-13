@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("Application: Default Reservation Reader")
+@DisplayName("Application: Reservation Query Service")
 public class ReservationReaderServiceTest {
     @Mock
     ReservationStore reservationStore;
