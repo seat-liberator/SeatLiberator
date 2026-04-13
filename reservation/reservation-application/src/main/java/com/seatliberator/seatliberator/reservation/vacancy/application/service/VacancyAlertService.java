@@ -1,6 +1,7 @@
 package com.seatliberator.seatliberator.reservation.vacancy.application.service;
 
-import com.seatliberator.seatliberator.reservation.book.application.contract.ReservationExistenceChecker;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
@@ -21,8 +22,8 @@ import java.time.Clock;
 @Service
 @RequiredArgsConstructor
 public class VacancyAlertService implements RequestVacancyAlertUseCase {
-    private final ReservationExistenceChecker reservationExistenceChecker;
     private final VacancyAlertRequestStore store;
+    private final ReservationReader reader;
 
     private final Clock clock;
 
@@ -31,7 +32,9 @@ public class VacancyAlertService implements RequestVacancyAlertUseCase {
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
 
-        var reservationExists = reservationExistenceChecker.isExistsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED);
+        var criteria = ReservationOverlapCriteria.of(locator, range)
+                .withStatuses(ReservationStatus.RESERVED);
+        var reservationExists = reader.existsOverlapping(criteria);
         if (!reservationExists) {
             throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_NOT_FOUND);
         }

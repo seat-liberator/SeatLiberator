@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.book.application;
 
-import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.book.application.contract.service.DefaultReservationOwnershipChecker;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 @DisplayName("Application: Default Reservation Ownership Checker")
 public class DefaultReservationOwnershipCheckerTest {
     @Mock
-    ReservationStore reservationStore;
+    ReservationReader reader;
 
     @InjectMocks
     DefaultReservationOwnershipChecker checker;
@@ -31,7 +31,7 @@ public class DefaultReservationOwnershipCheckerTest {
     void return_true_when_request_user_matches_reservation_owner() {
         var reservation = createReservation();
 
-        when(reservationStore.findById(1L)).thenReturn(Optional.of(reservation));
+        when(reader.findById(1L)).thenReturn(Optional.of(reservation));
 
         assertTrue(checker.hasOwnership(1L, INITIAL_USER_ID));
     }
@@ -41,7 +41,7 @@ public class DefaultReservationOwnershipCheckerTest {
     void return_false_when_request_user_differs_from_reservation_owner() {
         var reservation = createReservation();
 
-        when(reservationStore.findById(1L)).thenReturn(Optional.of(reservation));
+        when(reader.findById(1L)).thenReturn(Optional.of(reservation));
 
         var otherUserId = INITIAL_USER_ID + "-diff";
         assertFalse(checker.hasOwnership(1L, otherUserId));
@@ -50,7 +50,7 @@ public class DefaultReservationOwnershipCheckerTest {
     @Test
     @DisplayName("예약이 존재하지 않으면 false를 반환한다.")
     void return_false_when_reservation_does_not_exist() {
-        when(reservationStore.findById(1L)).thenReturn(Optional.empty());
+        when(reader.findById(1L)).thenReturn(Optional.empty());
 
         assertFalse(checker.hasOwnership(1L, INITIAL_USER_ID));
     }

@@ -7,8 +7,11 @@ import com.seatliberator.seatliberator.reservation.book.application.port.in.comm
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.UpdateReservationCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.result.ReservationResult;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFindOneCriteria;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
@@ -20,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +32,7 @@ public class ReservationCommandService implements
         UpdateReservationUseCase,
         CancelReservationUseCase {
     private final ReservationStore reservationStore;
+    private final ReservationReader reader;
     private final SeatStore seatStore;
 
     private final Clock clock;
@@ -39,14 +42,16 @@ public class ReservationCommandService implements
         seatStore.findForUpdate(command.roomId(), command.seatId())
                 .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND));
 
-        reservationStore.findByUserId(command.userId()).ifPresent(e -> {
+        reader.findByUserId(command.userId()).ifPresent(e -> {
             throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_ALREADY_EXISTS);
         });
 
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
 
-        var conflict = reservationStore.existsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED);
+        var criteria = ReservationFindOneCriteria.of(locator, range)
+                .withStatuses(ReservationStatus.RESERVED);
+        var conflict = reader.existsOne(criteria);
 
         if (conflict)
             throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_TIME_CONFLICT);
@@ -67,7 +72,7 @@ public class ReservationCommandService implements
     @Transactional
     @Override
     public ReservationResult update(UpdateReservationCommand command) {
-        Reservation reservation = reservationStore.findByUserId(command.userId()).orElseThrow();
+        Reservation reservation = reader.findByUserId(command.userId()).orElseThrow();
         var previousLocator = reservation.getLocator();
 
         lockSeats(
@@ -80,11 +85,9 @@ public class ReservationCommandService implements
         var currentLocator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var currentRange = SimpleTimeRange.from(command.startTime(), command.endTime());
 
-        var conflict = reservationStore.existsByLocatorAndRangeWithExcludeIds(
-                currentLocator,
-                currentRange,
-                List.of(reservation.getId())
-        );
+        var criteria = ReservationOverlapCriteria.of(currentLocator, currentRange)
+                .withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED);
+        var conflict = reader.existsOverlapping(criteria);
 
         if (conflict)
             throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_TIME_CONFLICT);
@@ -97,7 +100,7 @@ public class ReservationCommandService implements
     @Transactional
     @Override
     public ReservationResult cancel(CancelReservationCommand command) {
-        Reservation reservation = reservationStore.findByUserId(command.userId())
+        Reservation reservation = reader.findByUserId(command.userId())
                 .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_NOT_FOUND));
 
         var locator = reservation.getLocator();

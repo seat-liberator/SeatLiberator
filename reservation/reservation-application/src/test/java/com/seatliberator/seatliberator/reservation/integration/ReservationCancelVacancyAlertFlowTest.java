@@ -8,6 +8,7 @@ import com.seatliberator.seatliberator.reservation.book.application.port.in.Crea
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CancelReservationCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateSeatCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.book.application.service.SeatCommandService;
 import com.seatliberator.seatliberator.reservation.domain.*;
@@ -48,6 +49,9 @@ public class ReservationCancelVacancyAlertFlowTest extends ReservationDatabaseCl
 
     @Autowired
     ReservationStore reservationStore;
+
+    @Autowired
+    ReservationReader reservationReader;
 
     @Autowired
     RequestVacancyAlertUseCase requestVacancyAlertUseCase;
@@ -207,7 +211,7 @@ public class ReservationCancelVacancyAlertFlowTest extends ReservationDatabaseCl
     }
 
     private void assertReservationCreated(String userId, SeatLocator locator, TimeRange range) {
-        var reservation = reservationStore.findByUserId(userId).orElseThrow();
+        var reservation = reservationReader.findByUserId(userId).orElseThrow();
         assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.RESERVED);
         assertThat(reservation.getLocator().roomId()).isEqualTo(locator.roomId());
         assertThat(reservation.getLocator().seatId()).isEqualTo(locator.seatId());

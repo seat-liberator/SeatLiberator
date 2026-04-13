@@ -1,9 +1,8 @@
 package com.seatliberator.seatliberator.reservation.book.application.port.out;
 
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationCriteria;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationExclusion;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationTarget;
-import com.seatliberator.seatliberator.reservation.domain.TimeRange;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationRoomOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFindOneCriteria;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
 
 import java.util.List;
@@ -11,16 +10,17 @@ import java.util.Optional;
 
 public interface ReservationReader {
     Optional<Reservation> findById(Long id);
-
     Optional<Reservation> findByUserId(String userId);
 
-    Optional<Reservation> findOne(ReservationCriteria criteria);
+    boolean existsOne(ReservationFindOneCriteria criteria);
 
-    boolean existsOverlapping(ReservationTarget target);
+    Optional<Reservation> findOne(ReservationFindOneCriteria criteria);
 
-    boolean existsOverlapping(ReservationTarget target, ReservationExclusion exclusion);
+    boolean existsOverlapping(ReservationOverlapCriteria criteria);
 
-    List<Reservation> findAllOverlapping(TimeRange range);
+    boolean existsOverlapping(ReservationRoomOverlapCriteria criteria);
 
-    List<Reservation> findAllOverlappingInRoom(String roomId, TimeRange range);
+    List<Reservation> findAllOverlapping(ReservationOverlapCriteria criteria);
+
+    List<Reservation> findAllOverlapping(ReservationRoomOverlapCriteria criteria);
 }

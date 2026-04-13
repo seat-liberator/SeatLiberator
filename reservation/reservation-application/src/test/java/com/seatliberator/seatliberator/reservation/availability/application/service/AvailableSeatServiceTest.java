@@ -4,6 +4,7 @@ import com.seatliberator.seatliberator.reservation.availability.application.port
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.result.AvailableSeatResult;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatReader;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationRoomOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
@@ -62,7 +63,9 @@ public class AvailableSeatServiceTest {
                 range.endAt()
         );
 
-        when(reservationReader.findAllOverlappingInRoom(roomId, range))
+        var criteria = ReservationRoomOverlapCriteria.of(roomId, range)
+                .withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED);
+        when(reservationReader.findAllOverlapping(criteria))
                 .thenReturn(List.of(reservationA));
 
         var query = new FindAvailableSeatQuery(roomId, range);
@@ -73,7 +76,7 @@ public class AvailableSeatServiceTest {
                 .containsExactlyInAnyOrder("B", "C");
 
         verify(seatReader).findByRoomId(roomId);
-        verify(reservationReader).findAllOverlappingInRoom(roomId, range);
+        verify(reservationReader).findAllOverlapping(criteria);
     }
 
     @Test
@@ -96,7 +99,9 @@ public class AvailableSeatServiceTest {
         assertThat(result).isEmpty();
 
         verify(seatReader).findByRoomId(roomId);
-        verify(reservationReader, never()).findAllOverlappingInRoom(roomId, range);
+
+        var criteria = ReservationRoomOverlapCriteria.of(roomId, range);
+        verify(reservationReader, never()).findAllOverlapping(criteria);
     }
 
     @Test
@@ -110,8 +115,11 @@ public class AvailableSeatServiceTest {
 
         when(seatReader.findByRoomId(roomId))
                 .thenReturn(List.of(seatA));
-        when(reservationReader.findAllOverlappingInRoom(roomId, range))
-                .thenReturn(List.of(createReservation(seatALocator, range, ReservationStatus.CANCELED)));
+
+        var criteria = ReservationRoomOverlapCriteria.of(roomId, range)
+                .withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED);
+        when(reservationReader.findAllOverlapping(criteria))
+                .thenReturn(List.of());
 
         var query = new FindAvailableSeatQuery(roomId, range);
         var result = reader.findAvailabilitySeats(query);
@@ -132,8 +140,10 @@ public class AvailableSeatServiceTest {
 
         when(seatReader.findByRoomId(roomId))
                 .thenReturn(List.of(seatA));
-        when(reservationReader.findAllOverlappingInRoom(roomId, range))
-                .thenReturn(List.of(createReservation(seatALocator, range, ReservationStatus.EXPIRED)));
+        var criteria = ReservationRoomOverlapCriteria.of(roomId, range)
+                .withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED);
+        when(reservationReader.findAllOverlapping(criteria))
+                .thenReturn(List.of());
 
         var query = new FindAvailableSeatQuery(roomId, range);
         var result = reader.findAvailabilitySeats(query);
@@ -154,13 +164,26 @@ public class AvailableSeatServiceTest {
 
         when(seatReader.findByRoomId(roomId))
                 .thenReturn(List.of(seatA));
-        when(reservationReader.findAllOverlappingInRoom(roomId, range))
+        var criteria = ReservationRoomOverlapCriteria.of(roomId, range)
+                .withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED);
+        when(reservationReader.findAllOverlapping(criteria))
                 .thenReturn(List.of(createReservation(seatALocator, range, ReservationStatus.USED)));
 
         var query = new FindAvailableSeatQuery(roomId, range);
         var result = reader.findAvailabilitySeats(query);
 
         assertThat(result).isEmpty();
+    }
+
+    private Reservation createReservation(SimpleSeatLocator locator, SimpleTimeRange range) {
+        return Reservation.create(
+                "user-1",
+                locator.roomId(),
+                locator.seatId(),
+                range.startAt(),
+                range.endAt(),
+                ReservationStatus.RESERVED
+        );
     }
 
     private Reservation createReservation(SimpleSeatLocator locator, SimpleTimeRange range, ReservationStatus status) {

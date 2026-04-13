@@ -1,8 +1,9 @@
 package com.seatliberator.seatliberator.reservation.integration;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.UpdateReservationCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateSeatCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.UpdateReservationCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.book.application.service.ReservationCommandService;
 import com.seatliberator.seatliberator.reservation.book.application.service.SeatCommandService;
@@ -33,6 +34,8 @@ public class ReservationUpdateConcurrencyTest extends ReservationDatabaseCleanup
 
     @Autowired
     ReservationStore reservationStore;
+    @Autowired
+    ReservationReader reservationReader;
     @Autowired
     ReservationCommandService reservationCommandService;
     @Autowired
@@ -77,7 +80,7 @@ public class ReservationUpdateConcurrencyTest extends ReservationDatabaseCleanup
 
             reservationCommandService.create(command);
 
-            String reservation = reservationStore.findByUserId(userId).orElseThrow().getUserId();
+            String reservation = reservationReader.findByUserId(userId).orElseThrow().getUserId();
 
             reservationIds.add(reservation);
         }
