@@ -10,8 +10,8 @@ import com.seatliberator.seatliberator.reservation.book.application.port.in.resu
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationOverlapCriteria;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFindOneCriteria;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationSeatOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
@@ -49,9 +49,9 @@ public class ReservationCommandService implements
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
 
-        var criteria = ReservationFindOneCriteria.of(locator, range)
-                .withStatuses(ReservationStatus.RESERVED);
-        var conflict = reader.existsOne(criteria);
+        var criteria = ReservationSeatOverlapCriteria.of(locator, range)
+                .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
+        var conflict = reader.existsOverlapping(criteria);
 
         if (conflict)
             throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_TIME_CONFLICT);
@@ -85,8 +85,8 @@ public class ReservationCommandService implements
         var currentLocator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var currentRange = SimpleTimeRange.from(command.startTime(), command.endTime());
 
-        var criteria = ReservationOverlapCriteria.of(currentLocator, currentRange)
-                .withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED);
+        var criteria = ReservationSeatOverlapCriteria.of(currentLocator, currentRange)
+                .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED));
         var conflict = reader.existsOverlapping(criteria);
 
         if (conflict)

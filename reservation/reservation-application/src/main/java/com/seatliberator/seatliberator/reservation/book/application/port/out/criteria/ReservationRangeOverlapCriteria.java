@@ -5,26 +5,23 @@ import com.seatliberator.seatliberator.reservation.domain.TimeRange;
 
 import java.util.Objects;
 
-public record ReservationRoomOverlapCriteria(
-        String roomId,
+public record ReservationRangeOverlapCriteria(
         SimpleTimeRange range,
         ReservationFilter filter
 ) {
-    public ReservationRoomOverlapCriteria {
-        Objects.requireNonNull(roomId);
+    public ReservationRangeOverlapCriteria {
         Objects.requireNonNull(range);
         Objects.requireNonNull(filter);
     }
 
-    public static ReservationRoomOverlapCriteria of(String roomId, TimeRange range) {
-        return new ReservationRoomOverlapCriteria(
-                roomId,
+    public static ReservationRangeOverlapCriteria of(TimeRange range) {
+        return new ReservationRangeOverlapCriteria(
                 SimpleTimeRange.of(range),
                 ReservationFilter.empty()
         );
     }
 
-    public ReservationRoomOverlapCriteria withFilter(ReservationFilter filter) {
-        return new ReservationRoomOverlapCriteria(roomId, range, filter);
+    public ReservationRangeOverlapCriteria withFilter(ReservationFilter filter) {
+        return new ReservationRangeOverlapCriteria(range, filter);
     }
 }

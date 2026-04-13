@@ -2,9 +2,10 @@ package com.seatliberator.seatliberator.reservation.book.infrastructure.persiste
 
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationSeatLookupCriteria;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationSeatOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationRoomOverlapCriteria;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFindOneCriteria;
 import com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa.repository.ReservationRepository;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
 import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.CommonPredicates;
@@ -39,19 +40,19 @@ public class JpaReservationPersistenceAdapter implements ReservationStore, Reser
     }
 
     @Override
-    public boolean existsOne(ReservationFindOneCriteria criteria) {
+    public boolean existsOne(ReservationSeatLookupCriteria criteria) {
         var spec = createSpecificationFromFindOneCriteria(criteria);
         return repository.exists(spec);
     }
 
     @Override
-    public Optional<Reservation> findOne(ReservationFindOneCriteria criteria) {
+    public Optional<Reservation> findOne(ReservationSeatLookupCriteria criteria) {
         var spec = createSpecificationFromFindOneCriteria(criteria);
         return repository.findOne(spec);
     }
 
     @Override
-    public boolean existsOverlapping(ReservationOverlapCriteria criteria) {
+    public boolean existsOverlapping(ReservationSeatOverlapCriteria criteria) {
         var spec = createSpecificationFromOverlapCriteria(criteria);
         return repository.exists(spec);
     }
@@ -63,7 +64,7 @@ public class JpaReservationPersistenceAdapter implements ReservationStore, Reser
     }
 
     @Override
-    public List<Reservation> findAllOverlapping(ReservationOverlapCriteria criteria) {
+    public List<Reservation> findAllOverlapping(ReservationSeatOverlapCriteria criteria) {
         var spec = createSpecificationFromOverlapCriteria(criteria);
         return repository.findAll(spec);
     }
@@ -79,25 +80,28 @@ public class JpaReservationPersistenceAdapter implements ReservationStore, Reser
         repository.delete(reservation);
     }
 
-    private Specification<Reservation> createSpecificationFromOverlapCriteria(ReservationOverlapCriteria criteria) {
-
-        return Specification.<Reservation>unrestricted()
+    private Specification<Reservation> createSpecificationFromOverlapCriteria(ReservationSeatOverlapCriteria criteria) {
+        return createSpecificationFromFilter(criteria.filter())
                 .and(SeatLocatorPredicates.eq(criteria.locator(), SeatLocatorPredicates.defaultLocatorPathFunction()))
-                .and(TimeRangePredicates.overlap(criteria.range(), TimeRangePredicates.defaultRangePathFunction()))
-                .and(CommonPredicates.in(criteria.statuses(), from -> from.get("status")))
-                .and(CommonPredicates.excludeIn(criteria.excludedIds(), from -> from.get("id")));
+                .and(TimeRangePredicates.overlap(criteria.range(), TimeRangePredicates.defaultRangePathFunction()));
     }
 
-    private Specification<Reservation> createSpecificationFromFindOneCriteria(ReservationFindOneCriteria criteria) {
-        return Specification.<Reservation>unrestricted()
+    private Specification<Reservation> createSpecificationFromFindOneCriteria(ReservationSeatLookupCriteria criteria) {
+        return createSpecificationFromFilter(criteria.filter())
                 .and(SeatLocatorPredicates.eq(criteria.locator(), SeatLocatorPredicates.defaultLocatorPathFunction()))
-                .and(TimeRangePredicates.eq(criteria.range(), TimeRangePredicates.defaultRangePathFunction()))
-                .and(CommonPredicates.in(criteria.statuses(), from -> from.get("status")));
+                .and(TimeRangePredicates.eq(criteria.range(), TimeRangePredicates.defaultRangePathFunction()));
     }
 
     private Specification<Reservation> createSpecificationFromRoomOverlapCriteria(ReservationRoomOverlapCriteria criteria) {
-        return Specification.<Reservation>unrestricted()
+        return createSpecificationFromFilter(criteria.filter())
                 .and(TimeRangePredicates.overlap(criteria.range(), TimeRangePredicates.defaultRangePathFunction()))
                 .and(CommonPredicates.eq(criteria.roomId(), from -> from.get("locator").get("roomId")));
+    }
+
+    private Specification<Reservation> createSpecificationFromFilter(ReservationFilter filter) {
+        return Specification.<Reservation>unrestricted()
+                .and(CommonPredicates.excludeIn(filter.excludedIds(), from -> from.get("id")))
+                .and(CommonPredicates.in(filter.userIds(), from -> from.get("userId")))
+                .and(CommonPredicates.in(filter.statuses(), from -> from.get("status")));
     }
 }

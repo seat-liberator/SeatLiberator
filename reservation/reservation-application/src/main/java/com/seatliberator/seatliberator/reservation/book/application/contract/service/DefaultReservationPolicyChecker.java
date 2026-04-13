@@ -4,7 +4,8 @@ import com.seatliberator.seatliberator.reservation.book.application.contract.Res
 import com.seatliberator.seatliberator.reservation.book.application.contract.result.ReservationPolicyCheckResult;
 import com.seatliberator.seatliberator.reservation.book.application.contract.result.ReservationRejectReason;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFindOneCriteria;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationSeatLookupCriteria;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.TimeRange;
@@ -18,8 +19,8 @@ public class DefaultReservationPolicyChecker implements ReservationPolicyChecker
 
     @Override
     public ReservationPolicyCheckResult check(String userId, SeatLocator locator, TimeRange range) {
-        var criteria = ReservationFindOneCriteria.of(locator, range)
-                .withStatuses(ReservationStatus.RESERVED);
+        var criteria = ReservationSeatLookupCriteria.of(locator, range)
+                .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
         var exists = reader.existsOne(criteria);
 
         if (exists) return ReservationPolicyCheckResult.reject(ReservationRejectReason.SEAT_ALREADY_TAKEN);

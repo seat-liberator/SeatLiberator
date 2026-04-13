@@ -3,7 +3,8 @@ package com.seatliberator.seatliberator.reservation.book.application;
 import com.seatliberator.seatliberator.reservation.book.application.contract.query.IdBasedReservationLocator;
 import com.seatliberator.seatliberator.reservation.book.application.contract.query.SeatBasedReservationLocator;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFindOneCriteria;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationSeatLookupCriteria;
 import com.seatliberator.seatliberator.reservation.book.application.service.ReservationQueryService;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
@@ -80,8 +81,8 @@ public class ReservationQueryServiceTest {
         var locatorStartTime = range.startAt();
         var locatorEndTime = range.endAt();
 
-        var criteria = ReservationFindOneCriteria.of(locator, range)
-                .withStatuses(ReservationStatus.RESERVED);
+        var criteria = ReservationSeatLookupCriteria.of(locator, range)
+                .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
         when(reader.findOne(criteria))
                 .thenReturn(Optional.of(reservation));
 
@@ -109,8 +110,8 @@ public class ReservationQueryServiceTest {
         var locator = createLocator();
         var range = createRange();
 
-        var criteria = ReservationFindOneCriteria.of(locator, range)
-                .withStatuses(ReservationStatus.RESERVED);
+        var criteria = ReservationSeatLookupCriteria.of(locator, range)
+                .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
         when(reader.findOne(criteria))
                 .thenReturn(Optional.empty());
 

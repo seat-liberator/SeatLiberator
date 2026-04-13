@@ -3,7 +3,8 @@ package com.seatliberator.seatliberator.reservation.book.application;
 import com.seatliberator.seatliberator.reservation.book.application.contract.result.ReservationRejectReason;
 import com.seatliberator.seatliberator.reservation.book.application.contract.service.DefaultReservationPolicyChecker;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFindOneCriteria;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationSeatLookupCriteria;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,8 +35,8 @@ public class DefaultReservationPolicyCheckerTest {
         var locator = createLocator();
         var range = createRange();
 
-        var criteria = ReservationFindOneCriteria.of(locator, range)
-                        .withStatuses(ReservationStatus.RESERVED);
+        var criteria = ReservationSeatLookupCriteria.of(locator, range)
+                        .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
         when(reader.existsOne(criteria)).thenReturn(true);
 
         var result = checker.check(INITIAL_USER_ID, locator, range);
@@ -51,8 +52,8 @@ public class DefaultReservationPolicyCheckerTest {
         var locator = createLocator();
         var range = createRange();
 
-        var criteria = ReservationFindOneCriteria.of(locator, range)
-                .withStatuses(ReservationStatus.RESERVED);
+        var criteria = ReservationSeatLookupCriteria.of(locator, range)
+                .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
         when(reader.existsOne(criteria)).thenReturn(false);
 
         var result = checker.check(INITIAL_USER_ID, locator, range);
