@@ -1,7 +1,6 @@
 package com.seatliberator.seatliberator.reservation.availability.application.model;
 
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
 
 import java.util.List;
@@ -17,11 +16,11 @@ public class AvailableSeats {
 
     public static AvailableSeats from(List<Seat> seats, List<SeatLocator> reservedLocators) {
         var occupied = reservedLocators.stream()
-                .map(SimpleSeatLocator::of)
+                .map(SeatLocator::key)
                 .collect(Collectors.toSet());
 
         var available = seats.stream()
-                .filter(seat -> !occupied.contains(SimpleSeatLocator.of(seat.getLocator())))
+                .filter(seat -> !occupied.contains(seat.getLocator().key()))
                 .toList();
 
         return new AvailableSeats(available);
