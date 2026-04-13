@@ -1,8 +1,9 @@
 package com.seatliberator.seatliberator.reservation.book.application;
 
-import com.seatliberator.seatliberator.reservation.book.application.contract.ReservationExistenceChecker;
 import com.seatliberator.seatliberator.reservation.book.application.contract.result.ReservationRejectReason;
 import com.seatliberator.seatliberator.reservation.book.application.contract.service.DefaultReservationPolicyChecker;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFindOneCriteria;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.when;
 @DisplayName("Application: Default Reservation Policy Checker")
 public class DefaultReservationPolicyCheckerTest {
     @Mock
-    ReservationExistenceChecker existenceChecker;
+    ReservationReader reader;
 
     @InjectMocks
     DefaultReservationPolicyChecker checker;
@@ -33,13 +34,15 @@ public class DefaultReservationPolicyCheckerTest {
         var locator = createLocator();
         var range = createRange();
 
-        when(existenceChecker.isExistsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED)).thenReturn(true);
+        var criteria = ReservationFindOneCriteria.of(locator, range)
+                        .withStatuses(ReservationStatus.RESERVED);
+        when(reader.existsOne(criteria)).thenReturn(true);
 
         var result = checker.check(INITIAL_USER_ID, locator, range);
 
         assertFalse(result.reservable());
         assertEquals(ReservationRejectReason.SEAT_ALREADY_TAKEN, result.rejectReason());
-        verify(existenceChecker).isExistsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED);
+        verify(reader).existsOne(criteria);
     }
 
     @Test
@@ -48,12 +51,14 @@ public class DefaultReservationPolicyCheckerTest {
         var locator = createLocator();
         var range = createRange();
 
-        when(existenceChecker.isExistsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED)).thenReturn(false);
+        var criteria = ReservationFindOneCriteria.of(locator, range)
+                .withStatuses(ReservationStatus.RESERVED);
+        when(reader.existsOne(criteria)).thenReturn(false);
 
         var result = checker.check(INITIAL_USER_ID, locator, range);
 
         assertTrue(result.reservable());
         assertNull(result.rejectReason());
-        verify(existenceChecker).isExistsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED);
+        verify(reader).existsOne(criteria);
     }
 }

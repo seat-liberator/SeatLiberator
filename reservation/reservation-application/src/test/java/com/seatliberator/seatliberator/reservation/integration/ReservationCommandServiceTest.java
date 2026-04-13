@@ -2,6 +2,7 @@ package com.seatliberator.seatliberator.reservation.integration;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateSeatCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
@@ -35,6 +36,8 @@ public class ReservationCommandServiceTest extends ReservationDatabaseCleanupSup
     SeatReader seatReader;
     @Autowired
     ReservationStore reservationStore;
+    @Autowired
+    ReservationReader reservationReader;
 
 
     @Test
@@ -91,7 +94,7 @@ public class ReservationCommandServiceTest extends ReservationDatabaseCleanupSup
         // Then
         var result = reservationCommandService.create(reservationCreateCommand);
 
-        Optional<Reservation> optStoredReservation = reservationStore.findByUserId(
+        Optional<Reservation> optStoredReservation = reservationReader.findByUserId(
                 givenUserId
         );
 

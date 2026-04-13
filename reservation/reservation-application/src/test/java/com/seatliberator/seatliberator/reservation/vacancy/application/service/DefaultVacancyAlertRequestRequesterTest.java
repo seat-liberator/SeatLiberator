@@ -1,6 +1,7 @@
 package com.seatliberator.seatliberator.reservation.vacancy.application.service;
 
-import com.seatliberator.seatliberator.reservation.book.application.contract.ReservationExistenceChecker;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
@@ -36,13 +37,13 @@ public class DefaultVacancyAlertRequestRequesterTest {
     VacancyAlertRequestStore store;
 
     @Mock
-    ReservationExistenceChecker checker;
+    ReservationReader reader;
 
     VacancyAlertService requester;
 
     @BeforeEach
     void setup() {
-        requester = new VacancyAlertService(checker, store, fixedClock);
+        requester = new VacancyAlertService(store, reader, fixedClock);
     }
 
     @Test
@@ -53,7 +54,9 @@ public class DefaultVacancyAlertRequestRequesterTest {
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
 
-        when(checker.isExistsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED)).thenReturn(false);
+        var criteria = ReservationOverlapCriteria.of(locator, range)
+                        .withStatuses(ReservationStatus.RESERVED);
+        when(reader.existsOverlapping(criteria)).thenReturn(false);
 
         assertThatThrownBy(() -> requester.request(command))
                 .isInstanceOf(ReservationApplicationException.class)
@@ -68,7 +71,9 @@ public class DefaultVacancyAlertRequestRequesterTest {
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
 
-        when(checker.isExistsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED)).thenReturn(true);
+        var criteria = ReservationOverlapCriteria.of(locator, range)
+                .withStatuses(ReservationStatus.RESERVED);
+        when(reader.existsOverlapping(criteria)).thenReturn(true);
 
         whenCheckAlertRequestExists(command, true);
 
@@ -85,7 +90,9 @@ public class DefaultVacancyAlertRequestRequesterTest {
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
 
-        when(checker.isExistsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED)).thenReturn(true);
+        var criteria = ReservationOverlapCriteria.of(locator, range)
+                .withStatuses(ReservationStatus.RESERVED);
+        when(reader.existsOverlapping(criteria)).thenReturn(true);
 
         whenCheckAlertRequestExists(command, false);
 

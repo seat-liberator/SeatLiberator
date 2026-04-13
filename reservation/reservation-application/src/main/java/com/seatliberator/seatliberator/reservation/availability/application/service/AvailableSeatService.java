@@ -6,6 +6,8 @@ import com.seatliberator.seatliberator.reservation.availability.application.port
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.result.AvailableSeatResult;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatReader;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationRoomOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +29,9 @@ public class AvailableSeatService implements FindAvailableSeatUseCase {
 
         if (seats.isEmpty()) return List.of();
 
-        var reservedLocators = reservationReader.findAllOverlappingInRoom(roomId, range).stream()
-                .filter(r -> r.isReserved() || r.isUsed())
+        var criteria = ReservationRoomOverlapCriteria.of(roomId, range)
+                .withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED);
+        var reservedLocators = reservationReader.findAllOverlapping(criteria).stream()
                 .<SeatLocator>map(Reservation::getLocator)
                 .toList();
 

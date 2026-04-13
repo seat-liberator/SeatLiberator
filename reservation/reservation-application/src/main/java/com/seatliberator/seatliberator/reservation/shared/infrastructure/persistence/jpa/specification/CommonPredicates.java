@@ -18,6 +18,16 @@ public class CommonPredicates {
         };
     }
 
+    public static <T, V> PredicateSpecification<T> in(
+            Collection<V> values,
+            Function<From<?, T>, Path<V>> pathFunction
+    ) {
+        return (from, cb) -> {
+            if (values == null || values.isEmpty()) return cb.conjunction();
+            return pathFunction.apply(from).in(values);
+        };
+    }
+
     public static <T, V> PredicateSpecification<T> eq(V value, Function<From<?, T>, Path<V>> pathFunction) {
         return (from, cb) -> {
             var path = pathFunction.apply(from);

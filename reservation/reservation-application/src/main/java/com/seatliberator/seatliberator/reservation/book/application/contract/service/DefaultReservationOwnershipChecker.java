@@ -1,14 +1,14 @@
 package com.seatliberator.seatliberator.reservation.book.application.contract.service;
 
 import com.seatliberator.seatliberator.reservation.book.application.contract.ReservationOwnershipChecker;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class DefaultReservationOwnershipChecker implements ReservationOwnershipChecker {
-    private final ReservationStore reservationStore;
+    private final ReservationReader reader;
 
     @Override
     public boolean hasOwnership(Long reservationId, String userId) {
@@ -17,7 +17,7 @@ public class DefaultReservationOwnershipChecker implements ReservationOwnershipC
         // 코드 상 명시적으로 예약 Id가 reservationId인 예약에 대해서,
         // 예약자 Id가 userId와 동일하다는 것을 보장하도록 작성함
 
-        var optReservation = reservationStore.findById(reservationId);
+        var optReservation = reader.findById(reservationId);
 
         if (optReservation.isEmpty()) return false;
 
