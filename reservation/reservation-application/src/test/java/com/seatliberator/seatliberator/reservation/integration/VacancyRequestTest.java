@@ -125,7 +125,7 @@ public class VacancyRequestTest {
         assertThat(r2.getUserId()).isEqualTo(userId);
         assertThat(r2.getLocator().roomId()).isEqualTo(locator.roomId());
         assertThat(r2.getLocator().seatId()).isEqualTo(locator.seatId());
-        assertThat(r1.getState().getStatus()).isEqualTo(VacancyAlertRequestStatus.ACTIVE);
+        assertThat(r2.getState().getStatus()).isEqualTo(VacancyAlertRequestStatus.ACTIVE);
     }
 
     @Test

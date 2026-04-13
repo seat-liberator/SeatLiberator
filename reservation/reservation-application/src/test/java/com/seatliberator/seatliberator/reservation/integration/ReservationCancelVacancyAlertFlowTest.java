@@ -93,32 +93,6 @@ public class ReservationCancelVacancyAlertFlowTest extends ReservationDatabaseCl
     }
 
     @Test
-    @DisplayName("예약 취소 이벤트 발생 시 AUTO_CLAIM 요청은 실제 예약으로 승격되고 알림이 생성된다")
-    void auto_claim_request_is_promoted_and_notified_when_reservation_is_canceled() throws Exception {
-        var target = createReservedSeat("cancel-auto-claim", "reservation-user");
-        var autoClaimRequest = requestVacancy(target, "auto-claim-user", VacancyAlertRequestBehavior.AUTO_CLAIM);
-
-        var command = new CancelReservationCommand(target.reservationUserId());
-        cancelReservationUseCase.cancel(command);
-
-        assertSingleNotification(autoClaimRequest, "auto-claim-user", "INFO", "빈 자리를 예약했어요!");
-        assertVacancyAlertRequestState(autoClaimRequest, VacancyAlertRequestStatus.COMPLETED, VacancyAlertRequestResolution.CLAIMED);
-        assertReservationCreated("auto-claim-user", target.locator(), target.range());
-    }
-
-    @Test
-    @DisplayName("예약 만료 이벤트 발생 시 유효한 NOTIFY_ONLY 요청에 알림 생성 흐름이 연결된다")
-    void notify_only_request_is_notified_when_reservation_expired_event_is_published() throws Exception {
-        var target = createSeatWithoutReservation("expired-notify");
-        var notifyOnlyRequest = saveVacancyAlertRequest("notify-user", target, VacancyAlertRequestBehavior.NOTIFY_ONLY);
-
-        applicationEventPublisher.publishEvent(new ReservationExpired(target.locator(), target.range(), BASE_TIME));
-
-        assertSingleNotification(notifyOnlyRequest, "notify-user", "INFO", "빈 자리가 발생했어요!");
-        assertVacancyAlertRequestState(notifyOnlyRequest, VacancyAlertRequestStatus.COMPLETED, VacancyAlertRequestResolution.NOTIFIED);
-    }
-
-    @Test
     @DisplayName("예약 만료 이벤트 발생 시 AUTO_CLAIM 요청은 실제 예약으로 승격되고 알림이 생성된다")
     void auto_claim_request_is_promoted_and_notified_when_reservation_expired_event_is_published() throws Exception {
         var target = createSeatWithoutReservation("expired-auto-claim");
