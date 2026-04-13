@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.vacancy.application.service;
 
-import com.seatliberator.seatliberator.reservation.book.application.port.in.ReservationExistenceChecker;
+import com.seatliberator.seatliberator.reservation.book.application.contract.ReservationExistenceChecker;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
@@ -38,11 +38,11 @@ public class DefaultVacancyAlertRequestRequesterTest {
     @Mock
     ReservationExistenceChecker checker;
 
-    DefaultVacancyAlertRequester requester;
+    VacancyAlertService requester;
 
     @BeforeEach
     void setup() {
-        requester = new DefaultVacancyAlertRequester(checker, store, fixedClock);
+        requester = new VacancyAlertService(checker, store, fixedClock);
     }
 
     @Test

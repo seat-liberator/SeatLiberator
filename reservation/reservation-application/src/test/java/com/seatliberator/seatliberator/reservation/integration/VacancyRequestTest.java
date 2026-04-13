@@ -1,13 +1,13 @@
 package com.seatliberator.seatliberator.reservation.integration;
 
 import com.seatliberator.seatliberator.reservation.VacancyAlertRequestCreateCommandBuilder;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.ReservationManager;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationCreateCommand;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.SeatCreateCommand;
-import com.seatliberator.seatliberator.reservation.book.application.service.SeatService;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.CreateReservationUseCase;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateSeatCommand;
+import com.seatliberator.seatliberator.reservation.book.application.service.SeatCommandService;
 import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequestStatus;
 import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.VacancyAlertRequester;
+import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.RequestVacancyAlertUseCase;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,13 +32,13 @@ public class VacancyRequestTest {
     private static final Instant BASE_TIME = Instant.parse("2026-01-01T00:00:00Z");
 
     @Autowired
-    VacancyAlertRequester requester;
+    RequestVacancyAlertUseCase requester;
 
     @Autowired
-    ReservationManager reservationManager;
+    CreateReservationUseCase createReservationUseCase;
 
     @Autowired
-    SeatService seatService;
+    SeatCommandService seatService;
 
     @Autowired
     VacancyAlertRequestStore store;
@@ -48,8 +48,8 @@ public class VacancyRequestTest {
         var locator = createLocator();
         var range = createRange();
 
-        seatService.create(new SeatCreateCommand(locator.roomId(), locator.seatId()));
-        reservationManager.create(new ReservationCreateCommand(INITIAL_USER_ID, locator.roomId(), locator.seatId(), range.startAt(), range.endAt()));
+        seatService.create(new CreateSeatCommand(locator.roomId(), locator.seatId()));
+        createReservationUseCase.create(new CreateReservationCommand(INITIAL_USER_ID, locator.roomId(), locator.seatId(), range.startAt(), range.endAt()));
     }
 
     @Test

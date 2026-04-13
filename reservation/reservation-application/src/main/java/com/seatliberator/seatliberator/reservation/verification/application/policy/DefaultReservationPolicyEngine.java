@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.verification.application.policy;
 
-import com.seatliberator.seatliberator.reservation.book.application.port.in.ReservationOwnershipChecker;
+import com.seatliberator.seatliberator.reservation.book.application.contract.ReservationOwnershipChecker;
 import com.seatliberator.seatliberator.reservation.verification.application.port.in.command.ActorRequester;
 import com.seatliberator.seatliberator.reservation.verification.application.port.in.command.Requester;
 import com.seatliberator.seatliberator.reservation.verification.application.port.in.command.RequesterType;

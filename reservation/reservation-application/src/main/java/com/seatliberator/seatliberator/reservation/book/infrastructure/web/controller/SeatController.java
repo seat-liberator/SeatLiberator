@@ -1,9 +1,12 @@
 package com.seatliberator.seatliberator.reservation.book.infrastructure.web.controller;
 
 
-import com.seatliberator.seatliberator.reservation.book.application.port.in.SeatManager;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.SeatCreateCommand;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.SeatUpdateCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.CreateSeatUseCase;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.DeleteSeatUseCase;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.UpdateSeatUseCase;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateSeatCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.DeleteSeatCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.UpdateSeatCommand;
 import com.seatliberator.seatliberator.reservation.book.infrastructure.web.request.SeatCreateRequest;
 import com.seatliberator.seatliberator.reservation.book.infrastructure.web.request.SeatUpdateRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,14 +21,16 @@ import java.util.Map;
 @RequestMapping("/seat")
 public class SeatController {
 
-    private final SeatManager seatManager;
+    private final CreateSeatUseCase createSeatUseCase;
+    private final UpdateSeatUseCase updateSeatUseCase;
+    private final DeleteSeatUseCase deleteSeatUseCase;
 
     @PostMapping
     public Map<String, Boolean> create(
             @RequestBody SeatCreateRequest request
     ) {
-        boolean result = seatManager.create(
-                new SeatCreateCommand(
+        boolean result = createSeatUseCase.create(
+                new CreateSeatCommand(
                         request.roomId(),
                         request.seatId()
                 )
@@ -38,8 +43,8 @@ public class SeatController {
     public Map<String, Boolean> update(
             @RequestBody SeatUpdateRequest request
     ) {
-        boolean result = seatManager.update(
-                new SeatUpdateCommand(
+        boolean result = updateSeatUseCase.update(
+                new UpdateSeatCommand(
                         request.oldRoomId(),
                         request.oldSeatId(),
                         request.newRoomId(),
@@ -55,7 +60,8 @@ public class SeatController {
             @PathVariable String roomId,
             @PathVariable String seatId
     ) {
-        boolean result = seatManager.delete(roomId, seatId);
+        var command = new DeleteSeatCommand(roomId, seatId);
+        boolean result = deleteSeatUseCase.delete(command);
         return Map.of("success", result);
     }
 }

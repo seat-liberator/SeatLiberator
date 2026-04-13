@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.book.application;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
-import com.seatliberator.seatliberator.reservation.book.application.service.DefaultReservationExistenceChecker;
+import com.seatliberator.seatliberator.reservation.book.application.contract.service.DefaultReservationExistenceChecker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

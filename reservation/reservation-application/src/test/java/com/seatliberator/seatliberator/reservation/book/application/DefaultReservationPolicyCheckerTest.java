@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.book.application;
 
-import com.seatliberator.seatliberator.reservation.book.application.port.in.ReservationExistenceChecker;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.entry.ReservationRejectReason;
-import com.seatliberator.seatliberator.reservation.book.application.service.DefaultReservationPolicyChecker;
+import com.seatliberator.seatliberator.reservation.book.application.contract.ReservationExistenceChecker;
+import com.seatliberator.seatliberator.reservation.book.application.contract.result.ReservationRejectReason;
+import com.seatliberator.seatliberator.reservation.book.application.contract.service.DefaultReservationPolicyChecker;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

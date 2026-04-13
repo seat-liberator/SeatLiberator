@@ -1,0 +1,134 @@
+package com.seatliberator.seatliberator.reservation.book.application.service;
+
+import com.seatliberator.seatliberator.reservation.book.application.port.in.CancelReservationUseCase;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.CreateReservationUseCase;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.UpdateReservationUseCase;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CancelReservationCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.UpdateReservationCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.result.ReservationResult;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
+import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Clock;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class ReservationCommandService implements
+        CreateReservationUseCase,
+        UpdateReservationUseCase,
+        CancelReservationUseCase {
+    private final ReservationStore reservationStore;
+    private final SeatStore seatStore;
+
+    private final Clock clock;
+
+    @Override
+    public ReservationResult create(CreateReservationCommand command) {
+        seatStore.findForUpdate(command.roomId(), command.seatId())
+                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND));
+
+        reservationStore.findByUserId(command.userId()).ifPresent(e -> {
+            throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_ALREADY_EXISTS);
+        });
+
+        var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
+        var range = SimpleTimeRange.from(command.startTime(), command.endTime());
+
+        var conflict = reservationStore.existsByLocatorAndRangeAndStatus(locator, range, ReservationStatus.RESERVED);
+
+        if (conflict)
+            throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_TIME_CONFLICT);
+
+        var reservation = Reservation.create(
+                command.userId(),
+                command.roomId(),
+                command.seatId(),
+                command.startTime(),
+                command.endTime()
+        );
+
+        var saved = reservationStore.save(reservation);
+
+        return ReservationResult.of(saved);
+    }
+
+    @Transactional
+    @Override
+    public ReservationResult update(UpdateReservationCommand command) {
+        Reservation reservation = reservationStore.findByUserId(command.userId()).orElseThrow();
+        var previousLocator = reservation.getLocator();
+
+        lockSeats(
+                previousLocator.roomId(),
+                previousLocator.seatId(),
+                command.roomId(),
+                command.seatId()
+        );
+
+        var currentLocator = SimpleSeatLocator.from(command.roomId(), command.seatId());
+        var currentRange = SimpleTimeRange.from(command.startTime(), command.endTime());
+
+        var conflict = reservationStore.existsByLocatorAndRangeWithExcludeIds(
+                currentLocator,
+                currentRange,
+                List.of(reservation.getId())
+        );
+
+        if (conflict)
+            throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_TIME_CONFLICT);
+
+        reservation.update(command.userId(), command.roomId(), command.seatId(), command.startTime(), command.endTime());
+
+        return ReservationResult.of(reservation);
+    }
+
+    @Transactional
+    @Override
+    public ReservationResult cancel(CancelReservationCommand command) {
+        Reservation reservation = reservationStore.findByUserId(command.userId())
+                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_NOT_FOUND));
+
+        var locator = reservation.getLocator();
+        seatStore.findForUpdate(
+                locator.roomId(),
+                locator.seatId()
+        ).ifPresent(seat -> {
+        });
+
+        var now = clock.instant();
+        reservation.cancel(now);
+
+        var saved = reservationStore.save(reservation);
+
+        return ReservationResult.of(saved);
+    }
+
+    private void lockSeats(String roomId1, String seatId1, String roomId2, String seatId2) {
+
+        if (roomId1.equals(roomId2) && seatId1.equals(seatId2)) {
+            seatStore.findForUpdate(roomId1, seatId1).orElseThrow();
+        }
+
+        int roomCompare = roomId1.compareTo(roomId2);
+
+        if (roomCompare < 0 || (roomCompare == 0 && seatId1.compareTo(seatId2) < 0)) {
+            seatStore.findForUpdate(roomId1, seatId1).orElseThrow();
+            seatStore.findForUpdate(roomId2, seatId2).orElseThrow();
+        } else {
+            seatStore.findForUpdate(roomId2, seatId2).orElseThrow();
+            seatStore.findForUpdate(roomId1, seatId1).orElseThrow();
+        }
+    }
+}

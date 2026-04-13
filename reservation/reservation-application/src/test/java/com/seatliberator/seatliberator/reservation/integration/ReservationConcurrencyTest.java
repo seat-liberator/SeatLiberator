@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.reservation.integration;
 
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.ReservationCreateCommand;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.SeatCreateCommand;
-import com.seatliberator.seatliberator.reservation.book.application.service.ReservationService;
-import com.seatliberator.seatliberator.reservation.book.application.service.SeatService;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateSeatCommand;
+import com.seatliberator.seatliberator.reservation.book.application.service.ReservationCommandService;
+import com.seatliberator.seatliberator.reservation.book.application.service.SeatCommandService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -28,9 +28,9 @@ public class ReservationConcurrencyTest extends ReservationDatabaseCleanupSuppor
     private static final Logger log = LoggerFactory.getLogger(ReservationConcurrencyTest.class);
 
     @Autowired
-    ReservationService reservationService;
+    ReservationCommandService reservationCommandService;
     @Autowired
-    SeatService seatService;
+    SeatCommandService seatService;
     int threadCount;
 
     @BeforeEach
@@ -48,7 +48,7 @@ public class ReservationConcurrencyTest extends ReservationDatabaseCleanupSuppor
         var startTime = Instant.parse("2025-06-01T01:00:00Z");
         var endTime = Instant.parse("2025-06-01T02:00:00Z");
 
-        var seatCreateCommand = new SeatCreateCommand(
+        var seatCreateCommand = new CreateSeatCommand(
                 givenRoomId,
                 givenSeatId
         );
@@ -76,7 +76,7 @@ public class ReservationConcurrencyTest extends ReservationDatabaseCleanupSuppor
                         start.await();
                         var userId = "user-" + threadId;
 
-                        var reservationCommand = new ReservationCreateCommand(
+                        var reservationCommand = new CreateReservationCommand(
                                 userId,
                                 givenRoomId,
                                 givenSeatId,
@@ -84,7 +84,7 @@ public class ReservationConcurrencyTest extends ReservationDatabaseCleanupSuppor
                                 endTime
                         );
 
-                        reservationService.create(reservationCommand);
+                        reservationCommandService.create(reservationCommand);
                         log.debug("Thread {} report run command successfully.", threadId);
                         success.incrementAndGet();
                     } catch (Exception e) {
