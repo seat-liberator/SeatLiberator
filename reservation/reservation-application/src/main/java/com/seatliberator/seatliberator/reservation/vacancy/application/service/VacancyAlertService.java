@@ -1,7 +1,8 @@
 package com.seatliberator.seatliberator.reservation.vacancy.application.service;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationSeatOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
@@ -32,8 +33,8 @@ public class VacancyAlertService implements RequestVacancyAlertUseCase {
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
 
-        var criteria = ReservationOverlapCriteria.of(locator, range)
-                .withStatuses(ReservationStatus.RESERVED);
+        var criteria = ReservationSeatOverlapCriteria.of(locator, range)
+                .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
         var reservationExists = reader.existsOverlapping(criteria);
         if (!reservationExists) {
             throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_NOT_FOUND);

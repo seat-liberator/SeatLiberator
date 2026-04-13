@@ -4,6 +4,7 @@ import com.seatliberator.seatliberator.reservation.availability.application.port
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.result.AvailableSeatResult;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatReader;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFilter;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationRoomOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
@@ -64,7 +65,7 @@ public class AvailableSeatServiceTest {
         );
 
         var criteria = ReservationRoomOverlapCriteria.of(roomId, range)
-                .withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED);
+                .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED));
         when(reservationReader.findAllOverlapping(criteria))
                 .thenReturn(List.of(reservationA));
 
@@ -117,7 +118,7 @@ public class AvailableSeatServiceTest {
                 .thenReturn(List.of(seatA));
 
         var criteria = ReservationRoomOverlapCriteria.of(roomId, range)
-                .withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED);
+                .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED));
         when(reservationReader.findAllOverlapping(criteria))
                 .thenReturn(List.of());
 
@@ -141,7 +142,7 @@ public class AvailableSeatServiceTest {
         when(seatReader.findByRoomId(roomId))
                 .thenReturn(List.of(seatA));
         var criteria = ReservationRoomOverlapCriteria.of(roomId, range)
-                .withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED);
+                .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED));
         when(reservationReader.findAllOverlapping(criteria))
                 .thenReturn(List.of());
 
@@ -165,7 +166,7 @@ public class AvailableSeatServiceTest {
         when(seatReader.findByRoomId(roomId))
                 .thenReturn(List.of(seatA));
         var criteria = ReservationRoomOverlapCriteria.of(roomId, range)
-                .withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED);
+                .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED));
         when(reservationReader.findAllOverlapping(criteria))
                 .thenReturn(List.of(createReservation(seatALocator, range, ReservationStatus.USED)));
 
