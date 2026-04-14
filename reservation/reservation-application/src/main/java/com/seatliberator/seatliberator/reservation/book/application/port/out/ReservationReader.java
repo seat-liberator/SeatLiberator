@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.book.application.port.out;
 
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationRangeOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationSeatLookupCriteria;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationSeatOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationRoomOverlapCriteria;
@@ -21,6 +22,8 @@ public interface ReservationReader {
     boolean existsOverlapping(ReservationRoomOverlapCriteria criteria);
 
     List<Reservation> findAllOverlapping(ReservationSeatOverlapCriteria criteria);
+
+    List<Reservation> findAllOverlapping(ReservationRangeOverlapCriteria criteria);
 
     List<Reservation> findAllOverlapping(ReservationRoomOverlapCriteria criteria);
 }
