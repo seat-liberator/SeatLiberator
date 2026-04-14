@@ -69,5 +69,4 @@ public class ReservationController {
         var result = cancelReservationUseCase.cancel(command);
         return ResponseEntity.ok(result);
     }
-
 }
