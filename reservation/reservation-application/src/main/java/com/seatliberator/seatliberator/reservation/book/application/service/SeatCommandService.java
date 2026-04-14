@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.util.List;
 
 @Service
@@ -30,6 +31,8 @@ public class SeatCommandService implements
     private final SeatStore store;
     private final SeatReader query;
 
+    private final Clock clock;
+
     @Override
     public boolean create(CreateSeatCommand command) {
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
@@ -39,7 +42,8 @@ public class SeatCommandService implements
 
         Seat seat = Seat.create(
                 command.roomId(),
-                command.seatId()
+                command.seatId(),
+                clock.instant()
         );
 
         store.save(seat);

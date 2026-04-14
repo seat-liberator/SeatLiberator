@@ -2,6 +2,7 @@ package com.seatliberator.seatliberator.reservation.shared.application.seed;
 
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class DevFixture {
         List<Seat> result = new ArrayList<>();
         for (var room : rooms) {
             for (var seat : seats) {
-                result.add(Seat.create(room, seat));
+                result.add(Seat.create(room, seat, Instant.now()));
             }
         }
         return result;
