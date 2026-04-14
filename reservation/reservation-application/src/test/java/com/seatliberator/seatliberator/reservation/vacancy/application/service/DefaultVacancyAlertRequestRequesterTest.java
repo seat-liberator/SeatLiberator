@@ -114,8 +114,8 @@ public class DefaultVacancyAlertRequestRequesterTest {
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
 
-        var criteria = ReservationOverlapCriteria.of(locator, range)
-                .withStatuses(ReservationStatus.RESERVED);
+        var criteria = ReservationSeatOverlapCriteria.of(locator, range)
+                .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
         when(reader.existsOverlapping(criteria)).thenReturn(true);
         whenCheckAlertRequestExists(command, false);
         when(store.save(any(VacancyAlertRequest.class)))
