@@ -11,6 +11,7 @@ import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.util.List;
 
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
@@ -36,6 +38,13 @@ public class AvailableSeatServiceTest {
     @InjectMocks
     AvailableSeatService reader;
 
+    Instant now;
+
+    @BeforeEach
+    void run() {
+        now = fixedClock.instant();
+    }
+
     @Test
     @DisplayName("특정 시간 및 방에서 예약할 수 있는 좌석을 반환한다")
     void return_available_seats() {
@@ -49,9 +58,9 @@ public class AvailableSeatServiceTest {
         var seatBLocator = SimpleSeatLocator.from(roomId, "B");
         var seatCLocator = SimpleSeatLocator.from(roomId, "C");
 
-        var seatA = Seat.create(seatALocator);
-        var seatB = Seat.create(seatBLocator);
-        var seatC = Seat.create(seatCLocator);
+        var seatA = Seat.create(seatALocator, now);
+        var seatB = Seat.create(seatBLocator, now);
+        var seatC = Seat.create(seatCLocator, now);
 
         when(seatReader.findByRoomId(roomId))
                 .thenReturn(List.of(seatA, seatB, seatC));
@@ -112,7 +121,7 @@ public class AvailableSeatServiceTest {
         var roomId = "room-1";
         var range = SimpleTimeRange.from(now, now.plusSeconds(60));
         var seatALocator = SimpleSeatLocator.from(roomId, "A");
-        var seatA = Seat.create(seatALocator);
+        var seatA = Seat.create(seatALocator, now);
 
         when(seatReader.findByRoomId(roomId))
                 .thenReturn(List.of(seatA));
@@ -137,7 +146,7 @@ public class AvailableSeatServiceTest {
         var roomId = "room-1";
         var range = SimpleTimeRange.from(now, now.plusSeconds(60));
         var seatALocator = SimpleSeatLocator.from(roomId, "A");
-        var seatA = Seat.create(seatALocator);
+        var seatA = Seat.create(seatALocator, now);
 
         when(seatReader.findByRoomId(roomId))
                 .thenReturn(List.of(seatA));
@@ -161,7 +170,7 @@ public class AvailableSeatServiceTest {
         var roomId = "room-1";
         var range = SimpleTimeRange.from(now, now.plusSeconds(60));
         var seatALocator = SimpleSeatLocator.from(roomId, "A");
-        var seatA = Seat.create(seatALocator);
+        var seatA = Seat.create(seatALocator, now);
 
         when(seatReader.findByRoomId(roomId))
                 .thenReturn(List.of(seatA));
