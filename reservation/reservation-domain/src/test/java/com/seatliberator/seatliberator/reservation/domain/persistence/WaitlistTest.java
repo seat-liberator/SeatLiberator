@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Test;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
-import static com.seatliberator.seatliberator.reservation.domain.fixture.VacancyAlertRequestFixture.INITIAL_USER_ID;
-import static com.seatliberator.seatliberator.reservation.domain.fixture.VacancyAlertRequestFixture.createRequest;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.WaitlistFixture.INITIAL_USER_ID;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.WaitlistFixture.createWaitlist;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DisplayName("Domain: Vacancy Alert Request")
+@DisplayName("Domain: Waitlist")
 public class WaitlistTest {
     @Nested
     @DisplayName("Constructor")
@@ -84,7 +84,7 @@ public class WaitlistTest {
         void throw_exception_when_transitioning_non_active_request() {
 
             // given
-            Waitlist request = createRequest();
+            Waitlist request = createWaitlist();
             var now = fixedClock.instant();
             request.cancel(now);
 
@@ -99,7 +99,7 @@ public class WaitlistTest {
             @Test
             @DisplayName("requestedAt 이후 취소 처리 가능")
             void can_cancel_after_requested_at() {
-                var r = createRequest();
+                var r = createWaitlist();
                 var now = r.getState().getRequestedAt();
 
                 r.cancel(now);
@@ -115,7 +115,7 @@ public class WaitlistTest {
             @Test
             @DisplayName("requestedAt 보다 이른 시각에 취소 처리하면 예외 발생")
             void throw_exception_when_cancelled_at_is_before_than_requested_at() {
-                var r = createRequest();
+                var r = createWaitlist();
                 var now = r.getState().getRequestedAt().minusSeconds(1);
 
                 assertThatThrownBy(() -> r.cancel(now))
@@ -130,7 +130,7 @@ public class WaitlistTest {
             @Test
             @DisplayName("requestedAt 이후 만료 처리 가능")
             void can_expire_after_requested_at() {
-                var r = createRequest();
+                var r = createWaitlist();
                 var now = r.getState().getRequestedAt();
 
                 r.expire(now);
@@ -146,7 +146,7 @@ public class WaitlistTest {
             @Test
             @DisplayName("requestedAt 보다 이른 시각에 만료 처리하면 예외 발생")
             void throw_exception_when_cancelled_at_is_before_than_requested_at() {
-                var r = createRequest();
+                var r = createWaitlist();
                 var now = r.getState().getRequestedAt().minusSeconds(1);
 
                 assertThatThrownBy(() -> r.expire(now))
@@ -161,7 +161,7 @@ public class WaitlistTest {
             @Test
             @DisplayName("requestAt 이후 실패 처리 가능")
             void can_fail_after_requested_at() {
-                var r = createRequest();
+                var r = createWaitlist();
                 var now = r.getState().getRequestedAt();
 
                 r.fail(now);
@@ -177,7 +177,7 @@ public class WaitlistTest {
             @Test
             @DisplayName("requestedAt 보다 이른 시각에 실패 처리하면 예외 발생")
             void throw_exception_when_failed_at_is_before_than_requested_at() {
-                var r = createRequest();
+                var r = createWaitlist();
                 var now = r.getState().getRequestedAt().minusSeconds(1);
 
                 assertThatThrownBy(() -> r.fail(now))
@@ -192,7 +192,7 @@ public class WaitlistTest {
             @Test
             @DisplayName("requestedAt 이후 완료 처리 가능")
             void can_complete_after_requested_at() {
-                var r = createRequest();
+                var r = createWaitlist();
                 var now = r.getState().getRequestedAt();
 
                 r.complete(now);
@@ -208,7 +208,7 @@ public class WaitlistTest {
             @Test
             @DisplayName("requestedAt 보다 이른 시각에 완료 처리하면 예외 발생")
             void throw_exception_when_completed_at_is_before_than_requested_at() {
-                var r = createRequest();
+                var r = createWaitlist();
                 var now = r.getState().getRequestedAt().minusSeconds(1);
 
                 assertThatThrownBy(() -> r.complete(now))
@@ -261,7 +261,7 @@ public class WaitlistTest {
             @Test
             @DisplayName("requestedAt 보다 이른 시각에 만료 처리하면 예외 발생")
             void throw_exception_when_cancelled_at_is_before_than_requested_at() {
-                var r = createRequest();
+                var r = createWaitlist();
                 var now = r.getState().getRequestedAt().minusSeconds(1);
 
                 assertThatThrownBy(() -> r.expire(now))

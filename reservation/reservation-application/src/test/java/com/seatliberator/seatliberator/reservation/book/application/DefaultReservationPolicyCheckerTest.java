@@ -36,7 +36,7 @@ public class DefaultReservationPolicyCheckerTest {
         var range = createRange();
 
         var criteria = ReservationSeatLookupCriteria.of(locator, range)
-                        .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
+                .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
         when(reader.existsOne(criteria)).thenReturn(true);
 
         var result = checker.check(INITIAL_USER_ID, locator, range);

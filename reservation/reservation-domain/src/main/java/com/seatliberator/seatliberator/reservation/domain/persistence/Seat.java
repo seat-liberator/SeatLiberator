@@ -64,7 +64,7 @@ public class Seat {
     }
 
     private static Seat create(EmbeddableSeatLocator locator, Instant createdAt) {
-         return new Seat(locator, SeatStatus.ACTIVE, createdAt);
+        return new Seat(locator, SeatStatus.ACTIVE, createdAt);
     }
 
     public void update(SeatLocator locator) {

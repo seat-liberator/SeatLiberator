@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.reservation.book.application.port.out;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationRangeOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationRoomOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationSeatLookupCriteria;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationSeatOverlapCriteria;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationRoomOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
 
 import java.util.List;
@@ -11,6 +11,7 @@ import java.util.Optional;
 
 public interface ReservationReader {
     Optional<Reservation> findById(Long id);
+
     Optional<Reservation> findByUserId(String userId);
 
     boolean existsOne(ReservationSeatLookupCriteria criteria);

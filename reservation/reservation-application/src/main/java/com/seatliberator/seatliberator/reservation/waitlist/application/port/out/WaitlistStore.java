@@ -21,5 +21,5 @@ public interface WaitlistStore {
 
     Waitlist save(Waitlist waitlist);
 
-    List<Waitlist> saveAll(Iterable<Waitlist> vacancyAlertRequests);
+    List<Waitlist> saveAll(Iterable<Waitlist> waitlists);
 }

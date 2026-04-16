@@ -7,7 +7,7 @@ public class SimpleSeatLocatorTest implements SeatLocatorContractTest<SimpleSeat
     @Override
     public SimpleSeatLocator create(String roomId, String seatId) {
         return SimpleSeatLocator.from(roomId, seatId);
-   }
+    }
 
     @Override
     public String getRoomId() {

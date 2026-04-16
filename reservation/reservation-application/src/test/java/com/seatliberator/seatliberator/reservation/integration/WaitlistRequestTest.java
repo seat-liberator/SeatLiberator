@@ -1,10 +1,9 @@
 package com.seatliberator.seatliberator.reservation.integration;
 
-import com.seatliberator.seatliberator.reservation.VacancyAlertRequestCreateCommandBuilder;
+import com.seatliberator.seatliberator.reservation.WaitlistCreateCommandBuilder;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.CreateReservationUseCase;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
 import com.seatliberator.seatliberator.reservation.domain.WaitlistStatus;
-import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequestStatus;
 import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.CreateSeatCommand;
 import com.seatliberator.seatliberator.reservation.seat.application.service.SeatCommandService;
 import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
@@ -19,8 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Instant;
 
-import static com.seatliberator.seatliberator.reservation.VacancyAlertRequestApplicationFixture.createVacancyAlertRequestCancelCommand;
-import static com.seatliberator.seatliberator.reservation.VacancyAlertRequestApplicationFixture.createVacancyRequestCreateCommand;
+import static com.seatliberator.seatliberator.reservation.WaitlistApplicationFixture.createWaitlistCancelCommand;
+import static com.seatliberator.seatliberator.reservation.WaitlistApplicationFixture.createWaitlistCreateCommand;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.ReservationFixture.INITIAL_USER_ID;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
@@ -29,8 +28,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Tag("integration")
 @TransactionalReservationIntegrationTest
-@DisplayName("Integration: Vacancy Alert")
-public class VacancyRequestTest {
+@DisplayName("Integration: Waitlist")
+public class WaitlistRequestTest {
     private static final Instant BASE_TIME = Instant.parse("2026-01-01T00:00:00Z");
 
     @Autowired
@@ -58,9 +57,9 @@ public class VacancyRequestTest {
     }
 
     @Test
-    @DisplayName("VacancyAlert 요청 생성 시 정상 저장된다.")
-    void save_request_when_vacancy_alert_is_created() {
-        var command = createVacancyRequestCreateCommand();
+    @DisplayName("Waitlist 요청 생성 시 정상 저장된다.")
+    void save_request_when_waitlist_is_created() {
+        var command = createWaitlistCreateCommand();
 
         var userId = command.userId();
         var roomId = command.roomId();
@@ -82,9 +81,9 @@ public class VacancyRequestTest {
     }
 
     @Test
-    @DisplayName("VacancyAlert 동일 요청 시 예외 발생")
-    void throw_exception_when_duplicate_vacancy_alert_request_is_created() {
-        var command = createVacancyRequestCreateCommand();
+    @DisplayName("Waitlist 동일 요청 시 예외 발생")
+    void throw_exception_when_duplicate_waitlist_request_is_created() {
+        var command = createWaitlistCreateCommand();
 
         // 선 저장
         createWaitlistUseCase.create(command);
@@ -94,8 +93,8 @@ public class VacancyRequestTest {
     }
 
     @Test
-    @DisplayName("VacancyAlert 다른 시간 요청 가능")
-    void save_requests_when_vacancy_alert_times_differ() {
+    @DisplayName("Waitlist 다른 시간 요청 가능")
+    void save_requests_when_waitlist_times_differ() {
 
         //given
         var userId = INITIAL_USER_ID;
@@ -108,7 +107,7 @@ public class VacancyRequestTest {
         var range1 = createRange(startTime1);
         var range2 = createRange(startTime2);
 
-        var baseCommandBuilder = new VacancyAlertRequestCreateCommandBuilder()
+        var baseCommandBuilder = new WaitlistCreateCommandBuilder()
                 .userId(userId)
                 .locator(locator);
 
@@ -134,15 +133,15 @@ public class VacancyRequestTest {
     }
 
     @Test
-    @DisplayName("본인이_알람을_취소할_수_있다")
-    void cancel_alert_when_request_user_is_owner() {
+    @DisplayName("본인이_대기열_요청을_취소할_수_있다")
+    void cancel_waitlist_when_request_user_is_owner() {
 
         // given
-        var command = createVacancyRequestCreateCommand();
+        var command = createWaitlistCreateCommand();
         var saved = createWaitlistUseCase.create(command);
 
         // when
-        var cancelCommand = createVacancyAlertRequestCancelCommand(command.userId(), saved.getId());
+        var cancelCommand = createWaitlistCancelCommand(command.userId(), saved.getId());
         cancelWaitlistUseCase.cancel(cancelCommand);
 
         // then
@@ -154,39 +153,39 @@ public class VacancyRequestTest {
     }
 
     @Test
-    @DisplayName("타인은_알람을_취소할_수_없다")
-    void throw_exception_when_other_user_cancels_alert() {
+    @DisplayName("타인은_대기열_요청을_취소할_수_없다")
+    void throw_exception_when_other_user_cancels_waitlist() {
 
         // given
-        var command = createVacancyRequestCreateCommand();
+        var command = createWaitlistCreateCommand();
         var saved = createWaitlistUseCase.create(command);
 
         // when & then
-        var cancelCommand = createVacancyAlertRequestCancelCommand("other-" + command.userId(), saved.getId());
+        var cancelCommand = createWaitlistCancelCommand("other-" + command.userId(), saved.getId());
         assertThatThrownBy(() -> cancelWaitlistUseCase.cancel(cancelCommand))
                 .isInstanceOf(ReservationApplicationException.class)
-                .hasMessage("알람을 취소할 권한이 없습니다.");
+                .hasMessage("대기열 요청을 취소할 권한이 없습니다.");
     }
 
     @Test
-    @DisplayName("존재하지_않는_알람_취소_시_예외_발생")
-    void throw_exception_when_canceling_nonexistent_alert() {
+    @DisplayName("존재하지_않는_대기열_요청_취소_시_예외_발생")
+    void throw_exception_when_canceling_nonexistent_waitlist() {
 
         // when & then
-        var cancelCommand = createVacancyAlertRequestCancelCommand();
+        var cancelCommand = createWaitlistCancelCommand();
         assertThatThrownBy(() -> cancelWaitlistUseCase.cancel(cancelCommand))
                 .isInstanceOf(ReservationApplicationException.class);
     }
 
     @Test
-    @DisplayName("취소된_알람은_다시_신청할_수_있다")
-    void save_request_again_when_alert_was_cancelled() {
+    @DisplayName("취소된_대기열_요청은_다시_신청할_수_있다")
+    void save_request_again_when_waitlist_was_cancelled() {
 
         // given
-        var command = createVacancyRequestCreateCommand();
+        var command = createWaitlistCreateCommand();
         var saved = createWaitlistUseCase.create(command);
 
-        var cancelCommand = createVacancyAlertRequestCancelCommand(command.userId(), saved.getId());
+        var cancelCommand = createWaitlistCancelCommand(command.userId(), saved.getId());
         cancelWaitlistUseCase.cancel(cancelCommand);
 
         // when
