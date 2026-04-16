@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa.repository;
+package com.seatliberator.seatliberator.reservation.seat.infrastructure.persistence.jpa.repository;
 
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
 import jakarta.persistence.LockModeType;

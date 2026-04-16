@@ -7,13 +7,13 @@ import com.seatliberator.seatliberator.reservation.book.application.port.in.Canc
 import com.seatliberator.seatliberator.reservation.book.application.port.in.CreateReservationUseCase;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CancelReservationCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateSeatCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
-import com.seatliberator.seatliberator.reservation.book.application.service.SeatCommandService;
 import com.seatliberator.seatliberator.reservation.domain.*;
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationExpired;
 import com.seatliberator.seatliberator.reservation.domain.persistence.VacancyAlertRequest;
+import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.CreateSeatCommand;
+import com.seatliberator.seatliberator.reservation.seat.application.service.SeatCommandService;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.RequestVacancyAlertUseCase;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCancelCommand;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.result.VacancyAlertRequestResult;

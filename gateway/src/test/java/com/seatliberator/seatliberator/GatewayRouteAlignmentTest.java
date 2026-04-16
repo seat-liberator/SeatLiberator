@@ -7,28 +7,19 @@ import com.seatliberator.seatliberator.jwks.infrastructure.web.controller.JwksCo
 import com.seatliberator.seatliberator.notification.infrastructure.web.controller.NotificationController;
 import com.seatliberator.seatliberator.reservation.availability.infrastructure.web.controller.SeatAvailabilityController;
 import com.seatliberator.seatliberator.reservation.book.infrastructure.web.controller.ReservationController;
-import com.seatliberator.seatliberator.reservation.book.infrastructure.web.controller.SeatController;
+import com.seatliberator.seatliberator.reservation.seat.infrastructure.web.controller.SeatController;
 import com.seatliberator.seatliberator.reservation.vacancy.infrastructure.web.controller.VacancyAlertRequestController;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.server.PathContainer;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
