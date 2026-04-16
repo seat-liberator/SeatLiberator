@@ -41,7 +41,7 @@ class GatewayRouteAlignmentTest {
                         ReservationController.class,
                         SeatController.class,
                         SeatAvailabilityController.class,
-                        VacancyAlertRequestController.class
+                        WaitlistController.class
                 ),
                 true
         );

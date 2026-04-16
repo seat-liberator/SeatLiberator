@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.domain.fixture;
 
-import com.seatliberator.seatliberator.reservation.domain.persistence.VacancyAlertRequest;
+import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
 
 import java.time.Instant;
 
@@ -11,12 +11,12 @@ import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRan
 public class VacancyAlertRequestFixture {
     public static final String INITIAL_USER_ID = "user-1";
 
-    public static VacancyAlertRequest createRequest() {
+    public static Waitlist createRequest() {
         return createRequest(fixedClock.instant().minusSeconds(1));
     }
 
-    public static VacancyAlertRequest createRequest(Instant requestedAt) {
-        return VacancyAlertRequest.autoClaim(
+    public static Waitlist createRequest(Instant requestedAt) {
+        return Waitlist.autoClaim(
                 INITIAL_USER_ID,
                 createLocator(),
                 createRange(),

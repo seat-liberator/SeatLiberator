@@ -2,9 +2,9 @@ package com.seatliberator.seatliberator.reservation;
 
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.TimeRange;
-import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequestBehavior;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCancelCommand;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCreateCommand;
+import com.seatliberator.seatliberator.reservation.domain.WaitlistBehavior;
+import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.command.CancelWaitlistCommand;
+import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.command.CreateWaitlistCommand;
 
 import java.util.UUID;
 
@@ -13,46 +13,46 @@ import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLoc
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
 
 public class VacancyAlertRequestApplicationFixture {
-    public static VacancyAlertRequestCreateCommand createVacancyRequestCreateCommand(
+    public static CreateWaitlistCommand createVacancyRequestCreateCommand(
             String userId,
             SeatLocator locator,
             TimeRange range,
-            VacancyAlertRequestBehavior behavior
+            WaitlistBehavior behavior
     ) {
-        return VacancyAlertRequestCreateCommand.from(userId, locator, range, behavior);
+        return CreateWaitlistCommand.from(userId, locator, range, behavior);
     }
 
-    public static VacancyAlertRequestCreateCommand createVacancyRequestCreateCommand(
+    public static CreateWaitlistCommand createVacancyRequestCreateCommand(
             SeatLocator locator,
             TimeRange range
     ) {
-        return VacancyAlertRequestCreateCommand.from(
+        return CreateWaitlistCommand.from(
                 INITIAL_USER_ID,
                 locator,
                 range,
-                VacancyAlertRequestBehavior.AUTO_CLAIM
+                WaitlistBehavior.AUTO_CLAIM
         );
     }
 
-    public static VacancyAlertRequestCreateCommand createVacancyRequestCreateCommand() {
+    public static CreateWaitlistCommand createVacancyRequestCreateCommand() {
         return createVacancyRequestCreateCommand(
                 INITIAL_USER_ID,
                 createLocator(),
                 createRange(),
-                VacancyAlertRequestBehavior.AUTO_CLAIM
+                WaitlistBehavior.AUTO_CLAIM
         );
     }
 
-    public static VacancyAlertRequestCancelCommand createVacancyAlertRequestCancelCommand() {
+    public static CancelWaitlistCommand createVacancyAlertRequestCancelCommand() {
         // TODO: kernel test support에 fixed / atomic increment 기반 UUID generator 따로 빼야함
         return createVacancyAlertRequestCancelCommand(INITIAL_USER_ID, UUID.randomUUID());
     }
 
-    public static VacancyAlertRequestCancelCommand createVacancyAlertRequestCancelCommand(UUID waitlistId) {
+    public static CancelWaitlistCommand createVacancyAlertRequestCancelCommand(UUID waitlistId) {
         return createVacancyAlertRequestCancelCommand(INITIAL_USER_ID, waitlistId);
     }
 
-    public static VacancyAlertRequestCancelCommand createVacancyAlertRequestCancelCommand(String userId, UUID waitlistId) {
-        return new VacancyAlertRequestCancelCommand(userId, waitlistId);
+    public static CancelWaitlistCommand createVacancyAlertRequestCancelCommand(String userId, UUID waitlistId) {
+        return new CancelWaitlistCommand(userId, waitlistId);
     }
 }

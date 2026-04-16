@@ -11,7 +11,6 @@ import com.seatliberator.seatliberator.reservation.book.application.port.out.Res
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.domain.*;
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationExpired;
-import com.seatliberator.seatliberator.reservation.domain.persistence.VacancyAlertRequest;
 import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.CreateSeatCommand;
 import com.seatliberator.seatliberator.reservation.seat.application.service.SeatCommandService;
 import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.RequestVacancyAlertUseCase;
@@ -54,10 +53,10 @@ public class ReservationCancelVacancyAlertFlowTest extends ReservationDatabaseCl
     ReservationReader reservationReader;
 
     @Autowired
-    RequestVacancyAlertUseCase requestVacancyAlertUseCase;
+    CreateWaitlistUseCase createWaitlistUseCase;
 
     @Autowired
-    VacancyAlertRequestStore vacancyAlertRequestStore;
+    WaitlistStore waitlistStore;
 
     @Autowired
     ApplicationEventPublisher applicationEventPublisher;
@@ -78,30 +77,30 @@ public class ReservationCancelVacancyAlertFlowTest extends ReservationDatabaseCl
     void notify_only_request_is_notified_when_reservation_is_canceled() throws Exception {
         var target = createReservedSeat("cancel-notify", "reservation-user");
         var other = createReservedSeat("cancel-notify-other", "other-reservation-user");
-        var activeRequest = requestVacancy(target, "active-user", VacancyAlertRequestBehavior.NOTIFY_ONLY);
-        var canceledRequest = requestVacancy(target, "canceled-user", VacancyAlertRequestBehavior.NOTIFY_ONLY);
-        var otherSeatRequest = requestVacancy(other, "other-seat-user", VacancyAlertRequestBehavior.NOTIFY_ONLY);
-        requestVacancyAlertUseCase.cancel(new VacancyAlertRequestCancelCommand(canceledRequest.getUserId(), canceledRequest.getId()));
+        var activeRequest = requestVacancy(target, "active-user", WaitlistBehavior.NOTIFY_ONLY);
+        var canceledRequest = requestVacancy(target, "canceled-user", WaitlistBehavior.NOTIFY_ONLY);
+        var otherSeatRequest = requestVacancy(other, "other-seat-user", WaitlistBehavior.NOTIFY_ONLY);
+        createWaitlistUseCase.cancel(new CancelWaitlistCommand(canceledRequest.getUserId(), canceledRequest.getId()));
 
         var command = new CancelReservationCommand(target.reservationUserId());
         cancelReservationUseCase.cancel(command);
 
         assertSingleNotification(activeRequest, "active-user", "INFO", "빈 자리가 발생했어요!");
-        assertVacancyAlertRequestState(activeRequest, VacancyAlertRequestStatus.COMPLETED, VacancyAlertRequestResolution.NOTIFIED);
-        assertVacancyAlertRequestState(canceledRequest, VacancyAlertRequestStatus.CANCELLED, VacancyAlertRequestResolution.PENDING);
-        assertVacancyAlertRequestState(otherSeatRequest, VacancyAlertRequestStatus.ACTIVE, VacancyAlertRequestResolution.PENDING);
+        assertVacancyAlertRequestState(activeRequest, WaitlistStatus.COMPLETED, WaitlistResolution.NOTIFIED);
+        assertVacancyAlertRequestState(canceledRequest, WaitlistStatus.CANCELLED, WaitlistResolution.PENDING);
+        assertVacancyAlertRequestState(otherSeatRequest, WaitlistStatus.ACTIVE, WaitlistResolution.PENDING);
     }
 
     @Test
     @DisplayName("예약 만료 이벤트 발생 시 AUTO_CLAIM 요청은 실제 예약으로 승격되고 알림이 생성된다")
     void auto_claim_request_is_promoted_and_notified_when_reservation_expired_event_is_published() throws Exception {
         var target = createSeatWithoutReservation("expired-auto-claim");
-        var autoClaimRequest = saveVacancyAlertRequest("expired-auto-claim-user", target, VacancyAlertRequestBehavior.AUTO_CLAIM);
+        var autoClaimRequest = saveVacancyAlertRequest("expired-auto-claim-user", target, WaitlistBehavior.AUTO_CLAIM);
 
         applicationEventPublisher.publishEvent(new ReservationExpired(target.locator(), target.range(), BASE_TIME));
 
         assertSingleNotification(autoClaimRequest, "expired-auto-claim-user", "INFO", "빈 자리를 예약했어요!");
-        assertVacancyAlertRequestState(autoClaimRequest, VacancyAlertRequestStatus.COMPLETED, VacancyAlertRequestResolution.CLAIMED);
+        assertVacancyAlertRequestState(autoClaimRequest, WaitlistStatus.COMPLETED, WaitlistResolution.CLAIMED);
         assertReservationCreated("expired-auto-claim-user", target.locator(), target.range());
     }
 
@@ -126,10 +125,10 @@ public class ReservationCancelVacancyAlertFlowTest extends ReservationDatabaseCl
         return new SeatVacancyTarget(null, locator, range);
     }
 
-    private VacancyAlertRequest requestVacancy(
+    private Waitlist requestVacancy(
             SeatVacancyTarget target,
             String userId,
-            VacancyAlertRequestBehavior behavior
+            WaitlistBehavior behavior
     ) {
         var command = new VacancyAlertRequestCreateCommandBuilder()
                 .userId(userId)
@@ -137,20 +136,20 @@ public class ReservationCancelVacancyAlertFlowTest extends ReservationDatabaseCl
                 .range(target.range())
                 .behavior(behavior)
                 .build();
-        return requestVacancyAlertUseCase.request(command);
+        return createWaitlistUseCase.create(command);
     }
 
-    private VacancyAlertRequest saveVacancyAlertRequest(
+    private Waitlist saveVacancyAlertRequest(
             String userId,
             SeatVacancyTarget target,
-            VacancyAlertRequestBehavior behavior
+            WaitlistBehavior behavior
     ) {
-        var request = VacancyAlertRequest.create(userId, target.locator(), target.range(), behavior, BASE_TIME);
-        return vacancyAlertRequestStore.save(request);
+        var request = Waitlist.create(userId, target.locator(), target.range(), behavior, BASE_TIME);
+        return waitlistStore.save(request);
     }
 
     private void assertSingleNotification(
-            VacancyAlertRequest request,
+            Waitlist request,
             String targetUserId,
             String level,
             String title
@@ -166,7 +165,7 @@ public class ReservationCancelVacancyAlertFlowTest extends ReservationDatabaseCl
         assertThat(notificationPayload.level()).isEqualTo(level);
         assertThat(notificationPayload.title()).isEqualTo(title);
 
-        var payloadBody = objectMapper.readValue(notificationPayload.body(), VacancyAlertRequestResult.class);
+        var payloadBody = objectMapper.readValue(notificationPayload.body(), WaitlistResult.class);
         assertThat(payloadBody.userId()).isEqualTo(targetUserId);
         assertThat(payloadBody.locator().roomId()).isEqualTo(request.getLocator().roomId());
         assertThat(payloadBody.locator().seatId()).isEqualTo(request.getLocator().seatId());
@@ -175,11 +174,11 @@ public class ReservationCancelVacancyAlertFlowTest extends ReservationDatabaseCl
     }
 
     private void assertVacancyAlertRequestState(
-            VacancyAlertRequest request,
-            VacancyAlertRequestStatus status,
-            VacancyAlertRequestResolution resolution
+            Waitlist request,
+            WaitlistStatus status,
+            WaitlistResolution resolution
     ) {
-        var persisted = vacancyAlertRequestStore.findById(request.getId()).orElseThrow();
+        var persisted = waitlistStore.findById(request.getId()).orElseThrow();
         assertThat(persisted.getState().getStatus()).isEqualTo(status);
         assertThat(persisted.getState().getResolution()).isEqualTo(resolution);
     }

@@ -3,12 +3,14 @@ package com.seatliberator.seatliberator.reservation.integration;
 import com.seatliberator.seatliberator.reservation.VacancyAlertRequestCreateCommandBuilder;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.CreateReservationUseCase;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
+import com.seatliberator.seatliberator.reservation.domain.WaitlistStatus;
 import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequestStatus;
 import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.CreateSeatCommand;
 import com.seatliberator.seatliberator.reservation.seat.application.service.SeatCommandService;
 import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.RequestVacancyAlertUseCase;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.out.VacancyAlertRequestStore;
+import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.CancelWaitlistUseCase;
+import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.CreateWaitlistUseCase;
+import com.seatliberator.seatliberator.reservation.waitlist.application.port.out.WaitlistStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -32,7 +34,10 @@ public class VacancyRequestTest {
     private static final Instant BASE_TIME = Instant.parse("2026-01-01T00:00:00Z");
 
     @Autowired
-    RequestVacancyAlertUseCase requester;
+    CreateWaitlistUseCase createWaitlistUseCase;
+
+    @Autowired
+    CancelWaitlistUseCase cancelWaitlistUseCase;
 
     @Autowired
     CreateReservationUseCase createReservationUseCase;
@@ -41,7 +46,7 @@ public class VacancyRequestTest {
     SeatCommandService seatService;
 
     @Autowired
-    VacancyAlertRequestStore store;
+    WaitlistStore store;
 
     @BeforeEach
     void run() {
@@ -64,7 +69,7 @@ public class VacancyRequestTest {
         var endAt = command.endTime();
 
         // when
-        var result = requester.request(command);
+        var result = createWaitlistUseCase.create(command);
 
         // then
         assertThat(result).isNotNull();
@@ -73,7 +78,7 @@ public class VacancyRequestTest {
         assertThat(result.getLocator().seatId()).isEqualTo(seatId);
         assertThat(result.getRange().startAt()).isEqualTo(startAt);
         assertThat(result.getRange().endAt()).isEqualTo(endAt);
-        assertThat(result.getState().getStatus()).isEqualTo(VacancyAlertRequestStatus.ACTIVE);
+        assertThat(result.getState().getStatus()).isEqualTo(WaitlistStatus.ACTIVE);
     }
 
     @Test
@@ -82,10 +87,10 @@ public class VacancyRequestTest {
         var command = createVacancyRequestCreateCommand();
 
         // 선 저장
-        requester.request(command);
+        createWaitlistUseCase.create(command);
 
         // when & then
-        assertThatThrownBy(() -> requester.request(command)).isInstanceOf(ReservationApplicationException.class);
+        assertThatThrownBy(() -> createWaitlistUseCase.create(command)).isInstanceOf(ReservationApplicationException.class);
     }
 
     @Test
@@ -111,8 +116,8 @@ public class VacancyRequestTest {
         var command2 = baseCommandBuilder.copy().range(range2).build();
 
         // when
-        var r1 = requester.request(command1);
-        var r2 = requester.request(command2);
+        var r1 = createWaitlistUseCase.create(command1);
+        var r2 = createWaitlistUseCase.create(command2);
 
         // then
         assertThat(r1).isNotNull();
@@ -120,12 +125,12 @@ public class VacancyRequestTest {
         assertThat(r1.getUserId()).isEqualTo(userId);
         assertThat(r1.getLocator().roomId()).isEqualTo(locator.roomId());
         assertThat(r1.getLocator().seatId()).isEqualTo(locator.seatId());
-        assertThat(r1.getState().getStatus()).isEqualTo(VacancyAlertRequestStatus.ACTIVE);
+        assertThat(r1.getState().getStatus()).isEqualTo(WaitlistStatus.ACTIVE);
 
         assertThat(r2.getUserId()).isEqualTo(userId);
         assertThat(r2.getLocator().roomId()).isEqualTo(locator.roomId());
         assertThat(r2.getLocator().seatId()).isEqualTo(locator.seatId());
-        assertThat(r2.getState().getStatus()).isEqualTo(VacancyAlertRequestStatus.ACTIVE);
+        assertThat(r2.getState().getStatus()).isEqualTo(WaitlistStatus.ACTIVE);
     }
 
     @Test
@@ -134,18 +139,18 @@ public class VacancyRequestTest {
 
         // given
         var command = createVacancyRequestCreateCommand();
-        var saved = requester.request(command);
+        var saved = createWaitlistUseCase.create(command);
 
         // when
         var cancelCommand = createVacancyAlertRequestCancelCommand(command.userId(), saved.getId());
-        requester.cancel(cancelCommand);
+        cancelWaitlistUseCase.cancel(cancelCommand);
 
         // then
         var result = store.findById(saved.getId());
         assertThat(result.isPresent()).isTrue();
         var waitlist = result.get();
         var state = waitlist.getState();
-        assertThat(state.getStatus()).isEqualTo(VacancyAlertRequestStatus.CANCELLED);
+        assertThat(state.getStatus()).isEqualTo(WaitlistStatus.CANCELLED);
     }
 
     @Test
@@ -154,11 +159,11 @@ public class VacancyRequestTest {
 
         // given
         var command = createVacancyRequestCreateCommand();
-        var saved = requester.request(command);
+        var saved = createWaitlistUseCase.create(command);
 
         // when & then
         var cancelCommand = createVacancyAlertRequestCancelCommand("other-" + command.userId(), saved.getId());
-        assertThatThrownBy(() -> requester.cancel(cancelCommand))
+        assertThatThrownBy(() -> cancelWaitlistUseCase.cancel(cancelCommand))
                 .isInstanceOf(ReservationApplicationException.class)
                 .hasMessage("알람을 취소할 권한이 없습니다.");
     }
@@ -169,7 +174,7 @@ public class VacancyRequestTest {
 
         // when & then
         var cancelCommand = createVacancyAlertRequestCancelCommand();
-        assertThatThrownBy(() -> requester.cancel(cancelCommand))
+        assertThatThrownBy(() -> cancelWaitlistUseCase.cancel(cancelCommand))
                 .isInstanceOf(ReservationApplicationException.class);
     }
 
@@ -179,13 +184,13 @@ public class VacancyRequestTest {
 
         // given
         var command = createVacancyRequestCreateCommand();
-        var saved = requester.request(command);
+        var saved = createWaitlistUseCase.create(command);
 
         var cancelCommand = createVacancyAlertRequestCancelCommand(command.userId(), saved.getId());
-        requester.cancel(cancelCommand);
+        cancelWaitlistUseCase.cancel(cancelCommand);
 
         // when
-        var result = requester.request(command);
+        var result = createWaitlistUseCase.create(command);
 
         // then
         assertThat(result).isNotNull();
