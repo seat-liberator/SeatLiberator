@@ -3,7 +3,6 @@ package com.seatliberator.seatliberator.reservation.availability.application.ser
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.query.FindAvailableSeatQuery;
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.result.AvailableSeatResult;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFilter;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationRoomOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
@@ -11,6 +10,7 @@ import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
+import com.seatliberator.seatliberator.reservation.seat.application.port.out.SeatReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

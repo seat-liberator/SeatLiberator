@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.shared.application.seed;
 
-import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatReader;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
+import com.seatliberator.seatliberator.reservation.seat.application.port.out.SeatReader;
+import com.seatliberator.seatliberator.reservation.seat.application.port.out.SeatStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

@@ -1,16 +1,16 @@
-package com.seatliberator.seatliberator.reservation.book.application.service;
+package com.seatliberator.seatliberator.reservation.seat.application.service;
 
-import com.seatliberator.seatliberator.reservation.book.application.port.in.CreateSeatUseCase;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.DeleteSeatUseCase;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.UpdateSeatUseCase;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateSeatCommand;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.DeleteSeatCommand;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.UpdateSeatCommand;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatReader;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.SeatExclusion;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
+import com.seatliberator.seatliberator.reservation.seat.application.port.in.CreateSeatUseCase;
+import com.seatliberator.seatliberator.reservation.seat.application.port.in.DeleteSeatUseCase;
+import com.seatliberator.seatliberator.reservation.seat.application.port.in.UpdateSeatUseCase;
+import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.CreateSeatCommand;
+import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.DeleteSeatCommand;
+import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.UpdateSeatCommand;
+import com.seatliberator.seatliberator.reservation.seat.application.port.out.SeatReader;
+import com.seatliberator.seatliberator.reservation.seat.application.port.out.SeatStore;
+import com.seatliberator.seatliberator.reservation.seat.application.port.out.criteria.SeatExclusion;
 import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
 import lombok.RequiredArgsConstructor;

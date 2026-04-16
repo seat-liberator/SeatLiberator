@@ -1,16 +1,16 @@
 package com.seatliberator.seatliberator.reservation.integration;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateSeatCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatReader;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.book.application.service.ReservationCommandService;
-import com.seatliberator.seatliberator.reservation.book.application.service.SeatCommandService;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
+import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.CreateSeatCommand;
+import com.seatliberator.seatliberator.reservation.seat.application.port.out.SeatReader;
+import com.seatliberator.seatliberator.reservation.seat.application.port.out.SeatStore;
+import com.seatliberator.seatliberator.reservation.seat.application.service.SeatCommandService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.book.application.port.in.result;
+package com.seatliberator.seatliberator.reservation.seat.application.port.in.result;
 
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
 

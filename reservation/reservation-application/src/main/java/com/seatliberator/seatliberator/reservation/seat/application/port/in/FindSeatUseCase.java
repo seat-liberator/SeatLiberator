@@ -1,7 +1,7 @@
-package com.seatliberator.seatliberator.reservation.book.application.port.in;
+package com.seatliberator.seatliberator.reservation.seat.application.port.in;
 
-import com.seatliberator.seatliberator.reservation.book.application.port.in.result.SeatResult;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.seat.application.port.in.result.SeatResult;
 
 import java.util.List;
 

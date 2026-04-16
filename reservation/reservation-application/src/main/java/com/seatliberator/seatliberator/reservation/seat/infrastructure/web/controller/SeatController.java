@@ -1,14 +1,14 @@
-package com.seatliberator.seatliberator.reservation.book.infrastructure.web.controller;
+package com.seatliberator.seatliberator.reservation.seat.infrastructure.web.controller;
 
 
-import com.seatliberator.seatliberator.reservation.book.application.port.in.CreateSeatUseCase;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.DeleteSeatUseCase;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.UpdateSeatUseCase;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateSeatCommand;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.DeleteSeatCommand;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.UpdateSeatCommand;
-import com.seatliberator.seatliberator.reservation.book.infrastructure.web.request.SeatCreateRequest;
-import com.seatliberator.seatliberator.reservation.book.infrastructure.web.request.SeatUpdateRequest;
+import com.seatliberator.seatliberator.reservation.seat.application.port.in.CreateSeatUseCase;
+import com.seatliberator.seatliberator.reservation.seat.application.port.in.DeleteSeatUseCase;
+import com.seatliberator.seatliberator.reservation.seat.application.port.in.UpdateSeatUseCase;
+import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.CreateSeatCommand;
+import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.DeleteSeatCommand;
+import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.UpdateSeatCommand;
+import com.seatliberator.seatliberator.reservation.seat.infrastructure.web.request.SeatCreateRequest;
+import com.seatliberator.seatliberator.reservation.seat.infrastructure.web.request.SeatUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.book.application.port.out.criteria;
+package com.seatliberator.seatliberator.reservation.seat.application.port.out.criteria;
 
 import java.util.Collection;
 import java.util.HashSet;
