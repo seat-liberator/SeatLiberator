@@ -1,7 +1,7 @@
-package com.seatliberator.seatliberator.reservation.vacancy.application.model;
+package com.seatliberator.seatliberator.reservation.waitlist.application.model;
 
 import com.seatliberator.seatliberator.reservation.domain.*;
-import com.seatliberator.seatliberator.reservation.domain.fixture.VacancyAlertRequestFixtureBuilder;
+import com.seatliberator.seatliberator.reservation.domain.fixture.WaitlistFixtureBuilder;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
 import com.seatliberator.seatliberator.reservation.waitlist.application.internal.WaitlistPromotionResult;
 import com.seatliberator.seatliberator.reservation.waitlist.application.model.WaitlistNotification;
@@ -17,7 +17,7 @@ import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSup
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Application.model: VacancyAlertRequests")
+@DisplayName("Application.model: WaitlistRequests")
 class WaitlistRequestsTest {
 
     @Test
@@ -137,7 +137,7 @@ class WaitlistRequestsTest {
             WaitlistBehavior behavior,
             List<RequestSpec> requestSpecs
     ) {
-        var requestBuilder = new VacancyAlertRequestFixtureBuilder()
+        var requestBuilder = new WaitlistFixtureBuilder()
                 .locator(locator)
                 .range(range)
                 .behavior(behavior);
@@ -152,7 +152,7 @@ class WaitlistRequestsTest {
     }
 
     private Waitlist autoClaimRequest(String userId, SeatLocator locator, TimeRange range, java.time.Instant requestedAt) {
-        return new VacancyAlertRequestFixtureBuilder()
+        return new WaitlistFixtureBuilder()
                 .locator(locator)
                 .range(range)
                 .behavior(WaitlistBehavior.AUTO_CLAIM)
@@ -162,7 +162,7 @@ class WaitlistRequestsTest {
     }
 
     private Waitlist notifyOnlyRequest(String userId, SeatLocator locator, TimeRange range, java.time.Instant requestedAt) {
-        return new VacancyAlertRequestFixtureBuilder()
+        return new WaitlistFixtureBuilder()
                 .locator(locator)
                 .range(range)
                 .behavior(WaitlistBehavior.NOTIFY_ONLY)

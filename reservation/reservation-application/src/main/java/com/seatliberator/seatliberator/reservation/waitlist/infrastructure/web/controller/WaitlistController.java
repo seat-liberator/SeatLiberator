@@ -22,7 +22,7 @@ public class WaitlistController {
 
     private final ActorContextHolder actorContextHolder;
 
-    // 알람 신청
+    // 대기열 등록
     @PostMapping
     public ResponseEntity<Void> create(
             @RequestBody CreateWaitlistRequest request
@@ -43,14 +43,14 @@ public class WaitlistController {
         return ResponseEntity.ok().build();
     }
 
-    // 알람 취소
-    @DeleteMapping("/{alertId}")
+    // 대기열 취소
+    @DeleteMapping("/{waitlistId}")
     public ResponseEntity<Void> cancel(
-            @PathVariable UUID alertId
+            @PathVariable UUID waitlistId
     ) {
         var userId = actorContextHolder.getActor().subject();
 
-        var command = new CancelWaitlistCommand(userId, alertId);
+        var command = new CancelWaitlistCommand(userId, waitlistId);
 
         cancelWaitlistUseCase.cancel(command);
 

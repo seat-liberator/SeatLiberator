@@ -17,7 +17,7 @@
 |-----------------------------------------|-----------------------------------------------------------------------------------|
 | `Reservation`                           | 좌석 예약 aggregate. 취소 시 `CANCELED` 로 전이되고 `ReservationCanceled` 이벤트를 발행한다.          |
 | `ReservationCanceled`                   | 취소된 예약의 좌석(`SeatLocator`)과 시간 범위(`TimeRange`), 취소 시각을 담는 도메인 이벤트                  |
-| `VacancyAlertRequest`                   | 특정 좌석/시간대에 대한 빈자리 알림 신청. 상태는 `ACTIVE`, `CANCELLED`, `EXPIRED`, `FULFILLED` 를 가진다. |
+| `Waitlist`                             | 특정 좌석/시간대에 대한 대기열 의사 표현. 상태는 `ACTIVE`, `CANCELLED`, `EXPIRED`, `COMPLETED` 를 가진다. |
 | `ReservationCanceledHandler`            | 예약 취소 이벤트를 받아 빈자리 알림 대상 조회와 notification 생성 이벤트 발행을 담당한다.                         |
 | `NotificationCreateRequestEventPayload` | notification 모듈로 전달하는 생성 요청 payload                                               |
 
@@ -66,14 +66,14 @@ AND request.end > reservation.start
 조회된 각 요청에 대해 handler는 두 가지를 수행합니다.
 
 1. notification 모듈로 `NOTIFICATION_CREATE_REQUEST` 이벤트를 발행합니다.
-2. 해당 `VacancyAlertRequest` 상태를 `FULFILLED` 로 전이합니다.
+2. 해당 `Waitlist` 상태를 `COMPLETED` 로 전이합니다.
 
 이때 notification 본문에는 사용자에게 다시 확인할 좌석/시간대 정보가 포함됩니다.
 
 이 구조의 의도는 다음과 같습니다.
 
 - 예약 도메인은 "취소됨"이라는 사실만 발행한다.
-- 빈자리 알림 대상 판별은 vacancy 쪽 후속 처리에서 맡는다.
+- 대기열 대상 판별과 후속 처리는 waitlist 쪽에서 맡는다.
 - 실제 알림 저장/전달 채널 구현은 notification 모듈 이후 단계로 분리한다.
 
 ## 검증 기준
@@ -87,7 +87,7 @@ AND request.end > reservation.start
 
 관련 테스트:
 
-- `src/test/java/com/seatliberator/seatliberator/reservation/integration/ReservationCancelVacancyAlertFlowTest.java`
+- `src/test/java/com/seatliberator/seatliberator/reservation/integration/ReservationCancelWaitlistFlowTest.java`
 
 ## 남겨둔 범위
 

@@ -4,7 +4,7 @@ import com.seatliberator.seatliberator.eventrelay.core.model.EventPayload;
 
 import java.time.Instant;
 
-public record VacancyAlertNotificationPayload(
+public record WaitlistNotificationPayload(
         String roomId,
         String seatId,
         Instant startTime,

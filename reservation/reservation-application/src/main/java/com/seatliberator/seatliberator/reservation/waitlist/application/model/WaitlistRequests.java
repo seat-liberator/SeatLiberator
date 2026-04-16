@@ -21,7 +21,7 @@ public class WaitlistRequests {
         return new WaitlistRequests(requests);
     }
 
-    public WaitlistProcessingResult process(Instant now, VacancyAlertPromoter promoter) {
+    public WaitlistProcessingResult process(Instant now, WaitlistPromoter promoter) {
         var groupedByBehavior = requests.stream()
                 .collect(Collectors.groupingBy(Waitlist::getBehavior));
 
@@ -48,7 +48,7 @@ public class WaitlistRequests {
     private void processAutoClaim(
             List<Waitlist> autoClaimRequests,
             Instant now,
-            VacancyAlertPromoter promoter,
+            WaitlistPromoter promoter,
             List<Waitlist> processedRequests,
             List<WaitlistNotification> notifications
     ) {
@@ -85,7 +85,7 @@ public class WaitlistRequests {
     }
 
     @FunctionalInterface
-    public interface VacancyAlertPromoter {
+    public interface WaitlistPromoter {
         WaitlistPromotionResult promote(Waitlist request);
     }
 }

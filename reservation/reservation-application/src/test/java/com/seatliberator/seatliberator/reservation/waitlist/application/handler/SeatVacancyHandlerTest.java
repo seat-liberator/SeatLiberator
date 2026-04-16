@@ -1,11 +1,11 @@
-package com.seatliberator.seatliberator.reservation.vacancy.application.handler;
+package com.seatliberator.seatliberator.reservation.waitlist.application.handler;
 
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.WaitlistStatus;
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationCanceled;
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationExpired;
-import com.seatliberator.seatliberator.reservation.domain.fixture.VacancyAlertRequestFixtureBuilder;
+import com.seatliberator.seatliberator.reservation.domain.fixture.WaitlistFixtureBuilder;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
 import com.seatliberator.seatliberator.reservation.shared.application.notifier.Notifier;
 import com.seatliberator.seatliberator.reservation.waitlist.application.handler.SeatVacancyHandler;
@@ -59,7 +59,7 @@ class SeatVacancyHandlerTest {
         var range = SimpleTimeRange.from(Instant.parse("2026-01-01T00:00:00Z"), Instant.parse("2026-01-01T00:10:00Z"));
         var requestedAt = Instant.parse("2025-12-31T23:59:00Z");
         var now = Instant.parse("2026-01-01T00:01:00Z");
-        var request = new VacancyAlertRequestFixtureBuilder()
+        var request = new WaitlistFixtureBuilder()
                 .locator(locator)
                 .range(range)
                 .requestedAt(requestedAt)

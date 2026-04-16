@@ -8,14 +8,14 @@ import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLoc
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
 
-public class VacancyAlertRequestFixture {
+public class WaitlistFixture {
     public static final String INITIAL_USER_ID = "user-1";
 
-    public static Waitlist createRequest() {
-        return createRequest(fixedClock.instant().minusSeconds(1));
+    public static Waitlist createWaitlist() {
+        return createWaitlist(fixedClock.instant().minusSeconds(1));
     }
 
-    public static Waitlist createRequest(Instant requestedAt) {
+    public static Waitlist createWaitlist(Instant requestedAt) {
         return Waitlist.autoClaim(
                 INITIAL_USER_ID,
                 createLocator(),

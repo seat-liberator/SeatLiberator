@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.verification.application.service;
 
-import com.seatliberator.seatliberator.reservation.book.application.contract.query.ReservationLocator;
 import com.seatliberator.seatliberator.reservation.book.application.contract.ReservationUsageMarker;
+import com.seatliberator.seatliberator.reservation.book.application.contract.query.ReservationLocator;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.FindReservationUseCase;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;

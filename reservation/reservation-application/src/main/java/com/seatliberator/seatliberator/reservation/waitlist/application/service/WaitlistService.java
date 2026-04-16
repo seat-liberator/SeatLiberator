@@ -62,7 +62,7 @@ public class WaitlistService implements
     public void cancel(CancelWaitlistCommand command) {
         var now = clock.instant();
 
-        var waitlist = store.findById(command.alertId())
+        var waitlist = store.findById(command.waitlistId())
                 .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.NOT_FOUND));
 
         if (!waitlist.getUserId().equals(command.userId())) {

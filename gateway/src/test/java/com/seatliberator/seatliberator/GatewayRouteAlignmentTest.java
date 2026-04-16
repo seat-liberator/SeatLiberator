@@ -8,7 +8,7 @@ import com.seatliberator.seatliberator.notification.infrastructure.web.controlle
 import com.seatliberator.seatliberator.reservation.availability.infrastructure.web.controller.SeatAvailabilityController;
 import com.seatliberator.seatliberator.reservation.book.infrastructure.web.controller.ReservationController;
 import com.seatliberator.seatliberator.reservation.seat.infrastructure.web.controller.SeatController;
-import com.seatliberator.seatliberator.reservation.vacancy.infrastructure.web.controller.VacancyAlertRequestController;
+import com.seatliberator.seatliberator.reservation.waitlist.infrastructure.web.controller.WaitlistController;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.server.PathContainer;

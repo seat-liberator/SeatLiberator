@@ -57,8 +57,8 @@ public class JpaWaitlistStore implements
     }
 
     @Override
-    public List<Waitlist> saveAll(Iterable<Waitlist> vacancyAlertRequests) {
-        return repository.saveAll(vacancyAlertRequests);
+    public List<Waitlist> saveAll(Iterable<Waitlist> waitlists) {
+        return repository.saveAll(waitlists);
     }
 
     private Specification<Waitlist> createLocatorAndRangeSpecification(SeatLocator locator, TimeRange range) {

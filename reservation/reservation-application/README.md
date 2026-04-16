@@ -9,12 +9,12 @@
 - 직접 의존성: `:reservation:reservation-api`
 - 외부 API 의존성: `:notification:notification-api`
 
-resource-server 보안, JPA, 공통 웹 설정은 bootstrap starter가 맡고, 이 모듈은 reservation/vacancy 도메인 흐름과 notification 이벤트 연계만 직접 가집니다.
+resource-server 보안, JPA, 공통 웹 설정은 bootstrap starter가 맡고, 이 모듈은 reservation/waitlist 도메인 흐름과 notification 이벤트 연계만 직접 가집니다.
 
 ## 패키지 구조
 
 - `reservation.book`: 좌석, 예약 유스케이스와 REST API
-- `reservation.vacancy`: 빈자리 알림 유스케이스와 REST API
+- `reservation.waitlist`: 대기열 유스케이스와 REST API
 - `reservation.verification`: 예약 조회/검증용 내부 포트
 - `reservation.shared`: 좌석 식별자, 시간 범위, 공통 설정
 - `reservation.bootstrap.seed`: 로컬/개발용 시드 데이터
@@ -50,10 +50,10 @@ resource-server 보안, JPA, 공통 웹 설정은 bootstrap starter가 맡고, �
 
 현재 사용자 식별자는 요청 본문이 아니라 `ActorContextHolder` 의 actor subject 에서 가져옵니다.
 
-### Vacancy Alert
+### Waitlist
 
-- `POST /vacancy-alert`
-- `DELETE /vacancy-alert/{alertId}`
+- `POST /waitlist`
+- `DELETE /waitlist/{waitlistId}`
 
 ## 핵심 정책
 

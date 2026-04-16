@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.vacancy.application.service;
+package com.seatliberator.seatliberator.reservation.waitlist.application.service;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFilter;
@@ -24,35 +24,35 @@ import org.springframework.dao.DataIntegrityViolationException;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.seatliberator.seatliberator.reservation.VacancyAlertRequestApplicationFixture.createVacancyAlertRequestCancelCommand;
-import static com.seatliberator.seatliberator.reservation.VacancyAlertRequestApplicationFixture.createVacancyRequestCreateCommand;
+import static com.seatliberator.seatliberator.reservation.WaitlistApplicationFixture.createWaitlistCancelCommand;
+import static com.seatliberator.seatliberator.reservation.WaitlistApplicationFixture.createWaitlistCreateCommand;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
-import static com.seatliberator.seatliberator.reservation.domain.fixture.VacancyAlertRequestFixture.createRequest;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.WaitlistFixture.createWaitlist;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("Application: Vacancy Alert Service")
-public class DefaultWaitlistRequesterTest {
+@DisplayName("Application: Waitlist Service")
+public class WaitlistServiceTest {
     @Mock
     WaitlistStore store;
 
     @Mock
     ReservationReader reader;
 
-    WaitlistService requester;
+    WaitlistService service;
 
     @BeforeEach
     void setup() {
-        requester = new WaitlistService(store, reader, fixedClock);
+        service = new WaitlistService(store, reader, fixedClock);
     }
 
     @Test
-    @DisplayName("알림 대상 좌석 및 시간에 예약이 존재하지 않으면 RESERVATION_NOT_FOUND 예외를 던진다")
+    @DisplayName("대기열 대상 좌석 및 시간에 예약이 존재하지 않으면 RESERVATION_NOT_FOUND 예외를 던진다")
     void throw_exception_when_reservation_not_found_in_locator_and_range() {
-        var command = createVacancyRequestCreateCommand();
+        var command = createWaitlistCreateCommand();
         
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
@@ -61,16 +61,16 @@ public class DefaultWaitlistRequesterTest {
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
         when(reader.existsOverlapping(criteria)).thenReturn(false);
 
-        assertThatThrownBy(() -> requester.create(command))
+        assertThatThrownBy(() -> service.create(command))
                 .isInstanceOf(ReservationApplicationException.class)
                 .extracting("errorCode")
                 .isEqualTo(ReservationApplicationErrorCode.RESERVATION_NOT_FOUND);
     }
 
     @Test
-    @DisplayName("이미 동일 시간 / 좌석에 알람 요청이 존재하면 중복 요청 시 DUPLICATED_REQUEST 예외를 던진다.")
+    @DisplayName("이미 동일 시간 / 좌석에 대기열 요청이 존재하면 중복 요청 시 DUPLICATED_REQUEST 예외를 던진다.")
     void throw_exception_when_active_request_already_exists() {
-        var command = createVacancyRequestCreateCommand();
+        var command = createWaitlistCreateCommand();
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
 
@@ -78,9 +78,9 @@ public class DefaultWaitlistRequesterTest {
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
         when(reader.existsOverlapping(criteria)).thenReturn(true);
 
-        whenCheckAlertRequestExists(command, true);
+        whenActiveWaitlistExists(command, true);
 
-        assertThatThrownBy(() -> requester.create(command))
+        assertThatThrownBy(() -> service.create(command))
                 .isInstanceOf(ReservationApplicationException.class)
                 .extracting("errorCode")
                 .isEqualTo(ReservationApplicationErrorCode.DUPLICATED_REQUEST);
@@ -89,7 +89,7 @@ public class DefaultWaitlistRequesterTest {
     @Test
     @DisplayName("활성 요청이 없으면 요청을 생성하고 저장한다")
     void save_request_when_no_active_request_exists() {
-        var command = createVacancyRequestCreateCommand();
+        var command = createWaitlistCreateCommand();
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
 
@@ -97,12 +97,12 @@ public class DefaultWaitlistRequesterTest {
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
         when(reader.existsOverlapping(criteria)).thenReturn(true);
 
-        whenCheckAlertRequestExists(command, false);
+        whenActiveWaitlistExists(command, false);
 
         when(store.save(any(Waitlist.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        var result = requester.create(command);
+        var result = service.create(command);
 
         assertThat(result).isNotNull();
         verify(store).save(any(Waitlist.class));
@@ -111,33 +111,33 @@ public class DefaultWaitlistRequesterTest {
     @Test
     @DisplayName("저장 시 무결성 예외가 발생하면 DUPLICATED_REQUEST 예외로 변환한다")
     void throw_duplicated_request_when_save_raises_data_integrity_violation() {
-        var command = createVacancyRequestCreateCommand();
+        var command = createWaitlistCreateCommand();
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
 
         var criteria = ReservationSeatOverlapCriteria.of(locator, range)
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
         when(reader.existsOverlapping(criteria)).thenReturn(true);
-        whenCheckAlertRequestExists(command, false);
+        whenActiveWaitlistExists(command, false);
         when(store.save(any(Waitlist.class)))
                 .thenThrow(new DataIntegrityViolationException("duplicated request"));
 
-        assertThatThrownBy(() -> requester.create(command))
+        assertThatThrownBy(() -> service.create(command))
                 .isInstanceOf(ReservationApplicationException.class)
                 .extracting("errorCode")
                 .isEqualTo(ReservationApplicationErrorCode.DUPLICATED_REQUEST);
     }
 
     @Test
-    @DisplayName("본인 요청이면 알림 요청을 취소하고 저장한다")
+    @DisplayName("본인 요청이면 대기열 요청을 취소하고 저장한다")
     void cancel_request_when_command_user_is_owner() {
-        var request = createRequest();
+        var request = createWaitlist();
         var requestId = UUID.randomUUID();
-        var command = createVacancyAlertRequestCancelCommand(request.getUserId(), requestId);
+        var command = createWaitlistCancelCommand(request.getUserId(), requestId);
 
         when(store.findById(requestId)).thenReturn(Optional.of(request));
 
-        requester.cancel(command);
+        service.cancel(command);
 
         assertThat(request.getState().getStatus()).isEqualTo(WaitlistStatus.CANCELLED);
         verify(store).save(request);
@@ -147,11 +147,11 @@ public class DefaultWaitlistRequesterTest {
     @DisplayName("취소 대상이 없으면 NOT_FOUND 예외를 던진다")
     void throw_not_found_when_cancel_target_missing() {
         var requestId = UUID.randomUUID();
-        var command = createVacancyAlertRequestCancelCommand(requestId);
+        var command = createWaitlistCancelCommand(requestId);
 
         when(store.findById(requestId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> requester.cancel(command))
+        assertThatThrownBy(() -> service.cancel(command))
                 .isInstanceOf(ReservationApplicationException.class)
                 .extracting("errorCode")
                 .isEqualTo(ReservationApplicationErrorCode.NOT_FOUND);
@@ -162,13 +162,13 @@ public class DefaultWaitlistRequesterTest {
     @Test
     @DisplayName("본인 요청이 아니면 UNAUTHORIZED_CANCELLATION 예외를 던진다")
     void throw_unauthorized_cancellation_when_command_user_is_not_owner() {
-        var request = createRequest();
+        var request = createWaitlist();
         var requestId = UUID.randomUUID();
-        var command = createVacancyAlertRequestCancelCommand("other-" + request.getUserId(), requestId);
+        var command = createWaitlistCancelCommand("other-" + request.getUserId(), requestId);
 
         when(store.findById(requestId)).thenReturn(Optional.of(request));
 
-        assertThatThrownBy(() -> requester.cancel(command))
+        assertThatThrownBy(() -> service.cancel(command))
                 .isInstanceOf(ReservationApplicationException.class)
                 .extracting("errorCode")
                 .isEqualTo(ReservationApplicationErrorCode.UNAUTHORIZED_CANCELLATION);
@@ -176,7 +176,7 @@ public class DefaultWaitlistRequesterTest {
         verify(store, never()).save(any(Waitlist.class));
     }
 
-    private void whenCheckAlertRequestExists(CreateWaitlistCommand command, boolean value) {
+    private void whenActiveWaitlistExists(CreateWaitlistCommand command, boolean value) {
         var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
         var range = SimpleTimeRange.from(command.startTime(), command.endTime());
         when(store.existsByUserIdAndLocatorAndRangeAndStatus(command.userId(), locator, range, WaitlistStatus.ACTIVE))

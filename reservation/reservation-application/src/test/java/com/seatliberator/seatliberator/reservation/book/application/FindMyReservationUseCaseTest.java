@@ -92,7 +92,7 @@ public class FindMyReservationUseCaseTest {
 
         when(reader.findAllOverlapping(any(ReservationRangeOverlapCriteria.class)))
                 .thenReturn(List.of());
-        
+
         var result = useCase.find(query);
 
         assertThat(result).isEmpty();

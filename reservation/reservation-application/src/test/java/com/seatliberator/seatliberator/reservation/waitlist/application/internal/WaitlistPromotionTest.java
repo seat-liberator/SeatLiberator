@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.vacancy.application.internal;
+package com.seatliberator.seatliberator.reservation.waitlist.application.internal;
 
 import com.seatliberator.seatliberator.reservation.book.application.contract.ReservationPolicyChecker;
 import com.seatliberator.seatliberator.reservation.book.application.contract.result.ReservationPolicyCheckResult;
@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("Application: Vacancy Alert Request Promotion")
+@DisplayName("Application: Waitlist Promotion")
 class WaitlistPromotionTest {
 
     @Mock

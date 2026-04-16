@@ -10,9 +10,9 @@ import java.time.Instant;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
-import static com.seatliberator.seatliberator.reservation.domain.fixture.VacancyAlertRequestFixture.INITIAL_USER_ID;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.WaitlistFixture.INITIAL_USER_ID;
 
-public class VacancyAlertRequestFixtureBuilder {
+public class WaitlistFixtureBuilder {
     private String userId = INITIAL_USER_ID;
 
     private SeatLocator locator = createLocator();
@@ -23,10 +23,10 @@ public class VacancyAlertRequestFixtureBuilder {
 
     private WaitlistBehavior behavior = WaitlistBehavior.NOTIFY_ONLY;
 
-    public VacancyAlertRequestFixtureBuilder() {
+    public WaitlistFixtureBuilder() {
     }
 
-    public VacancyAlertRequestFixtureBuilder(
+    public WaitlistFixtureBuilder(
             String userId,
             SeatLocator locator,
             TimeRange range,
@@ -40,32 +40,32 @@ public class VacancyAlertRequestFixtureBuilder {
         this.behavior = behavior;
     }
 
-    public VacancyAlertRequestFixtureBuilder copy() {
-        return new VacancyAlertRequestFixtureBuilder(userId, locator, range, requestedAt, behavior);
+    public WaitlistFixtureBuilder copy() {
+        return new WaitlistFixtureBuilder(userId, locator, range, requestedAt, behavior);
     }
 
-    public VacancyAlertRequestFixtureBuilder userId(String userId) {
+    public WaitlistFixtureBuilder userId(String userId) {
         this.userId = userId;
         return this;
     }
 
-    public VacancyAlertRequestFixtureBuilder locator(SeatLocator locator) {
+    public WaitlistFixtureBuilder locator(SeatLocator locator) {
         this.locator = locator;
         return this;
     }
 
-    public VacancyAlertRequestFixtureBuilder range(TimeRange range) {
+    public WaitlistFixtureBuilder range(TimeRange range) {
         this.range = range;
         return this;
     }
 
-    public VacancyAlertRequestFixtureBuilder requestedAt(Instant requestedAt) {
+    public WaitlistFixtureBuilder requestedAt(Instant requestedAt) {
         this.requestedAt = requestedAt;
         return this;
     }
 
-    public VacancyAlertRequestFixtureBuilder behavior(WaitlistBehavior actionType) {
-        this.behavior = actionType;
+    public WaitlistFixtureBuilder behavior(WaitlistBehavior behavior) {
+        this.behavior = behavior;
         return this;
     }
 

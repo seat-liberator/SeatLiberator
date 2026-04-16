@@ -12,8 +12,8 @@ import static com.seatliberator.seatliberator.reservation.domain.fixture.Reserva
 import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
 
-public class VacancyAlertRequestApplicationFixture {
-    public static CreateWaitlistCommand createVacancyRequestCreateCommand(
+public class WaitlistApplicationFixture {
+    public static CreateWaitlistCommand createWaitlistCreateCommand(
             String userId,
             SeatLocator locator,
             TimeRange range,
@@ -22,7 +22,7 @@ public class VacancyAlertRequestApplicationFixture {
         return CreateWaitlistCommand.from(userId, locator, range, behavior);
     }
 
-    public static CreateWaitlistCommand createVacancyRequestCreateCommand(
+    public static CreateWaitlistCommand createWaitlistCreateCommand(
             SeatLocator locator,
             TimeRange range
     ) {
@@ -34,8 +34,8 @@ public class VacancyAlertRequestApplicationFixture {
         );
     }
 
-    public static CreateWaitlistCommand createVacancyRequestCreateCommand() {
-        return createVacancyRequestCreateCommand(
+    public static CreateWaitlistCommand createWaitlistCreateCommand() {
+        return createWaitlistCreateCommand(
                 INITIAL_USER_ID,
                 createLocator(),
                 createRange(),
@@ -43,16 +43,16 @@ public class VacancyAlertRequestApplicationFixture {
         );
     }
 
-    public static CancelWaitlistCommand createVacancyAlertRequestCancelCommand() {
+    public static CancelWaitlistCommand createWaitlistCancelCommand() {
         // TODO: kernel test support에 fixed / atomic increment 기반 UUID generator 따로 빼야함
-        return createVacancyAlertRequestCancelCommand(INITIAL_USER_ID, UUID.randomUUID());
+        return createWaitlistCancelCommand(INITIAL_USER_ID, UUID.randomUUID());
     }
 
-    public static CancelWaitlistCommand createVacancyAlertRequestCancelCommand(UUID waitlistId) {
-        return createVacancyAlertRequestCancelCommand(INITIAL_USER_ID, waitlistId);
+    public static CancelWaitlistCommand createWaitlistCancelCommand(UUID waitlistId) {
+        return createWaitlistCancelCommand(INITIAL_USER_ID, waitlistId);
     }
 
-    public static CancelWaitlistCommand createVacancyAlertRequestCancelCommand(String userId, UUID waitlistId) {
+    public static CancelWaitlistCommand createWaitlistCancelCommand(String userId, UUID waitlistId) {
         return new CancelWaitlistCommand(userId, waitlistId);
     }
 }
