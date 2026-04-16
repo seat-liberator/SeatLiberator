@@ -2,8 +2,8 @@ package com.seatliberator.seatliberator.reservation.domain.fixture;
 
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.TimeRange;
-import com.seatliberator.seatliberator.reservation.domain.VacancyAlertRequestBehavior;
-import com.seatliberator.seatliberator.reservation.domain.persistence.VacancyAlertRequest;
+import com.seatliberator.seatliberator.reservation.domain.WaitlistBehavior;
+import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
 
 import java.time.Instant;
 
@@ -21,7 +21,7 @@ public class VacancyAlertRequestFixtureBuilder {
 
     private Instant requestedAt = fixedClock.instant();
 
-    private VacancyAlertRequestBehavior behavior = VacancyAlertRequestBehavior.NOTIFY_ONLY;
+    private WaitlistBehavior behavior = WaitlistBehavior.NOTIFY_ONLY;
 
     public VacancyAlertRequestFixtureBuilder() {
     }
@@ -31,7 +31,7 @@ public class VacancyAlertRequestFixtureBuilder {
             SeatLocator locator,
             TimeRange range,
             Instant requestedAt,
-            VacancyAlertRequestBehavior behavior
+            WaitlistBehavior behavior
     ) {
         this.userId = userId;
         this.locator = locator;
@@ -64,12 +64,12 @@ public class VacancyAlertRequestFixtureBuilder {
         return this;
     }
 
-    public VacancyAlertRequestFixtureBuilder behavior(VacancyAlertRequestBehavior actionType) {
+    public VacancyAlertRequestFixtureBuilder behavior(WaitlistBehavior actionType) {
         this.behavior = actionType;
         return this;
     }
 
-    public VacancyAlertRequest build() {
-        return VacancyAlertRequest.create(userId, locator, range, behavior, requestedAt);
+    public Waitlist build() {
+        return Waitlist.create(userId, locator, range, behavior, requestedAt);
     }
 }

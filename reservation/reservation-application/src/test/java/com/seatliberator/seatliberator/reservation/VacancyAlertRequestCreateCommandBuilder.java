@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation;
 
 import com.seatliberator.seatliberator.reservation.domain.*;
-import com.seatliberator.seatliberator.reservation.vacancy.application.port.in.command.VacancyAlertRequestCreateCommand;
+import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.command.CreateWaitlistCommand;
 
 import java.time.Instant;
 
@@ -13,7 +13,7 @@ public class VacancyAlertRequestCreateCommandBuilder {
     private String userId = INITIAL_USER_ID;
     private SeatLocator locator = createLocator();
     private TimeRange range = createRange();
-    private VacancyAlertRequestBehavior behavior = VacancyAlertRequestBehavior.AUTO_CLAIM;
+    private WaitlistBehavior behavior = WaitlistBehavior.AUTO_CLAIM;
 
     public VacancyAlertRequestCreateCommandBuilder() {}
 
@@ -21,7 +21,7 @@ public class VacancyAlertRequestCreateCommandBuilder {
             String userId,
             SeatLocator locator,
             TimeRange range,
-            VacancyAlertRequestBehavior behavior
+            WaitlistBehavior behavior
     ) {
         this.userId = userId;
         this.locator = locator;
@@ -38,8 +38,8 @@ public class VacancyAlertRequestCreateCommandBuilder {
         );
     }
 
-    public VacancyAlertRequestCreateCommand build() {
-        return VacancyAlertRequestCreateCommand.from(
+    public CreateWaitlistCommand build() {
+        return CreateWaitlistCommand.from(
                 userId,
                 locator,
                 range,
@@ -72,7 +72,7 @@ public class VacancyAlertRequestCreateCommandBuilder {
         return this;
     }
 
-    public VacancyAlertRequestCreateCommandBuilder behavior(VacancyAlertRequestBehavior behavior) {
+    public VacancyAlertRequestCreateCommandBuilder behavior(WaitlistBehavior behavior) {
         this.behavior = behavior;
         return this;
     }
