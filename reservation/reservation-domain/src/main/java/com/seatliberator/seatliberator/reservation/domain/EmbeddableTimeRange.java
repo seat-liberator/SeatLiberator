@@ -51,7 +51,7 @@ public class EmbeddableTimeRange implements TimeRange {
     }
 
     public void setRange(Instant startAt, Instant endAt) {
-        var range = SimpleTimeRange.from(startAt, endAt);
+        var range = SimpleTimeRange.of(startAt, endAt);
         apply(range);
     }
 

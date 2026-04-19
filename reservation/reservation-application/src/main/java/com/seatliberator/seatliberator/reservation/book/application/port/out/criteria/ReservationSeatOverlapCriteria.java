@@ -20,8 +20,8 @@ public record ReservationSeatOverlapCriteria(
 
     public static ReservationSeatOverlapCriteria of(SeatLocator locator, TimeRange range) {
         return new ReservationSeatOverlapCriteria(
-                SimpleSeatLocator.of(locator),
-                SimpleTimeRange.of(range),
+                SimpleSeatLocator.from(locator),
+                SimpleTimeRange.from(range),
                 ReservationFilter.empty()
         );
     }

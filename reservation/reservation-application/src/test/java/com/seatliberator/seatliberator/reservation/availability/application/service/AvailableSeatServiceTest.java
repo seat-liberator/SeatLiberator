@@ -50,13 +50,13 @@ public class AvailableSeatServiceTest {
     void return_available_seats() {
         var now = fixedClock.instant();
         var roomId = "room-1";
-        var range = SimpleTimeRange.from(
+        var range = SimpleTimeRange.of(
                 now,
                 now.plusSeconds(60)
         );
-        var seatALocator = SimpleSeatLocator.from(roomId, "A");
-        var seatBLocator = SimpleSeatLocator.from(roomId, "B");
-        var seatCLocator = SimpleSeatLocator.from(roomId, "C");
+        var seatALocator = SimpleSeatLocator.of(roomId, "A");
+        var seatBLocator = SimpleSeatLocator.of(roomId, "B");
+        var seatCLocator = SimpleSeatLocator.of(roomId, "C");
 
         var seatA = Seat.create(seatALocator, now);
         var seatB = Seat.create(seatBLocator, now);
@@ -95,7 +95,7 @@ public class AvailableSeatServiceTest {
 
         var now = fixedClock.instant();
         var roomId = "room-1";
-        var range = SimpleTimeRange.from(
+        var range = SimpleTimeRange.of(
                 now,
                 now.plusSeconds(60)
         );
@@ -119,8 +119,8 @@ public class AvailableSeatServiceTest {
     void ignore_canceled_reservation_when_calculating_available_seats() {
         var now = fixedClock.instant();
         var roomId = "room-1";
-        var range = SimpleTimeRange.from(now, now.plusSeconds(60));
-        var seatALocator = SimpleSeatLocator.from(roomId, "A");
+        var range = SimpleTimeRange.of(now, now.plusSeconds(60));
+        var seatALocator = SimpleSeatLocator.of(roomId, "A");
         var seatA = Seat.create(seatALocator, now);
 
         when(seatReader.findByRoomId(roomId))
@@ -144,8 +144,8 @@ public class AvailableSeatServiceTest {
     void ignore_expired_reservation_when_calculating_available_seats() {
         var now = fixedClock.instant();
         var roomId = "room-1";
-        var range = SimpleTimeRange.from(now, now.plusSeconds(60));
-        var seatALocator = SimpleSeatLocator.from(roomId, "A");
+        var range = SimpleTimeRange.of(now, now.plusSeconds(60));
+        var seatALocator = SimpleSeatLocator.of(roomId, "A");
         var seatA = Seat.create(seatALocator, now);
 
         when(seatReader.findByRoomId(roomId))
@@ -168,8 +168,8 @@ public class AvailableSeatServiceTest {
     void treat_used_reservation_as_occupied_seat() {
         var now = fixedClock.instant();
         var roomId = "room-1";
-        var range = SimpleTimeRange.from(now, now.plusSeconds(60));
-        var seatALocator = SimpleSeatLocator.from(roomId, "A");
+        var range = SimpleTimeRange.of(now, now.plusSeconds(60));
+        var seatALocator = SimpleSeatLocator.of(roomId, "A");
         var seatA = Seat.create(seatALocator, now);
 
         when(seatReader.findByRoomId(roomId))

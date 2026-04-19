@@ -58,7 +58,7 @@ public class WaitlistCreateCommandBuilder {
     }
 
     public WaitlistCreateCommandBuilder locator(String roomId, String seatId) {
-        this.locator = SimpleSeatLocator.from(roomId, seatId);
+        this.locator = SimpleSeatLocator.of(roomId, seatId);
         return this;
     }
 
@@ -68,7 +68,7 @@ public class WaitlistCreateCommandBuilder {
     }
 
     public WaitlistCreateCommandBuilder range(Instant startAt, Instant endAt) {
-        this.range = SimpleTimeRange.from(startAt, endAt);
+        this.range = SimpleTimeRange.of(startAt, endAt);
         return this;
     }
 

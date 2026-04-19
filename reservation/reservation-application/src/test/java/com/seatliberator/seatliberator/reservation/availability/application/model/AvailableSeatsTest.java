@@ -31,8 +31,8 @@ public class AvailableSeatsTest {
         var seatC = Seat.create("room-1", "C", now);
 
         var reservedLocators = List.<SeatLocator>of(
-                SimpleSeatLocator.from("room-1", "A"),
-                SimpleSeatLocator.from("room-1", "C")
+                SimpleSeatLocator.of("room-1", "A"),
+                SimpleSeatLocator.of("room-1", "C")
         );
 
         // when
@@ -67,8 +67,8 @@ public class AvailableSeatsTest {
         var seatB = Seat.create("room-1", "B", now);
 
         var reservedLocators = List.<SeatLocator>of(
-                SimpleSeatLocator.from("room-1", "A"),
-                SimpleSeatLocator.from("room-1", "B")
+                SimpleSeatLocator.of("room-1", "A"),
+                SimpleSeatLocator.of("room-1", "B")
         );
 
         // when
@@ -89,8 +89,8 @@ public class AvailableSeatsTest {
         var seatB = Seat.create("room-1", "B", now);
 
         var reservedLocators = List.<SeatLocator>of(
-                SimpleSeatLocator.from("room-1", "A"),
-                SimpleSeatLocator.from("room-1", "A")
+                SimpleSeatLocator.of("room-1", "A"),
+                SimpleSeatLocator.of("room-1", "A")
         );
 
         // when

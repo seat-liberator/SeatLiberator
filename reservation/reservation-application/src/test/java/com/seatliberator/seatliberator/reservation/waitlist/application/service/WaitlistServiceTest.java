@@ -12,7 +12,6 @@ import com.seatliberator.seatliberator.reservation.shared.application.exception.
 import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.command.CreateWaitlistCommand;
 import com.seatliberator.seatliberator.reservation.waitlist.application.port.out.WaitlistStore;
-import com.seatliberator.seatliberator.reservation.waitlist.application.service.WaitlistService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,9 +52,9 @@ public class WaitlistServiceTest {
     @DisplayName("대기열 대상 좌석 및 시간에 예약이 존재하지 않으면 RESERVATION_NOT_FOUND 예외를 던진다")
     void throw_exception_when_reservation_not_found_in_locator_and_range() {
         var command = createWaitlistCreateCommand();
-        
-        var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
-        var range = SimpleTimeRange.from(command.startTime(), command.endTime());
+
+        var locator = SimpleSeatLocator.of(command.roomId(), command.seatId());
+        var range = SimpleTimeRange.of(command.startTime(), command.endTime());
 
         var criteria = ReservationSeatOverlapCriteria.of(locator, range)
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
@@ -71,8 +70,8 @@ public class WaitlistServiceTest {
     @DisplayName("이미 동일 시간 / 좌석에 대기열 요청이 존재하면 중복 요청 시 DUPLICATED_REQUEST 예외를 던진다.")
     void throw_exception_when_active_request_already_exists() {
         var command = createWaitlistCreateCommand();
-        var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
-        var range = SimpleTimeRange.from(command.startTime(), command.endTime());
+        var locator = SimpleSeatLocator.of(command.roomId(), command.seatId());
+        var range = SimpleTimeRange.of(command.startTime(), command.endTime());
 
         var criteria = ReservationSeatOverlapCriteria.of(locator, range)
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
@@ -90,8 +89,8 @@ public class WaitlistServiceTest {
     @DisplayName("활성 요청이 없으면 요청을 생성하고 저장한다")
     void save_request_when_no_active_request_exists() {
         var command = createWaitlistCreateCommand();
-        var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
-        var range = SimpleTimeRange.from(command.startTime(), command.endTime());
+        var locator = SimpleSeatLocator.of(command.roomId(), command.seatId());
+        var range = SimpleTimeRange.of(command.startTime(), command.endTime());
 
         var criteria = ReservationSeatOverlapCriteria.of(locator, range)
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
@@ -112,8 +111,8 @@ public class WaitlistServiceTest {
     @DisplayName("저장 시 무결성 예외가 발생하면 DUPLICATED_REQUEST 예외로 변환한다")
     void throw_duplicated_request_when_save_raises_data_integrity_violation() {
         var command = createWaitlistCreateCommand();
-        var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
-        var range = SimpleTimeRange.from(command.startTime(), command.endTime());
+        var locator = SimpleSeatLocator.of(command.roomId(), command.seatId());
+        var range = SimpleTimeRange.of(command.startTime(), command.endTime());
 
         var criteria = ReservationSeatOverlapCriteria.of(locator, range)
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
@@ -177,8 +176,8 @@ public class WaitlistServiceTest {
     }
 
     private void whenActiveWaitlistExists(CreateWaitlistCommand command, boolean value) {
-        var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
-        var range = SimpleTimeRange.from(command.startTime(), command.endTime());
+        var locator = SimpleSeatLocator.of(command.roomId(), command.seatId());
+        var range = SimpleTimeRange.of(command.startTime(), command.endTime());
         when(store.existsByUserIdAndLocatorAndRangeAndStatus(command.userId(), locator, range, WaitlistStatus.ACTIVE))
                 .thenReturn(value);
     }

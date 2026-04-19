@@ -46,7 +46,7 @@ public class EmbeddableSeatLocator implements SeatLocator {
     }
 
     public void setLocate(String roomId, String seatId) {
-        var locator = SimpleSeatLocator.from(roomId, seatId);
+        var locator = SimpleSeatLocator.of(roomId, seatId);
         apply(locator);
     }
 

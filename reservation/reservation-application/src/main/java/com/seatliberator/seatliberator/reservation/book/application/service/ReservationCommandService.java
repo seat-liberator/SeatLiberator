@@ -46,8 +46,8 @@ public class ReservationCommandService implements
             throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_ALREADY_EXISTS);
         });
 
-        var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
-        var range = SimpleTimeRange.from(command.startTime(), command.endTime());
+        var locator = SimpleSeatLocator.of(command.roomId(), command.seatId());
+        var range = SimpleTimeRange.of(command.startTime(), command.endTime());
 
         var criteria = ReservationSeatOverlapCriteria.of(locator, range)
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
@@ -82,8 +82,8 @@ public class ReservationCommandService implements
                 command.seatId()
         );
 
-        var currentLocator = SimpleSeatLocator.from(command.roomId(), command.seatId());
-        var currentRange = SimpleTimeRange.from(command.startTime(), command.endTime());
+        var currentLocator = SimpleSeatLocator.of(command.roomId(), command.seatId());
+        var currentRange = SimpleTimeRange.of(command.startTime(), command.endTime());
 
         var criteria = ReservationSeatOverlapCriteria.of(currentLocator, currentRange)
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED));

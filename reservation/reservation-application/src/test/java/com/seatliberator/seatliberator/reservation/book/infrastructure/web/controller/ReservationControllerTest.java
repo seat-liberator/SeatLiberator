@@ -67,7 +67,7 @@ public class ReservationControllerTest {
         var actual = captor.getValue();
         assertThat(actual).isNotNull();
         assertThat(actual.userId()).isEqualTo("user-1");
-        assertThat(actual.range()).isEqualTo(SimpleTimeRange.from(startAt, endAt));
+        assertThat(actual.range()).isEqualTo(SimpleTimeRange.of(startAt, endAt));
         assertThat(actual.status()).isEqualTo(ReservationStatus.RESERVED);
     }
 

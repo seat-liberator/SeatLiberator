@@ -22,7 +22,7 @@ public class SeatAvailabilityController {
             @RequestParam(name = "start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant start,
             @RequestParam(name = "end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant end
     ) {
-        var range = SimpleTimeRange.from(start, end);
+        var range = SimpleTimeRange.of(start, end);
         var query = new FindAvailableSeatQuery(roomId, range);
         var result = reader.findAvailabilitySeats(query);
         return ResponseEntity.ok(result);

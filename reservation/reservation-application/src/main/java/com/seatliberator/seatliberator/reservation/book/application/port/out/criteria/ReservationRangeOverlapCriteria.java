@@ -16,7 +16,7 @@ public record ReservationRangeOverlapCriteria(
 
     public static ReservationRangeOverlapCriteria of(TimeRange range) {
         return new ReservationRangeOverlapCriteria(
-                SimpleTimeRange.of(range),
+                SimpleTimeRange.from(range),
                 ReservationFilter.empty()
         );
     }

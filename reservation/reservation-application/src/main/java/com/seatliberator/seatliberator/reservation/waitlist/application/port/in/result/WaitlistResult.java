@@ -12,8 +12,8 @@ public record WaitlistResult(
     public static WaitlistResult from(Waitlist request) {
         return new WaitlistResult(
                 request.getUserId(),
-                SimpleSeatLocator.of(request.getLocator()),
-                SimpleTimeRange.of(request.getRange())
+                SimpleSeatLocator.from(request.getLocator()),
+                SimpleTimeRange.from(request.getRange())
         );
     }
 }

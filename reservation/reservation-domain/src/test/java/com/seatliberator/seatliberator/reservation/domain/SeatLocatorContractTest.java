@@ -48,7 +48,7 @@ public interface SeatLocatorContractTest<T extends SeatLocator> {
     default void create_locator_with_from_factory() {
         var roomId = getRoomId();
         var seatId = getSeatId();
-        var locator = SimpleSeatLocator.from(roomId, seatId);
+        var locator = SimpleSeatLocator.of(roomId, seatId);
 
         assertThat(locator.roomId()).isEqualTo(roomId);
         assertThat(locator.seatId()).isEqualTo(seatId);
@@ -59,9 +59,9 @@ public interface SeatLocatorContractTest<T extends SeatLocator> {
     default void copy_locator_with_of_factory() {
         var roomId = getRoomId();
         var seatId = getSeatId();
-        var source = SimpleSeatLocator.from(roomId, seatId);
+        var source = SimpleSeatLocator.of(roomId, seatId);
 
-        var copied = SimpleSeatLocator.of(source);
+        var copied = SimpleSeatLocator.from(source);
 
         assertThat(copied.roomId()).isEqualTo(roomId);
         assertThat(copied.seatId()).isEqualTo(seatId);
@@ -188,7 +188,7 @@ public interface SeatLocatorContractTest<T extends SeatLocator> {
     @Test
     @DisplayName("SeatLocator의 key()는 동일한 SeatLocatorKey를 반환한다")
     default void return_key_from_locator_default_method() {
-        SeatLocator locator = SimpleSeatLocator.from("room-1", "seat-1");
+        SeatLocator locator = SimpleSeatLocator.of("room-1", "seat-1");
 
         var key = locator.key();
 
@@ -198,7 +198,7 @@ public interface SeatLocatorContractTest<T extends SeatLocator> {
     @Test
     @DisplayName("서로 다른 SeatLocator 구현체라도 같은 값이면 같은 key를 만든다")
     default void create_same_key_across_different_implementations() {
-        SeatLocator simple = SimpleSeatLocator.from("room-1", "seat-1");
+        SeatLocator simple = SimpleSeatLocator.of("room-1", "seat-1");
         SeatLocator embeddable = EmbeddableSeatLocator.from("room-1", "seat-1");
 
         assertThat(simple.key()).isEqualTo(embeddable.key());
@@ -212,7 +212,7 @@ public interface SeatLocatorContractTest<T extends SeatLocator> {
         );
 
         assertThat(keys).contains(
-                SimpleSeatLocator.from("room-1", "seat-1").key()
+                SimpleSeatLocator.of("room-1", "seat-1").key()
         );
     }
 

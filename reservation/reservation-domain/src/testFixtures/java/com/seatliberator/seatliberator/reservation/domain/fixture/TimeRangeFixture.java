@@ -23,6 +23,6 @@ public class TimeRangeFixture {
     }
 
     public static TimeRange createRange(Instant startAt, Instant endAt) {
-        return SimpleTimeRange.from(startAt, endAt);
+        return SimpleTimeRange.of(startAt, endAt);
     }
 }
