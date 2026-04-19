@@ -12,11 +12,11 @@ public record SimpleTimeRange(
         }
     }
 
-    public static SimpleTimeRange from(Instant startAt, Instant endAt) {
+    public static SimpleTimeRange of(Instant startAt, Instant endAt) {
         return new SimpleTimeRange(startAt, endAt);
     }
 
-    public static SimpleTimeRange of(TimeRange range) {
+    public static SimpleTimeRange from(TimeRange range) {
         return new SimpleTimeRange(range.startAt(), range.endAt());
     }
 }

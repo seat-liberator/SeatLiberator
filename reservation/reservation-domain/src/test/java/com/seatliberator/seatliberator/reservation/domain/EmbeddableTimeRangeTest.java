@@ -64,7 +64,7 @@ public class EmbeddableTimeRangeTest {
         @Test
         @DisplayName("of 팩토리로 다른 TimeRange를 복사할 수 있다")
         void copy_range_with_of_factory() {
-            var source = SimpleTimeRange.from(startAt, endAt);
+            var source = SimpleTimeRange.of(startAt, endAt);
 
             var copied = EmbeddableTimeRange.of(source);
 

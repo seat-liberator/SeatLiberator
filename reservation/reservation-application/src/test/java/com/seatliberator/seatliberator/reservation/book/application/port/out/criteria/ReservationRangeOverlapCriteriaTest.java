@@ -15,7 +15,7 @@ public class ReservationRangeOverlapCriteriaTest {
         var range = createRange();
         var criteria = ReservationRangeOverlapCriteria.of(range);
 
-        assertThat(criteria.range()).isEqualTo(SimpleTimeRange.of(range));
+        assertThat(criteria.range()).isEqualTo(SimpleTimeRange.from(range));
         assertThat(criteria.filter()).isEqualTo(ReservationFilter.empty());
     }
 

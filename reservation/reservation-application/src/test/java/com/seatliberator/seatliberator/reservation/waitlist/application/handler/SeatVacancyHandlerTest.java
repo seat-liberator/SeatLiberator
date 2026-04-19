@@ -8,7 +8,6 @@ import com.seatliberator.seatliberator.reservation.domain.event.ReservationExpir
 import com.seatliberator.seatliberator.reservation.domain.fixture.WaitlistFixtureBuilder;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
 import com.seatliberator.seatliberator.reservation.shared.application.notifier.Notifier;
-import com.seatliberator.seatliberator.reservation.waitlist.application.handler.SeatVacancyHandler;
 import com.seatliberator.seatliberator.reservation.waitlist.application.internal.WaitlistPromotion;
 import com.seatliberator.seatliberator.reservation.waitlist.application.internal.WaitlistPromotionResult;
 import com.seatliberator.seatliberator.reservation.waitlist.application.port.out.WaitlistStore;
@@ -55,8 +54,8 @@ class SeatVacancyHandlerTest {
     @Test
     @DisplayName("예약 취소 이벤트를 받으면 활성 요청을 조회해 처리 결과를 저장하고 알린다")
     void handle_canceled_event() {
-        var locator = SimpleSeatLocator.from("room-1", "seat-1");
-        var range = SimpleTimeRange.from(Instant.parse("2026-01-01T00:00:00Z"), Instant.parse("2026-01-01T00:10:00Z"));
+        var locator = SimpleSeatLocator.of("room-1", "seat-1");
+        var range = SimpleTimeRange.of(Instant.parse("2026-01-01T00:00:00Z"), Instant.parse("2026-01-01T00:10:00Z"));
         var requestedAt = Instant.parse("2025-12-31T23:59:00Z");
         var now = Instant.parse("2026-01-01T00:01:00Z");
         var request = new WaitlistFixtureBuilder()
@@ -80,8 +79,8 @@ class SeatVacancyHandlerTest {
     @Test
     @DisplayName("예약 만료 이벤트를 받으면 AUTO_CLAIM 요청을 승격 결과에 따라 처리한다")
     void handle_expired_event() {
-        var locator = SimpleSeatLocator.from("room-1", "seat-1");
-        var range = SimpleTimeRange.from(Instant.parse("2026-01-01T00:00:00Z"), Instant.parse("2026-01-01T00:10:00Z"));
+        var locator = SimpleSeatLocator.of("room-1", "seat-1");
+        var range = SimpleTimeRange.of(Instant.parse("2026-01-01T00:00:00Z"), Instant.parse("2026-01-01T00:10:00Z"));
         var requestedAt = Instant.parse("2025-12-31T23:59:00Z");
         var now = Instant.parse("2026-01-01T00:01:00Z");
         var request = Waitlist.autoClaim("user-1", locator, range, requestedAt);

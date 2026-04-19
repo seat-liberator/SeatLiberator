@@ -35,7 +35,7 @@ public class SeatCommandService implements
 
     @Override
     public boolean create(CreateSeatCommand command) {
-        var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
+        var locator = SimpleSeatLocator.of(command.roomId(), command.seatId());
 
         var conflict = query.existsByLocator(locator);
         if (conflict) return false;
@@ -53,8 +53,8 @@ public class SeatCommandService implements
 
     @Override
     public boolean update(UpdateSeatCommand command) {
-        var oldLocator = SimpleSeatLocator.from(command.oldRoomId(), command.oldSeatId());
-        var newLocator = SimpleSeatLocator.from(command.newRoomId(), command.newSeatId());
+        var oldLocator = SimpleSeatLocator.of(command.oldRoomId(), command.oldSeatId());
+        var newLocator = SimpleSeatLocator.of(command.newRoomId(), command.newSeatId());
         var oldSeat = query.findByLocator(oldLocator)
                 .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND));
 
@@ -69,7 +69,7 @@ public class SeatCommandService implements
 
     @Override
     public boolean delete(DeleteSeatCommand command) {
-        var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
+        var locator = SimpleSeatLocator.of(command.roomId(), command.seatId());
         store.deleteByLocator(locator);
 
         return true;

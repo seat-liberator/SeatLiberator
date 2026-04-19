@@ -38,7 +38,7 @@ public class SimpleTimeRangeTest {
         @Test
         @DisplayName("from 팩토리로 생성할 수 있다")
         void create_range_with_from_factory() {
-            var range = SimpleTimeRange.from(startAt, endAt);
+            var range = SimpleTimeRange.of(startAt, endAt);
 
             assertThat(range.startAt()).isEqualTo(startAt);
             assertThat(range.endAt()).isEqualTo(endAt);
@@ -47,9 +47,9 @@ public class SimpleTimeRangeTest {
         @Test
         @DisplayName("다른 TimeRange로부터 동일한 구간을 복사할 수 있다")
         void copy_range_with_of_factory() {
-            var source = SimpleTimeRange.from(startAt, endAt);
+            var source = SimpleTimeRange.of(startAt, endAt);
 
-            var copied = SimpleTimeRange.of(source);
+            var copied = SimpleTimeRange.from(source);
 
             assertThat(copied.startAt()).isEqualTo(startAt);
             assertThat(copied.endAt()).isEqualTo(endAt);
@@ -62,7 +62,7 @@ public class SimpleTimeRangeTest {
         @Test
         @DisplayName("시작 시간 이상 종료 시간 미만이면 포함한다")
         void contains_time_within_range() {
-            var range = SimpleTimeRange.from(startAt, endAt);
+            var range = SimpleTimeRange.of(startAt, endAt);
 
             assertThat(range.contains(startAt)).isTrue();
             assertThat(range.contains(endAt.minusNanos(1))).isTrue();
@@ -71,7 +71,7 @@ public class SimpleTimeRangeTest {
         @Test
         @DisplayName("시작 시간 이전과 종료 시간 이후는 포함하지 않는다")
         void does_not_contain_time_outside_range() {
-            var range = SimpleTimeRange.from(startAt, endAt);
+            var range = SimpleTimeRange.of(startAt, endAt);
 
             assertThat(range.contains(startAt.minusNanos(1))).isFalse();
             assertThat(range.contains(endAt)).isFalse();
@@ -80,7 +80,7 @@ public class SimpleTimeRangeTest {
         @Test
         @DisplayName("종료 시간 이상이면 종료된 상태다")
         void return_true_when_time_is_on_or_after_end_at() {
-            var range = SimpleTimeRange.from(startAt, endAt);
+            var range = SimpleTimeRange.of(startAt, endAt);
 
             assertThat(range.isEnded(endAt.minusNanos(1))).isFalse();
             assertThat(range.isEnded(endAt)).isTrue();

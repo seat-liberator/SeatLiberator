@@ -19,7 +19,7 @@ public record ReservationRoomOverlapCriteria(
     public static ReservationRoomOverlapCriteria of(String roomId, TimeRange range) {
         return new ReservationRoomOverlapCriteria(
                 roomId,
-                SimpleTimeRange.of(range),
+                SimpleTimeRange.from(range),
                 ReservationFilter.empty()
         );
     }

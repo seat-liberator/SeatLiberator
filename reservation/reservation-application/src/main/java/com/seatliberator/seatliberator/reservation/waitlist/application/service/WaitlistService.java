@@ -33,8 +33,8 @@ public class WaitlistService implements
 
     @Override
     public Waitlist create(CreateWaitlistCommand command) {
-        var locator = SimpleSeatLocator.from(command.roomId(), command.seatId());
-        var range = SimpleTimeRange.from(command.startTime(), command.endTime());
+        var locator = SimpleSeatLocator.of(command.roomId(), command.seatId());
+        var range = SimpleTimeRange.of(command.startTime(), command.endTime());
 
         var criteria = ReservationSeatOverlapCriteria.of(locator, range)
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));

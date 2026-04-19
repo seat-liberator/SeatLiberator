@@ -23,8 +23,8 @@ public record ReservationSeatLookupCriteria(
             TimeRange range
     ) {
         return new ReservationSeatLookupCriteria(
-                SimpleSeatLocator.of(locator),
-                SimpleTimeRange.of(range),
+                SimpleSeatLocator.from(locator),
+                SimpleTimeRange.from(range),
                 ReservationFilter.empty()
         );
     }

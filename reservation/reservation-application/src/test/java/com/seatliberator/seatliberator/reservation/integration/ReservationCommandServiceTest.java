@@ -45,7 +45,7 @@ public class ReservationCommandServiceTest extends ReservationDatabaseCleanupSup
     void return_true_when_seat_is_created() {
         var givenRoomId = "room-1";
         var givenSeatId = "seat-1";
-        var locator = SimpleSeatLocator.from(givenRoomId, givenSeatId);
+        var locator = SimpleSeatLocator.of(givenRoomId, givenSeatId);
 
         var seatCreateCommand = new CreateSeatCommand(
                 givenRoomId,

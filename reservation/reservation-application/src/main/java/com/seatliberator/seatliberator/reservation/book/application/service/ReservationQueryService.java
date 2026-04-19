@@ -34,8 +34,8 @@ public class ReservationQueryService implements
         var optReservation = switch (reservationLocator) {
             case IdBasedReservationLocator(Long reservationId) -> reader.findById(reservationId);
             case SeatBasedReservationLocator(String roomId, String seatId, Instant startTime, Instant endTime) -> {
-                var locator = SimpleSeatLocator.from(roomId, seatId);
-                var range = SimpleTimeRange.from(startTime, endTime);
+                var locator = SimpleSeatLocator.of(roomId, seatId);
+                var range = SimpleTimeRange.of(startTime, endTime);
                 var criteria = ReservationSeatLookupCriteria.of(locator, range)
                         .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
                 yield reader.findOne(criteria);

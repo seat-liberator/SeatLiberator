@@ -55,7 +55,7 @@ public class FindMyReservationUseCaseTest {
 
         var actual = captor.getValue();
 
-        assertThat(actual.range()).isEqualTo(SimpleTimeRange.of(range));
+        assertThat(actual.range()).isEqualTo(SimpleTimeRange.from(range));
         assertThat(actual.filter().userIds()).containsExactlyInAnyOrder("user-1");
         assertThat(actual.filter().statuses()).containsExactly(ReservationStatus.RESERVED);
         assertThat(actual.filter().excludedIds()).isEmpty();

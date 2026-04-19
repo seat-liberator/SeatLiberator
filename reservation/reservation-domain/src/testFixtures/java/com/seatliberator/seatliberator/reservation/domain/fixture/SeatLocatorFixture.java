@@ -12,6 +12,6 @@ public class SeatLocatorFixture {
     }
 
     public static SeatLocator createLocator(String roomId, String seatId) {
-        return SimpleSeatLocator.from(roomId, seatId);
+        return SimpleSeatLocator.of(roomId, seatId);
     }
 }

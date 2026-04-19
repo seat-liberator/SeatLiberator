@@ -33,7 +33,7 @@ public class ReservationQueryController {
             @RequestParam(name = "status") ReservationStatus status
     ) {
         var userId = actorContextHolder.getActor().subject();
-        var range = SimpleTimeRange.from(startAt, endAt);
+        var range = SimpleTimeRange.of(startAt, endAt);
         var query = new FindMyReservationQuery(userId, range, status);
         var result = findMyReservationUseCase.find(query);
         return ResponseEntity.ok(result);

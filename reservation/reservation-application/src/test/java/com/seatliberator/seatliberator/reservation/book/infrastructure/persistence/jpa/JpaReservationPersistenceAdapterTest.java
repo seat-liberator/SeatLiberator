@@ -38,7 +38,7 @@ public class JpaReservationPersistenceAdapterTest {
     @DisplayName("기간이 겹치는 예약만 조회한다")
     void find_all_overlapping_by_user() {
         // given
-        var queryRange = SimpleTimeRange.from(
+        var queryRange = SimpleTimeRange.of(
                 Instant.parse("2026-04-20T10:00:00Z"),
                 Instant.parse("2026-04-20T12:00:00Z")
         );
@@ -95,7 +95,7 @@ public class JpaReservationPersistenceAdapterTest {
     @DisplayName("상태 조건이 있으면 해당 상태만 조회한다")
     void find_all_overlapping_with_status_filter() {
         // given
-        var queryRange = SimpleTimeRange.from(
+        var queryRange = SimpleTimeRange.of(
                 Instant.parse("2026-04-20T10:00:00Z"),
                 Instant.parse("2026-04-20T12:00:00Z")
         );
@@ -137,7 +137,7 @@ public class JpaReservationPersistenceAdapterTest {
     @DisplayName("excludedIds에 포함된 예약은 조회에서 제외한다")
     void exclude_ids() {
         // given
-        var queryRange = SimpleTimeRange.from(
+        var queryRange = SimpleTimeRange.of(
                 Instant.parse("2026-04-20T10:00:00Z"),
                 Instant.parse("2026-04-20T12:00:00Z")
         );

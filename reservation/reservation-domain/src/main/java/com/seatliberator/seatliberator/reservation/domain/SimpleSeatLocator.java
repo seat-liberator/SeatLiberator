@@ -13,11 +13,11 @@ public record SimpleSeatLocator(
         }
     }
 
-    public static SimpleSeatLocator from(String roomId, String seatId) {
+    public static SimpleSeatLocator of(String roomId, String seatId) {
         return new SimpleSeatLocator(roomId, seatId);
     }
 
-    public static SimpleSeatLocator of(SeatLocator locator) {
+    public static SimpleSeatLocator from(SeatLocator locator) {
         return new SimpleSeatLocator(locator.roomId(), locator.seatId());
     }
 }

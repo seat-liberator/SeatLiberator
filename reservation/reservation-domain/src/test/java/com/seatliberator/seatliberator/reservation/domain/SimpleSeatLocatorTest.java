@@ -6,7 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 public class SimpleSeatLocatorTest implements SeatLocatorContractTest<SimpleSeatLocator> {
     @Override
     public SimpleSeatLocator create(String roomId, String seatId) {
-        return SimpleSeatLocator.from(roomId, seatId);
+        return SimpleSeatLocator.of(roomId, seatId);
     }
 
     @Override
