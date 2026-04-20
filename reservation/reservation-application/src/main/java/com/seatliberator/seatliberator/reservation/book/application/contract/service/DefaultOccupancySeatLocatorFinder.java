@@ -3,6 +3,7 @@ package com.seatliberator.seatliberator.reservation.book.application.contract.se
 import com.seatliberator.seatliberator.reservation.book.application.contract.OccupancySeatLocatorFinder;
 import com.seatliberator.seatliberator.reservation.book.application.model.ReservationOccupancyPolicy;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFilter;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationRoomOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.TimeRange;
@@ -20,11 +21,10 @@ public class DefaultOccupancySeatLocatorFinder implements OccupancySeatLocatorFi
 
     @Override
     public List<SeatLocator> find(String roomId, TimeRange range) {
-        var criteria = ReservationRoomOverlapCriteria.of(roomId, range);
-        var reservations = reader.findAllOverlapping(criteria);
+        var criteria = ReservationRoomOverlapCriteria.of(roomId, range)
+                .withFilter(ReservationFilter.empty().withStatuses(policy.occupyingStatuses()));
 
-        return reservations.stream()
-                .filter(reservation -> policy.isOccupied(reservation.getStatus()))
+        return reader.findAllOverlapping(criteria).stream()
                 .<SeatLocator>map(Reservation::getLocator)
                 .toList();
     }
