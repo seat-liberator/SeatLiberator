@@ -3,14 +3,20 @@ package com.seatliberator.seatliberator.reservation.availability.application.ser
 import com.seatliberator.seatliberator.reservation.availability.application.model.AvailableSeats;
 import com.seatliberator.seatliberator.reservation.availability.application.model.SeatReservationStatusClassifier;
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.FindAvailableSeatsUseCase;
+import com.seatliberator.seatliberator.reservation.availability.application.port.in.FindSeatOccupancyRangesUseCase;
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.FindSeatStatusesUseCase;
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.query.FindAvailableSeatQuery;
+import com.seatliberator.seatliberator.reservation.availability.application.port.in.query.FindOccupancyRangesQuery;
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.query.FindSeatStatusesQuery;
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.result.AvailableSeatResult;
+import com.seatliberator.seatliberator.reservation.availability.application.port.in.result.SeatOccupancyRangeResult;
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.result.SeatStatusesResult;
 import com.seatliberator.seatliberator.reservation.book.application.contract.OccupancySeatLocatorFinder;
+import com.seatliberator.seatliberator.reservation.book.application.contract.OccupancySeatRangeFinder;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
 import com.seatliberator.seatliberator.reservation.seat.application.port.out.SeatReader;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
+import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +26,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SeatAvailabilityService implements
         FindAvailableSeatsUseCase,
-        FindSeatStatusesUseCase {
+        FindSeatStatusesUseCase,
+        FindSeatOccupancyRangesUseCase {
     private final SeatReader seatReader;
     private final OccupancySeatLocatorFinder occupancySeatLocatorFinder;
+    private final OccupancySeatRangeFinder occupancySeatRangeFinder;
 
     @Override
     public List<AvailableSeatResult> find(FindAvailableSeatQuery query) {
@@ -49,14 +57,29 @@ public class SeatAvailabilityService implements
 
         if (seatLocators.isEmpty()) return List.of();
 
-        var occupancyReservations = occupancySeatLocatorFinder.find(roomId, range);
+        var occupiedLocators = occupancySeatLocatorFinder.find(roomId, range);
 
-        var statuses = SeatReservationStatusClassifier.from(seatLocators, occupancyReservations).toMap();
+        var statuses = SeatReservationStatusClassifier.from(seatLocators, occupiedLocators).toMap();
 
         return seatLocators.stream()
                 .map(locator ->
                         SeatStatusesResult.of(locator, statuses.get(locator.key()))
                 )
+                .toList();
+    }
+
+    @Override
+    public List<SeatOccupancyRangeResult> find(FindOccupancyRangesQuery query) {
+        var targetLocator = query.locator();
+        var targetRange = query.range();
+
+        var exists = seatReader.existsByLocator(targetLocator);
+        if (!exists) throw new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND);
+
+        var occupiedRanges = occupancySeatRangeFinder.find(targetLocator, targetRange);
+
+        return occupiedRanges.stream()
+                .map(SeatOccupancyRangeResult::of)
                 .toList();
     }
 }
