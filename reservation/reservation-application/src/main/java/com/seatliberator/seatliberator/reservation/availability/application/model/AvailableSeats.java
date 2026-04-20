@@ -14,8 +14,8 @@ public class AvailableSeats {
         this.seats = seats;
     }
 
-    public static AvailableSeats from(List<Seat> seats, List<SeatLocator> reservedLocators) {
-        var occupied = reservedLocators.stream()
+    public static AvailableSeats from(List<Seat> seats, List<SeatLocator> occupiedLocators) {
+        var occupied = occupiedLocators.stream()
                 .map(SeatLocator::key)
                 .collect(Collectors.toSet());
 
