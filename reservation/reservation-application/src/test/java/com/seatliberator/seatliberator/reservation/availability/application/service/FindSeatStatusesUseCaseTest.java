@@ -5,6 +5,7 @@ import com.seatliberator.seatliberator.reservation.availability.application.port
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.query.FindSeatStatusesQuery;
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.result.SeatStatusesResult;
 import com.seatliberator.seatliberator.reservation.book.application.contract.OccupancySeatLocatorFinder;
+import com.seatliberator.seatliberator.reservation.book.application.contract.OccupancySeatRangeFinder;
 import com.seatliberator.seatliberator.reservation.domain.fixture.SeatFixture;
 import com.seatliberator.seatliberator.reservation.seat.application.port.out.SeatReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,13 +33,16 @@ public class FindSeatStatusesUseCaseTest {
     @Mock
     OccupancySeatLocatorFinder occupancySeatLocatorFinder;
 
+    @Mock
+    OccupancySeatRangeFinder occupancySeatRangeFinder;
+
     FindSeatStatusesUseCase useCase;
 
     Instant now = fixedClock.instant();
 
     @BeforeEach
     void run() {
-        useCase = new SeatAvailabilityService(seatReader, occupancySeatLocatorFinder);
+        useCase = new SeatAvailabilityService(seatReader, occupancySeatLocatorFinder, occupancySeatRangeFinder);
     }
 
     @Test
