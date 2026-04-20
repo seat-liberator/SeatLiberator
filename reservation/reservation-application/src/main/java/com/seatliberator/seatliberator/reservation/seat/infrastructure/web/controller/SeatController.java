@@ -18,47 +18,40 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/seat")
+@RequestMapping("/rooms")
 public class SeatController {
 
     private final CreateSeatUseCase createSeatUseCase;
     private final UpdateSeatUseCase updateSeatUseCase;
     private final DeleteSeatUseCase deleteSeatUseCase;
 
-    @PostMapping
+    @PostMapping("/{roomId}/seats")
     public Map<String, Boolean> create(
+            @PathVariable("roomId") String roomId,
             @RequestBody SeatCreateRequest request
     ) {
-        boolean result = createSeatUseCase.create(
-                new CreateSeatCommand(
-                        request.roomId(),
-                        request.seatId()
-                )
-        );
+        var command = new CreateSeatCommand(roomId, request.seatId());
+        boolean result = createSeatUseCase.create(command);
 
         return Map.of("success", result);
     }
 
-    @PutMapping
+    @PutMapping("/{roomId}/seats/{seatId}")
     public Map<String, Boolean> update(
+            @PathVariable("roomId") String roomId,
+            @PathVariable("seatId") String seatId,
             @RequestBody SeatUpdateRequest request
     ) {
-        boolean result = updateSeatUseCase.update(
-                new UpdateSeatCommand(
-                        request.oldRoomId(),
-                        request.oldSeatId(),
-                        request.newRoomId(),
-                        request.newSeatId()
-                )
-        );
+        var command = new UpdateSeatCommand(roomId, seatId, request.newRoomId(), request.newSeatId());
+        boolean result = updateSeatUseCase.update(command);
 
         return Map.of("success", result);
     }
 
-    @DeleteMapping("/{roomId}/{seatId}")
+    @DeleteMapping("/{roomId}/seats/{seatId}")
     public Map<String, Boolean> delete(
-            @PathVariable String roomId,
-            @PathVariable String seatId
+            @PathVariable("roomId") String roomId,
+            @PathVariable("seatId") String seatId
     ) {
         var command = new DeleteSeatCommand(roomId, seatId);
         boolean result = deleteSeatUseCase.delete(command);
