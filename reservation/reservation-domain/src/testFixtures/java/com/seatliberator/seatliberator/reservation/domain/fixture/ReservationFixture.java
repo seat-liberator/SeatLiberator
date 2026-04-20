@@ -1,12 +1,14 @@
 package com.seatliberator.seatliberator.reservation.domain.fixture;
 
-import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.domain.*;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
 
 import java.time.Duration;
 import java.time.Instant;
 
+import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
 import static org.assertj.core.api.Fail.fail;
 
 public class ReservationFixture {
@@ -38,6 +40,75 @@ public class ReservationFixture {
             idField.set(reservation, id);
         } catch (ReflectiveOperationException e) {
             fail("테스트용 ID 설정 실패");
+        }
+    }
+
+    public static class Builder {
+        private String userId = INITIAL_USER_ID;
+        private SeatLocator locator = createLocator();
+        private TimeRange range = createRange();
+        private ReservationStatus status = ReservationStatus.RESERVED;
+
+        public Builder() {
+        }
+
+        public Builder(String userId, SeatLocator locator, TimeRange range, ReservationStatus status) {
+            this.userId = userId;
+            this.locator = locator;
+            this.range = range;
+            this.status = status;
+        }
+
+        public static Builder from(Builder other) {
+            return new Builder(
+                    other.userId,
+                    SimpleSeatLocator.from(other.locator),
+                    SimpleTimeRange.from(other.range),
+                    other.status
+            );
+        }
+
+        public Builder copy() {
+            return from(this);
+        }
+
+        public Builder seatId(String seatId) {
+            this.locator = SimpleSeatLocator.of(locator.roomId(), seatId);
+            return this;
+        }
+
+        public Builder roomId(String roomId) {
+            this.locator = SimpleSeatLocator.of(roomId, locator.seatId());
+            return this;
+        }
+
+        public Builder locator(SeatLocator locator) {
+            this.locator = SimpleSeatLocator.from(locator);
+            return this;
+        }
+
+        public Builder startAt(Instant startAt) {
+            this.range = SimpleTimeRange.of(startAt, range.endAt());
+            return this;
+        }
+
+        public Builder endAt(Instant endAt) {
+            this.range = SimpleTimeRange.of(range.startAt(), endAt);
+            return this;
+        }
+
+        public Builder range(TimeRange range) {
+            this.range = SimpleTimeRange.from(range);
+            return this;
+        }
+
+        public Builder status(ReservationStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public Reservation build() {
+            return Reservation.create(userId, locator.roomId(), locator.seatId(), range.startAt(), range.endAt(), status);
         }
     }
 }
