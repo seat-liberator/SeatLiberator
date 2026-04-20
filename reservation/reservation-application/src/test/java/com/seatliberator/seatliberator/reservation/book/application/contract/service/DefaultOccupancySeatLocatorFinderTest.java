@@ -1,6 +1,8 @@
 package com.seatliberator.seatliberator.reservation.book.application.contract.service;
 
+import com.seatliberator.seatliberator.reservation.book.application.model.ReservationOccupancyPolicy;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
+import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFilter;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationRoomOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
@@ -25,6 +27,8 @@ class DefaultOccupancySeatLocatorFinderTest {
     @Mock
     ReservationReader reader;
 
+    ReservationOccupancyPolicy policy = new ReservationOccupancyPolicy();
+
     @InjectMocks
     DefaultOccupancySeatLocatorFinder finder;
 
@@ -33,7 +37,8 @@ class DefaultOccupancySeatLocatorFinderTest {
     void find_overlapping_reservations_by_room_and_range() {
         var roomId = "room-1";
         var range = createRange();
-        var criteria = ReservationRoomOverlapCriteria.of(roomId, range);
+        var criteria = ReservationRoomOverlapCriteria.of(roomId, range)
+                .withFilter(ReservationFilter.empty().withStatuses(policy.occupyingStatuses()));
 
         when(reader.findAllOverlapping(criteria)).thenReturn(List.of());
 
@@ -66,15 +71,11 @@ class DefaultOccupancySeatLocatorFinderTest {
                 .status(ReservationStatus.RESERVED)
                 .build();
 
-        var canceled = builder.copy()
-                .locator(canceledLocator)
-                .status(ReservationStatus.CANCELED)
-                .build();
-
-        var criteria = ReservationRoomOverlapCriteria.of(roomId, range);
+        var criteria = ReservationRoomOverlapCriteria.of(roomId, range)
+                .withFilter(ReservationFilter.empty().withStatuses(policy.occupyingStatuses()));
 
         when(reader.findAllOverlapping(criteria))
-                .thenReturn(List.of(used, reserved, canceled));
+                .thenReturn(List.of(used, reserved));
 
         var result = finder.find(roomId, range);
 
