@@ -5,6 +5,6 @@ import com.seatliberator.seatliberator.reservation.availability.application.port
 
 import java.util.List;
 
-public interface FindAvailableSeatUseCase {
-    List<AvailableSeatResult> findAvailabilitySeats(FindAvailableSeatQuery query);
+public interface FindAvailableSeatsUseCase {
+    List<AvailableSeatResult> find(FindAvailableSeatQuery query);
 }

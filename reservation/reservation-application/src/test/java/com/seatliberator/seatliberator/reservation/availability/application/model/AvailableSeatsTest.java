@@ -13,7 +13,7 @@ import java.util.List;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Application.model: AvailableSeats")
+@DisplayName("Available Seats")
 public class AvailableSeatsTest {
     Instant now;
 
@@ -23,20 +23,20 @@ public class AvailableSeatsTest {
     }
 
     @Test
-    @DisplayName("예약된 좌석 locator를 제외한 좌석만 남긴다")
-    void exclude_reserved_seats() {
+    @DisplayName("점유된 좌석 locator를 제외한 좌석만 남긴다")
+    void exclude_occupied_seats() {
         // given
         var seatA = Seat.create("room-1", "A", now);
         var seatB = Seat.create("room-1", "B", now);
         var seatC = Seat.create("room-1", "C", now);
 
-        var reservedLocators = List.<SeatLocator>of(
+        var occupiedLocators = List.<SeatLocator>of(
                 SimpleSeatLocator.of("room-1", "A"),
                 SimpleSeatLocator.of("room-1", "C")
         );
 
         // when
-        var result = AvailableSeats.from(List.of(seatA, seatB, seatC), reservedLocators);
+        var result = AvailableSeats.from(List.of(seatA, seatB, seatC), occupiedLocators);
 
         assertThat(result.toList())
                 .extracting(seat -> seat.getLocator().seatId())
@@ -44,8 +44,8 @@ public class AvailableSeatsTest {
     }
 
     @Test
-    @DisplayName("예약된 좌석이 없으면 모든 좌석을 가용 좌석으로 본다")
-    void keep_all_seats_when_reserved_locator_is_empty() {
+    @DisplayName("점유된 좌석이 없으면 모든 좌석을 가용 좌석으로 본다")
+    void keep_all_seats_when_occupied_locator_is_empty() {
         var seatA = Seat.create("room-1", "A", now);
         var seatB = Seat.create("room-1", "B", now);
 
@@ -60,13 +60,13 @@ public class AvailableSeatsTest {
     }
 
     @Test
-    @DisplayName("모든 좌석이 예약됐으면 빈 가용 좌석 컬렉션을 반환한다")
-    void return_empty_when_all_seats_are_reserved() {
+    @DisplayName("모든 좌석이 점유됐으면 빈 가용 좌석 컬렉션을 반환한다")
+    void return_empty_when_all_seats_are_occupied() {
         // given
         var seatA = Seat.create("room-1", "A", now);
         var seatB = Seat.create("room-1", "B", now);
 
-        var reservedLocators = List.<SeatLocator>of(
+        var occupiedLocators = List.<SeatLocator>of(
                 SimpleSeatLocator.of("room-1", "A"),
                 SimpleSeatLocator.of("room-1", "B")
         );
@@ -74,7 +74,7 @@ public class AvailableSeatsTest {
         // when
         var result = AvailableSeats.from(
                 List.of(seatA, seatB),
-                reservedLocators
+                occupiedLocators
         );
 
         // then
@@ -82,13 +82,13 @@ public class AvailableSeatsTest {
     }
 
     @Test
-    @DisplayName("예약 locator가 중복되어 있어도 결과는 한 번만 제외된 것처럼 동작한다")
-    void handle_duplicate_reserved_locators() {
+    @DisplayName("점유된 locator가 중복되어 있어도 결과는 한 번만 제외된 것처럼 동작한다")
+    void handle_duplicate_occupied_locators() {
         // given
         var seatA = Seat.create("room-1", "A", now);
         var seatB = Seat.create("room-1", "B", now);
 
-        var reservedLocators = List.<SeatLocator>of(
+        var occupiedLocators = List.<SeatLocator>of(
                 SimpleSeatLocator.of("room-1", "A"),
                 SimpleSeatLocator.of("room-1", "A")
         );
@@ -96,7 +96,7 @@ public class AvailableSeatsTest {
         // when
         var result = AvailableSeats.from(
                 List.of(seatA, seatB),
-                reservedLocators
+                occupiedLocators
         );
 
         // then

@@ -1,7 +1,9 @@
 package com.seatliberator.seatliberator.reservation.availability.infrastructure.web.controller;
 
-import com.seatliberator.seatliberator.reservation.availability.application.port.in.FindAvailableSeatUseCase;
+import com.seatliberator.seatliberator.reservation.availability.application.port.in.FindAvailableSeatsUseCase;
+import com.seatliberator.seatliberator.reservation.availability.application.port.in.FindSeatStatusesUseCase;
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.query.FindAvailableSeatQuery;
+import com.seatliberator.seatliberator.reservation.availability.application.port.in.query.FindSeatStatusesQuery;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,17 +16,30 @@ import java.time.Instant;
 @RequestMapping("/rooms")
 @RequiredArgsConstructor
 public class SeatAvailabilityController {
-    private final FindAvailableSeatUseCase reader;
+    private final FindAvailableSeatsUseCase findAvailableSeatsUseCase;
+    private final FindSeatStatusesUseCase findSeatStatusesUseCase;
 
     @GetMapping("/{roomId}/available-seats")
     public ResponseEntity<?> getAvailableSeats(
             @PathVariable("roomId") String roomId,
-            @RequestParam(name = "start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant start,
-            @RequestParam(name = "end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant end
+            @RequestParam(name = "start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant startAt,
+            @RequestParam(name = "end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endAt
     ) {
-        var range = SimpleTimeRange.of(start, end);
+        var range = SimpleTimeRange.of(startAt, endAt);
         var query = new FindAvailableSeatQuery(roomId, range);
-        var result = reader.findAvailabilitySeats(query);
+        var result = findAvailableSeatsUseCase.find(query);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{roomId}/seat-statuses")
+    public ResponseEntity<?> getSeatStatuses(
+            @PathVariable("roomId") String roomId,
+            @RequestParam(name = "start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant startAt,
+            @RequestParam(name = "end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endAt
+    ) {
+        var range = SimpleTimeRange.of(startAt, endAt);
+        var query = new FindSeatStatusesQuery(roomId, range);
+        var result = findSeatStatusesUseCase.find(query);
         return ResponseEntity.ok(result);
     }
 }
