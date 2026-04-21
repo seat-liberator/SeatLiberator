@@ -26,4 +26,7 @@ dependencies {
     // Observability
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
+
+    // Documentation
+    api("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
 }
