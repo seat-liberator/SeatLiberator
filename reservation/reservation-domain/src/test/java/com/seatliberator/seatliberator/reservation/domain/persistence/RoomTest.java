@@ -3,6 +3,7 @@ package com.seatliberator.seatliberator.reservation.domain.persistence;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.fixture.SeatFixture;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -17,95 +18,137 @@ public class RoomTest {
 
     Instant now = fixedClock.instant();
 
-    @Test
-    @DisplayName("유효한 Id와 현재 시각으로 생성한다")
-    void create_with_valid_name_and_created_at() {
-        var roomId = "study-room-1";
+    @Nested
+    @DisplayName("Creation")
+    class Creation {
+        @Test
+        @DisplayName("유효한 Id와 현재 시각으로 생성한다")
+        void create_with_valid_name_and_created_at() {
+            var roomId = "study-room-1";
 
-        var room = Room.of(roomId, now);
+            var room = Room.of(roomId, now);
 
-        assertThat(room.getRoomId()).isEqualTo(roomId);
-        assertThat(room.getCreatedAt()).isEqualTo(now);
+            assertThat(room.getRoomId()).isEqualTo(roomId);
+            assertThat(room.getCreatedAt()).isEqualTo(now);
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 Id 전달하면 예외")
+        void throw_exception_when_invalid_name() {
+            var roomId = " ";
+
+            assertThatThrownBy(() -> Room.of(roomId, now))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("roomId must not be null or blank.");
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 현재 시각 전달하면 예외")
+        void throw_exception_when_invalid_created_at() {
+            var roomId = "study-room-1";
+
+            assertThatThrownBy(() -> Room.of(roomId, null))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("createdAt must not be null or blank.");
+        }
+
+        @Test
+        @DisplayName("유효한 좌석 목록으로 생성한다")
+        void create_with_valid_seat_list() {
+            var roomId = "study-room-1";
+            var seatBuilder = new SeatFixture.Builder().roomId(roomId);
+            var seatA = seatBuilder.copy().seatId("A").build();
+            var seatB = seatBuilder.copy().seatId("B").build();
+            var seatC = seatBuilder.copy().seatId("C").build();
+            var seats = List.of(seatA, seatB, seatC);
+
+            var room = Room.of(roomId, seats, now);
+
+            assertThat(room.getSeats())
+                    .containsExactlyInAnyOrder(seatA, seatB, seatC);
+        }
+
+        @Test
+        @DisplayName("방에 속하지 않는 좌석이 있으면 예외")
+        void throw_exception_when_create_with_seat_not_belong_to_room() {
+            var roomId = "study-room-1";
+            var diffRoomId = "diff-room-1";
+
+            var seatBuilder = new SeatFixture.Builder();
+            var seatA = seatBuilder.copy().roomId(roomId).seatId("A").build();
+            var seatB = seatBuilder.copy().roomId(diffRoomId).seatId("B").build();
+            var seatC = seatBuilder.copy().roomId(roomId).seatId("C").build();
+
+            assertThatThrownBy(() -> Room.of(roomId, List.of(seatA, seatB, seatC), now))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("seat must belong to room.")
+                    .hasMessageContaining("B");
+        }
     }
 
-    @Test
-    @DisplayName("유효하지 않은 Id 전달하면 예외")
-    void throw_exception_when_invalid_name() {
-        var roomId = " ";
+    @Nested
+    @DisplayName("Update")
+    class Update {
+        @Test
+        @DisplayName("방 ID를 변경할 수 있다")
+        void update_room_id() {
+            var roomId = "study-room-1";
+            var room = Room.of(roomId, now);
 
-        assertThatThrownBy(() -> Room.of(roomId, now))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("roomId must not be null or blank.");
-    }
+            assertThat(room.getRoomId()).isEqualTo(roomId);
 
-    @Test
-    @DisplayName("유효하지 않은 현재 시각 전달하면 예외")
-    void throw_exception_when_invalid_created_at() {
-        var roomId = "study-room-1";
+            var newRoomId = "new-room-1";
+            room.updateRoomId(newRoomId);
 
-        assertThatThrownBy(() -> Room.of(roomId, null))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("createdAt must not be null or blank.");
-    }
+            assertThat(room.getRoomId()).isEqualTo(newRoomId);
+        }
 
-    @Test
-    @DisplayName("유효한 좌석 목록으로 생성한다")
-    void create_with_valid_seat_list() {
-        var roomId = "study-room-1";
-        var seatBuilder = new SeatFixture.Builder().roomId(roomId);
-        var seatA = seatBuilder.copy().seatId("A").build();
-        var seatB = seatBuilder.copy().seatId("B").build();
-        var seatC = seatBuilder.copy().seatId("C").build();
-        var seats = List.of(seatA, seatB, seatC);
+        @Test
+        @DisplayName("유효하지 않은 방 ID로 변경하면 예외")
+        void throw_exception_when_update_with_invalid_roomId() {
+            var roomId = "study-room-1";
+            var room = Room.of(roomId, now);
 
-        var room = Room.of(roomId, seats, now);
+            assertThat(room.getRoomId()).isEqualTo(roomId);
 
-        assertThat(room.getSeats())
-                .containsExactlyInAnyOrder(seatA, seatB, seatC);
-    }
+            assertThatThrownBy(() -> room.updateRoomId(null))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("roomId must not be null or blank.");
 
-    @Test
-    @DisplayName("방에 속하지 않는 좌석이 있으면 예외")
-    void throw_exception_when_create_with_seat_not_belong_to_room() {
-        var roomId = "study-room-1";
-        var diffRoomId = "diff-room-1";
+            var newRoomId = " ";
+            assertThatThrownBy(() -> room.updateRoomId(newRoomId))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("roomId must not be null or blank.");
 
-        var seatBuilder = new SeatFixture.Builder();
-        var seatA = seatBuilder.copy().roomId(roomId).seatId("A").build();
-        var seatB = seatBuilder.copy().roomId(diffRoomId).seatId("B").build();
-        var seatC = seatBuilder.copy().roomId(roomId).seatId("C").build();
+            assertThat(room.getRoomId()).isEqualTo(roomId);
+        }
 
-        assertThatThrownBy(() -> Room.of(roomId, List.of(seatA, seatB, seatC), now))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("seat must belong to room.")
-                .hasMessageContaining("B");
-    }
+        @Test
+        @DisplayName("좌석을 방에 추가할 수 있다")
+        void add_seat() {
+            var seatId = "A";
+            var roomId = "study-room-1";
+            var seat = new SeatFixture.Builder().roomId(roomId).seatId(seatId).build();
+            var room = Room.of(roomId, now);
 
-    @Test
-    @DisplayName("좌석을 방에 추가할 수 있다")
-    void add_seat() {
-        var seatId = "A";
-        var roomId = "study-room-1";
-        var seat = new SeatFixture.Builder().roomId(roomId).seatId(seatId).build();
-        var room = Room.of(roomId, now);
+            room.addSeat(seat);
 
-        room.addSeat(seat);
+            assertThat(room.getSeats()).containsExactly(seat);
+        }
 
-        assertThat(room.getSeats()).containsExactly(seat);
-    }
+        @Test
+        @DisplayName("방에 속하지 않은 좌석을 추가할 수 없다")
+        void throw_exception_when_add_seat_with_not_included_room() {
+            var seatId = "A";
+            var diffRoomId = "other-room-1";
+            var roomId = "study-room-1";
+            var seat = new SeatFixture.Builder().roomId(diffRoomId).seatId(seatId).build();
+            var room = Room.of(roomId, now);
 
-    @Test
-    @DisplayName("방에 속하지 않은 좌석을 추가할 수 없다")
-    void throw_exception_when_add_seat_with_not_included_room() {
-        var seatId = "A";
-        var diffRoomId = "other-room-1";
-        var roomId = "study-room-1";
-        var seat = new SeatFixture.Builder().roomId(diffRoomId).seatId(seatId).build();
-        var room = Room.of(roomId, now);
-
-        assertThatThrownBy(() -> room.addSeat(seat))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("seat must belong to room.");
+            assertThatThrownBy(() -> room.addSeat(seat))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("seat must belong to room.");
+        }
     }
 
     @Test

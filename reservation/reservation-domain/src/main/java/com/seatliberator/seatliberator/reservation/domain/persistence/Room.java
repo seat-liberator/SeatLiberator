@@ -61,6 +61,11 @@ public class Room {
         this.seats.add(seat);
     }
 
+    public void updateRoomId(String roomId) {
+        if (roomId == null || roomId.isBlank()) throw new IllegalArgumentException("roomId must not be null or blank.");
+        this.roomId = roomId;
+    }
+
     public SeatLocator locatorOf(Seat seat) {
         ensureSeatBelongToRoom(seat);
         return SimpleSeatLocator.of(roomId, seat.getLocator().seatId());
