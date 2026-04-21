@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="app-local-full" type="CompoundRunConfigurationType">
+    <toRun name="BoardApplication" type="Application" />
+    <toRun name="GatewayApplication" type="Application" />
+    <toRun name="IdentityApplication" type="Application" />
+    <toRun name="NotificationApplication" type="Application" />
+    <toRun name="ReservationApplication" type="Application" />
+    <toRun name="Kafka" type="docker-deploy" />
+    <method v="2" />
+  </configuration>
+</component>
