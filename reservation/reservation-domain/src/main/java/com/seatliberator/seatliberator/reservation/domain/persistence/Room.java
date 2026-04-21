@@ -24,7 +24,8 @@ public class Room {
     @Column(name = "room_id", nullable = false, unique = true)
     private String roomId;
 
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "room_id")
     private List<Seat> seats = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false)
