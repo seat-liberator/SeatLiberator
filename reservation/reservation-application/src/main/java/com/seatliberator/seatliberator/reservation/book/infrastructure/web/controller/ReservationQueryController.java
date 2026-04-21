@@ -5,6 +5,11 @@ import com.seatliberator.seatliberator.reservation.book.application.port.in.Find
 import com.seatliberator.seatliberator.reservation.book.application.port.in.query.FindMyReservationQuery;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
 
+@Tag(name = "Reservations", description = "스터디룸 좌석 예약 관련 API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -26,10 +32,19 @@ public class ReservationQueryController {
 
     private final ActorContextHolder actorContextHolder;
 
+    @Operation(summary = "내 예약 조회", description = "로그인한 사용자의 예약 목록을 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "401", description = "권한 없음")
+    })
     @GetMapping("/me")
     public ResponseEntity<?> me(
+            @Parameter(description = "조회 시작 시각", example = "2026-04-20T14:00:00Z")
             @RequestParam(name = "start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant startAt,
+            @Parameter(description = "조회 종료 시각", example = "2026-04-20T14:00:00Z")
             @RequestParam(name = "end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endAt,
+            @Parameter(description = "조회 대상 예약 상태")
             @RequestParam(name = "status") ReservationStatus status
     ) {
         var userId = actorContextHolder.getActor().subject();
