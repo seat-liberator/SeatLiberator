@@ -1,6 +1,5 @@
 package com.seatliberator.seatliberator.reservation.seat.infrastructure.web.controller;
 
-
 import com.seatliberator.seatliberator.reservation.seat.application.port.in.CreateSeatUseCase;
 import com.seatliberator.seatliberator.reservation.seat.application.port.in.DeleteSeatUseCase;
 import com.seatliberator.seatliberator.reservation.seat.application.port.in.UpdateSeatUseCase;
@@ -9,12 +8,18 @@ import com.seatliberator.seatliberator.reservation.seat.application.port.in.comm
 import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.UpdateSeatCommand;
 import com.seatliberator.seatliberator.reservation.seat.infrastructure.web.request.SeatCreateRequest;
 import com.seatliberator.seatliberator.reservation.seat.infrastructure.web.request.SeatUpdateRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@Tag(name = "Seats", description = "스터디룸 좌석 관련 관리 API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -25,8 +30,15 @@ public class SeatController {
     private final UpdateSeatUseCase updateSeatUseCase;
     private final DeleteSeatUseCase deleteSeatUseCase;
 
+    @Operation(summary = "좌석 생성", description = "특정 방에 좌석을 생성합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "생성 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "401", description = "권한 없음")
+    })
     @PostMapping("/{roomId}/seats")
     public Map<String, Boolean> create(
+            @Parameter(description = "방 ID", example = "room-1")
             @PathVariable("roomId") String roomId,
             @RequestBody SeatCreateRequest request
     ) {
@@ -36,9 +48,17 @@ public class SeatController {
         return Map.of("success", result);
     }
 
+    @Operation(summary = "좌석 위치 변경", description = "기존 좌석의 위치를 변경합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "변경 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "401", description = "권한 없음")
+    })
     @PutMapping("/{roomId}/seats/{seatId}")
     public Map<String, Boolean> update(
+            @Parameter(description = "방 ID", example = "room-1")
             @PathVariable("roomId") String roomId,
+            @Parameter(description = "좌석 ID", example = "A-1")
             @PathVariable("seatId") String seatId,
             @RequestBody SeatUpdateRequest request
     ) {
@@ -48,9 +68,17 @@ public class SeatController {
         return Map.of("success", result);
     }
 
+    @Operation(summary = "좌석 삭제", description = "좌석을 삭제합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "삭제 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "401", description = "권한 없음")
+    })
     @DeleteMapping("/{roomId}/seats/{seatId}")
     public Map<String, Boolean> delete(
+            @Parameter(description = "방 ID", example = "room-1")
             @PathVariable("roomId") String roomId,
+            @Parameter(description = "좌석 ID", example = "A-1")
             @PathVariable("seatId") String seatId
     ) {
         var command = new DeleteSeatCommand(roomId, seatId);
