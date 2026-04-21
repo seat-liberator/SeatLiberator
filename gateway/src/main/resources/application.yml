@@ -12,10 +12,17 @@ spring:
       server:
         webflux:
           routes:
-            - id: identity-service-route
+            - id: identity-credential
               uri: http://localhost:8081
               predicates:
-                - Path=/auth/**,/oauth2/**,/login/**,/.well-known/jwks.json
+                - Path=/api/v1/auth/**
+              filters:
+                - RewritePath=/api/v1/?(?<segment>.*), /$\{segment}
+
+            - id: identity-oauth-jwks
+              uri: http://localhost:8081
+              predicates:
+                - Path=/oauth2/**,/login/**,/.well-known/jwks.json
 
             - id: reservation-service-route
               uri: http://localhost:8082
