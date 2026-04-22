@@ -5,6 +5,10 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum ReservationCapability implements Capability {
+    ROOM_LIST("room.list", "방 목록 조회"),
+    ROOM_READ("room.read", "방 조회"),
+    ROOM_MANAGE("room.manage", "방 관리"),
+
     SEAT_LIST("seat.list", "자리 목록 조회"),
     SEAT_READ("seat.read", "자리 조회"),
     SEAT_MANAGE("seat.manage", "자리 관리"),
