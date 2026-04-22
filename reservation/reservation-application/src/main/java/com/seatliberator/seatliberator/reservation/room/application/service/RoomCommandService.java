@@ -2,8 +2,10 @@ package com.seatliberator.seatliberator.reservation.room.application.service;
 
 import com.seatliberator.seatliberator.reservation.domain.persistence.Room;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.CreateRoomUseCase;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.DeleteRoomUseCase;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.UpdateRoomUseCase;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateRoomCommand;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.command.DeleteRoomCommand;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.command.UpdateRoomCommand;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.result.RoomResult;
 import com.seatliberator.seatliberator.reservation.room.application.port.out.RoomReader;
@@ -21,14 +23,15 @@ import java.time.Clock;
 @Transactional
 public class RoomCommandService implements
         CreateRoomUseCase,
-        UpdateRoomUseCase {
+        UpdateRoomUseCase,
+        DeleteRoomUseCase {
     private final RoomReader reader;
     private final RoomStore store;
     private final Clock clock;
 
     @Override
     public RoomResult create(CreateRoomCommand command) {
-        var exists = reader.isExistsByRoomId(command.roomId());
+        var exists = reader.existsByRoomId(command.roomId());
         if (exists) throw new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_ALREADY_EXISTS);
 
         var room = Room.of(command.roomId(), clock.instant());
@@ -46,5 +49,12 @@ public class RoomCommandService implements
         store.save(room);
 
         return RoomResult.from(room);
+    }
+
+    @Override
+    public void delete(DeleteRoomCommand command) {
+        var exists = reader.existsByRoomId(command.roomId());
+        if (!exists) throw new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_NOT_FOUND);
+        store.deleteByRoomId(command.roomId());
     }
 }

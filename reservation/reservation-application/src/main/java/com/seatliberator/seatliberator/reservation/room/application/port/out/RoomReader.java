@@ -5,7 +5,7 @@ import com.seatliberator.seatliberator.reservation.domain.persistence.Room;
 import java.util.Optional;
 
 public interface RoomReader {
-    boolean isExistsByRoomId(String roomId);
+    boolean existsByRoomId(String roomId);
 
     Optional<Room> findByRoomId(String roomId);
 }
