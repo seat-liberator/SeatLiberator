@@ -2,7 +2,9 @@ package com.seatliberator.seatliberator.reservation.room.application.service;
 
 import com.seatliberator.seatliberator.reservation.domain.persistence.Room;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.CreateRoomUseCase;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.UpdateRoomUseCase;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateRoomCommand;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.command.UpdateRoomCommand;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.result.RoomResult;
 import com.seatliberator.seatliberator.reservation.room.application.port.out.RoomReader;
 import com.seatliberator.seatliberator.reservation.room.application.port.out.RoomStore;
@@ -18,7 +20,8 @@ import java.time.Clock;
 @RequiredArgsConstructor
 @Transactional
 public class RoomCommandService implements
-        CreateRoomUseCase {
+        CreateRoomUseCase,
+        UpdateRoomUseCase {
     private final RoomReader reader;
     private final RoomStore store;
     private final Clock clock;
@@ -29,6 +32,17 @@ public class RoomCommandService implements
         if (exists) throw new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_ALREADY_EXISTS);
 
         var room = Room.of(command.roomId(), clock.instant());
+        store.save(room);
+
+        return RoomResult.from(room);
+    }
+
+    @Override
+    public RoomResult update(UpdateRoomCommand command) {
+        var room = reader.findByRoomId(command.oldRoomId())
+                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_NOT_FOUND));
+
+        room.updateRoomId(command.newRoomId());
         store.save(room);
 
         return RoomResult.from(room);
