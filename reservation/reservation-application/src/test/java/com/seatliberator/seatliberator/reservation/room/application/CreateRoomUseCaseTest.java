@@ -48,7 +48,7 @@ public class CreateRoomUseCaseTest {
         var roomId = "study-room-1";
         var command = new CreateRoomCommand(roomId);
 
-        when(reader.isExistsByRoomId(roomId)).thenReturn(false);
+        when(reader.existsByRoomId(roomId)).thenReturn(false);
 
         useCase.create(command);
 
@@ -65,7 +65,7 @@ public class CreateRoomUseCaseTest {
         var roomId = "study-room-1";
         var command = new CreateRoomCommand(roomId);
 
-        when(reader.isExistsByRoomId(roomId)).thenReturn(true);
+        when(reader.existsByRoomId(roomId)).thenReturn(true);
         assertThatThrownBy(() -> useCase.create(command))
                 .isInstanceOf(ReservationApplicationException.class)
                 .extracting("errorCode")
