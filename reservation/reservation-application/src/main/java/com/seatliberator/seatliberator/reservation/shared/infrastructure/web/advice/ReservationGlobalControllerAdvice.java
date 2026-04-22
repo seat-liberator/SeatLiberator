@@ -9,6 +9,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -58,6 +60,23 @@ public class ReservationGlobalControllerAdvice {
         problem.setTitle("BAD_REQUEST");
         problem.setType(URI.create("https://seatliberator/errors/bad-request"));
         problem.setProperty("code", "BAD_REQUEST");
+        return problem;
+    }
+
+    @ExceptionHandler({
+            AccessDeniedException.class,
+            AuthorizationDeniedException.class
+    })
+    public ProblemDetail handelAccessDenied(Exception exception, HttpServletRequest request) {
+        log.warn("AccessDenied type={}, path={}, message={}",
+                exception.getClass().getSimpleName(),
+                request.getRequestURI(),
+                exception.getMessage());
+
+        var problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, "권한이 없습니다");
+        problem.setTitle("FORBIDDEN");
+        problem.setType(URI.create("https://seatliberator/errors/forbidden"));
+        problem.setProperty("code", "FORBIDDEN");
         return problem;
     }
 
