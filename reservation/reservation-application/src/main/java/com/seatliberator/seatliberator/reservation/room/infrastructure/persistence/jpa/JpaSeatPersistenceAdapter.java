@@ -1,13 +1,12 @@
-package com.seatliberator.seatliberator.reservation.seat.infrastructure.persistence.jpa;
+package com.seatliberator.seatliberator.reservation.room.infrastructure.persistence.jpa;
 
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
-import com.seatliberator.seatliberator.reservation.seat.application.port.out.SeatReader;
-import com.seatliberator.seatliberator.reservation.seat.application.port.out.SeatStore;
-import com.seatliberator.seatliberator.reservation.seat.application.port.out.criteria.SeatExclusion;
-import com.seatliberator.seatliberator.reservation.seat.infrastructure.persistence.jpa.repository.SeatRepository;
+import com.seatliberator.seatliberator.reservation.room.application.port.out.SeatReader;
+import com.seatliberator.seatliberator.reservation.room.application.port.out.SeatStore;
+import com.seatliberator.seatliberator.reservation.room.application.port.out.criteria.SeatExclusion;
+import com.seatliberator.seatliberator.reservation.room.infrastructure.persistence.jpa.repository.SeatRepository;
 import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.CommonPredicates;
-import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.SeatLocatorPredicates;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.DeleteSpecification;
 import org.springframework.data.jpa.domain.Specification;
@@ -18,7 +17,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class JpaSeatStore implements SeatStore, SeatReader {
+public class JpaSeatPersistenceAdapter implements SeatStore, SeatReader {
 
     private final SeatRepository repository;
 
@@ -29,12 +28,12 @@ public class JpaSeatStore implements SeatStore, SeatReader {
 
     @Override
     public Optional<Seat> findByRoomIdAndSeatId(String roomId, String seatId) {
-        return repository.findByLocator_RoomIdAndLocator_SeatId(roomId, seatId);
+        return repository.findByRoom_RoomIdAndSeatId(roomId, seatId);
     }
 
     @Override
     public Optional<Seat> findByLocator(SeatLocator locator) {
-        return repository.findByLocator_RoomIdAndLocator_SeatId(locator.roomId(), locator.seatId());
+        return repository.findByRoom_RoomIdAndSeatId(locator.roomId(), locator.seatId());
     }
 
     @Override
@@ -44,7 +43,7 @@ public class JpaSeatStore implements SeatStore, SeatReader {
 
     @Override
     public List<Seat> findByRoomId(String roomId) {
-        return repository.findByLocator_RoomId(roomId);
+        return repository.findByRoom_RoomId(roomId);
     }
 
     @Override
@@ -68,11 +67,13 @@ public class JpaSeatStore implements SeatStore, SeatReader {
 
     private Specification<Seat> createLocatorSpecification(SeatLocator locator) {
         return Specification.<Seat>unrestricted()
-                .and(SeatLocatorPredicates.eq(locator, SeatLocatorPredicates.defaultLocatorPathFunction()));
+                .and(CommonPredicates.eq(locator.roomId(), from -> from.get("room").get("roomId")))
+                .and(CommonPredicates.eq(locator.seatId(), from -> from.get("seatId")));
     }
 
     private DeleteSpecification<Seat> createLocatorDeleteSpecification(SeatLocator locator) {
         return DeleteSpecification.<Seat>unrestricted()
-                .and(SeatLocatorPredicates.eq(locator, SeatLocatorPredicates.defaultLocatorPathFunction()));
+                .and(CommonPredicates.eq(locator.roomId(), from -> from.get("room").get("roomId")))
+                .and(CommonPredicates.eq(locator.seatId(), from -> from.get("seatId")));
     }
 }
