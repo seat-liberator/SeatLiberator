@@ -1,3 +1,7 @@
+app:
+  seed:
+    enabled: true
+
 spring:
   datasource:
     url: ${LOCAL_DB_URL:jdbc:h2:mem:${spring.application.name};MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}
