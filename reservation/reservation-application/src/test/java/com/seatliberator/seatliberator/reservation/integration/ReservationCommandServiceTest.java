@@ -7,10 +7,10 @@ import com.seatliberator.seatliberator.reservation.book.application.service.Rese
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
-import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.CreateSeatCommand;
-import com.seatliberator.seatliberator.reservation.seat.application.port.out.SeatReader;
-import com.seatliberator.seatliberator.reservation.seat.application.port.out.SeatStore;
-import com.seatliberator.seatliberator.reservation.seat.application.service.SeatCommandService;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateSeatCommand;
+import com.seatliberator.seatliberator.reservation.room.application.port.out.SeatReader;
+import com.seatliberator.seatliberator.reservation.room.application.port.out.SeatStore;
+import com.seatliberator.seatliberator.reservation.room.application.service.SeatCommandService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ public class ReservationCommandServiceTest extends ReservationDatabaseCleanupSup
         );
 
         // Then
-        boolean result = seatService.create(seatCreateCommand);
+        var result = seatService.create(seatCreateCommand);
 
         Optional<Seat> optStoreSeat = seatReader.findByLocator(locator);
 
@@ -61,7 +61,6 @@ public class ReservationCommandServiceTest extends ReservationDatabaseCleanupSup
 
         var storedSeat = optStoreSeat.get();
 
-        assertThat(result).isTrue();
         assertThat(storedSeat.getLocator().roomId()).isEqualTo(givenRoomId);
         assertThat(storedSeat.getLocator().seatId()).isEqualTo(givenSeatId);
     }

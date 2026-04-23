@@ -5,8 +5,8 @@ import com.seatliberator.seatliberator.reservation.book.application.port.in.comm
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.book.application.service.ReservationCommandService;
-import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.CreateSeatCommand;
-import com.seatliberator.seatliberator.reservation.seat.application.service.SeatCommandService;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateSeatCommand;
+import com.seatliberator.seatliberator.reservation.room.application.service.SeatCommandService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
