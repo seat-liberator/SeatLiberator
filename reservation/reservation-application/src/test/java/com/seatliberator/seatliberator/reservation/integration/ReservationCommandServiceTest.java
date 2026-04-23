@@ -7,6 +7,8 @@ import com.seatliberator.seatliberator.reservation.book.application.service.Rese
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.CreateRoomUseCase;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateRoomCommand;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateSeatCommand;
 import com.seatliberator.seatliberator.reservation.room.application.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.room.application.port.out.SeatStore;
@@ -27,6 +29,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ReservationCommandServiceTest extends ReservationDatabaseCleanupSupport {
 
     @Autowired
+    CreateRoomUseCase createRoomUseCase;
+    @Autowired
     SeatCommandService seatService;
     @Autowired
     ReservationCommandService reservationCommandService;
@@ -46,6 +50,8 @@ public class ReservationCommandServiceTest extends ReservationDatabaseCleanupSup
         var givenRoomId = "room-1";
         var givenSeatId = "seat-1";
         var locator = SimpleSeatLocator.of(givenRoomId, givenSeatId);
+
+        createRoomUseCase.create(new CreateRoomCommand(givenRoomId));
 
         var seatCreateCommand = new CreateSeatCommand(
                 givenRoomId,
@@ -71,6 +77,8 @@ public class ReservationCommandServiceTest extends ReservationDatabaseCleanupSup
         var givenRoomId = "room-1";
         var givenSeatId = "seat-1";
         var givenUserId = "user-1";
+
+        createRoomUseCase.create(new CreateRoomCommand(givenRoomId));
 
         var seatCreateCommand = new CreateSeatCommand(
                 givenRoomId,

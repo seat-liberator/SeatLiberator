@@ -4,6 +4,8 @@ import com.seatliberator.seatliberator.reservation.WaitlistCreateCommandBuilder;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.CreateReservationUseCase;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
 import com.seatliberator.seatliberator.reservation.domain.WaitlistStatus;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.CreateRoomUseCase;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateRoomCommand;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateSeatCommand;
 import com.seatliberator.seatliberator.reservation.room.application.service.SeatCommandService;
 import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
@@ -33,6 +35,9 @@ public class WaitlistRequestTest {
     private static final Instant BASE_TIME = Instant.parse("2026-01-01T00:00:00Z");
 
     @Autowired
+    CreateRoomUseCase createRoomUseCase;
+
+    @Autowired
     CreateWaitlistUseCase createWaitlistUseCase;
 
     @Autowired
@@ -52,6 +57,7 @@ public class WaitlistRequestTest {
         var locator = createLocator();
         var range = createRange();
 
+        createRoomUseCase.create(new CreateRoomCommand(locator.roomId()));
         seatService.create(new CreateSeatCommand(locator.roomId(), locator.seatId()));
         createReservationUseCase.create(new CreateReservationCommand(INITIAL_USER_ID, locator.roomId(), locator.seatId(), range.startAt(), range.endAt()));
     }

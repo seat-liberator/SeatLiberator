@@ -12,6 +12,8 @@ import com.seatliberator.seatliberator.reservation.book.application.port.out.Res
 import com.seatliberator.seatliberator.reservation.domain.*;
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationExpired;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.CreateRoomUseCase;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateRoomCommand;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateSeatCommand;
 import com.seatliberator.seatliberator.reservation.room.application.service.SeatCommandService;
 import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.CancelWaitlistUseCase;
@@ -38,6 +40,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Integration: Reservation Cancel Waitlist Flow")
 public class ReservationCancelWaitlistFlowTest extends ReservationDatabaseCleanupSupport {
     private static final Instant BASE_TIME = Instant.parse("2026-01-01T00:00:00Z");
+
+    @Autowired
+    CreateRoomUseCase createRoomUseCase;
 
     @Autowired
     SeatCommandService seatService;
@@ -126,6 +131,7 @@ public class ReservationCancelWaitlistFlowTest extends ReservationDatabaseCleanu
     private SeatVacancyTarget createSeatWithoutReservation(String name) {
         var locator = createLocator("room-" + name, "seat-" + name);
         var range = createRange(BASE_TIME.plusSeconds(60), BASE_TIME.plusSeconds(120));
+        createRoomUseCase.create(new CreateRoomCommand(locator.roomId()));
         seatService.create(new CreateSeatCommand(locator.roomId(), locator.seatId()));
         return new SeatVacancyTarget(null, locator, range);
     }

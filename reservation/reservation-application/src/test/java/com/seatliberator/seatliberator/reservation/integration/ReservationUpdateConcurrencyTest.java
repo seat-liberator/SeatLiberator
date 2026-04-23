@@ -5,6 +5,8 @@ import com.seatliberator.seatliberator.reservation.book.application.port.in.comm
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.book.application.service.ReservationCommandService;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.CreateRoomUseCase;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateRoomCommand;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateSeatCommand;
 import com.seatliberator.seatliberator.reservation.room.application.service.SeatCommandService;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +35,8 @@ public class ReservationUpdateConcurrencyTest extends ReservationDatabaseCleanup
     private static final Logger log = LoggerFactory.getLogger(ReservationUpdateConcurrencyTest.class);
 
     @Autowired
+    CreateRoomUseCase createRoomUseCase;
+    @Autowired
     ReservationStore reservationStore;
     @Autowired
     ReservationReader reservationReader;
@@ -57,6 +61,8 @@ public class ReservationUpdateConcurrencyTest extends ReservationDatabaseCleanup
         var givenTargetSeatId = "seat-1";
         var startTime = Instant.parse("2025-06-01T01:00:00Z");
         var endTime = Instant.parse("2025-06-01T02:00:00Z");
+
+        createRoomUseCase.create(new CreateRoomCommand(givenRoomId));
 
         // target 좌석 생성
         seatService.create(new CreateSeatCommand(givenRoomId, givenTargetSeatId));
