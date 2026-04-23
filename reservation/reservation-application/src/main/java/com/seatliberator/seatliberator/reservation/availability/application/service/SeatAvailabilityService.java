@@ -14,7 +14,7 @@ import com.seatliberator.seatliberator.reservation.availability.application.port
 import com.seatliberator.seatliberator.reservation.book.application.contract.OccupancySeatLocatorFinder;
 import com.seatliberator.seatliberator.reservation.book.application.contract.OccupancySeatRangeFinder;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
-import com.seatliberator.seatliberator.reservation.seat.application.port.out.SeatReader;
+import com.seatliberator.seatliberator.reservation.room.application.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
 import lombok.RequiredArgsConstructor;

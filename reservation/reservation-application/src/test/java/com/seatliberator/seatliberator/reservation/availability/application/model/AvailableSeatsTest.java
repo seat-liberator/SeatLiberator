@@ -1,8 +1,7 @@
 package com.seatliberator.seatliberator.reservation.availability.application.model;
 
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
+import com.seatliberator.seatliberator.reservation.domain.fixture.SeatFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,13 +25,14 @@ public class AvailableSeatsTest {
     @DisplayName("점유된 좌석 locator를 제외한 좌석만 남긴다")
     void exclude_occupied_seats() {
         // given
-        var seatA = Seat.create("room-1", "A", now);
-        var seatB = Seat.create("room-1", "B", now);
-        var seatC = Seat.create("room-1", "C", now);
+        var seatBuilder = new SeatFixture.Builder().createdAt(now);
+        var seatA = seatBuilder.copy().seatId("A").build();
+        var seatB = seatBuilder.copy().seatId("B").build();
+        var seatC = seatBuilder.copy().seatId("C").build();
 
         var occupiedLocators = List.<SeatLocator>of(
-                SimpleSeatLocator.of("room-1", "A"),
-                SimpleSeatLocator.of("room-1", "C")
+                seatA.getLocator(),
+                seatC.getLocator()
         );
 
         // when
@@ -46,8 +46,9 @@ public class AvailableSeatsTest {
     @Test
     @DisplayName("점유된 좌석이 없으면 모든 좌석을 가용 좌석으로 본다")
     void keep_all_seats_when_occupied_locator_is_empty() {
-        var seatA = Seat.create("room-1", "A", now);
-        var seatB = Seat.create("room-1", "B", now);
+        var seatBuilder = new SeatFixture.Builder().createdAt(now);
+        var seatA = seatBuilder.copy().seatId("A").build();
+        var seatB = seatBuilder.copy().seatId("B").build();
 
         var result = AvailableSeats.from(
                 List.of(seatA, seatB),
@@ -63,12 +64,13 @@ public class AvailableSeatsTest {
     @DisplayName("모든 좌석이 점유됐으면 빈 가용 좌석 컬렉션을 반환한다")
     void return_empty_when_all_seats_are_occupied() {
         // given
-        var seatA = Seat.create("room-1", "A", now);
-        var seatB = Seat.create("room-1", "B", now);
+        var seatBuilder = new SeatFixture.Builder().createdAt(now);
+        var seatA = seatBuilder.copy().seatId("A").build();
+        var seatB = seatBuilder.copy().seatId("B").build();
 
         var occupiedLocators = List.<SeatLocator>of(
-                SimpleSeatLocator.of("room-1", "A"),
-                SimpleSeatLocator.of("room-1", "B")
+                seatA.getLocator(),
+                seatB.getLocator()
         );
 
         // when
@@ -85,12 +87,13 @@ public class AvailableSeatsTest {
     @DisplayName("점유된 locator가 중복되어 있어도 결과는 한 번만 제외된 것처럼 동작한다")
     void handle_duplicate_occupied_locators() {
         // given
-        var seatA = Seat.create("room-1", "A", now);
-        var seatB = Seat.create("room-1", "B", now);
+        var seatBuilder = new SeatFixture.Builder().createdAt(now);
+        var seatA = seatBuilder.copy().seatId("A").build();
+        var seatB = seatBuilder.copy().seatId("B").build();
 
         var occupiedLocators = List.<SeatLocator>of(
-                SimpleSeatLocator.of("room-1", "A"),
-                SimpleSeatLocator.of("room-1", "A")
+                seatA.getLocator(),
+                seatA.getLocator()
         );
 
         // when

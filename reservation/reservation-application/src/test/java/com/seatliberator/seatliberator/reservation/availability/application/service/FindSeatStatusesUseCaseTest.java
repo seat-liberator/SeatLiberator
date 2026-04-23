@@ -6,8 +6,9 @@ import com.seatliberator.seatliberator.reservation.availability.application.port
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.result.SeatStatusesResult;
 import com.seatliberator.seatliberator.reservation.book.application.contract.OccupancySeatLocatorFinder;
 import com.seatliberator.seatliberator.reservation.book.application.contract.OccupancySeatRangeFinder;
+import com.seatliberator.seatliberator.reservation.domain.fixture.RoomFixture;
 import com.seatliberator.seatliberator.reservation.domain.fixture.SeatFixture;
-import com.seatliberator.seatliberator.reservation.seat.application.port.out.SeatReader;
+import com.seatliberator.seatliberator.reservation.room.application.port.out.SeatReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Instant;
 import java.util.List;
 
-import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,34 +48,31 @@ public class FindSeatStatusesUseCaseTest {
     @Test
     @DisplayName("특정 시간에 방에 존재하는 좌석의 예약 가능 상태를 반환한다")
     void return_seat_statuses() {
+        // given
         var roomId = "room-1";
+        var room = new RoomFixture.Builder().roomId(roomId).build();
+
+        var seatBuilder = new SeatFixture.Builder().room(room).createdAt(now);
+        var seatA = seatBuilder.copy().seatId("A").build();
+        var seatB = seatBuilder.copy().seatId("B").build();
+        var seatC = seatBuilder.copy().seatId("C").build();
+        var seats = List.of(seatA, seatB, seatC);
+
         var range = createRange();
-
-        var seatBuilder = new SeatFixture.Builder().createdAt(now);
-
-        var locatorA = createLocator(roomId, "A");
-        var locatorB = createLocator(roomId, "B");
-        var locatorC = createLocator(roomId, "C");
-
-        var locators = List.of(locatorA, locatorB, locatorC);
-
-        var seats = locators.stream()
-                .map(locator -> seatBuilder.copy().locator(locator).build())
-                .toList();
 
         when(seatReader.findByRoomId(roomId))
                 .thenReturn(seats);
         when(occupancySeatLocatorFinder.find(roomId, range))
-                .thenReturn(List.of(locatorA));
+                .thenReturn(List.of(seatA.getLocator()));
 
         var query = new FindSeatStatusesQuery(roomId, range);
         var result = useCase.find(query);
 
         assertThat(result)
                 .containsExactlyInAnyOrder(
-                        SeatStatusesResult.of(locatorA, SeatReservationStatus.OCCUPIED),
-                        SeatStatusesResult.of(locatorB, SeatReservationStatus.AVAILABLE),
-                        SeatStatusesResult.of(locatorC, SeatReservationStatus.AVAILABLE)
+                        SeatStatusesResult.of(seatA.getLocator(), SeatReservationStatus.OCCUPIED),
+                        SeatStatusesResult.of(seatB.getLocator(), SeatReservationStatus.AVAILABLE),
+                        SeatStatusesResult.of(seatC.getLocator(), SeatReservationStatus.AVAILABLE)
                 );
 
         verify(seatReader).findByRoomId(roomId);
