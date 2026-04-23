@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/rooms")
 @RequiredArgsConstructor
 @PreAuthorize("hasAuthority('room.manage')")
-public class RoomController {
+public class RoomCommandController {
     private final CreateRoomUseCase createRoomUseCase;
     private final UpdateRoomUseCase updateRoomUseCase;
     private final DeleteRoomUseCase deleteRoomUseCase;

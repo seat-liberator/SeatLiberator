@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.seat.infrastructure.web.request;
+package com.seatliberator.seatliberator.reservation.room.infrastructure.web.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

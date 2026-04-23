@@ -7,7 +7,7 @@ import com.seatliberator.seatliberator.reservation.room.application.port.in.comm
 import com.seatliberator.seatliberator.reservation.room.application.port.in.command.DeleteRoomCommand;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.command.UpdateRoomCommand;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.result.RoomResult;
-import com.seatliberator.seatliberator.reservation.room.infrastructure.web.controller.RoomController;
+import com.seatliberator.seatliberator.reservation.room.infrastructure.web.controller.RoomCommandController;
 import com.seatliberator.seatliberator.reservation.room.infrastructure.web.request.CreateRoomRequest;
 import com.seatliberator.seatliberator.reservation.room.infrastructure.web.request.UpdateRoomRequest;
 import org.junit.jupiter.api.*;
@@ -44,7 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Tag("integration")
-@WebMvcTest(RoomController.class)
+@WebMvcTest(RoomCommandController.class)
 @Import({RoomCommandControllerMvcTest.TestSecurityConfig.class})
 @DisplayName("Room Command Controller MVC")
 public class RoomCommandControllerMvcTest {
@@ -131,7 +131,7 @@ public class RoomCommandControllerMvcTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id").value("study-room-1"));
+                    .andExpect(jsonPath("$.roomId").value("study-room-1"));
 
             var captor = ArgumentCaptor.forClass(CreateRoomCommand.class);
             verify(createRoomUseCase).create(captor.capture());
