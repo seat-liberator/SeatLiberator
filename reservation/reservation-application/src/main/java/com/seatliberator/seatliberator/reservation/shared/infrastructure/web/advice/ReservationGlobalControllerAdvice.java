@@ -130,7 +130,7 @@ public class ReservationGlobalControllerAdvice {
 
     private HttpStatus resolveStatus(Enum<?> errorCode) {
         return switch (errorCode.name()) {
-            case "RESERVATION_NOT_FOUND", "SEAT_NOT_FOUND" -> HttpStatus.NOT_FOUND;
+            case "RESERVATION_NOT_FOUND", "SEAT_NOT_FOUND", "ROOM_NOT_FOUND" -> HttpStatus.NOT_FOUND;
             case "RESERVATION_ALREADY_EXISTS", "RESERVATION_TIME_CONFLICT" -> HttpStatus.CONFLICT;
             case "RESERVATION_READ_FORBIDDEN", "RESERVATION_VERIFY_FORBIDDEN" -> HttpStatus.FORBIDDEN;
             default -> HttpStatus.BAD_REQUEST;
