@@ -97,7 +97,8 @@ public class BoardRoleCapabilityConfiguration {
 ```
 
 - 동일한 role을 중복 등록하면 `NamespaceRoleCapabilitiesRegistry` 생성 시 예외가 발생한다.
-- 관리자 role이 하위 role capability를 모두 포함해야 한다면 명시적으로 상위집합으로 등록해야 한다.
+- `Role` enum 순서(`GUEST -> USER -> MAINTAINER -> ADMIN`)를 기준으로 상위 role은 하위 role capability를 자동으로 포함한다.
+- 각 role에는 해당 role에서 새로 추가되는 capability만 등록하면 된다.
 
 ## 4. JWT 변환기 연결
 
