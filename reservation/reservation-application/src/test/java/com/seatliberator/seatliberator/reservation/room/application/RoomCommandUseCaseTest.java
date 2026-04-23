@@ -107,7 +107,7 @@ public class RoomCommandUseCaseTest {
 
             var result = useCase.update(command);
 
-            assertThat(result.id()).isEqualTo(newRoomId);
+            assertThat(result.roomId()).isEqualTo(newRoomId);
 
             var roomCaptor = ArgumentCaptor.forClass(Room.class);
             verify(reader).findByRoomId(oldRoomId);
@@ -115,6 +115,23 @@ public class RoomCommandUseCaseTest {
 
             var saved = roomCaptor.getValue();
             assertThat(saved.getRoomId()).isEqualTo(newRoomId);
+        }
+
+        @Test
+        @DisplayName("방 정보 변경 시 기존 방 Id와 새 방 Id가 동일하면 변경하지 않고 바로 결과 반환")
+        void fast_return_when_oldRoomId_and_newRoomId_is_same() {
+            var oldRoomId = "old-room-1";
+            var command = new UpdateRoomCommand(oldRoomId, oldRoomId);
+
+            var oldRoom = Room.of(oldRoomId, now);
+            when(reader.findByRoomId(oldRoomId)).thenReturn(Optional.of(oldRoom));
+
+            var result = useCase.update(command);
+
+            assertThat(result.roomId()).isEqualTo(oldRoomId);
+
+            verify(reader).findByRoomId(oldRoomId);
+            verify(store, never()).save(any());
         }
 
         @Test
