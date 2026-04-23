@@ -1,13 +1,13 @@
-package com.seatliberator.seatliberator.reservation.seat.infrastructure.web.controller;
+package com.seatliberator.seatliberator.reservation.room.infrastructure.web.controller;
 
-import com.seatliberator.seatliberator.reservation.seat.application.port.in.CreateSeatUseCase;
-import com.seatliberator.seatliberator.reservation.seat.application.port.in.DeleteSeatUseCase;
-import com.seatliberator.seatliberator.reservation.seat.application.port.in.UpdateSeatUseCase;
-import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.CreateSeatCommand;
-import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.DeleteSeatCommand;
-import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.UpdateSeatCommand;
-import com.seatliberator.seatliberator.reservation.seat.infrastructure.web.request.SeatCreateRequest;
-import com.seatliberator.seatliberator.reservation.seat.infrastructure.web.request.SeatUpdateRequest;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.CreateSeatUseCase;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.DeleteSeatUseCase;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.UpdateSeatUseCase;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateSeatCommand;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.command.DeleteSeatCommand;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.command.UpdateSeatCommand;
+import com.seatliberator.seatliberator.reservation.room.infrastructure.web.request.SeatCreateRequest;
+import com.seatliberator.seatliberator.reservation.room.infrastructure.web.request.SeatUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,16 +15,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @Tag(name = "Seats", description = "스터디룸 좌석 관련 관리 API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/rooms")
-public class SeatController {
+public class SeatCommandController {
 
     private final CreateSeatUseCase createSeatUseCase;
     private final UpdateSeatUseCase updateSeatUseCase;
@@ -37,35 +36,35 @@ public class SeatController {
             @ApiResponse(responseCode = "401", description = "권한 없음")
     })
     @PostMapping("/{roomId}/seats")
-    public Map<String, Boolean> create(
+    public ResponseEntity<?> createSeat(
             @Parameter(description = "방 ID", example = "room-1")
             @PathVariable("roomId") String roomId,
             @RequestBody SeatCreateRequest request
     ) {
         var command = new CreateSeatCommand(roomId, request.seatId());
-        boolean result = createSeatUseCase.create(command);
+        var result = createSeatUseCase.create(command);
 
-        return Map.of("success", result);
+        return ResponseEntity.ok(result);
     }
 
-    @Operation(summary = "좌석 위치 변경", description = "기존 좌석의 위치를 변경합니다.")
+    @Operation(summary = "좌석 Id 변경", description = "기존 좌석의 식별자를 변경합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "변경 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @ApiResponse(responseCode = "401", description = "권한 없음")
     })
-    @PutMapping("/{roomId}/seats/{seatId}")
-    public Map<String, Boolean> update(
+    @PutMapping("/{roomId}/seats/{seatId}/id")
+    public ResponseEntity<?> updateSeatId(
             @Parameter(description = "방 ID", example = "room-1")
             @PathVariable("roomId") String roomId,
             @Parameter(description = "좌석 ID", example = "A-1")
             @PathVariable("seatId") String seatId,
             @RequestBody SeatUpdateRequest request
     ) {
-        var command = new UpdateSeatCommand(roomId, seatId, request.newRoomId(), request.newSeatId());
-        boolean result = updateSeatUseCase.update(command);
+        var command = new UpdateSeatCommand(roomId, seatId, request.newSeatId());
+        var result = updateSeatUseCase.update(command);
 
-        return Map.of("success", result);
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "좌석 삭제", description = "좌석을 삭제합니다.")
@@ -75,14 +74,14 @@ public class SeatController {
             @ApiResponse(responseCode = "401", description = "권한 없음")
     })
     @DeleteMapping("/{roomId}/seats/{seatId}")
-    public Map<String, Boolean> delete(
+    public ResponseEntity<?> deleteSeat(
             @Parameter(description = "방 ID", example = "room-1")
             @PathVariable("roomId") String roomId,
             @Parameter(description = "좌석 ID", example = "A-1")
             @PathVariable("seatId") String seatId
     ) {
         var command = new DeleteSeatCommand(roomId, seatId);
-        boolean result = deleteSeatUseCase.delete(command);
-        return Map.of("success", result);
+        deleteSeatUseCase.delete(command);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -7,7 +7,7 @@ import com.seatliberator.seatliberator.jwks.infrastructure.web.controller.JwksCo
 import com.seatliberator.seatliberator.notification.infrastructure.web.controller.NotificationController;
 import com.seatliberator.seatliberator.reservation.availability.infrastructure.web.controller.SeatAvailabilityController;
 import com.seatliberator.seatliberator.reservation.book.infrastructure.web.controller.ReservationController;
-import com.seatliberator.seatliberator.reservation.seat.infrastructure.web.controller.SeatController;
+import com.seatliberator.seatliberator.reservation.room.infrastructure.web.controller.SeatCommandController;
 import com.seatliberator.seatliberator.reservation.waitlist.infrastructure.web.controller.WaitlistController;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -39,7 +39,7 @@ class GatewayRouteAlignmentTest {
                 patterns,
                 controllerPaths(
                         ReservationController.class,
-                        SeatController.class,
+                        SeatCommandController.class,
                         SeatAvailabilityController.class,
                         WaitlistController.class
                 ),
