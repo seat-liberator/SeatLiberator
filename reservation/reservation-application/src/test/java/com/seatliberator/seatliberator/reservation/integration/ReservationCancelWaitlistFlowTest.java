@@ -12,8 +12,8 @@ import com.seatliberator.seatliberator.reservation.book.application.port.out.Res
 import com.seatliberator.seatliberator.reservation.domain.*;
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationExpired;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
-import com.seatliberator.seatliberator.reservation.seat.application.port.in.command.CreateSeatCommand;
-import com.seatliberator.seatliberator.reservation.seat.application.service.SeatCommandService;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateSeatCommand;
+import com.seatliberator.seatliberator.reservation.room.application.service.SeatCommandService;
 import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.CancelWaitlistUseCase;
 import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.CreateWaitlistUseCase;
 import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.command.CancelWaitlistCommand;
