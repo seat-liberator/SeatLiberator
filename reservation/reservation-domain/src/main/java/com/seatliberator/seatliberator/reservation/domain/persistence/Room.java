@@ -1,7 +1,5 @@
 package com.seatliberator.seatliberator.reservation.domain.persistence;
 
-import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,41 +22,25 @@ public class Room {
     @Column(name = "room_id", nullable = false, unique = true)
     private String roomId;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "room_id")
-    private List<Seat> seats = new ArrayList<>();
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
+    private final List<Seat> seats = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
     private Room(
             String roomId,
-            List<Seat> seats,
             Instant createdAt
     ) {
         if (roomId == null || roomId.isBlank()) throw new IllegalArgumentException("roomId must not be null or blank.");
-        if (createdAt == null) throw new IllegalArgumentException("createdAt must not be null or blank.");
+        if (createdAt == null) throw new IllegalArgumentException("createdAt must not be null.");
 
         this.roomId = roomId;
-        this.seats = new ArrayList<>(seats);
         this.createdAt = createdAt;
-
-        for (var seat : seats) {
-            ensureSeatBelongToRoom(seat);
-        }
     }
 
     public static Room of(String roomId, Instant createdAt) {
-        return new Room(roomId, List.of(), createdAt);
-    }
-
-    public static Room of(String roomId, List<Seat> seats, Instant createdAt) {
-        return new Room(roomId, seats, createdAt);
-    }
-
-    public void addSeat(Seat seat) {
-        ensureSeatBelongToRoom(seat);
-        this.seats.add(seat);
+        return new Room(roomId, createdAt);
     }
 
     public void updateRoomId(String roomId) {
@@ -66,20 +48,14 @@ public class Room {
         this.roomId = roomId;
     }
 
-    public SeatLocator locatorOf(Seat seat) {
-        ensureSeatBelongToRoom(seat);
-        return SimpleSeatLocator.of(roomId, seat.getLocator().seatId());
+    protected void attachSeat(Seat seat) {
+        if (seat == null) throw new IllegalArgumentException("seat must not be null.");
+        if (seats.contains(seat)) return;
+        this.seats.add(seat);
     }
 
-    private void ensureSeatBelongToRoom(Seat seat) {
-        var locator = seat.getLocator();
-        if (!locator.roomId().equals(roomId)) {
-            throw new IllegalArgumentException(String.format(
-                    "seat must belong to room. seatId=%s, roomId expected=%s actual=%s",
-                    locator.seatId(),
-                    roomId,
-                    locator.roomId()
-            ));
-        }
+    protected void detachSeat(Seat seat) {
+        if (seat == null) throw new IllegalArgumentException("seat must not be null.");
+        seats.remove(seat);
     }
 }

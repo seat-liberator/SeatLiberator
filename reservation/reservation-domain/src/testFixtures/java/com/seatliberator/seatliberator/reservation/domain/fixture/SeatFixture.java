@@ -1,43 +1,46 @@
 package com.seatliberator.seatliberator.reservation.domain.fixture;
 
-import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.SeatStatus;
+import com.seatliberator.seatliberator.reservation.domain.persistence.Room;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
 
 import java.time.Instant;
 
-import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLocatorFixture.createLocator;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.RoomFixture.createRoom;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 
 public class SeatFixture {
-    private static final Instant INITIAL_CREATED_AT = fixedClock.instant();
+    public static final Room INITIAL_ROOM = createRoom();
+    public static final String INITIAL_SEAT_ID = "seat-a";
+    public static final SeatStatus INITIAL_STATUS = SeatStatus.ACTIVE;
+    public static final Instant INITIAL_CREATED_AT = fixedClock.instant();
 
-    public static Seat create(SeatLocator locator, Instant createdAt) {
-        return Seat.create(locator, createdAt);
+    public static Seat createSeat() {
+        return create(INITIAL_ROOM, INITIAL_SEAT_ID, INITIAL_CREATED_AT);
     }
 
-    public static Seat create(SeatLocator locator) {
-        return create(locator, INITIAL_CREATED_AT);
-    }
-
-    public static Seat create() {
-        return create(createLocator(), INITIAL_CREATED_AT);
+    public static Seat create(Room room, String seatId, Instant createdAt) {
+        return Seat.of(room, seatId, createdAt);
     }
 
     public static class Builder {
-        private SeatLocator locator = createLocator();
+        private Room room = INITIAL_ROOM;
+        private String seatId = INITIAL_SEAT_ID;
+        private SeatStatus status = INITIAL_STATUS;
         private Instant createdAt = INITIAL_CREATED_AT;
 
         public Builder() {
         }
 
-        public Builder(SeatLocator locator, Instant createdAt) {
-            this.locator = locator;
+        public Builder(Room room, String seatId, SeatStatus status, Instant createdAt) {
+            this.room = room;
+            this.seatId = seatId;
+            this.status = status;
             this.createdAt = createdAt;
         }
 
         public static Builder from(Builder other) {
-            return new Builder(SimpleSeatLocator.from(other.locator), other.createdAt);
+            return new Builder(other.room, other.seatId, other.status, other.createdAt);
         }
 
         public Builder copy() {
@@ -45,17 +48,17 @@ public class SeatFixture {
         }
 
         public Builder seatId(String seatId) {
-            this.locator = SimpleSeatLocator.of(locator.roomId(), seatId);
+            this.seatId = seatId;
             return this;
         }
 
-        public Builder roomId(String roomId) {
-            this.locator = SimpleSeatLocator.of(roomId, locator.seatId());
+        public Builder room(Room room) {
+            this.room = room;
             return this;
         }
 
-        public Builder locator(SeatLocator locator) {
-            this.locator = SimpleSeatLocator.from(locator);
+        public Builder status(SeatStatus status) {
+            this.status = status;
             return this;
         }
 
@@ -65,7 +68,7 @@ public class SeatFixture {
         }
 
         public Seat build() {
-            return create(locator, createdAt);
+            return Seat.of(room, seatId, status, createdAt);
         }
     }
 }
