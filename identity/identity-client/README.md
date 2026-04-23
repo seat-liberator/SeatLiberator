@@ -43,6 +43,7 @@ dependencies {
 `NamespaceRoleCapabilitiesRegistry` 를 생성합니다.
 
 즉, 소비자 서비스는 자기 namespace 에 대한 capability 매핑만 정의하면 됩니다.
+`Role` enum 순서(`GUEST -> USER -> MAINTAINER -> ADMIN`)를 기준으로 상위 role은 하위 role의 capability를 자동으로 포함합니다.
 
 예:
 
