@@ -9,9 +9,9 @@ public enum ReservationCapability implements Capability {
     ROOM_READ("room.read", "방 조회"),
     ROOM_MANAGE("room.manage", "방 관리"),
 
-    SEAT_LIST("seat.list", "자리 목록 조회"),
-    SEAT_READ("seat.read", "자리 조회"),
-    SEAT_MANAGE("seat.manage", "자리 관리"),
+    SEAT_LIST("seat.list", "좌석 목록 조회"),
+    SEAT_READ("seat.read", "좌석 조회"),
+    SEAT_MANAGE("seat.manage", "좌석 관리"),
 
     BOOKING_CREATE("booking.create", "예약 생성"),
     OWNED_BOOKING_CANCEL("owned.booking.cancel", "예약 취소"),
