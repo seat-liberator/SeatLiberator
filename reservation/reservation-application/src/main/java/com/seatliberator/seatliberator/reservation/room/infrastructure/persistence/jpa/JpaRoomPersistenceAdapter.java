@@ -7,6 +7,7 @@ import com.seatliberator.seatliberator.reservation.room.infrastructure.persisten
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -22,6 +23,11 @@ public class JpaRoomPersistenceAdapter implements RoomStore, RoomReader {
     @Override
     public Optional<Room> findByRoomId(String roomId) {
         return repository.findByRoomId(roomId);
+    }
+
+    @Override
+    public List<Room> findAll() {
+        return repository.findAll();
     }
 
     @Override
