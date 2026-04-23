@@ -18,11 +18,11 @@ import org.springframework.stereotype.Component;
 )
 @RequiredArgsConstructor
 public class ApplicationSeedRunner implements ApplicationRunner {
-    private final SeatSeedService seatSeedService;
+    private final RoomSeeder roomSeeder;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         log.info("Seed runner enabled.");
-        seatSeedService.seed();
+        roomSeeder.seed();
     }
 }
