@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.domain.persistence;
 
-import com.seatliberator.seatliberator.reservation.domain.EmbeddableSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SeatStatus;
+import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,17 +15,20 @@ import java.time.Instant;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"room_id", "seat_id"})
+                @UniqueConstraint(columnNames = {"room_pk", "seat_id"})
         }
 )
 public class Seat {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Embedded
-    private EmbeddableSeatLocator locator;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_pk", nullable = false)
+    private Room room;
+
+    @Column(name = "seat_id", nullable = false)
+    private String seatId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -34,46 +37,61 @@ public class Seat {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    @Column(name = "last_activated_at", nullable = false)
+    @Column(name = "last_activated_at")
     private Instant lastActivatedAt;
 
     @Column(name = "last_inactivated_at")
     private Instant lastInactivatedAt;
 
     private Seat(
-            EmbeddableSeatLocator locator,
+            Room room,
+            String seatId,
             SeatStatus status,
             Instant createdAt
     ) {
-        if (locator == null) throw new IllegalArgumentException("locator must not be null.");
+        if (room == null) throw new IllegalArgumentException("room must not be null.");
+        if (seatId == null || seatId.isBlank()) throw new IllegalArgumentException("seatId must not be null or blank.");
         if (status == null) throw new IllegalArgumentException("status must not be null.");
         if (createdAt == null) throw new IllegalArgumentException("createdAt must not be null.");
-        this.locator = locator;
+
+        this.room = room;
+        this.seatId = seatId;
         this.status = status;
         this.createdAt = createdAt;
-        this.lastActivatedAt = createdAt;
+
+        room.attachSeat(this);
+
+        switch (status) {
+            case ACTIVE -> this.lastActivatedAt = createdAt;
+            case INACTIVE -> this.lastInactivatedAt = createdAt;
+        }
     }
 
-    public static Seat create(String roomId, String seatId, Instant createdAt) {
-        return create(EmbeddableSeatLocator.from(roomId, seatId), createdAt);
+    public static Seat of(Room room, String seatId, Instant createdAt) {
+        return of(room, seatId, SeatStatus.ACTIVE, createdAt);
     }
 
-    public static Seat create(SeatLocator locator, Instant createdAt) {
-        if (locator == null) throw new IllegalArgumentException("locator must not be null.");
-        return create(EmbeddableSeatLocator.of(locator), createdAt);
+    public static Seat of(Room room, String seatId, SeatStatus status, Instant createdAt) {
+        return new Seat(room, seatId, status, createdAt);
     }
 
-    private static Seat create(EmbeddableSeatLocator locator, Instant createdAt) {
-        return new Seat(locator, SeatStatus.ACTIVE, createdAt);
+    public SeatLocator getLocator() {
+        return SimpleSeatLocator.of(room.getRoomId(), seatId);
     }
 
-    public void update(SeatLocator locator) {
-        if (locator == null) throw new IllegalArgumentException("locator must not be null.");
-        this.locator.setLocate(locator.roomId(), locator.seatId());
+    public void updateSeatId(String seatId) {
+        if (seatId == null || seatId.isBlank()) throw new IllegalArgumentException("seatId must not be null or blank.");
+        this.seatId = seatId;
     }
 
-    public void update(String roomId, String seatId) {
-        this.locator.setLocate(roomId, seatId);
+    public void updateRoom(Room room) {
+        if (room == null) throw new IllegalArgumentException("room must not be null.");
+        if (this.room.equals(room)) return;
+
+        var oldRoom = this.room;
+        oldRoom.detachSeat(this);
+        this.room = room;
+        room.attachSeat(this);
     }
 
     public void active(Instant activatedAt) {
@@ -103,13 +121,6 @@ public class Seat {
                 "%s can not be earlier than %s.",
                 fieldName,
                 refFieldName
-        ));
-    }
-
-    private void ensureNotBeforeCreatedAt(Instant at, String fieldName) {
-        if (at.isBefore(createdAt)) throw new IllegalArgumentException(String.format(
-                "%s can not be earlier than createdAt.",
-                fieldName
         ));
     }
 
