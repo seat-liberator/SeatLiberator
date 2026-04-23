@@ -2,6 +2,8 @@ package com.seatliberator.seatliberator.reservation.integration;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
 import com.seatliberator.seatliberator.reservation.book.application.service.ReservationCommandService;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.CreateRoomUseCase;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateRoomCommand;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateSeatCommand;
 import com.seatliberator.seatliberator.reservation.room.application.service.SeatCommandService;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +30,8 @@ public class ReservationConcurrencyTest extends ReservationDatabaseCleanupSuppor
     private static final Logger log = LoggerFactory.getLogger(ReservationConcurrencyTest.class);
 
     @Autowired
+    CreateRoomUseCase createRoomUseCase;
+    @Autowired
     ReservationCommandService reservationCommandService;
     @Autowired
     SeatCommandService seatService;
@@ -47,6 +51,8 @@ public class ReservationConcurrencyTest extends ReservationDatabaseCleanupSuppor
         var givenSeatId = "seat-1";
         var startTime = Instant.parse("2025-06-01T01:00:00Z");
         var endTime = Instant.parse("2025-06-01T02:00:00Z");
+
+        createRoomUseCase.create(new CreateRoomCommand(givenRoomId));
 
         var seatCreateCommand = new CreateSeatCommand(
                 givenRoomId,
