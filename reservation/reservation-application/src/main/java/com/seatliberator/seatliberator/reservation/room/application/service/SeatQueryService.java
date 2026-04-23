@@ -1,8 +1,12 @@
 package com.seatliberator.seatliberator.reservation.room.application.service;
 
-import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.FindSeatUseCase;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.ListSeatUseCase;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.query.FindSeatQuery;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.query.ListSeatQuery;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.result.SeatResult;
+import com.seatliberator.seatliberator.reservation.room.application.port.out.RoomReader;
 import com.seatliberator.seatliberator.reservation.room.application.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
@@ -15,20 +19,31 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class SeatQueryService implements FindSeatUseCase {
-    private final SeatReader query;
+public class SeatQueryService implements
+        ListSeatUseCase,
+        FindSeatUseCase {
+    private final RoomReader roomReader;
+    private final SeatReader seatReader;
 
     @Override
-    public SeatResult read(SeatLocator locator) {
-        return query.findByLocator(locator)
+    public List<SeatResult> list(ListSeatQuery query) {
+        ensureRoomExists(query.roomId());
+        return seatReader.findByRoomId(query.roomId()).stream()
+                .map(SeatResult::from)
+                .toList();
+    }
+
+    @Override
+    public SeatResult find(FindSeatQuery query) {
+        ensureRoomExists(query.roomId());
+        var locator = SimpleSeatLocator.of(query.roomId(), query.seatId());
+        return seatReader.findByLocator(locator)
                 .map(SeatResult::from)
                 .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND));
     }
 
-    @Override
-    public List<SeatResult> findAllByRoomId(String roomId) {
-        return query.findByRoomId(roomId).stream()
-                .map(SeatResult::from)
-                .toList();
+    private void ensureRoomExists(String roomId) {
+        var exists = roomReader.existsByRoomId(roomId);
+        if (!exists) throw new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_NOT_FOUND);
     }
 }
