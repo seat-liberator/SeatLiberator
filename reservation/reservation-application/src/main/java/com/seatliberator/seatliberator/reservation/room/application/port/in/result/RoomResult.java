@@ -5,7 +5,7 @@ import com.seatliberator.seatliberator.reservation.domain.persistence.Room;
 import java.time.Instant;
 
 public record RoomResult(
-        String id,
+        String roomId,
         Instant createdAt
 ) {
     public static RoomResult from(Room room) {

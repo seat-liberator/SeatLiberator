@@ -31,8 +31,7 @@ public class RoomCommandService implements
 
     @Override
     public RoomResult create(CreateRoomCommand command) {
-        var exists = reader.existsByRoomId(command.roomId());
-        if (exists) throw new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_ALREADY_EXISTS);
+        ensureRoomNotExists(command.roomId());
 
         var room = Room.of(command.roomId(), clock.instant());
         store.save(room);
@@ -42,8 +41,10 @@ public class RoomCommandService implements
 
     @Override
     public RoomResult update(UpdateRoomCommand command) {
-        var room = reader.findByRoomId(command.oldRoomId())
-                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_NOT_FOUND));
+        var room = tryFindByRoomId(command.oldRoomId());
+        if (command.oldRoomId().equals(command.newRoomId())) return RoomResult.from(room);
+
+        ensureRoomNotExists(command.newRoomId());
 
         room.updateRoomId(command.newRoomId());
         store.save(room);
@@ -56,5 +57,14 @@ public class RoomCommandService implements
         var exists = reader.existsByRoomId(command.roomId());
         if (!exists) throw new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_NOT_FOUND);
         store.deleteByRoomId(command.roomId());
+    }
+
+    private Room tryFindByRoomId(String roomId) {
+        return reader.findByRoomId(roomId).orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_NOT_FOUND));
+    }
+
+    private void ensureRoomNotExists(String roomId) {
+        var exists = reader.existsByRoomId(roomId);
+        if (exists) throw new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_ALREADY_EXISTS);
     }
 }
