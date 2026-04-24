@@ -18,6 +18,6 @@ public class FormattedStringGenerator implements Generator<String> {
 
     @Override
     public String generate() {
-        return String.format(format, counter.next().toString());
+        return String.format(format, counter.next());
     }
 }
