@@ -53,7 +53,7 @@ public class SeatQueryController {
     public ResponseEntity<?> findSeatInRoom(
             @Parameter(description = "조회할 방 ID", example = "study-room-1")
             @PathVariable("roomId") String roomId,
-            @Parameter(description = "조회할 좌석 ID", example = "seat-A")
+            @Parameter(description = "조회할 좌석 ID", example = "A1")
             @PathVariable("seatId") String seatId
     ) {
         var query = new FindSeatQuery(roomId, seatId);

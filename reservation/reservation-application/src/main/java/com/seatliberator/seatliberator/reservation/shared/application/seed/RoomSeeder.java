@@ -18,7 +18,7 @@ import java.util.List;
 public class RoomSeeder {
     public static final String roomIdPrefix = "study-room";
     public static final Integer roomNumber = 5;
-    public static final String seatIdPrefix = "seat";
+    public static final String seatIdPrefix = "A";
     public static final Integer seatNumber = 10;
 
     private final RoomStore roomStore;
@@ -46,7 +46,7 @@ public class RoomSeeder {
 
     private void seedSeat(Room room) {
         for (int i = 0; i < seatNumber; i++) {
-            var seatId = String.format("%s-%s", seatIdPrefix, i);
+            var seatId = String.format("%s%s", seatIdPrefix, i);
             var seat = Seat.of(room, seatId, clock.instant());
             seatStore.save(seat);
         }
