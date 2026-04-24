@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    api(project(":kernel"))
+    api(project(":kernel:kernel-core"))
     api(project(":identity:identity-core"))
     api(project(":event-relay:event-relay-core"))
 
