@@ -3,6 +3,7 @@ package com.seatliberator.seatliberator.reservation.book.infrastructure.web.cont
 import com.seatliberator.seatliberator.identity.client.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.CreateReservationUseCase;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.book.infrastructure.web.request.ReservationCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,7 +31,7 @@ public class CreateReservationController {
             @ApiResponse(responseCode = "401", description = "권한 없음")
     })
     @PostMapping("/{roomId}/seats/{seatId}/reservations")
-    public ResponseEntity<?> create(
+    public ResponseEntity<ReservationResult> create(
             @Parameter(description = "방 ID", example = "study-room-1")
             @PathVariable("roomId") String roomId,
             @Parameter(description = "좌석 ID", example = "A1")

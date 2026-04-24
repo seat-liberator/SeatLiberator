@@ -5,6 +5,7 @@ import com.seatliberator.seatliberator.reservation.book.application.port.in.Canc
 import com.seatliberator.seatliberator.reservation.book.application.port.in.UpdateReservationUseCase;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CancelReservationCommand;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.UpdateReservationCommand;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.book.infrastructure.web.request.ReservationUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -33,7 +34,7 @@ public class ReservationController {
             @ApiResponse(responseCode = "401", description = "권한 없음")
     })
     @PutMapping
-    public ResponseEntity<?> update(
+    public ResponseEntity<ReservationResult> update(
             @RequestBody ReservationUpdateRequest request
     ) {
         var userId = actorContextHolder.getActor().subject();
@@ -57,7 +58,7 @@ public class ReservationController {
             @ApiResponse(responseCode = "401", description = "권한 없음")
     })
     @DeleteMapping
-    public ResponseEntity<?> delete() {
+    public ResponseEntity<ReservationResult> delete() {
         var userId = actorContextHolder.getActor().subject();
         var command = new CancelReservationCommand(userId);
         var result = cancelReservationUseCase.cancel(command);

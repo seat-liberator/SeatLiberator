@@ -3,6 +3,7 @@ package com.seatliberator.seatliberator.reservation.book.infrastructure.web.cont
 import com.seatliberator.seatliberator.identity.client.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.FindMyReservationUseCase;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.query.FindMyReservationQuery;
+import com.seatliberator.seatliberator.reservation.book.application.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,12 +21,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
+import java.util.List;
 
 @Tag(name = "Reservations", description = "스터디룸 좌석 예약 관련 API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/reservation")
+@RequestMapping("/reservations")
 public class ReservationQueryController {
 
     private final FindMyReservationUseCase findMyReservationUseCase;
@@ -39,17 +41,18 @@ public class ReservationQueryController {
             @ApiResponse(responseCode = "401", description = "권한 없음")
     })
     @GetMapping("/me")
-    public ResponseEntity<?> me(
+    public ResponseEntity<List<ReservationResult>> me(
             @Parameter(description = "조회 시작 시각", example = "2026-04-20T14:00:00Z")
             @RequestParam(name = "start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant startAt,
-            @Parameter(description = "조회 종료 시각", example = "2026-04-20T14:00:00Z")
+            @Parameter(description = "조회 종료 시각", example = "2026-04-20T15:00:00Z")
             @RequestParam(name = "end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endAt,
-            @Parameter(description = "조회 대상 예약 상태")
+            @Parameter(description = "조회 대상 예약 상태", example = "RESERVED")
             @RequestParam(name = "status") ReservationStatus status
     ) {
         var userId = actorContextHolder.getActor().subject();
         var range = SimpleTimeRange.of(startAt, endAt);
         var query = new FindMyReservationQuery(userId, range, status);
+        log.info("내 예약 조회 API 호출됨. 쿼리={}", query);
         var result = findMyReservationUseCase.find(query);
         return ResponseEntity.ok(result);
     }
