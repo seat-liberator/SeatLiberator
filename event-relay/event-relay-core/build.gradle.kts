@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    api(project(":kernel"))
+    api(project(":kernel:kernel-core"))
 
     api("tools.jackson.core:jackson-databind")
 

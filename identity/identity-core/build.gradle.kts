@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    api(project(":kernel"))
+    api(project(":kernel:kernel-core"))
 
     implementation("org.springframework:spring-context")
     implementation("org.springframework.boot:spring-boot-autoconfigure")

@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    api(project(":kernel"))
+    api(project(":kernel:kernel-core"))
 
     api(project(":event-relay:event-relay-core"))
     implementation(project(":event-relay:event-relay-support-jpa"))
