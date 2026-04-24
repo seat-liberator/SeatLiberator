@@ -31,9 +31,9 @@ public class CreateReservationController {
     })
     @PostMapping("/{roomId}/seats/{seatId}/reservations")
     public ResponseEntity<?> create(
-            @Parameter(description = "방 ID", example = "room-1")
+            @Parameter(description = "방 ID", example = "study-room-1")
             @PathVariable("roomId") String roomId,
-            @Parameter(description = "좌석 ID", example = "A-1")
+            @Parameter(description = "좌석 ID", example = "A1")
             @PathVariable("seatId") String seatId,
             @RequestBody ReservationCreateRequest request
     ) {

@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 
 @Schema(description = "방 정보 변경 요청")
 public record UpdateRoomRequest(
-        @Schema(description = "새로운 방 ID", example = "new-study-room-1")
+        @Schema(description = "새로운 방 ID", example = "study-room-2")
         @NotBlank String newRoomId
 ) {
     public UpdateRoomCommand toCommand(String oldRoomId) {

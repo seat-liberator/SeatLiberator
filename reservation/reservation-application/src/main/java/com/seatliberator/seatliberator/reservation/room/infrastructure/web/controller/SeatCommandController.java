@@ -37,7 +37,7 @@ public class SeatCommandController {
     })
     @PostMapping("/{roomId}/seats")
     public ResponseEntity<?> createSeat(
-            @Parameter(description = "방 ID", example = "room-1")
+            @Parameter(description = "방 ID", example = "study-room-1")
             @PathVariable("roomId") String roomId,
             @RequestBody SeatCreateRequest request
     ) {
@@ -55,9 +55,9 @@ public class SeatCommandController {
     })
     @PutMapping("/{roomId}/seats/{seatId}/id")
     public ResponseEntity<?> updateSeatId(
-            @Parameter(description = "방 ID", example = "room-1")
+            @Parameter(description = "방 ID", example = "study-room-1")
             @PathVariable("roomId") String roomId,
-            @Parameter(description = "좌석 ID", example = "A-1")
+            @Parameter(description = "좌석 ID", example = "A1")
             @PathVariable("seatId") String seatId,
             @RequestBody SeatUpdateRequest request
     ) {
@@ -75,9 +75,9 @@ public class SeatCommandController {
     })
     @DeleteMapping("/{roomId}/seats/{seatId}")
     public ResponseEntity<?> deleteSeat(
-            @Parameter(description = "방 ID", example = "room-1")
+            @Parameter(description = "방 ID", example = "study-room-1")
             @PathVariable("roomId") String roomId,
-            @Parameter(description = "좌석 ID", example = "A-1")
+            @Parameter(description = "좌석 ID", example = "A1")
             @PathVariable("seatId") String seatId
     ) {
         var command = new DeleteSeatCommand(roomId, seatId);
