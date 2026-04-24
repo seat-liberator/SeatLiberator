@@ -6,6 +6,8 @@ import com.seatliberator.seatliberator.reservation.availability.application.port
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.query.FindAvailableSeatQuery;
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.query.FindOccupancyRangesQuery;
 import com.seatliberator.seatliberator.reservation.availability.application.port.in.query.FindSeatStatusesQuery;
+import com.seatliberator.seatliberator.reservation.availability.application.port.in.result.AvailableSeatResult;
+import com.seatliberator.seatliberator.reservation.availability.application.port.in.result.SeatStatusesResult;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.List;
 
 @Tag(name = "Seat Availability", description = "스터디룸 좌석 가용 상태 조회 API")
 @RestController
@@ -35,7 +38,7 @@ public class SeatAvailabilityController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
     @GetMapping("/{roomId}/available-seats")
-    public ResponseEntity<?> getAvailableSeats(
+    public ResponseEntity<List<AvailableSeatResult>> getAvailableSeats(
             @Parameter(description = "방 ID", example = "room-1")
             @PathVariable("roomId") String roomId,
             @Parameter(description = "조회 시작 시각", example = "2026-04-20T13:00:00Z")
@@ -55,7 +58,7 @@ public class SeatAvailabilityController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
     @GetMapping("/{roomId}/seat-statuses")
-    public ResponseEntity<?> getSeatStatuses(
+    public ResponseEntity<List<SeatStatusesResult>> getSeatStatuses(
             @Parameter(description = "방 ID", example = "room-1")
             @PathVariable("roomId") String roomId,
             @Parameter(description = "조회 시작 시각", example = "2026-04-20T13:00:00Z")
