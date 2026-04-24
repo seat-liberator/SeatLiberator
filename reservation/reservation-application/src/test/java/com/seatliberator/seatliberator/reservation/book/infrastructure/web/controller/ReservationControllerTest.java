@@ -54,7 +54,7 @@ public class ReservationControllerTest {
                 .willReturn(List.of());
 
         // when
-        mockMvc.perform(get("/reservation/me")
+        mockMvc.perform(get("/reservations/me")
                 .queryParam("start", startAt.toString())
                 .queryParam("end", endAt.toString())
                 .queryParam("status", ReservationStatus.RESERVED.name())
@@ -86,7 +86,7 @@ public class ReservationControllerTest {
                 .willReturn(result);
 
         // when & then
-        mockMvc.perform(get("/reservation/me")
+        mockMvc.perform(get("/reservations/me")
                         .queryParam("start", startAt.toString())
                         .queryParam("end", endAt.toString())
                         .queryParam("status", ReservationStatus.RESERVED.name())
@@ -106,7 +106,7 @@ public class ReservationControllerTest {
         given(actorContextHolder.getActor()).willReturn(actor);
 
         // when & then
-        mockMvc.perform(get("/reservation/me")
+        mockMvc.perform(get("/reservations/me")
                         .queryParam("start", startAt.toString())
                         .queryParam("end", endAt.toString())
                         .queryParam("status", "INVALID_STATUS"))
@@ -121,7 +121,7 @@ public class ReservationControllerTest {
         given(actorContextHolder.getActor()).willReturn(actor);
 
         // when & then
-        mockMvc.perform(get("/reservation/me")
+        mockMvc.perform(get("/reservations/me")
                         .queryParam("start", "not-a-date")
                         .queryParam("end", "2026-04-14T12:00:00Z")
                         .queryParam("status", ReservationStatus.RESERVED.name()))
@@ -136,7 +136,7 @@ public class ReservationControllerTest {
         given(actorContextHolder.getActor()).willReturn(actor);
 
         // when & then
-        mockMvc.perform(get("/reservation/me")
+        mockMvc.perform(get("/reservations/me")
                         .queryParam("start", "2026-04-14T10:00:00Z")
                         .queryParam("status", ReservationStatus.RESERVED.name()))
                 .andExpect(status().isBadRequest());
