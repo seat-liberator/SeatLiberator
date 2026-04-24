@@ -65,5 +65,14 @@ public class FormattedStringGeneratorTest {
             assertThat(generator.generate()).isEqualTo("seat-A");
             assertThat(generator.generate()).isEqualTo("seat-B");
         }
+
+        @Test
+        @DisplayName("카운터 원값을 그대로 전달해 타입에 맞는 포맷을 적용한다")
+        void apply_format_with_original_counter_value() {
+            var generator = new FormattedStringGenerator("seat-%02d", new SequenceCounter());
+
+            assertThat(generator.generate()).isEqualTo("seat-00");
+            assertThat(generator.generate()).isEqualTo("seat-01");
+        }
     }
 }
