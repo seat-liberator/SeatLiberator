@@ -4,6 +4,7 @@ import com.seatliberator.seatliberator.reservation.room.application.port.in.Find
 import com.seatliberator.seatliberator.reservation.room.application.port.in.ListSeatUseCase;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.query.FindSeatQuery;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.query.ListSeatQuery;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.result.SeatResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Tag(name = "Seats", description = "스터디룸 좌석 조회 관리 API")
 @Slf4j
@@ -34,7 +37,7 @@ public class SeatQueryController {
     })
     @GetMapping("/{roomId}/seats")
     @PreAuthorize("hasAuthority('seat.list')")
-    public ResponseEntity<?> listSeatsInRoom(
+    public ResponseEntity<List<SeatResult>> listSeatsInRoom(
             @Parameter(description = "조회할 방 ID", example = "study-room-1")
             @PathVariable("roomId") String roomId
     ) {
@@ -50,7 +53,7 @@ public class SeatQueryController {
     })
     @GetMapping("/{roomId}/seats/{seatId}")
     @PreAuthorize("hasAuthority('seat.read')")
-    public ResponseEntity<?> findSeatInRoom(
+    public ResponseEntity<SeatResult> findSeatInRoom(
             @Parameter(description = "조회할 방 ID", example = "study-room-1")
             @PathVariable("roomId") String roomId,
             @Parameter(description = "조회할 좌석 ID", example = "A1")

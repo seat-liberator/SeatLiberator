@@ -4,6 +4,7 @@ import com.seatliberator.seatliberator.reservation.room.application.port.in.Crea
 import com.seatliberator.seatliberator.reservation.room.application.port.in.DeleteRoomUseCase;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.UpdateRoomUseCase;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.command.DeleteRoomCommand;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.result.RoomResult;
 import com.seatliberator.seatliberator.reservation.room.infrastructure.web.request.CreateRoomRequest;
 import com.seatliberator.seatliberator.reservation.room.infrastructure.web.request.UpdateRoomRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +37,7 @@ public class RoomCommandController {
             @ApiResponse(responseCode = "401", description = "권한 없음")
     })
     @PostMapping
-    public ResponseEntity<?> createRoom(
+    public ResponseEntity<RoomResult> createRoom(
             @Valid @RequestBody CreateRoomRequest request
     ) {
         var command = request.toCommand();
@@ -51,7 +52,7 @@ public class RoomCommandController {
             @ApiResponse(responseCode = "401", description = "권한 없음")
     })
     @PutMapping("/{roomId}")
-    public ResponseEntity<?> updateRoomId(
+    public ResponseEntity<RoomResult> updateRoomId(
             @Parameter(description = "변경할 방 ID", example = "study-room-1")
             @PathVariable("roomId") String roomId,
             @Valid @RequestBody UpdateRoomRequest request
@@ -68,7 +69,7 @@ public class RoomCommandController {
             @ApiResponse(responseCode = "401", description = "권한 없음")
     })
     @DeleteMapping("/{roomId}")
-    public ResponseEntity<?> deleteRoom(
+    public ResponseEntity<Void> deleteRoom(
             @Parameter(description = "삭제할 방 ID", example = "study-room-1")
             @PathVariable("roomId") String roomId
     ) {

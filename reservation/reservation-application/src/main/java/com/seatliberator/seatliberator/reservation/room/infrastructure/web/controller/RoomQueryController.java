@@ -3,6 +3,7 @@ package com.seatliberator.seatliberator.reservation.room.infrastructure.web.cont
 import com.seatliberator.seatliberator.reservation.room.application.port.in.FindRoomUseCase;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.ListRoomUseCase;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.query.FindRoomQuery;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.result.RoomResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Tag(name = "Rooms", description = "스터디룸 방 조회 관리 API")
 @Slf4j
@@ -33,7 +36,7 @@ public class RoomQueryController {
     })
     @GetMapping
     @PreAuthorize("hasAuthority('room.list')")
-    public ResponseEntity<?> findRooms() {
+    public ResponseEntity<List<RoomResult>> findRooms() {
         var result = listRoomUseCase.list();
         return ResponseEntity.ok(result);
     }
@@ -45,7 +48,7 @@ public class RoomQueryController {
     })
     @GetMapping("/{roomId}")
     @PreAuthorize("hasAuthority('room.read')")
-    public ResponseEntity<?> findRoom(
+    public ResponseEntity<RoomResult> findRoom(
             @Parameter(description = "조회할 방 ID", example = "study-room-1")
             @PathVariable("roomId") String roomId
     ) {

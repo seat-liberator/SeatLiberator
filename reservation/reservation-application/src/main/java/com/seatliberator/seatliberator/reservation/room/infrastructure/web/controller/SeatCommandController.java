@@ -6,6 +6,7 @@ import com.seatliberator.seatliberator.reservation.room.application.port.in.Upda
 import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateSeatCommand;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.command.DeleteSeatCommand;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.command.UpdateSeatCommand;
+import com.seatliberator.seatliberator.reservation.room.application.port.in.result.SeatResult;
 import com.seatliberator.seatliberator.reservation.room.infrastructure.web.request.SeatCreateRequest;
 import com.seatliberator.seatliberator.reservation.room.infrastructure.web.request.SeatUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +37,7 @@ public class SeatCommandController {
             @ApiResponse(responseCode = "401", description = "권한 없음")
     })
     @PostMapping("/{roomId}/seats")
-    public ResponseEntity<?> createSeat(
+    public ResponseEntity<SeatResult> createSeat(
             @Parameter(description = "방 ID", example = "study-room-1")
             @PathVariable("roomId") String roomId,
             @RequestBody SeatCreateRequest request
@@ -54,7 +55,7 @@ public class SeatCommandController {
             @ApiResponse(responseCode = "401", description = "권한 없음")
     })
     @PutMapping("/{roomId}/seats/{seatId}/id")
-    public ResponseEntity<?> updateSeatId(
+    public ResponseEntity<SeatResult> updateSeatId(
             @Parameter(description = "방 ID", example = "study-room-1")
             @PathVariable("roomId") String roomId,
             @Parameter(description = "좌석 ID", example = "A1")
@@ -74,7 +75,7 @@ public class SeatCommandController {
             @ApiResponse(responseCode = "401", description = "권한 없음")
     })
     @DeleteMapping("/{roomId}/seats/{seatId}")
-    public ResponseEntity<?> deleteSeat(
+    public ResponseEntity<Void> deleteSeat(
             @Parameter(description = "방 ID", example = "study-room-1")
             @PathVariable("roomId") String roomId,
             @Parameter(description = "좌석 ID", example = "A1")
