@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa.repository;
+package com.seatliberator.seatliberator.reservation.persistence.book.jpa.repository;
 
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;

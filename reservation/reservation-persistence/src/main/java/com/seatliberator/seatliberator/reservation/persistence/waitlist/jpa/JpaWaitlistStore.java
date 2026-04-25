@@ -1,14 +1,14 @@
-package com.seatliberator.seatliberator.reservation.waitlist.infrastructure.persistence.jpa;
+package com.seatliberator.seatliberator.reservation.persistence.waitlist.jpa;
 
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.TimeRange;
 import com.seatliberator.seatliberator.reservation.domain.WaitlistStatus;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
-import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.CommonPredicates;
-import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.SeatLocatorPredicates;
-import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.TimeRangePredicates;
+import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.CommonPredicates;
+import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.SeatLocatorPredicates;
+import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.TimeRangePredicates;
+import com.seatliberator.seatliberator.reservation.persistence.waitlist.jpa.repository.WaitlistRepository;
 import com.seatliberator.seatliberator.reservation.waitlist.application.port.out.WaitlistStore;
-import com.seatliberator.seatliberator.reservation.waitlist.infrastructure.persistence.jpa.repository.WaitlistRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;

@@ -38,6 +38,7 @@ include("reservation:reservation-api")
 include("reservation:reservation-application")
 include("reservation:reservation-domain")
 include("reservation:reservation-web-mvc")
+include("reservation:reservation-persistence")
 
 include("board:board-api")
 include("board:board-application")

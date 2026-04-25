@@ -1,12 +1,12 @@
-package com.seatliberator.seatliberator.reservation.room.infrastructure.persistence.jpa;
+package com.seatliberator.seatliberator.reservation.persistence.room.jpa;
 
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
+import com.seatliberator.seatliberator.reservation.persistence.room.jpa.repository.SeatRepository;
+import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.CommonPredicates;
 import com.seatliberator.seatliberator.reservation.room.application.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.room.application.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.room.application.port.out.criteria.SeatExclusion;
-import com.seatliberator.seatliberator.reservation.room.infrastructure.persistence.jpa.repository.SeatRepository;
-import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.CommonPredicates;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.DeleteSpecification;
 import org.springframework.data.jpa.domain.Specification;
