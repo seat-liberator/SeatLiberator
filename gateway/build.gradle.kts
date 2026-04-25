@@ -18,7 +18,7 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation(project(":identity:identity-application"))
-    testImplementation(project(":reservation:reservation-application"))
+    testImplementation(project(":reservation:reservation-web-mvc"))
     testImplementation(project(":board:board-application"))
     testImplementation(project(":notification:notification-application"))
 }
