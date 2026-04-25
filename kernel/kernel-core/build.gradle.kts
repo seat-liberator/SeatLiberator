@@ -5,10 +5,6 @@ plugins {
 group = "com.seatliberator.seatliberator"
 version = "0.0.1-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     testImplementation("org.assertj:assertj-core")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))

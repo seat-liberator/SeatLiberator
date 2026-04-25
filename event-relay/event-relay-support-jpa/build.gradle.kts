@@ -5,10 +5,6 @@ plugins {
 group = "com.seatliberator.seatliberator"
 version = "0.0.1-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project(":event-relay:event-relay-core"))
     api("org.springframework.boot:spring-boot-starter-data-jpa")
