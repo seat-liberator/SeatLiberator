@@ -1,15 +1,15 @@
-package com.seatliberator.seatliberator.reservation.room.infrastructure;
+package com.seatliberator.seatliberator.reservation.persistence.room.jpa;
 
 import com.seatliberator.seatliberator.reservation.domain.persistence.Room;
+import com.seatliberator.seatliberator.reservation.persistence.room.jpa.repository.RoomRepository;
 import com.seatliberator.seatliberator.reservation.room.application.port.out.RoomReader;
 import com.seatliberator.seatliberator.reservation.room.application.port.out.RoomStore;
-import com.seatliberator.seatliberator.reservation.room.infrastructure.persistence.jpa.JpaRoomPersistenceAdapter;
-import com.seatliberator.seatliberator.reservation.room.infrastructure.persistence.jpa.repository.RoomRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import({JpaRoomPersistenceAdapter.class})
 @TestPropertySource(locations = "classpath:application-test.yml")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@EntityScan(basePackages = "com.seatliberator.seatliberator.reservation")
 @DisplayName("Room Persistence")
 public class JpaRoomPersistenceAdapterTest {
     @Autowired
