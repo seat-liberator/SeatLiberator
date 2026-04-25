@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation;
 
+import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.command.CreateWaitlistCommand;
 import com.seatliberator.seatliberator.reservation.domain.*;
-import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.command.CreateWaitlistCommand;
 
 import java.time.Instant;
 

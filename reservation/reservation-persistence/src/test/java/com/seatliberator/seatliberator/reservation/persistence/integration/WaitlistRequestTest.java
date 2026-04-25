@@ -1,17 +1,17 @@
 package com.seatliberator.seatliberator.reservation.persistence.integration;
 
 import com.seatliberator.seatliberator.reservation.WaitlistCreateCommandBuilder;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.CreateReservationUseCase;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
+import com.seatliberator.seatliberator.reservation.application.booking.port.in.CreateReservationUseCase;
+import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CreateReservationCommand;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.CreateRoomUseCase;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.command.CreateRoomCommand;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.command.CreateSeatCommand;
+import com.seatliberator.seatliberator.reservation.application.room.service.SeatCommandService;
+import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
+import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.CancelWaitlistUseCase;
+import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.CreateWaitlistUseCase;
+import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.WaitlistStore;
 import com.seatliberator.seatliberator.reservation.domain.WaitlistStatus;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.CreateRoomUseCase;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateRoomCommand;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateSeatCommand;
-import com.seatliberator.seatliberator.reservation.room.application.service.SeatCommandService;
-import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
-import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.CancelWaitlistUseCase;
-import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.CreateWaitlistUseCase;
-import com.seatliberator.seatliberator.reservation.waitlist.application.port.out.WaitlistStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;

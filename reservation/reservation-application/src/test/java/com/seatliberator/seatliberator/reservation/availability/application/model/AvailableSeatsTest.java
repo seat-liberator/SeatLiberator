@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.availability.application.model;
 
+import com.seatliberator.seatliberator.reservation.application.availability.model.AvailableSeats;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.fixture.SeatFixture;
 import org.junit.jupiter.api.BeforeEach;

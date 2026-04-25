@@ -1,17 +1,18 @@
 package com.seatliberator.seatliberator.reservation.waitlist.application.service;
 
-import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFilter;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationSeatOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationSeatOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
+import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
+import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.command.CreateWaitlistCommand;
+import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.WaitlistStore;
+import com.seatliberator.seatliberator.reservation.application.waitlist.service.WaitlistService;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.WaitlistStatus;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
-import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
-import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
-import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.command.CreateWaitlistCommand;
-import com.seatliberator.seatliberator.reservation.waitlist.application.port.out.WaitlistStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

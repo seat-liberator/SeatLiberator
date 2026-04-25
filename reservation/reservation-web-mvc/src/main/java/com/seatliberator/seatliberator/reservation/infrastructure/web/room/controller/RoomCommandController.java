@@ -1,12 +1,12 @@
 package com.seatliberator.seatliberator.reservation.infrastructure.web.room.controller;
 
+import com.seatliberator.seatliberator.reservation.application.room.port.in.CreateRoomUseCase;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.DeleteRoomUseCase;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.UpdateRoomUseCase;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.command.DeleteRoomCommand;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.result.RoomResult;
 import com.seatliberator.seatliberator.reservation.infrastructure.web.room.request.CreateRoomRequest;
 import com.seatliberator.seatliberator.reservation.infrastructure.web.room.request.UpdateRoomRequest;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.CreateRoomUseCase;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.DeleteRoomUseCase;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.UpdateRoomUseCase;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.command.DeleteRoomCommand;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.result.RoomResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

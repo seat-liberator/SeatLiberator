@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.infrastructure.web.room.request;
 
-import com.seatliberator.seatliberator.reservation.room.application.port.in.command.UpdateRoomCommand;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.command.UpdateRoomCommand;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 

@@ -1,5 +1,7 @@
 package com.seatliberator.seatliberator.reservation.availability.application.model;
 
+import com.seatliberator.seatliberator.reservation.application.availability.model.SeatReservationStatus;
+import com.seatliberator.seatliberator.reservation.application.availability.model.SeatReservationStatusClassifier;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

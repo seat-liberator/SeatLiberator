@@ -1,11 +1,11 @@
 package com.seatliberator.seatliberator.reservation.persistence.integration;
 
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
-import com.seatliberator.seatliberator.reservation.book.application.service.ReservationCommandService;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.CreateRoomUseCase;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateRoomCommand;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.command.CreateSeatCommand;
-import com.seatliberator.seatliberator.reservation.room.application.service.SeatCommandService;
+import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CreateReservationCommand;
+import com.seatliberator.seatliberator.reservation.application.booking.service.ReservationCommandService;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.CreateRoomUseCase;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.command.CreateRoomCommand;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.command.CreateSeatCommand;
+import com.seatliberator.seatliberator.reservation.application.room.service.SeatCommandService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;

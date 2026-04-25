@@ -1,14 +1,14 @@
 package com.seatliberator.seatliberator.reservation.book.application;
 
-import com.seatliberator.seatliberator.reservation.book.application.contract.query.IdBasedReservationLocator;
-import com.seatliberator.seatliberator.reservation.book.application.contract.query.SeatBasedReservationLocator;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFilter;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationSeatLookupCriteria;
-import com.seatliberator.seatliberator.reservation.book.application.service.ReservationQueryService;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.query.IdBasedReservationLocator;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.query.SeatBasedReservationLocator;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationSeatLookupCriteria;
+import com.seatliberator.seatliberator.reservation.application.booking.service.ReservationQueryService;
+import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
+import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
-import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
-import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
