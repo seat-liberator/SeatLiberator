@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.integration;
+package com.seatliberator.seatliberator.reservation.persistence.integration;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
 import com.seatliberator.seatliberator.reservation.book.application.service.ReservationCommandService;
@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Tag("integration")
-@ReservationIntegrationTest
+@ReservationPersistenceIntegrationTest
 @DisplayName("Integration Reservation Concurrency")
 public class ReservationConcurrencyTest extends ReservationDatabaseCleanupSupport {
 

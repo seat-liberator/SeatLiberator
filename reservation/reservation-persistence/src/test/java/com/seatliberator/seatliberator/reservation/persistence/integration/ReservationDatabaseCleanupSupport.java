@@ -1,9 +1,9 @@
-package com.seatliberator.seatliberator.reservation.integration;
+package com.seatliberator.seatliberator.reservation.persistence.integration;
 
-import com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa.repository.ReservationRepository;
-import com.seatliberator.seatliberator.reservation.room.infrastructure.persistence.jpa.repository.RoomRepository;
-import com.seatliberator.seatliberator.reservation.room.infrastructure.persistence.jpa.repository.SeatRepository;
-import com.seatliberator.seatliberator.reservation.waitlist.infrastructure.persistence.jpa.repository.WaitlistRepository;
+import com.seatliberator.seatliberator.reservation.persistence.book.jpa.repository.ReservationRepository;
+import com.seatliberator.seatliberator.reservation.persistence.room.jpa.repository.RoomRepository;
+import com.seatliberator.seatliberator.reservation.persistence.room.jpa.repository.SeatRepository;
+import com.seatliberator.seatliberator.reservation.persistence.waitlist.jpa.repository.WaitlistRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 
