@@ -9,9 +9,9 @@ import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Room;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 
