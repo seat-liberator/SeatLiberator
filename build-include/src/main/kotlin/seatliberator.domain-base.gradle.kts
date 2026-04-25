@@ -12,8 +12,8 @@ dependencies {
     add("compileOnly", libs.findLibrary("jakarta-persistence-api").get())
     add("compileOnly", libs.findLibrary("spring-data-commons").get())
 
-    add("testFixturesImplementation", libs.findLibrary("assertj-core").get())
-
     add("testFixturesCompileOnly", platform(libs.findLibrary("spring-boot-dependencies").get()))
     add("testFixturesCompileOnly", libs.findLibrary("jakarta-persistence-api").get())
+
+    add("testFixturesImplementation", libs.findLibrary("assertj-core").get())
 }
