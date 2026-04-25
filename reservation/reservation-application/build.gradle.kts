@@ -1,26 +1,17 @@
 plugins {
-    id("seatliberator.resource-application")
+    id("seatliberator.application-base")
 }
 
 group = "com.seatliberator.seatliberator"
 version = "0.0.1-SNAPSHOT"
 
 dependencies {
-    // API
-    implementation(project(":reservation:reservation-api"))
-
-    // Domain
-    implementation(project(":reservation:reservation-domain"))
-    testImplementation(testFixtures(project(":reservation:reservation-domain")))
-
-    // External API
+    implementation(project(":identity:identity-client"))
     implementation(project(":notification:notification-api"))
-}
+    implementation(project(":reservation:reservation-api"))
+    implementation(project(":reservation:reservation-domain"))
 
-tasks.bootJar {
-    enabled = false
-}
+    implementation(project(":bootstrap:application-starter"))
 
-tasks.jar {
-    enabled = true
+    testImplementation(testFixtures(project(":reservation:reservation-domain")))
 }
