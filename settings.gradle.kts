@@ -37,6 +37,7 @@ include("event-relay:event-relay-starter")
 include("reservation:reservation-api")
 include("reservation:reservation-application")
 include("reservation:reservation-domain")
+include("reservation:reservation-web-mvc")
 
 include("board:board-api")
 include("board:board-application")

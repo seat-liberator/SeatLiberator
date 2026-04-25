@@ -17,3 +17,11 @@ dependencies {
     implementation(project(":notification:notification-api"))
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
 }
+
+tasks.bootJar {
+    enabled = false
+}
+
+tasks.jar {
+    enabled = true
+}
