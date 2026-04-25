@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification;
+package com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification;
 
 import com.seatliberator.seatliberator.reservation.domain.EmbeddableSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;

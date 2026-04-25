@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.waitlist.infrastructure.persistence.jpa.repository;
+package com.seatliberator.seatliberator.reservation.persistence.waitlist.jpa.repository;
 
 import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
 import org.springframework.data.jpa.repository.JpaRepository;

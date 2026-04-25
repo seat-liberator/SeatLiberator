@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification;
+package com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification;
 
 import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Path;

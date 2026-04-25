@@ -1,13 +1,13 @@
-package com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa;
+package com.seatliberator.seatliberator.reservation.persistence.book.jpa;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.*;
-import com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa.repository.ReservationRepository;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
-import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.CommonPredicates;
-import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.SeatLocatorPredicates;
-import com.seatliberator.seatliberator.reservation.shared.infrastructure.persistence.jpa.specification.TimeRangePredicates;
+import com.seatliberator.seatliberator.reservation.persistence.book.jpa.repository.ReservationRepository;
+import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.CommonPredicates;
+import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.SeatLocatorPredicates;
+import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.TimeRangePredicates;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
