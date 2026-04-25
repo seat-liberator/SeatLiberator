@@ -1,7 +1,6 @@
-rootProject.name = "seatliberator"
-
 pluginManagement {
     includeBuild("build-include")
+
     repositories {
         gradlePluginPortal()
         mavenCentral()
@@ -9,11 +8,14 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+
     repositories {
         mavenCentral()
     }
 }
 
+rootProject.name = "seatliberator"
 
 include("kernel:kernel-core")
 include("kernel:kernel-test")
