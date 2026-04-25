@@ -1,12 +1,12 @@
-package com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa;
+package com.seatliberator.seatliberator.reservation.persistence.book.jpa;
 
 import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFilter;
 import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationRangeOverlapCriteria;
-import com.seatliberator.seatliberator.reservation.book.infrastructure.persistence.jpa.repository.ReservationRepository;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
+import com.seatliberator.seatliberator.reservation.persistence.book.jpa.repository.ReservationRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.Instant;
 import java.util.List;
@@ -21,9 +22,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import({
-        JpaReservationPersistenceAdapter.class
-})
+@Import({JpaReservationPersistenceAdapter.class})
+@TestPropertySource(locations = "classpath:application-test.yml")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @EntityScan(basePackages = "com.seatliberator.seatliberator.reservation")
 @DisplayName("Jpa Reservation Persistence Adapter")
