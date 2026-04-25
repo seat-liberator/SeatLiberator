@@ -1,12 +1,12 @@
-package com.seatliberator.seatliberator.reservation.room.infrastructure;
+package com.seatliberator.seatliberator.reservation.infrastructure.web.room;
 
 import com.seatliberator.seatliberator.reservation.domain.SeatStatus;
+import com.seatliberator.seatliberator.reservation.infrastructure.web.room.controller.SeatQueryController;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.FindSeatUseCase;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.ListSeatUseCase;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.query.FindSeatQuery;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.query.ListSeatQuery;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.result.SeatResult;
-import com.seatliberator.seatliberator.reservation.room.infrastructure.web.controller.SeatQueryController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -36,9 +36,7 @@ import java.util.List;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
