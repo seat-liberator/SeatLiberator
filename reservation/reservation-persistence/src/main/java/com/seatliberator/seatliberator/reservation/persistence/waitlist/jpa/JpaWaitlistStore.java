@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.persistence.waitlist.jpa;
 
+import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.WaitlistStore;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.TimeRange;
 import com.seatliberator.seatliberator.reservation.domain.WaitlistStatus;
@@ -8,7 +9,6 @@ import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specif
 import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.SeatLocatorPredicates;
 import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.TimeRangePredicates;
 import com.seatliberator.seatliberator.reservation.persistence.waitlist.jpa.repository.WaitlistRepository;
-import com.seatliberator.seatliberator.reservation.waitlist.application.port.out.WaitlistStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;

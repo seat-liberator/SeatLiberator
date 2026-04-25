@@ -1,10 +1,10 @@
 package com.seatliberator.seatliberator.reservation.book.application;
 
-import com.seatliberator.seatliberator.reservation.book.application.contract.result.ReservationRejectReason;
-import com.seatliberator.seatliberator.reservation.book.application.contract.service.DefaultReservationPolicyChecker;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFilter;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationSeatLookupCriteria;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.result.ReservationRejectReason;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.service.DefaultReservationPolicyChecker;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationSeatLookupCriteria;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

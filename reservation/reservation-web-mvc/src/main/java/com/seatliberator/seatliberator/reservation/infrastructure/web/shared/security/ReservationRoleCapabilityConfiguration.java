@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 
 import java.util.Set;
 
-import static com.seatliberator.seatliberator.reservation.shared.application.configuration.ReservationCapability.*;
+import static com.seatliberator.seatliberator.reservation.application.shared.configuration.ReservationCapability.*;
 
 @Configuration
 @EnableWebSecurity

@@ -1,11 +1,11 @@
 package com.seatliberator.seatliberator.reservation.book.application;
 
-import com.seatliberator.seatliberator.reservation.book.application.port.in.FindMyReservationUseCase;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.query.FindMyReservationQuery;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.result.ReservationResult;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationRangeOverlapCriteria;
-import com.seatliberator.seatliberator.reservation.book.application.service.ReservationQueryService;
+import com.seatliberator.seatliberator.reservation.application.booking.port.in.FindMyReservationUseCase;
+import com.seatliberator.seatliberator.reservation.application.booking.port.in.query.FindMyReservationQuery;
+import com.seatliberator.seatliberator.reservation.application.booking.port.in.result.ReservationResult;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationRangeOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.application.booking.service.ReservationQueryService;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import org.junit.jupiter.api.BeforeEach;

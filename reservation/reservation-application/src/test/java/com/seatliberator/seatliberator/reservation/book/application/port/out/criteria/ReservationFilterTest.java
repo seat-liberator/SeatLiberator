@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.book.application.port.out.criteria;
 
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

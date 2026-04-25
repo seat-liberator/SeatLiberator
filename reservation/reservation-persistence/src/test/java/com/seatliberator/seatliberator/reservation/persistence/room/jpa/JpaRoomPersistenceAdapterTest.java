@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.reservation.persistence.room.jpa;
 
+import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomReader;
+import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomStore;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Room;
 import com.seatliberator.seatliberator.reservation.persistence.room.jpa.repository.RoomRepository;
-import com.seatliberator.seatliberator.reservation.room.application.port.out.RoomReader;
-import com.seatliberator.seatliberator.reservation.room.application.port.out.RoomStore;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,10 +1,11 @@
 package com.seatliberator.seatliberator.reservation.book.application.contract.service;
 
-import com.seatliberator.seatliberator.reservation.book.application.contract.OccupancySeatRangeFinder;
-import com.seatliberator.seatliberator.reservation.book.application.model.ReservationOccupancyPolicy;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationFilter;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationSeatOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.OccupancySeatRangeFinder;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.service.DefaultOccupancySeatRangeFinder;
+import com.seatliberator.seatliberator.reservation.application.booking.model.ReservationOccupancyPolicy;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationSeatOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.fixture.ReservationFixture;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,14 +1,14 @@
 package com.seatliberator.seatliberator.reservation.book.application;
 
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.ReservationStore;
-import com.seatliberator.seatliberator.reservation.book.application.port.out.criteria.ReservationSeatOverlapCriteria;
-import com.seatliberator.seatliberator.reservation.book.application.service.ReservationCommandService;
+import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CreateReservationCommand;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationStore;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationSeatOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.application.booking.service.ReservationCommandService;
+import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatStore;
+import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
+import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
-import com.seatliberator.seatliberator.reservation.room.application.port.out.SeatStore;
-import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
-import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

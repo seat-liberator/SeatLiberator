@@ -1,15 +1,15 @@
 package com.seatliberator.seatliberator.reservation.room.application;
 
+import com.seatliberator.seatliberator.reservation.application.room.port.in.FindSeatUseCase;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.ListSeatUseCase;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.query.FindSeatQuery;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.query.ListSeatQuery;
+import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomReader;
+import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatReader;
+import com.seatliberator.seatliberator.reservation.application.room.service.SeatQueryService;
+import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
+import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.FindSeatUseCase;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.ListSeatUseCase;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.query.FindSeatQuery;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.query.ListSeatQuery;
-import com.seatliberator.seatliberator.reservation.room.application.port.out.RoomReader;
-import com.seatliberator.seatliberator.reservation.room.application.port.out.SeatReader;
-import com.seatliberator.seatliberator.reservation.room.application.service.SeatQueryService;
-import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationErrorCode;
-import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -28,9 +28,7 @@ import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSup
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Seat Query UseCase")

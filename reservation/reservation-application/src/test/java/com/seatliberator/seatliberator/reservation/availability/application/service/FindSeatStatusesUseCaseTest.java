@@ -1,14 +1,15 @@
 package com.seatliberator.seatliberator.reservation.availability.application.service;
 
-import com.seatliberator.seatliberator.reservation.availability.application.model.SeatReservationStatus;
-import com.seatliberator.seatliberator.reservation.availability.application.port.in.FindSeatStatusesUseCase;
-import com.seatliberator.seatliberator.reservation.availability.application.port.in.query.FindSeatStatusesQuery;
-import com.seatliberator.seatliberator.reservation.availability.application.port.in.result.SeatStatusesResult;
-import com.seatliberator.seatliberator.reservation.book.application.contract.OccupancySeatLocatorFinder;
-import com.seatliberator.seatliberator.reservation.book.application.contract.OccupancySeatRangeFinder;
+import com.seatliberator.seatliberator.reservation.application.availability.model.SeatReservationStatus;
+import com.seatliberator.seatliberator.reservation.application.availability.port.in.FindSeatStatusesUseCase;
+import com.seatliberator.seatliberator.reservation.application.availability.port.in.query.FindSeatStatusesQuery;
+import com.seatliberator.seatliberator.reservation.application.availability.port.in.result.SeatStatusesResult;
+import com.seatliberator.seatliberator.reservation.application.availability.service.SeatAvailabilityService;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.OccupancySeatLocatorFinder;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.OccupancySeatRangeFinder;
+import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.domain.fixture.RoomFixture;
 import com.seatliberator.seatliberator.reservation.domain.fixture.SeatFixture;
-import com.seatliberator.seatliberator.reservation.room.application.port.out.SeatReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

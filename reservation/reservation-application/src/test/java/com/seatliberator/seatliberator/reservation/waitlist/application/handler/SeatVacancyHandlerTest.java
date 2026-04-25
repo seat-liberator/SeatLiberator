@@ -1,5 +1,10 @@
 package com.seatliberator.seatliberator.reservation.waitlist.application.handler;
 
+import com.seatliberator.seatliberator.reservation.application.shared.notifier.Notifier;
+import com.seatliberator.seatliberator.reservation.application.waitlist.handler.SeatVacancyHandler;
+import com.seatliberator.seatliberator.reservation.application.waitlist.internal.WaitlistPromotion;
+import com.seatliberator.seatliberator.reservation.application.waitlist.internal.WaitlistPromotionResult;
+import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.WaitlistStore;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.WaitlistStatus;
@@ -7,10 +12,6 @@ import com.seatliberator.seatliberator.reservation.domain.event.ReservationCance
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationExpired;
 import com.seatliberator.seatliberator.reservation.domain.fixture.WaitlistFixtureBuilder;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
-import com.seatliberator.seatliberator.reservation.shared.application.notifier.Notifier;
-import com.seatliberator.seatliberator.reservation.waitlist.application.internal.WaitlistPromotion;
-import com.seatliberator.seatliberator.reservation.waitlist.application.internal.WaitlistPromotionResult;
-import com.seatliberator.seatliberator.reservation.waitlist.application.port.out.WaitlistStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

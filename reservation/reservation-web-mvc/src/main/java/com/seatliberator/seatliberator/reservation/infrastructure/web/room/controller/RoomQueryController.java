@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.reservation.infrastructure.web.room.controller;
 
-import com.seatliberator.seatliberator.reservation.room.application.port.in.FindRoomUseCase;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.ListRoomUseCase;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.query.FindRoomQuery;
-import com.seatliberator.seatliberator.reservation.room.application.port.in.result.RoomResult;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.FindRoomUseCase;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.ListRoomUseCase;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.query.FindRoomQuery;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.result.RoomResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

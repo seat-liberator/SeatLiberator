@@ -1,11 +1,11 @@
 package com.seatliberator.seatliberator.reservation.waitlist.application.model;
 
+import com.seatliberator.seatliberator.reservation.application.waitlist.internal.WaitlistPromotionResult;
+import com.seatliberator.seatliberator.reservation.application.waitlist.model.WaitlistNotification;
+import com.seatliberator.seatliberator.reservation.application.waitlist.model.WaitlistRequests;
 import com.seatliberator.seatliberator.reservation.domain.*;
 import com.seatliberator.seatliberator.reservation.domain.fixture.WaitlistFixtureBuilder;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
-import com.seatliberator.seatliberator.reservation.waitlist.application.internal.WaitlistPromotionResult;
-import com.seatliberator.seatliberator.reservation.waitlist.application.model.WaitlistNotification;
-import com.seatliberator.seatliberator.reservation.waitlist.application.model.WaitlistRequests;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

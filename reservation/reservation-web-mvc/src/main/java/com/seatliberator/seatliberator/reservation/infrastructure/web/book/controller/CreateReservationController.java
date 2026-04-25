@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.reservation.infrastructure.web.book.controller;
 
 import com.seatliberator.seatliberator.identity.client.actor.ActorContextHolder;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.CreateReservationUseCase;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.command.CreateReservationCommand;
-import com.seatliberator.seatliberator.reservation.book.application.port.in.result.ReservationResult;
+import com.seatliberator.seatliberator.reservation.application.booking.port.in.CreateReservationUseCase;
+import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CreateReservationCommand;
+import com.seatliberator.seatliberator.reservation.application.booking.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.infrastructure.web.book.request.ReservationCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

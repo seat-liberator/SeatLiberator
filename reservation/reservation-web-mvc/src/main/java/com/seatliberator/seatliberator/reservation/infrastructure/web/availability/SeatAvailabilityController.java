@@ -1,13 +1,13 @@
 package com.seatliberator.seatliberator.reservation.infrastructure.web.availability;
 
-import com.seatliberator.seatliberator.reservation.availability.application.port.in.FindAvailableSeatsUseCase;
-import com.seatliberator.seatliberator.reservation.availability.application.port.in.FindSeatOccupancyRangesUseCase;
-import com.seatliberator.seatliberator.reservation.availability.application.port.in.FindSeatStatusesUseCase;
-import com.seatliberator.seatliberator.reservation.availability.application.port.in.query.FindAvailableSeatQuery;
-import com.seatliberator.seatliberator.reservation.availability.application.port.in.query.FindOccupancyRangesQuery;
-import com.seatliberator.seatliberator.reservation.availability.application.port.in.query.FindSeatStatusesQuery;
-import com.seatliberator.seatliberator.reservation.availability.application.port.in.result.AvailableSeatResult;
-import com.seatliberator.seatliberator.reservation.availability.application.port.in.result.SeatStatusesResult;
+import com.seatliberator.seatliberator.reservation.application.availability.port.in.FindAvailableSeatsUseCase;
+import com.seatliberator.seatliberator.reservation.application.availability.port.in.FindSeatOccupancyRangesUseCase;
+import com.seatliberator.seatliberator.reservation.application.availability.port.in.FindSeatStatusesUseCase;
+import com.seatliberator.seatliberator.reservation.application.availability.port.in.query.FindAvailableSeatQuery;
+import com.seatliberator.seatliberator.reservation.application.availability.port.in.query.FindOccupancyRangesQuery;
+import com.seatliberator.seatliberator.reservation.application.availability.port.in.query.FindSeatStatusesQuery;
+import com.seatliberator.seatliberator.reservation.application.availability.port.in.result.AvailableSeatResult;
+import com.seatliberator.seatliberator.reservation.application.availability.port.in.result.SeatStatusesResult;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import io.swagger.v3.oas.annotations.Operation;

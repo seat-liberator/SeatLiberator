@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.infrastructure.web.shared.advice;
 
-import com.seatliberator.seatliberator.reservation.shared.application.exception.ReservationApplicationException;
+import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;

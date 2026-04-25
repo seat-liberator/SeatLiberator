@@ -1,11 +1,11 @@
 package com.seatliberator.seatliberator.reservation.infrastructure.web.waitlist.controller;
 
 import com.seatliberator.seatliberator.identity.client.actor.ActorContextHolder;
+import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.CancelWaitlistUseCase;
+import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.CreateWaitlistUseCase;
+import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.command.CancelWaitlistCommand;
+import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.command.CreateWaitlistCommand;
 import com.seatliberator.seatliberator.reservation.infrastructure.web.waitlist.request.CreateWaitlistRequest;
-import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.CancelWaitlistUseCase;
-import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.CreateWaitlistUseCase;
-import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.command.CancelWaitlistCommand;
-import com.seatliberator.seatliberator.reservation.waitlist.application.port.in.command.CreateWaitlistCommand;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
