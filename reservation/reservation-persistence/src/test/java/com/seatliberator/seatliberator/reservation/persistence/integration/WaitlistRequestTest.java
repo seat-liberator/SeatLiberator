@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.integration;
+package com.seatliberator.seatliberator.reservation.persistence.integration;
 
 import com.seatliberator.seatliberator.reservation.WaitlistCreateCommandBuilder;
 import com.seatliberator.seatliberator.reservation.book.application.port.in.CreateReservationUseCase;
@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Tag("integration")
-@TransactionalReservationIntegrationTest
+@TransactionalReservationPersistenceIntegrationTest
 @DisplayName("Integration: Waitlist")
 public class WaitlistRequestTest {
     private static final Instant BASE_TIME = Instant.parse("2026-01-01T00:00:00Z");

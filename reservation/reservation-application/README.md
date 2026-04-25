@@ -4,7 +4,7 @@
 
 ## 모듈 개요
 
-이 모듈은 reservation 도메인의 애플리케이션 계층과 인프라 어댑터를 포함합니다.
+이 모듈은 reservation 도메인의 애플리케이션 계층을 포함합니다.
 
 - 좌석 생성/수정/삭제
 - 예약 생성/수정/취소/조회
@@ -23,7 +23,6 @@
 - Domain 의존성: `:reservation:reservation-domain`
 - 테스트 fixture 의존성: `testFixtures(project(":reservation:reservation-domain"))`
 - 외부 API 의존성: `:notification:notification-api`
-- JPA 테스트 의존성: `org.springframework.boot:spring-boot-starter-data-jpa-test`
 
 모듈 단위 테스트는 다음 명령으로 실행합니다.
 
@@ -35,12 +34,12 @@
 
 주요 패키지는 기능 단위로 나뉩니다.
 
-- `reservation.seat`: 좌석 관리 유스케이스, 포트, JPA 어댑터, 웹 컨트롤러
-- `reservation.book`: 예약 생성/수정/취소/조회, 예약 정책, 예약 조회 criteria, JPA 어댑터, 웹 컨트롤러
+- `reservation.seat`: 좌석 관리 유스케이스와 포트
+- `reservation.book`: 예약 생성/수정/취소/조회, 예약 정책, 예약 조회 criteria
 - `reservation.availability`: 가용 좌석 조회와 좌석별 점유 상태 조회
-- `reservation.waitlist`: 대기열 요청, 대기열 승격, 빈자리 이벤트 처리, JPA 어댑터, 웹 컨트롤러
+- `reservation.waitlist`: 대기열 요청, 대기열 승격, 빈자리 이벤트 처리
 - `reservation.verification`: 예약 사용 검증용 내부 유스케이스와 정책 엔진
-- `reservation.shared`: 공통 예외, 보안, JPA specification, seed, 웹 advice, notification 연계
+- `reservation.shared`: 공통 예외, seed, notification 연계
 
 각 기능 패키지는 대체로 다음 구조를 따릅니다.
 
@@ -48,8 +47,6 @@
 - `application/port/in`: 유스케이스 입력 포트와 command/query/result
 - `application/port/out`: 저장소/조회 포트와 조회 criteria
 - `application/service`: 유스케이스 구현
-- `infrastructure/persistence`: JPA 기반 persistence adapter
-- `infrastructure/web`: REST controller와 request 타입
 
 ## 실행 설정
 
@@ -105,9 +102,7 @@ Gateway 경유 시 외부 경로는 `/api/v1` prefix가 붙고, 이 모듈의 �
 
 - application model test: `AvailableSeats`, `SeatReservationStatusClassifier`, `ReservationOccupancyPolicy`, `WaitlistRequests`
 - use case/service test: 예약, 좌석 가용성, 좌석 상태, 대기열 유스케이스의 포트 wiring과 결과 변환 검증
-- persistence adapter test: JPA criteria와 repository adapter 동작 검증
-- controller test: 웹 요청이 command/query로 변환되는지 검증
-- integration test: 예약 생성/수정/취소, 동시성, 대기열 흐름 검증
+- persistence integration test: `reservation-persistence` 모듈에서 JPA criteria, repository adapter, DB 기반 동시성/대기열 흐름 검증
 
 주요 실행 명령은 다음과 같습니다.
 

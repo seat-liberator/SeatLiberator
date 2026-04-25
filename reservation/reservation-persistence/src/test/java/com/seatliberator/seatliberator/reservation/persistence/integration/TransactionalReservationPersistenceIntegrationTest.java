@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.integration;
+package com.seatliberator.seatliberator.reservation.persistence.integration;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@ReservationIntegrationTest
+@ReservationPersistenceIntegrationTest
 @Transactional
-public @interface TransactionalReservationIntegrationTest {
+public @interface TransactionalReservationPersistenceIntegrationTest {
 }

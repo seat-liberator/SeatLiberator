@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.integration;
+package com.seatliberator.seatliberator.reservation.persistence.integration;
 
 import com.seatliberator.seatliberator.notification.api.event.NotificationCreateRequestEventPayload;
 import com.seatliberator.seatliberator.notification.api.event.NotificationEventType;
@@ -36,7 +36,7 @@ import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRan
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Tag("integration")
-@TransactionalReservationIntegrationTest
+@TransactionalReservationPersistenceIntegrationTest
 @DisplayName("Integration: Reservation Cancel Waitlist Flow")
 public class ReservationCancelWaitlistFlowTest extends ReservationDatabaseCleanupSupport {
     private static final Instant BASE_TIME = Instant.parse("2026-01-01T00:00:00Z");
@@ -72,7 +72,7 @@ public class ReservationCancelWaitlistFlowTest extends ReservationDatabaseCleanu
     ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
-    ReservationIntegrationTestConfiguration.TestEventPublisher testEventPublisher;
+    ReservationPersistenceIntegrationTestConfiguration.TestEventPublisher testEventPublisher;
 
     @Autowired
     ObjectMapper objectMapper;
