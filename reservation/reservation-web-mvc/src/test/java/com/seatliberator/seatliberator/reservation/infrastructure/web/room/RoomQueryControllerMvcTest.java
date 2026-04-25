@@ -1,10 +1,10 @@
-package com.seatliberator.seatliberator.reservation.room.infrastructure;
+package com.seatliberator.seatliberator.reservation.infrastructure.web.room;
 
+import com.seatliberator.seatliberator.reservation.infrastructure.web.room.controller.RoomQueryController;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.FindRoomUseCase;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.ListRoomUseCase;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.query.FindRoomQuery;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.result.RoomResult;
-import com.seatliberator.seatliberator.reservation.room.infrastructure.web.controller.RoomQueryController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -21,6 +21,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,10 +35,7 @@ import java.util.List;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -66,7 +64,7 @@ public class RoomQueryControllerMvcTest {
     void run() {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
-                .apply(springSecurity())
+                .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
     }
 

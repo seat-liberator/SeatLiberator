@@ -1,5 +1,9 @@
-package com.seatliberator.seatliberator.reservation.room.infrastructure;
+package com.seatliberator.seatliberator.reservation.infrastructure.web.room;
 
+
+import com.seatliberator.seatliberator.reservation.infrastructure.web.room.controller.RoomCommandController;
+import com.seatliberator.seatliberator.reservation.infrastructure.web.room.request.CreateRoomRequest;
+import com.seatliberator.seatliberator.reservation.infrastructure.web.room.request.UpdateRoomRequest;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.CreateRoomUseCase;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.DeleteRoomUseCase;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.UpdateRoomUseCase;
@@ -7,9 +11,6 @@ import com.seatliberator.seatliberator.reservation.room.application.port.in.comm
 import com.seatliberator.seatliberator.reservation.room.application.port.in.command.DeleteRoomCommand;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.command.UpdateRoomCommand;
 import com.seatliberator.seatliberator.reservation.room.application.port.in.result.RoomResult;
-import com.seatliberator.seatliberator.reservation.room.infrastructure.web.controller.RoomCommandController;
-import com.seatliberator.seatliberator.reservation.room.infrastructure.web.request.CreateRoomRequest;
-import com.seatliberator.seatliberator.reservation.room.infrastructure.web.request.UpdateRoomRequest;
 import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,10 +37,9 @@ import java.time.Clock;
 import java.time.Instant;
 
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -74,7 +75,7 @@ public class RoomCommandControllerMvcTest {
     void run() {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
-                .apply(springSecurity())
+                .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
     }
 
