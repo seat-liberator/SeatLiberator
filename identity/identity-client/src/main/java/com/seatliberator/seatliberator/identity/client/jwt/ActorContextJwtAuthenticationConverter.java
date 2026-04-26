@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.bootstrap.security;
+package com.seatliberator.seatliberator.identity.client.jwt;
 
 import com.seatliberator.seatliberator.identity.client.role.NamespaceRoleCapabilitiesRegistry;
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
@@ -8,6 +8,7 @@ import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleDeserializer;
 import com.seatliberator.seatliberator.identity.core.role.Role;
 import com.seatliberator.seatliberator.kernel.CurrentApplicationNamespaceProvider;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -16,7 +17,7 @@ import org.springframework.security.oauth2.jwt.JwtClaimAccessor;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ActorContextJwtAuthenticationConverter implements JwtAuthenticationTokenConverter {
+public class ActorContextJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
     private static final String SCOPE_CLAIM = "scope";
     private static final String SCOPES_CLAIM = "scopes";
     private final NamespaceRoleDeserializer deserializer;

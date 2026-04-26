@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.bootstrap.security;
+package com.seatliberator.seatliberator.identity.client.jwt;
 
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import org.jspecify.annotations.NullMarked;

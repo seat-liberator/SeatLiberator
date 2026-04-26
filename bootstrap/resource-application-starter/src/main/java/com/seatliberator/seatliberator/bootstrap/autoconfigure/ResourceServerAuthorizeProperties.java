@@ -16,8 +16,6 @@ public record ResourceServerAuthorizeProperties(
         @DefaultValue("true")
         boolean enabled,
 
-        URI jwkSetUri,
-
         @DefaultValue({"/error", "/actuator/prometheus", "/actuator/health", "/actuator/health/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"})
         @NotEmpty
         List<@NotBlank String> permits,
