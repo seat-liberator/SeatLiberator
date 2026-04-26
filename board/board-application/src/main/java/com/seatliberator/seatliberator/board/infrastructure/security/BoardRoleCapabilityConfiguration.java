@@ -1,6 +1,5 @@
 package com.seatliberator.seatliberator.board.infrastructure.security;
 
-import com.seatliberator.seatliberator.identity.client.role.NamespaceProvider;
 import com.seatliberator.seatliberator.identity.client.role.RoleCapabilities;
 import com.seatliberator.seatliberator.identity.core.role.Role;
 import org.springframework.context.annotation.Bean;
@@ -46,10 +45,5 @@ public class BoardRoleCapabilityConfiguration {
     @Bean
     RoleCapabilities adminRoleCapabilities() {
         return new RoleCapabilities(Role.ADMIN, Set.of());
-    }
-
-    @Bean
-    NamespaceProvider namespaceProvider() {
-        return new NamespaceProvider("board");
     }
 }
