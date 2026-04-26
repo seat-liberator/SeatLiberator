@@ -1,7 +1,5 @@
 plugins {
-    id("java")
-    id("org.springframework.boot")
-    id("io.spring.dependency-management")
+    id("seatliberator.web-mvc-base")
 }
 
 group = "com.seatliberator.seatliberator"
@@ -12,29 +10,7 @@ dependencies {
     implementation(project(":reservation:reservation-application"))
     implementation(project(":reservation:reservation-domain"))
 
-    // Web
-    implementation("org.springframework.boot:spring-boot-starter-webmvc")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-
-    // Security
-    implementation(project(":identity:identity-client"))
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-
-    // Documentation
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
-
-    // Lombok
-    compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.projectlombok:lombok")
-
-    // Test
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
-    testImplementation("org.springframework.security:spring-security-test")
+    implementation(project(":bootstrap:resource-application-starter"))
 
     testImplementation(testFixtures(project(":reservation:reservation-domain")))
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
