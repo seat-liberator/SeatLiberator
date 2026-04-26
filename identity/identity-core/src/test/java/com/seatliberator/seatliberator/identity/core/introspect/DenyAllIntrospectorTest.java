@@ -1,9 +1,5 @@
-package com.seatliberator.seatliberator.identity.client.introspection;
+package com.seatliberator.seatliberator.identity.core.introspect;
 
-import com.seatliberator.seatliberator.identity.client.introspector.DenyAllIntrospector;
-import com.seatliberator.seatliberator.identity.client.introspector.Introspector;
-import com.seatliberator.seatliberator.identity.core.introspection.IntrospectionFactory;
-import com.seatliberator.seatliberator.identity.core.introspection.SimpleIntrospectionFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +17,7 @@ public class DenyAllIntrospectorTest {
                 introspectionFactory
         );
 
-        com.seatliberator.seatliberator.identity.core.introspection.Introspection introspection = introspector.introspect(TOKEN);
+        Introspection introspection = introspector.introspect(TOKEN);
 
         assertNotNull(introspection);
         assertFalse(introspection.active());
@@ -37,8 +33,8 @@ public class DenyAllIntrospectorTest {
                 introspectionFactory
         );
 
-        com.seatliberator.seatliberator.identity.core.introspection.Introspection introspection1 = introspector.introspect(TOKEN);
-        com.seatliberator.seatliberator.identity.core.introspection.Introspection introspection2 = introspector.introspect(TOKEN + "-1");
+        Introspection introspection1 = introspector.introspect(TOKEN);
+        Introspection introspection2 = introspector.introspect(TOKEN + "-1");
 
         assertFalse(introspection1.active());
         assertFalse(introspection2.active());

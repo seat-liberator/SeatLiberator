@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.core.introspection;
+package com.seatliberator.seatliberator.identity.core.introspect;
 
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import org.jspecify.annotations.NonNull;
