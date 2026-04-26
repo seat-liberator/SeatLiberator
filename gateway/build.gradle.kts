@@ -1,5 +1,5 @@
 plugins {
-    id("base.seatliberator.spring-application-base")
+    id("seatliberator.spring-boot-application-base")
 }
 
 group = "com.seatliberator.seatliberator"
@@ -16,7 +16,6 @@ dependencyManagement {
 dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-gateway-server-webflux")
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation(project(":identity:identity-application"))
     testImplementation(project(":reservation:reservation-web-mvc"))
     testImplementation(project(":board:board-application"))

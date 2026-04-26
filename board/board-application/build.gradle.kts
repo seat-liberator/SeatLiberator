@@ -1,11 +1,12 @@
 plugins {
-    id("seatliberator.resource-application")
+    id("seatliberator.spring-boot-monolith-base")
 }
 
 group = "com.seatliberator.seatliberator"
 version = "0.0.1-SNAPSHOT"
 
 dependencies {
-    // API
     implementation(project(":board:board-api"))
+    implementation(project(":bootstrap:application-starter"))
+    implementation(project(":bootstrap:resource-application-starter"))
 }
