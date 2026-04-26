@@ -1,7 +1,5 @@
-package com.seatliberator.seatliberator.identity.client.actor;
+package com.seatliberator.seatliberator.identity.core.actor;
 
-import com.seatliberator.seatliberator.identity.core.actor.Actor;
-import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +14,7 @@ public class SimpleActorFactoryTest {
     @DisplayName("SimpleActorFactory는 SimpleActor를 생성한다")
     void shouldCreateSimpleActor() {
         // given
-        ActorFactory factory = new SimpleActorFactory();
+        ActorFactory factory = new com.seatliberator.seatliberator.identity.core.actor.SimpleActorFactory();
         var subject = "user-1";
         var scopes = Set.of("seat:read", "seat:reserve");
 

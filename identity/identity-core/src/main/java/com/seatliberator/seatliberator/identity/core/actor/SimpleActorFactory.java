@@ -1,7 +1,4 @@
-package com.seatliberator.seatliberator.identity.client.actor;
-
-import com.seatliberator.seatliberator.identity.core.actor.Actor;
-import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
+package com.seatliberator.seatliberator.identity.core.actor;
 
 import java.util.Set;
 
