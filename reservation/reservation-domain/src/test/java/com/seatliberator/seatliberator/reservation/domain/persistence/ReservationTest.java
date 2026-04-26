@@ -56,6 +56,45 @@ public class ReservationTest {
                 assertThat(r.getStatus()).isEqualTo(ReservationStatus.CANCELED);
                 assertThat(r.isCanceled()).isTrue();
             }
+
+            @Test
+            @DisplayName("예약 상태에서 만료 처리할 수 있다")
+            void can_expire_when_reserved() {
+                var r = createReservation();
+                var now = r.getRange().endAt().plusSeconds(5);
+
+                r.expire(now);
+
+                assertThat(r.getStatus()).isEqualTo(ReservationStatus.EXPIRED);
+                assertThat(r.isExpired()).isTrue();
+            }
+
+            @Test
+            @DisplayName("예약 구간 내에 만료 처리할 수 없다")
+            void throw_exception_when_expire_within_range() {
+                var r = createReservation();
+
+                var now = r.getRange().endAt().minusSeconds(5);
+
+                assertThatThrownBy(() -> r.expire(now))
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("만료 처리 가능한 시간이 아닙니다.");
+
+                assertThat(r.isExpired()).isFalse();
+                assertThat(r.isReserved()).isTrue();
+            }
+
+            @Test
+            @DisplayName("예약 종료 시각에 만료 처리할 수 있다")
+            void can_expire_when_reservation_endAt() {
+                var r = createReservation();
+
+                var now = r.getRange().endAt();
+
+                r.expire(now);
+
+                assertThat(r.getStatus()).isEqualTo(ReservationStatus.EXPIRED);
+            }
         }
 
         @Nested
