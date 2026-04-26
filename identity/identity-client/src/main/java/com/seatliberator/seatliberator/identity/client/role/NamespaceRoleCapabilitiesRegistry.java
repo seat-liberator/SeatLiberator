@@ -1,16 +1,9 @@
 package com.seatliberator.seatliberator.identity.client.role;
 
-import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
-import com.seatliberator.seatliberator.identity.core.role.Role;
-import com.seatliberator.seatliberator.identity.core.role.SimpleNamespaceRole;
+import com.seatliberator.seatliberator.identity.core.role.*;
 import com.seatliberator.seatliberator.kernel.ApplicationNamespace;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class NamespaceRoleCapabilitiesRegistry {
     private final Map<SimpleNamespaceRole, Set<Capability>> registry;

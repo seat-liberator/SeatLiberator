@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.identity.client.role;
 
+import com.seatliberator.seatliberator.identity.core.role.RoleCapabilities;
 import com.seatliberator.seatliberator.kernel.CurrentApplicationNamespaceProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
