@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.identity.client.introspection;
 
-import com.seatliberator.seatliberator.identity.client.actor.ActorFactory;
-import com.seatliberator.seatliberator.identity.client.actor.SimpleActorFactory;
 import com.seatliberator.seatliberator.identity.client.introspector.AllowAllIntrospector;
 import com.seatliberator.seatliberator.identity.client.introspector.Introspector;
+import com.seatliberator.seatliberator.identity.core.actor.ActorFactory;
+import com.seatliberator.seatliberator.identity.core.actor.SimpleActorFactory;
 import com.seatliberator.seatliberator.identity.core.introspection.IntrospectionFactory;
 import com.seatliberator.seatliberator.identity.core.introspection.SimpleIntrospectionFactory;
 import org.junit.jupiter.api.DisplayName;

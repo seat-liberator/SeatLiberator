@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.notification.infrastructure.web.controller;
 
-import com.seatliberator.seatliberator.identity.client.actor.ActorContextHolder;
+import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.notification.application.port.in.NotificationReader;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

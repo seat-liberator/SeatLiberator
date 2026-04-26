@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.client.introspector;
 
-import com.seatliberator.seatliberator.identity.client.actor.ActorFactory;
+import com.seatliberator.seatliberator.identity.core.actor.ActorFactory;
 import com.seatliberator.seatliberator.identity.core.introspection.IntrospectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,7 +1,8 @@
 package com.seatliberator.seatliberator.identity.client.actor;
 
-import com.seatliberator.seatliberator.identity.client.actor.exception.UnidentifiableActorException;
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
+import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
+import com.seatliberator.seatliberator.identity.core.actor.exception.UnidentifiableActorException;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.MDC;
 

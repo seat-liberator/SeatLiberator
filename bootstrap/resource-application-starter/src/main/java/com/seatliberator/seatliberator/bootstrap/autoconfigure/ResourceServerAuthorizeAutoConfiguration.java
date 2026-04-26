@@ -6,9 +6,9 @@ import com.seatliberator.seatliberator.bootstrap.security.JwtAuthenticationToken
 import com.seatliberator.seatliberator.bootstrap.security.customizer.ResourceServerAuthorizeRequestMatcherCustomizer;
 import com.seatliberator.seatliberator.bootstrap.security.customizer.ResourceServerHttpSecurityCustomizer;
 import com.seatliberator.seatliberator.bootstrap.security.customizer.ResourceServerOAuth2Customizer;
-import com.seatliberator.seatliberator.identity.client.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.identity.client.actor.ThreadLocalActorContextHolder;
 import com.seatliberator.seatliberator.identity.client.role.NamespaceRoleCapabilitiesRegistry;
+import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleDeserializer;
 import com.seatliberator.seatliberator.kernel.CurrentApplicationNamespaceProvider;
 import org.springframework.beans.factory.ObjectProvider;

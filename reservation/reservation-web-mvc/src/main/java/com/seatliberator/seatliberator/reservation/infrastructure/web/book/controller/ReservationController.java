@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.infrastructure.web.book.controller;
 
-import com.seatliberator.seatliberator.identity.client.actor.ActorContextHolder;
+import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.CancelReservationUseCase;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.UpdateReservationUseCase;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CancelReservationCommand;

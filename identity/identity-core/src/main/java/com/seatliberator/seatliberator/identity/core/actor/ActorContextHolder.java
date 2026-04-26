@@ -1,6 +1,5 @@
-package com.seatliberator.seatliberator.identity.client.actor;
+package com.seatliberator.seatliberator.identity.core.actor;
 
-import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import org.jspecify.annotations.NonNull;
 
 public interface ActorContextHolder {
