@@ -8,11 +8,11 @@ import org.springframework.validation.annotation.Validated;
 
 @Validated
 @ConfigurationProperties(prefix = "identity.validate.introspection.web")
-public record WebClientIntrospectionConfigurationProperties(
+public record WebIntrospectionConfigurationProperties(
         boolean enabled,
         @Valid ServerProperties server
 ) {
-    public WebClientIntrospectionConfigurationProperties {
+    public WebIntrospectionConfigurationProperties {
         server = server != null ? server : ServerProperties.getDefault();
     }
 
@@ -22,4 +22,3 @@ public record WebClientIntrospectionConfigurationProperties(
         return server != null && server().isAllConfigured();
     }
 }
-

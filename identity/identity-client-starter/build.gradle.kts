@@ -16,7 +16,7 @@ dependencies {
 
     // Web
     implementation("org.springframework:spring-web")
-    implementation("org.springframework:spring-webflux")
+    implementation("tools.jackson.core:jackson-databind")
     compileOnly("jakarta.servlet:jakarta.servlet-api")
 
     // Logging

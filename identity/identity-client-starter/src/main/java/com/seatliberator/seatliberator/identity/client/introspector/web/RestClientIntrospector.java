@@ -2,19 +2,19 @@ package com.seatliberator.seatliberator.identity.client.introspector.web;
 
 import com.seatliberator.seatliberator.identity.core.introspect.Introspection;
 import com.seatliberator.seatliberator.identity.core.introspect.Introspector;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestClient;
 
 import java.util.Map;
 
-public class WebClientIntrospector implements Introspector {
-    private final WebClient webClient;
+public class RestClientIntrospector implements Introspector {
+    private final RestClient restClient;
     private final String apiUrl;
 
-    public WebClientIntrospector(
-            WebClient webClient,
+    public RestClientIntrospector(
+            RestClient restClient,
             String apiUrl
     ) {
-        this.webClient = webClient;
+        this.restClient = restClient;
         this.apiUrl = apiUrl;
     }
 
@@ -22,11 +22,10 @@ public class WebClientIntrospector implements Introspector {
     public Introspection introspect(String token) {
         var payload = Map.of("token", token);
 
-        return webClient.post()
+        return restClient.post()
                 .uri(apiUrl)
-                .bodyValue(payload)
+                .body(payload)
                 .retrieve()
-                .bodyToMono(WebIntrospectionResponse.class)
-                .block();
+                .body(WebIntrospectionResponse.class);
     }
 }
