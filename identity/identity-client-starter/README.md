@@ -81,7 +81,7 @@ identity:
 - `identity.validate.introspection.web.server.uri`
 - `identity.introspection.expiration-ms`
 
-활성화되면 `WebClient` 기반 `Introspector` 가 등록됩니다.
+활성화되면 `RestClient` 기반 `Introspector` 가 등록됩니다.
 
 ## 사용 방향
 

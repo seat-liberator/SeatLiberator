@@ -9,28 +9,28 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestClient;
 
-@ConditionalOnClass(WebClient.class)
+@ConditionalOnClass(RestClient.class)
 @ConditionalOnProperty(
         prefix = "identity.validate.introspection.web",
         name = "enabled",
         havingValue = "true"
 )
-@EnableConfigurationProperties(WebClientIntrospectionConfigurationProperties.class)
+@EnableConfigurationProperties(WebIntrospectionConfigurationProperties.class)
 public class WebIntrospectionAutoConfiguration {
-    static final String IDENTITY_INTROSPECTION_WEB_CLIENT = "identityIntrospectionWebClient";
+    static final String IDENTITY_INTROSPECTION_REST_CLIENT = "identityIntrospectionRestClient";
     private static final Logger log = LoggerFactory.getLogger(WebIntrospectionAutoConfiguration.class);
 
-    @Bean(name = IDENTITY_INTROSPECTION_WEB_CLIENT)
-    @ConditionalOnMissingBean(name = IDENTITY_INTROSPECTION_WEB_CLIENT)
-    WebClient webClient(
-            WebClient.Builder builder,
-            WebClientIntrospectionConfigurationProperties properties
+    @Bean(name = IDENTITY_INTROSPECTION_REST_CLIENT)
+    @ConditionalOnMissingBean(name = IDENTITY_INTROSPECTION_REST_CLIENT)
+    RestClient restClient(
+            RestClient.Builder builder,
+            WebIntrospectionConfigurationProperties properties
     ) {
         var baseUrl = properties.server().baseUrl();
 
-        log.debug("WebClient configured with baseUrl={}", baseUrl);
+        log.debug("RestClient configured with baseUrl={}", baseUrl);
 
         return builder
                 .baseUrl(baseUrl.toString())
@@ -39,16 +39,16 @@ public class WebIntrospectionAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(Introspector.class)
-    Introspector webClientIntrospector(
-            @Qualifier(IDENTITY_INTROSPECTION_WEB_CLIENT) WebClient webClient,
-            WebClientIntrospectionConfigurationProperties properties
+    Introspector restClientIntrospector(
+            @Qualifier(IDENTITY_INTROSPECTION_REST_CLIENT) RestClient restClient,
+            WebIntrospectionConfigurationProperties properties
     ) {
         var uri = properties.server().uri();
 
-        log.debug("WebClientIntrospector configured with uri={}", uri);
+        log.debug("RestClientIntrospector configured with uri={}", uri);
 
-        return new WebClientIntrospector(
-                webClient,
+        return new RestClientIntrospector(
+                restClient,
                 uri.toString()
         );
     }
