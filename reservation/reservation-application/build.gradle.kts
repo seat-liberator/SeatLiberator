@@ -6,7 +6,6 @@ group = "com.seatliberator.seatliberator"
 version = "0.0.1-SNAPSHOT"
 
 dependencies {
-    implementation(project(":identity:identity-client"))
     implementation(project(":notification:notification-api"))
     implementation(project(":reservation:reservation-api"))
     implementation(project(":reservation:reservation-domain"))
