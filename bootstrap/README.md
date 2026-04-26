@@ -28,8 +28,7 @@
 resource server 계열 애플리케이션의 보안 bootstrap 을 제공합니다.
 
 - `SecurityFilterChain` 기본 구성
-- `JwtDecoder` 기본 구성
-- actor context binding
+- identity-client가 제공하는 actor context filter 연결
 - namespace role 기반 authority 확장 지원
 - resource server 보안 확장용 SPI
 
@@ -38,7 +37,7 @@ resource server 계열 애플리케이션의 보안 bootstrap 을 제공합니�
 - `ResourceServerSecurityAutoConfiguration`:
   stateless filter chain 생성과 `ResourceServerHttpSecurityCustomizer` 조립
 - `ResourceServerAuthorizeAutoConfiguration`:
-  JWT decoder, OAuth2 resource server wiring, actor context filter, authorize 규칙 조립
+  OAuth2 resource server wiring, actor context filter 연결, authorize 규칙 조립
 
 현재 설정 prefix:
 

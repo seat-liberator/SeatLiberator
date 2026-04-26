@@ -1,6 +1,5 @@
-package com.seatliberator.seatliberator.bootstrap.security;
+package com.seatliberator.seatliberator.identity.client.jwt;
 
-import com.seatliberator.seatliberator.identity.client.jwt.ActorContextJwtAuthenticationConverter;
 import com.seatliberator.seatliberator.identity.client.role.NamespaceRoleCapabilitiesRegistry;
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import com.seatliberator.seatliberator.identity.core.role.Capability;
@@ -20,7 +19,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -63,7 +66,7 @@ public class ActorContextJwtAuthenticationConverterTest {
 
         AbstractAuthenticationToken token = converter.convert(jwt);
 
-        assertThat(token).isInstanceOf(com.seatliberator.seatliberator.identity.client.jwt.ActorContextAuthenticationToken.class);
+        assertThat(token).isInstanceOf(ActorContextAuthenticationToken.class);
         assertThat(token.getPrincipal()).isInstanceOf(Actor.class);
         assertThat(token.getCredentials()).isSameAs(jwt);
 
@@ -261,7 +264,6 @@ public class ActorContextJwtAuthenticationConverterTest {
 
         assertThat(actor.scopes()).isEmpty();
     }
-
 
     private Jwt jwt(String subject, Map<String, Object> claims) {
         return new Jwt(

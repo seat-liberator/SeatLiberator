@@ -15,7 +15,9 @@ dependencies {
     implementation("org.springframework.security:spring-security-oauth2-jose")
 
     // Web
+    implementation("org.springframework:spring-web")
     implementation("org.springframework:spring-webflux")
+    compileOnly("jakarta.servlet:jakarta.servlet-api")
 
     // Logging
     implementation("org.slf4j:slf4j-api")
