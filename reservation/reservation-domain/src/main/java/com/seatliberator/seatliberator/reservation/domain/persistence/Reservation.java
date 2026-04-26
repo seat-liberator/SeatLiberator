@@ -112,6 +112,12 @@ public class Reservation {
         status = ReservationStatus.USED;
     }
 
+    public void expire(Instant expiredAt) {
+        if (range.contains(expiredAt)) throw new IllegalArgumentException("만료 처리 가능한 시간이 아닙니다.");
+        status = ReservationStatus.EXPIRED;
+        registerExpiredEvent(expiredAt);
+    }
+
     public void cancel(Instant canceledAt) {
         expireIfEnded(canceledAt);
         ensureCancelableAt();
