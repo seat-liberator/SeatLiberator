@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.bootstrap.security;
 
+import com.seatliberator.seatliberator.identity.client.jwt.ActorContextJwtAuthenticationConverter;
 import com.seatliberator.seatliberator.identity.client.role.NamespaceRoleCapabilitiesRegistry;
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import com.seatliberator.seatliberator.identity.core.role.Capability;
@@ -62,7 +63,7 @@ public class ActorContextJwtAuthenticationConverterTest {
 
         AbstractAuthenticationToken token = converter.convert(jwt);
 
-        assertThat(token).isInstanceOf(ActorContextAuthenticationToken.class);
+        assertThat(token).isInstanceOf(com.seatliberator.seatliberator.identity.client.jwt.ActorContextAuthenticationToken.class);
         assertThat(token.getPrincipal()).isInstanceOf(Actor.class);
         assertThat(token.getCredentials()).isSameAs(jwt);
 
