@@ -2,16 +2,13 @@
 
 `identity:identity-client` 는 다른 서비스가 identity 도메인의 actor / role / introspection 기능을 재사용할 수 있게 해주는 클라이언트 모듈입니다.
 
-현재 이 모듈이 자동 구성으로 제공하는 것은 두 가지입니다.
+현재 이 모듈이 자동 구성으로 제공하는 것은 다음과 같습니다.
 
 - 웹 기반 token introspection용 `Introspector`
 - 현재 애플리케이션 namespace 기준 `NamespaceRoleCapabilitiesRegistry`
-
-중요:
-
-- 이 모듈은 더 이상 `JwtDecoder` 를 자동 구성하지 않습니다.
-- resource server JWT 검증은 `bootstrap:resource-application-starter` 의
-  `seatliberator.resource-server.security.authorize.jwk-set-uri` 설정이 담당합니다.
+- resource server JWT 검증용 `JwtDecoder`
+- JWT 인증 결과를 `Actor` 로 변환하는 `ActorContextJwtAuthenticationConverter`
+- servlet 요청 동안 `ActorContextHolder` 를 채우고 정리하는 `ActorContextBindingFilter`
 
 ## 의존성
 
@@ -29,17 +26,20 @@ dependencies {
 - `RoleCapabilities`
 - `NamespaceRoleCapabilitiesRegistry`
 - `Introspector`
+- `ActorContextJwtAuthenticationConverter`
+- `ActorContextBindingFilter`
 
 ## Auto Configuration
 
 등록된 auto-configuration:
 
-- `IdentityClientNamespaceRoleAutoConfiguration`
+- `IdentityClientAutoConfiguration`
 - `WebIntrospectionAutoConfiguration`
+- `IdentityClientServletAutoConfiguration`
 
 ### Namespace role registry
 
-`IdentityClientNamespaceRoleAutoConfiguration` 은 현재 애플리케이션 namespace 와 `RoleCapabilities` 목록을 받아
+`IdentityClientAutoConfiguration` 은 현재 애플리케이션 namespace 와 `RoleCapabilities` 목록을 받아
 `NamespaceRoleCapabilitiesRegistry` 를 생성합니다.
 
 즉, 소비자 서비스는 자기 namespace 에 대한 capability 매핑만 정의하면 됩니다.
@@ -88,14 +88,14 @@ identity:
 ### resource server 앱에서의 권장 조합
 
 - 앱에 `seatliberator.resource-application` plugin 적용
-- `seatliberator.resource-server.security.authorize.jwk-set-uri` 설정
+- `identity.client.jwk-set-uri` 설정
 - 필요한 `RoleCapabilities` 빈 정의
 - 필요 시 `ResourceServerAuthorizeRequestMatcherCustomizer` 로 앱 전용 인가 규칙 추가
 
-즉, JWT 검증은 bootstrap starter가 맡고, `identity-client` 는 actor / role / introspection 지원을 맡습니다.
+즉, JWT decoder와 actor 변환은 `identity-client` 가 맡고, bootstrap starter는 resource server `SecurityFilterChain` 조립을 맡습니다.
 
 ## 주의점
 
-- `identity-client` 만 추가한다고 resource server 보안 구성이 완성되지는 않습니다.
+- `identity-client` 만 추가한다고 resource server 보안 filter chain 구성이 완성되지는 않습니다.
 - `Introspector` 는 `identity.validate.introspection.web.enabled=true` 일 때만 웹 구현이 등록됩니다.
 - `NamespaceRoleCapabilitiesRegistry` 는 현재 앱 namespace 기준으로 동작하므로, 각 앱이 자기 capability 매핑을 직접 제공해야 합니다.

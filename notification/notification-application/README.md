@@ -31,7 +31,7 @@
 
 핵심 설정:
 
-- `seatliberator.resource-server.security.authorize.jwk-set-uri`
+- `identity.client.jwk-set-uri`
 - `spring.datasource.*`
 - `spring.jpa.*`
 

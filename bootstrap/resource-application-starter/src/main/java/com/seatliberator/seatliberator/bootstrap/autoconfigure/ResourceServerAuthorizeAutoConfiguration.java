@@ -1,13 +1,11 @@
 package com.seatliberator.seatliberator.bootstrap.autoconfigure;
 
-import com.seatliberator.seatliberator.bootstrap.security.ActorContextBindingFilter;
 import com.seatliberator.seatliberator.bootstrap.security.customizer.ResourceServerAuthorizeRequestMatcherCustomizer;
 import com.seatliberator.seatliberator.bootstrap.security.customizer.ResourceServerHttpSecurityCustomizer;
 import com.seatliberator.seatliberator.bootstrap.security.customizer.ResourceServerOAuth2Customizer;
-import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
+import com.seatliberator.seatliberator.identity.client.web.ActorContextBindingFilter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -52,12 +50,6 @@ public class ResourceServerAuthorizeAutoConfiguration {
         return auth -> {
             for (var permit : properties.permits()) auth.requestMatchers(permit).permitAll();
         };
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    ActorContextBindingFilter actorContextBindingFilter(ActorContextHolder actorContextHolder) {
-        return new ActorContextBindingFilter(actorContextHolder);
     }
 
     @Bean

@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.bootstrap.security;
+package com.seatliberator.seatliberator.identity.client.web;
 
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
@@ -45,4 +45,3 @@ public class ActorContextBindingFilter extends OncePerRequestFilter {
         }
     }
 }
-
