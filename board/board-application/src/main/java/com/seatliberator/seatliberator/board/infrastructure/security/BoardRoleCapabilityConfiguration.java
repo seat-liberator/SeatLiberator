@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.board.infrastructure.security;
 
-import com.seatliberator.seatliberator.identity.client.role.RoleCapabilities;
 import com.seatliberator.seatliberator.identity.core.role.Role;
+import com.seatliberator.seatliberator.identity.core.role.RoleCapabilities;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

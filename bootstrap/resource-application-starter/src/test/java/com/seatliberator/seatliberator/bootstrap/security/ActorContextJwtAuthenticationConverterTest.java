@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.bootstrap.security;
 
-import com.seatliberator.seatliberator.identity.client.role.Capability;
 import com.seatliberator.seatliberator.identity.client.role.NamespaceRoleCapabilitiesRegistry;
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
+import com.seatliberator.seatliberator.identity.core.role.Capability;
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleDeserializer;
 import com.seatliberator.seatliberator.identity.core.role.Role;
 import com.seatliberator.seatliberator.identity.core.role.SimpleNamespaceRole;
