@@ -6,37 +6,55 @@ lombok = "1.18.44"
 spring-boot = "4.0.2"
 spring-dependency-management = "1.1.7"
 springdoc-openapi = "3.0.2"
+testcontainers = "2.0.3"
 
 [libraries]
+# Base
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+testcontainers-bom = { module = "org.testcontainers:testcontainers-bom", version.ref = "testcontainers" }
+testcontainers-postgresql = { module = "org.testcontainers:testcontainers-postgresql" }
+testcontainers-jdbc = { module = "org.testcontainers:testcontainers-jdbc" }
 
-# Spring Ecosystem
+# Spring Ecosystem - Base
 spring-dependency-management-gradle-plugin = { module = "io.spring.gradle:dependency-management-plugin", version.ref = "spring-dependency-management" }
+spring-boot = { module = "org.springframework.boot:spring-boot" }
 spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
 spring-boot-gradle-plugin = { module = "org.springframework.boot:spring-boot-gradle-plugin", version.ref = "spring-boot" }
-spring-boot = { module = "org.springframework.boot:spring-boot" }
 spring-boot-autoconfigure = { module = "org.springframework.boot:spring-boot-autoconfigure" }
-spring-boot-configuration-processor = { module = "org.springframework.boot:spring-boot-configuration-processor" }
-spring-boot-starter-oauth2-resource-server = { module = "org.springframework.boot:spring-boot-starter-oauth2-resource-server" }
-spring-boot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security" }
-spring-security-test = { module = "org.springframework.security:spring-security-test" }
-spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
-spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
-spring-boot-starter-webmvc = { module = "org.springframework.boot:spring-boot-starter-webmvc" }
-spring-boot-starter-webmvc-test = { module = "org.springframework.boot:spring-boot-starter-webmvc-test" }
-spring-boot-starter-kafka = { module = "org.springframework.boot:spring-boot-starter-kafka" }
-springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref="springdoc-openapi" }
 spring-data-commons = { module = "org.springframework.data:spring-data-commons" }
 spring-context = { module = "org.springframework:spring-context" }
 spring-tx = { module = "org.springframework:spring-tx" }
+
+# Spring Ecosystem - Web
+spring-boot-starter-webmvc = { module = "org.springframework.boot:spring-boot-starter-webmvc" }
+spring-boot-starter-webmvc-test = { module = "org.springframework.boot:spring-boot-starter-webmvc-test" }
+spring-boot-starter-oauth2-resource-server = { module = "org.springframework.boot:spring-boot-starter-oauth2-resource-server" }
+spring-boot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security" }
+spring-security-test = { module = "org.springframework.security:spring-security-test" }
+spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref="springdoc-openapi" }
+
+# Spring Ecosystem - Persistence
+spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+spring-boot-starter-data-jpa-test = { module = "org.springframework.boot:spring-boot-starter-data-jpa-test" }
 jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api" }
+postgresql = { module = "org.postgresql:postgresql" }
+h2database = { module = "com.h2database:h2" }
+
+# Spring Ecosystem - Event
+spring-boot-starter-kafka = { module = "org.springframework.boot:spring-boot-starter-kafka" }
+
+# Spring Ecosystem - Testing Base
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
 mockito-core = { module = "org.mockito:mockito-core" }
 mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter" }
+
+# Spring Ecosystem - Logging
 slf4j-api = { module = "org.slf4j:slf4j-api" }
 
 [plugins]
