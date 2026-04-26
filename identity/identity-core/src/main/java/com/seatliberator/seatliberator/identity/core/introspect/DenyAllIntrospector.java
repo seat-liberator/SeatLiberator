@@ -1,6 +1,5 @@
-package com.seatliberator.seatliberator.identity.client.introspector;
+package com.seatliberator.seatliberator.identity.core.introspect;
 
-import com.seatliberator.seatliberator.identity.core.introspection.IntrospectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +14,7 @@ public class DenyAllIntrospector implements Introspector {
     }
 
     @Override
-    public com.seatliberator.seatliberator.identity.core.introspection.Introspection introspect(String token) {
+    public Introspection introspect(String token) {
         log.warn("DenyAllIntrospector is enabled. Actual token introspection is bypassed, and every token is considered inactive.");
         return introspectionFactory.createNoContent();
     }

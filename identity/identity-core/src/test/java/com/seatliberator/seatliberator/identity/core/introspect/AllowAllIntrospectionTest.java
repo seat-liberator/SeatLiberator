@@ -1,11 +1,7 @@
-package com.seatliberator.seatliberator.identity.client.introspection;
+package com.seatliberator.seatliberator.identity.core.introspect;
 
-import com.seatliberator.seatliberator.identity.client.introspector.AllowAllIntrospector;
-import com.seatliberator.seatliberator.identity.client.introspector.Introspector;
 import com.seatliberator.seatliberator.identity.core.actor.ActorFactory;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActorFactory;
-import com.seatliberator.seatliberator.identity.core.introspection.IntrospectionFactory;
-import com.seatliberator.seatliberator.identity.core.introspection.SimpleIntrospectionFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +23,7 @@ public class AllowAllIntrospectionTest {
         );
 
         // when
-        com.seatliberator.seatliberator.identity.core.introspection.Introspection introspection = introspector.introspect("any-token");
+        Introspection introspection = introspector.introspect("any-token");
 
         // then
         assertNotNull(introspection);
@@ -47,8 +43,8 @@ public class AllowAllIntrospectionTest {
         );
 
         // when
-        com.seatliberator.seatliberator.identity.core.introspection.Introspection first = introspector.introspect("token-1");
-        com.seatliberator.seatliberator.identity.core.introspection.Introspection second = introspector.introspect("token-2");
+        Introspection first = introspector.introspect("token-1");
+        Introspection second = introspector.introspect("token-2");
 
         // then
         assertNotNull(first.actor());
@@ -68,8 +64,8 @@ public class AllowAllIntrospectionTest {
         );
 
         // when
-        com.seatliberator.seatliberator.identity.core.introspection.Introspection introspection1 = introspector.introspect("token-a");
-        com.seatliberator.seatliberator.identity.core.introspection.Introspection introspection2 = introspector.introspect("token-b");
+        Introspection introspection1 = introspector.introspect("token-a");
+        Introspection introspection2 = introspector.introspect("token-b");
 
         // then
         assertTrue(introspection1.active());

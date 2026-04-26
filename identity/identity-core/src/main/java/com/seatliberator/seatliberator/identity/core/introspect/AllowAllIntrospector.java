@@ -1,7 +1,6 @@
-package com.seatliberator.seatliberator.identity.client.introspector;
+package com.seatliberator.seatliberator.identity.core.introspect;
 
 import com.seatliberator.seatliberator.identity.core.actor.ActorFactory;
-import com.seatliberator.seatliberator.identity.core.introspection.IntrospectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +25,7 @@ public class AllowAllIntrospector implements Introspector {
     }
 
     @Override
-    public com.seatliberator.seatliberator.identity.core.introspection.Introspection introspect(String token) {
+    public Introspection introspect(String token) {
         log.warn("AllowAllIntrospector is enabled. Actual token introspection is bypassed, and every token is considered active. expirationMs={}", expiration);
 
         var fakeSubject = UUID.randomUUID().toString();

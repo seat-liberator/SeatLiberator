@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.core.introspection;
+package com.seatliberator.seatliberator.identity.core.introspect;
 
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
@@ -10,7 +10,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SimpleIntrospectionFactoryTest {
-    private final com.seatliberator.seatliberator.identity.core.introspection.IntrospectionFactory factory = new SimpleIntrospectionFactory();
+    private final IntrospectionFactory factory = new SimpleIntrospectionFactory();
 
     @Test
     @DisplayName("createNoContent는 비활성 introspection을 생성한다")

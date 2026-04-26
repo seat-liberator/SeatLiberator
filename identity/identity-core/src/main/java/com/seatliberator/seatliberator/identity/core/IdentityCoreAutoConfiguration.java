@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.identity.core;
 
-import com.seatliberator.seatliberator.identity.core.introspection.IntrospectionFactory;
-import com.seatliberator.seatliberator.identity.core.introspection.SimpleIntrospectionFactory;
+import com.seatliberator.seatliberator.identity.core.introspect.IntrospectionFactory;
+import com.seatliberator.seatliberator.identity.core.introspect.SimpleIntrospectionFactory;
 import com.seatliberator.seatliberator.identity.core.role.*;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

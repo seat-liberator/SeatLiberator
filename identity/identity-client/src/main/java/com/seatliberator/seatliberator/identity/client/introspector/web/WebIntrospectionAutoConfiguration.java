@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.client.introspector.web;
 
-import com.seatliberator.seatliberator.identity.client.introspector.Introspector;
+import com.seatliberator.seatliberator.identity.core.introspect.Introspector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
