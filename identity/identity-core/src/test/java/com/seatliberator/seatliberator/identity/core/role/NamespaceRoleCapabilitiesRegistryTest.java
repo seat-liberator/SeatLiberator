@@ -1,9 +1,5 @@
-package com.seatliberator.seatliberator.identity.client.role;
+package com.seatliberator.seatliberator.identity.core.role;
 
-import com.seatliberator.seatliberator.identity.core.role.Role;
-import com.seatliberator.seatliberator.identity.core.role.RoleCapabilities;
-import com.seatliberator.seatliberator.identity.core.role.SimpleCapability;
-import com.seatliberator.seatliberator.identity.core.role.SimpleNamespaceRole;
 import com.seatliberator.seatliberator.kernel.SimpleApplicationNamespace;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

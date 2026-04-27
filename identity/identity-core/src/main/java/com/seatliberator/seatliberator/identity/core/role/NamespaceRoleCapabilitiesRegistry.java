@@ -1,9 +1,8 @@
-package com.seatliberator.seatliberator.identity.client.role;
+package com.seatliberator.seatliberator.identity.core.role;
 
-import com.seatliberator.seatliberator.identity.core.role.*;
 import com.seatliberator.seatliberator.kernel.ApplicationNamespace;
 
-import java.util.*;
+import java.util.*;import java.util.stream.Collectors;
 
 public class NamespaceRoleCapabilitiesRegistry {
     private final Map<SimpleNamespaceRole, Set<Capability>> registry;
@@ -30,11 +29,19 @@ public class NamespaceRoleCapabilitiesRegistry {
     }
 
     public Set<Capability> resolve(NamespaceRole namespaceRole) {
-        return registry.getOrDefault(SimpleNamespaceRole.copyOf(namespaceRole), Set.of());
+        if (namespaceRole == null) throw new IllegalArgumentException("namespaceRole must not be null.");
+    return registry.getOrDefault(SimpleNamespaceRole.copyOf(namespaceRole), Set.of());
     }
 
     public Set<Capability> resolve(ApplicationNamespace namespace, Role role) {
         var namespaceRole = SimpleNamespaceRole.from(namespace, role);
         return registry.getOrDefault(namespaceRole, Set.of());
+    }
+
+    public Set<Capability> resolve(Collection<NamespaceRole> namespaceRoles) {
+        if (namespaceRoles == null) throw new IllegalArgumentException("namespaceRoles must not be null.");
+        return namespaceRoles.stream()
+                .flatMap(namespaceRole -> resolve(namespaceRole).stream())
+                .collect(Collectors.toUnmodifiableSet());
     }
 }
