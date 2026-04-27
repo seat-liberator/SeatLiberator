@@ -3,28 +3,51 @@ package com.seatliberator.seatliberator.identity.core.role;
 import com.seatliberator.seatliberator.kernel.SimpleApplicationNamespace;
 
 import java.util.Arrays;
-import java.util.Optional;
+import java.util.Collection;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class SeparatorNamespaceRoleDeserializer implements NamespaceRoleDeserializer {
     private final String separator;
 
     public SeparatorNamespaceRoleDeserializer(String separator) {
+        if (separator == null || separator.isBlank())
+            throw new IllegalArgumentException("separator must not be null or blank.");
         this.separator = separator;
     }
 
     @Override
-    public Optional<NamespaceRole> tryMaterialize(String raw) {
-        var parts = raw.split(separator);
-        if (parts.length != 2 || Arrays.stream(parts).anyMatch(String::isBlank)) {
-            return Optional.empty();
-        }
+    public NamespaceRole materialize(String raw) {
+        if (raw == null || raw.isBlank())
+            throw new IllegalArgumentException("namespace role format must not be null or blank.");
+
+        var parts = raw.split(Pattern.quote(separator), -1);
+        if (parts.length != 2 || Arrays.stream(parts).anyMatch(String::isBlank))
+            throw new IllegalArgumentException("invalid namespace role format. expected '<namespace>%s<role>', but was '%s'.".formatted(separator, raw));
+
+        var namespace = SimpleApplicationNamespace.of(parts[0]);
 
         try {
-            var namespace = SimpleApplicationNamespace.of(parts[0]);
             var role = Role.valueOf(parts[1]);
-            return Optional.of(SimpleNamespaceRole.from(namespace, role));
+            return SimpleNamespaceRole.from(namespace, role);
         } catch (IllegalArgumentException e) {
-            return Optional.empty();
+            throw new IllegalArgumentException(
+                    "invalid role '%s' in namespace role '%s'. expected one of: %s."
+                            .formatted(parts[1], raw, Arrays.toString(Role.values())),
+                    e
+            );
         }
+    }
+
+    @Override
+    public Set<NamespaceRole> materialize(Collection<String> rawCollection) {
+        if (rawCollection == null) {
+            throw new IllegalArgumentException("rawCollection must not be null.");
+        }
+
+        return rawCollection.stream()
+                .map(this::materialize)
+                .collect(Collectors.toUnmodifiableSet());
     }
 }

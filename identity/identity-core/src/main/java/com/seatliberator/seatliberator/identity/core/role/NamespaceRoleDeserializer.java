@@ -1,7 +1,10 @@
 package com.seatliberator.seatliberator.identity.core.role;
 
-import java.util.Optional;
+import java.util.Collection;
+import java.util.Set;
 
 public interface NamespaceRoleDeserializer {
-    Optional<NamespaceRole> tryMaterialize(String raw);
+    NamespaceRole materialize(String raw);
+
+    Set<NamespaceRole> materialize(Collection<String> rawCollection);
 }
