@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.core.introspect;
 
-import com.seatliberator.seatliberator.identity.core.actor.Actor;
+import com.seatliberator.seatliberator.identity.core.TestCapability;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,9 @@ public class SimpleIntrospectionFactoryTest {
     @DisplayName("createIntrospection은 활성 introspection을 생성한다")
     void shouldCreateActiveIntrospection() {
         // given
-        Actor actor = new SimpleActor("user-1", Set.of("seat:read", "seat:reserve"));
+        var subject = "user-1";
+        var capabilities = Set.of(TestCapability.TEST_CAPABILITY);
+        var actor = SimpleActor.of(subject, capabilities);
         Long expiration = 999999L;
 
         // when
@@ -48,7 +50,9 @@ public class SimpleIntrospectionFactoryTest {
     @DisplayName("createIntrospection에 null expiration을 전달하면 예외가 발생한다")
     void shouldThrowWhenExpirationIsNull() {
         // given
-        Actor actor = new SimpleActor("user-1", Set.of("seat:read"));
+        var subject = "user-1";
+        var capabilities = Set.of(TestCapability.TEST_CAPABILITY);
+        var actor = SimpleActor.of(subject, capabilities);
 
         // when & then
         assertThrows(NullPointerException.class, () -> factory.createIntrospection(null, actor));

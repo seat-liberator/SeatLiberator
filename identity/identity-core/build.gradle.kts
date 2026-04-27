@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("seatliberator.module-base")
 }
 
 group = "com.seatliberator.seatliberator"

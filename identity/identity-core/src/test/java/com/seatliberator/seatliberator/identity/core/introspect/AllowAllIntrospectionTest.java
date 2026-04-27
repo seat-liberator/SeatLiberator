@@ -1,14 +1,11 @@
 package com.seatliberator.seatliberator.identity.core.introspect;
 
-import com.seatliberator.seatliberator.identity.core.actor.ActorFactory;
-import com.seatliberator.seatliberator.identity.core.actor.SimpleActorFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AllowAllIntrospectionTest {
-    private final ActorFactory actorFactory = new SimpleActorFactory();
     private final IntrospectionFactory introspectionFactory = new SimpleIntrospectionFactory();
 
     @Test
@@ -17,7 +14,6 @@ public class AllowAllIntrospectionTest {
         // given
         Long expiration = 60000L;
         Introspector introspector = new AllowAllIntrospector(
-                actorFactory,
                 introspectionFactory,
                 expiration
         );
@@ -37,7 +33,6 @@ public class AllowAllIntrospectionTest {
     void shouldCreateDifferentFakeSubjectPerInvocation() {
         // given
         Introspector introspector = new AllowAllIntrospector(
-                actorFactory,
                 introspectionFactory,
                 60000L
         );
@@ -58,7 +53,6 @@ public class AllowAllIntrospectionTest {
         // given
         Long expiration = 12345L;
         Introspector introspector = new AllowAllIntrospector(
-                actorFactory,
                 introspectionFactory,
                 expiration
         );

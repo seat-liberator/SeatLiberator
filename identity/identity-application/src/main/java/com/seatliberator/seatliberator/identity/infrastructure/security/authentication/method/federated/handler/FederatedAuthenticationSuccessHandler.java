@@ -64,7 +64,7 @@ public class FederatedAuthenticationSuccessHandler implements AuthenticationSucc
                 actor.subject()
         );
 
-        var issuedTokenEntry = tokenIssueProcessor.process(actor.subject(), actor.scopes());
+        var issuedTokenEntry = tokenIssueProcessor.process(actor.subject(), actor.capabilities());
 
         log.debug(
                 "Token issuance succeeded for federated authentication. subject={}",

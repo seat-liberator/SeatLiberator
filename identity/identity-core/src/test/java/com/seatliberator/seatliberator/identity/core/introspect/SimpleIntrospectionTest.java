@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.core.introspect;
 
-import com.seatliberator.seatliberator.identity.core.actor.Actor;
+import com.seatliberator.seatliberator.identity.core.TestCapability;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,9 @@ public class SimpleIntrospectionTest {
     @DisplayName("SimpleIntrospection은 전달된 값을 그대로 반환한다")
     void SimpleIntrospection은_전달된_값을_그대로_반환한다() {
         // given
-        Actor actor = new SimpleActor("user-1", Set.of("seat:read"));
+        var subject = "user-1";
+        var capabilities = Set.of(TestCapability.TEST_CAPABILITY);
+        var actor = SimpleActor.of(subject, capabilities);
         Long expiration = 123456789L;
 
         // when
