@@ -54,4 +54,32 @@ public class SimpleApplicationNamespaceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("application namespace must not be null.");
     }
+
+    @Test
+    @DisplayName("value가 같으면 동등성 체크는 true")
+    void true_if_same_value() {
+        var nsValue = "ns";
+
+        var ns1 = SimpleApplicationNamespace.of(nsValue);
+        ApplicationNamespace ns2 = new ApplicationNamespace() {
+            @Override
+            public String value() {
+                return nsValue;
+            }
+        };
+
+        assertThat(ns1.isSame(ns2)).isTrue();
+    }
+
+    @Test
+    @DisplayName("value가 다르면 동등성 체크는 false")
+    void false_if_diff_value() {
+        var ns1Value = "ns-1";
+        var ns2Value = "ns-2";
+
+        var ns1 = SimpleApplicationNamespace.of(ns1Value);
+        var ns2 = SimpleApplicationNamespace.of(ns2Value);
+
+        assertThat(ns1.isSame(ns2)).isFalse();
+    }
 }
