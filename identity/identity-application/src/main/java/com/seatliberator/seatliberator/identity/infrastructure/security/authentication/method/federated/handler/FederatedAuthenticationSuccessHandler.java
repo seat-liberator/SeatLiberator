@@ -28,8 +28,6 @@ public class FederatedAuthenticationSuccessHandler implements AuthenticationSucc
             @Nullable HttpServletResponse response,
             @Nullable Authentication authentication
     ) throws IOException, ServletException {
-        log.debug("Handling federated authentication success response.");
-
         if (authentication == null) {
             log.debug("Federated authentication success handling skipped because authentication was null.");
             return;
@@ -56,30 +54,13 @@ public class FederatedAuthenticationSuccessHandler implements AuthenticationSucc
                 federatedPrincipal.email()
         );
 
-        var actor = federatedSignInProcessor.authenticate(federatedPrincipal);
-
-        log.debug(
-                "Federated sign-in processor succeeded. registrationId={}, subject={}",
-                federatedPrincipal.registrationId(),
-                actor.subject()
-        );
-
-        var issuedTokenEntry = tokenIssueProcessor.process(actor.subject(), actor.capabilities());
-
-        log.debug(
-                "Token issuance succeeded for federated authentication. subject={}",
-                actor.subject()
-        );
+        var auth = federatedSignInProcessor.process(federatedPrincipal);
+        var issuedTokenEntry = tokenIssueProcessor.process(auth.userId().toString(), auth.scopes());
 
         responseWriter.write(
                 response,
                 HttpStatus.OK,
                 issuedTokenEntry
-        );
-
-        log.debug(
-                "Federated authentication success response written. subject={}",
-                actor.subject()
         );
     }
 }

@@ -6,6 +6,7 @@ import com.seatliberator.seatliberator.identity.application.port.in.UserRegistra
 import com.seatliberator.seatliberator.identity.application.port.in.command.AuthenticationCommand;
 import com.seatliberator.seatliberator.identity.application.port.in.command.ExistenceCheckingCommand;
 import com.seatliberator.seatliberator.identity.application.port.in.command.RegistrationCommand;
+import com.seatliberator.seatliberator.identity.application.port.in.result.AuthEntry;
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
 import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.federated.principal.FederatedPrincipal;
@@ -19,80 +20,21 @@ public class DefaultFederatedSignInProcessor implements FederatedSignInProcessor
     private final AccountExistenceChecker accountExistenceChecker;
     private final UserRegistrar userRegistrar;
 
-
     @Override
-    public Actor authenticate(FederatedPrincipal principal) {
-        log.debug(
-                "Attempting federated sign-in processing. registrationId={}, email={}",
-                principal.registrationId(),
-                principal.email()
-        );
+    public AuthEntry process(FederatedPrincipal principal) {
+        var nick = principal.nickname();
+        var regId = principal.registrationId();
+        var prvId = principal.providerUserId();
 
-        var existsCommand = new ExistenceCheckingCommand.Federated(
-                principal.registrationId(),
-                principal.providerUserId()
-        );
-
-        boolean existsAccount = accountExistenceChecker.isFederatedAccountExists(
-                existsCommand
-        );
-
-        log.debug(
-                "Federated account existence check completed. registrationId={}, exists={}",
-                principal.registrationId(),
-                existsAccount
-        );
+        var existsCommand = new ExistenceCheckingCommand.Federated(regId, prvId);
+        boolean existsAccount = accountExistenceChecker.isFederatedAccountExists(existsCommand);
 
         if (!existsAccount) {
-            log.debug(
-                    "Federated account not found. proceeding with federated registration. registrationId={}, nickname={}",
-                    principal.registrationId(),
-                    principal.nickname()
-            );
-
-            var registrationCommand = new RegistrationCommand.Federated(
-                    principal.nickname(),
-                    principal.registrationId(),
-                    principal.providerUserId()
-            );
-
-            userRegistrar.register(registrationCommand);
-
-            log.debug(
-                    "Federated registration succeeded during sign-in processing. registrationId={}",
-                    principal.registrationId()
-            );
+            var registrationCommand = new RegistrationCommand.Federated(nick, regId, prvId);
+            return userRegistrar.register(registrationCommand);
+        } else {
+            var authenticationCommand = new AuthenticationCommand.Federated(regId, prvId);
+            return accountAuthenticator.authenticate(authenticationCommand);
         }
-
-        var authenticationCommand = new AuthenticationCommand.Federated(
-                principal.registrationId(),
-                principal.providerUserId()
-        );
-
-        log.debug(
-                "Federated authentication command created during sign-in processing. registrationId={}",
-                principal.registrationId()
-        );
-
-        var authContext = accountAuthenticator.authenticate(authenticationCommand);
-
-        log.debug(
-                "Federated authentication succeeded during sign-in processing. registrationId={}, userId={}",
-                principal.registrationId(),
-                authContext.userId()
-        );
-
-        var actor = new SimpleActor(
-                authContext.userId().toString(),
-                authContext.scopes()
-        );
-
-        log.debug(
-                "Federated sign-in processing completed. registrationId={}, subject={}",
-                principal.registrationId(),
-                actor.subject()
-        );
-
-        return actor;
     }
 }
