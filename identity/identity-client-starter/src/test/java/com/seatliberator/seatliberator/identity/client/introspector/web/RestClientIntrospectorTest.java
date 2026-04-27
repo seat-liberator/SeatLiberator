@@ -8,11 +8,9 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @DisplayName("RestClient Introspector")
 class RestClientIntrospectorTest {
@@ -48,7 +46,7 @@ class RestClientIntrospectorTest {
         assertThat(introspection.actor())
                 .extracting(Actor::subject)
                 .isEqualTo("user-1");
-        assertThat(introspection.actor().scopes())
+        assertThat(introspection.actor().capabilities())
                 .containsExactly("reservation:USER");
 
         server.verify();

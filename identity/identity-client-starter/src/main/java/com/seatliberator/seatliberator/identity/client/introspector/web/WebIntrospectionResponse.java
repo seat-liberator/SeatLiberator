@@ -13,7 +13,7 @@ public record WebIntrospectionResponse(
         return new SimpleIntrospection(
                 active,
                 expiration,
-                actor != null ? new SimpleActor(actor.subject(), actor.scopes()) : null
+                actor != null ? SimpleActor.from(actor) : null
         );
     }
 }

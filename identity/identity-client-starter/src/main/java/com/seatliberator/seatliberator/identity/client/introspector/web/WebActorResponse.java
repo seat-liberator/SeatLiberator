@@ -1,11 +1,12 @@
 package com.seatliberator.seatliberator.identity.client.introspector.web;
 
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
+import com.seatliberator.seatliberator.identity.core.role.SimpleCapability;
 
 import java.util.Set;
 
 public record WebActorResponse(
         String subject,
-        Set<String> scopes
+        Set<SimpleCapability> capabilities
 ) implements Actor {
 }

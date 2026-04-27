@@ -19,11 +19,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.time.Instant;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -73,7 +69,7 @@ public class ActorContextJwtAuthenticationConverterTest {
         Actor actor = (Actor) token.getPrincipal();
 
         assertThat(actor.subject()).isEqualTo("user-1");
-        assertThat(actor.scopes())
+        assertThat(actor.capabilities())
                 .containsExactlyInAnyOrder(
                         "reservation:USER"
                 );
@@ -105,7 +101,7 @@ public class ActorContextJwtAuthenticationConverterTest {
 
         var actor = (Actor) token.getPrincipal();
 
-        assertThat(actor.scopes())
+        assertThat(actor.capabilities())
                 .containsExactlyInAnyOrder(
                         "reservation:USER",
                         "ROLE_USER"
@@ -138,7 +134,7 @@ public class ActorContextJwtAuthenticationConverterTest {
 
         var actor = (Actor) token.getPrincipal();
 
-        assertThat(actor.scopes())
+        assertThat(actor.capabilities())
                 .containsExactlyInAnyOrder(
                         "reservation:USER",
                         "ROLE_USER",
@@ -178,7 +174,7 @@ public class ActorContextJwtAuthenticationConverterTest {
 
         var actor = (Actor) token.getPrincipal();
 
-        assertThat(actor.scopes())
+        assertThat(actor.capabilities())
                 .containsExactlyInAnyOrder(
                         "board:USER"
                 );
@@ -214,7 +210,7 @@ public class ActorContextJwtAuthenticationConverterTest {
 
         var actor = (Actor) token.getPrincipal();
 
-        assertThat(actor.scopes())
+        assertThat(actor.capabilities())
                 .containsExactlyInAnyOrder(
                         "reservation:ADMIN",
                         "ROLE_ADMIN",
@@ -244,7 +240,7 @@ public class ActorContextJwtAuthenticationConverterTest {
 
         var actor = (Actor) token.getPrincipal();
 
-        assertThat(actor.scopes())
+        assertThat(actor.capabilities())
                 .containsExactlyInAnyOrder(
                         "reservation:USER",
                         "board:ADMIN"
@@ -262,7 +258,7 @@ public class ActorContextJwtAuthenticationConverterTest {
 
         var actor = (Actor) token.getPrincipal();
 
-        assertThat(actor.scopes()).isEmpty();
+        assertThat(actor.capabilities()).isEmpty();
     }
 
     private Jwt jwt(String subject, Map<String, Object> claims) {

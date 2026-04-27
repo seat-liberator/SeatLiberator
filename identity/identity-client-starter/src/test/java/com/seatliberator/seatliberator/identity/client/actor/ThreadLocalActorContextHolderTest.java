@@ -28,7 +28,7 @@ public class ThreadLocalActorContextHolderTest {
     @DisplayName("setActor 후 getActor로 같은 actor를 조회할 수 있다")
     void setActor_후_getActor로_같은_actor를_조회할_수_있다() {
         // given
-        Actor actor = new SimpleActor("user-1", Set.of("seat:read"));
+        Actor actor = SimpleActor.of("user-1", Set.of());
 
         // when
         holder.setActor(actor);
@@ -53,7 +53,7 @@ public class ThreadLocalActorContextHolderTest {
     @DisplayName("clear 후에는 actor를 조회할 수 없다")
     void clear_후에는_actor를_조회할_수_없다() {
         // given
-        holder.setActor(new SimpleActor("user-1", Set.of("seat:read")));
+        holder.setActor(SimpleActor.of("user-1", Set.of()));
 
         // when
         holder.clear();
@@ -66,7 +66,7 @@ public class ThreadLocalActorContextHolderTest {
     @DisplayName("setActor는 MDC에 actor subject를 기록한다")
     void setActor는_MDC에_actor_subject를_기록한다() {
         // given
-        Actor actor = new SimpleActor("user-1", Set.of("seat:read"));
+        Actor actor = SimpleActor.of("user-1", Set.of());
 
         // when
         holder.setActor(actor);
@@ -79,7 +79,7 @@ public class ThreadLocalActorContextHolderTest {
     @DisplayName("Actor 정보는 ThreadLocal로 스레드 간 격리된다")
     void Actor_정보는_ThreadLocal로_스레드_간_격리된다() throws InterruptedException {
         // given
-        holder.setActor(new SimpleActor("main-user", Set.of("seat:read")));
+        holder.setActor(SimpleActor.of("user-1", Set.of()));
 
         var childThreadActor = new AtomicReference<Actor>();
         var childThreadException = new AtomicReference<Throwable>();
@@ -110,7 +110,8 @@ public class ThreadLocalActorContextHolderTest {
     @DisplayName("자식 스레드에서 설정한 actor는 해당 스레드에서만 보인다")
     void 자식_스레드에서_설정한_actor는_해당_스레드에서만_보인다() throws InterruptedException {
         // given
-        holder.setActor(new SimpleActor("main-user", Set.of("seat:read")));
+        var mainSubject = "main-user";
+        holder.setActor(SimpleActor.of(mainSubject, Set.of()));
 
         var childSubject = new AtomicReference<String>();
         var mainSubjectAfterChild = new AtomicReference<String>();
@@ -118,7 +119,7 @@ public class ThreadLocalActorContextHolderTest {
 
         Thread thread = new Thread(() -> {
             try {
-                holder.setActor(new SimpleActor("child-user", Set.of("seat:write")));
+                holder.setActor(SimpleActor.of(childSubject.get(), Set.of()));
                 childSubject.set(holder.getActor().subject());
             } finally {
                 holder.clear();
