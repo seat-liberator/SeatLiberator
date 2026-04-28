@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.identity.client.jwt;
 
-import com.seatliberator.seatliberator.identity.client.role.NamespaceRoleCapabilitiesRegistry;
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import com.seatliberator.seatliberator.identity.core.role.Capability;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleCapabilitiesRegistry;
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleDeserializer;
 import com.seatliberator.seatliberator.identity.core.role.Role;
 import com.seatliberator.seatliberator.identity.core.role.SimpleNamespaceRole;
@@ -12,23 +12,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("Actor Context Jwt Authentication Converter")
-public class ActorContextJwtAuthenticationConverterTest {
+@DisplayName("ActorContextJwtAuthenticationConverter")
+class ActorContextJwtAuthenticationConverterTest {
 
     @Mock
     private NamespaceRoleDeserializer deserializer;
@@ -47,218 +50,96 @@ public class ActorContextJwtAuthenticationConverterTest {
     }
 
     @Test
-    @DisplayName("subject와 scope/scopes 기반으로 ActorContextAuthenticationToken을 생성한다")
-    void convert_token_from_jwt() {
-        var jwt = jwt(
-                "user-1",
-                Map.of(
-                        "scope", "reservation:USER",
-                        "scopes", List.of("reservation:USER")
-                )
+    @DisplayName("현재 namespace role과 resolve된 capability로 인증 토큰을 만든다")
+    void convertsCurrentNamespaceRolesToActorAndAuthorities() {
+        var reservation = SimpleApplicationNamespace.of("reservation");
+        var role = SimpleNamespaceRole.from(reservation, Role.ADMIN);
+        var capabilities = Set.of(
+                capability("book:create"),
+                capability("book:cancel")
         );
 
-        given(deserializer.tryMaterialize("reservation:USER"))
-                .willReturn(Optional.empty());
+        given(namespaceProvider.current()).willReturn(reservation);
+        given(deserializer.materialize(Set.of("reservation:ADMIN"))).willReturn(Set.of(role));
+        given(registry.resolve(Set.of(role))).willReturn(capabilities);
 
-        AbstractAuthenticationToken token = converter.convert(jwt);
+        var token = converter.convert(jwt("user-1", Map.of("scopes", List.of("reservation:ADMIN"))));
 
         assertThat(token).isInstanceOf(ActorContextAuthenticationToken.class);
-        assertThat(token.getPrincipal()).isInstanceOf(Actor.class);
-        assertThat(token.getCredentials()).isSameAs(jwt);
-
-        Actor actor = (Actor) token.getPrincipal();
-
-        assertThat(actor.subject()).isEqualTo("user-1");
-        assertThat(actor.capabilities())
-                .containsExactlyInAnyOrder(
-                        "reservation:USER"
-                );
+        assertThat(token.getCredentials()).isInstanceOf(Jwt.class);
         assertThat(token.getAuthorities())
                 .containsExactlyInAnyOrder(
-                        new SimpleGrantedAuthority("reservation:USER")
-                );
-    }
-
-    @Test
-    @DisplayName("서비스 namespace와 일치하는 namespace role이 있으면 prefixed Role도 담는다")
-    void namespace_role_create_spring_security_prefixed_role() {
-        Jwt jwt = jwt("user-1", Map.of("scope", "reservation:USER"));
-
-        var namespace = SimpleApplicationNamespace.of("reservation");
-
-        given(deserializer.tryMaterialize("reservation:USER"))
-                .willReturn(Optional.of(SimpleNamespaceRole.from(namespace, Role.USER)));
-        given(namespaceProvider.current())
-                .willReturn(namespace);
-
-        var token = converter.convert(jwt);
-
-        assertThat(token.getAuthorities())
-                .containsExactlyInAnyOrder(
-                        new SimpleGrantedAuthority("reservation:USER"),
-                        new SimpleGrantedAuthority("ROLE_USER")
-                );
-
-        var actor = (Actor) token.getPrincipal();
-
-        assertThat(actor.capabilities())
-                .containsExactlyInAnyOrder(
-                        "reservation:USER",
-                        "ROLE_USER"
-                );
-    }
-
-    @Test
-    @DisplayName("같은 namespace에 여러 Role이 있으면 여러 prefixed Role을 전부 담는다")
-    void multiple_namespace_role_create_multiple_spring_security_prefixed_role() {
-        Jwt jwt = jwt("user-1", Map.of("scope", List.of("reservation:USER", "reservation:ADMIN")));
-
-        var namespace = SimpleApplicationNamespace.of("reservation");
-
-        given(deserializer.tryMaterialize("reservation:USER"))
-                .willReturn(Optional.of(SimpleNamespaceRole.from(namespace, Role.USER)));
-        given(deserializer.tryMaterialize("reservation:ADMIN"))
-                .willReturn(Optional.of(SimpleNamespaceRole.from(namespace, Role.ADMIN)));
-        given(namespaceProvider.current())
-                .willReturn(namespace);
-
-        var token = converter.convert(jwt);
-
-        assertThat(token.getAuthorities())
-                .containsExactlyInAnyOrder(
-                        new SimpleGrantedAuthority("reservation:USER"),
-                        new SimpleGrantedAuthority("ROLE_USER"),
-                        new SimpleGrantedAuthority("reservation:ADMIN"),
-                        new SimpleGrantedAuthority("ROLE_ADMIN")
-                );
-
-        var actor = (Actor) token.getPrincipal();
-
-        assertThat(actor.capabilities())
-                .containsExactlyInAnyOrder(
-                        "reservation:USER",
-                        "ROLE_USER",
-                        "reservation:ADMIN",
-                        "ROLE_ADMIN"
-                );
-    }
-
-    @Test
-    @DisplayName("subject가 없으면 예외")
-    void throw_exception_when_subject_missing() {
-        var jwt = jwt(null, Map.of("scope", "reservation:USER"));
-
-        assertThatThrownBy(() -> converter.convert(jwt))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Missing jwt subject");
-    }
-
-    @Test
-    @DisplayName("서비스 namespace와 다른 namespace role은 prefixed Role을 만들지 않는다")
-    void do_not_create_prefixed_role_when_namespace_is_different() {
-        var jwt = jwt("user-1", Map.of("scope", "board:USER"));
-
-        var boardNamespace = SimpleApplicationNamespace.of("board");
-        var reservationNamespace = SimpleApplicationNamespace.of("reservation");
-
-        given(deserializer.tryMaterialize("board:USER"))
-                .willReturn(Optional.of(SimpleNamespaceRole.from(boardNamespace, Role.USER)));
-        given(namespaceProvider.current()).willReturn(reservationNamespace);
-
-        var token = converter.convert(jwt);
-
-        assertThat(token.getAuthorities())
-                .containsExactlyInAnyOrder(
-                        new SimpleGrantedAuthority("board:USER")
-                );
-
-        var actor = (Actor) token.getPrincipal();
-
-        assertThat(actor.capabilities())
-                .containsExactlyInAnyOrder(
-                        "board:USER"
-                );
-    }
-
-    @Test
-    @DisplayName("namespace role에 연결된 capability가 있으면 capability scope도 만든다")
-    void namespace_role_add_capability_scopes() {
-        var jwt = jwt("user-1", Map.of("scope", "reservation:ADMIN"));
-
-        var namespace = SimpleApplicationNamespace.of("reservation");
-        var role = SimpleNamespaceRole.from(namespace, Role.ADMIN);
-
-        var createBookCapability = capability("book:create");
-        var cancelBookCapability = capability("book:cancel");
-
-        given(deserializer.tryMaterialize("reservation:ADMIN"))
-                .willReturn(Optional.of(role));
-        given(namespaceProvider.current())
-                .willReturn(namespace);
-        given(registry.resolve(role))
-                .willReturn(Set.of(createBookCapability, cancelBookCapability));
-
-        var token = converter.convert(jwt);
-
-        assertThat(token.getAuthorities())
-                .containsExactlyInAnyOrder(
-                        new SimpleGrantedAuthority("reservation:ADMIN"),
                         new SimpleGrantedAuthority("ROLE_ADMIN"),
                         new SimpleGrantedAuthority("book:create"),
                         new SimpleGrantedAuthority("book:cancel")
                 );
 
         var actor = (Actor) token.getPrincipal();
-
+        assertThat(actor.subject()).isEqualTo("user-1");
         assertThat(actor.capabilities())
-                .containsExactlyInAnyOrder(
-                        "reservation:ADMIN",
-                        "ROLE_ADMIN",
-                        "book:create",
-                        "book:cancel"
-                );
+                .extracting(Capability::scope)
+                .containsExactlyInAnyOrder("book:create", "book:cancel");
     }
 
     @Test
-    @DisplayName("scope 문자열은 공백과 콤마를 구분자로 파싱할 수 있고 중복은 제거한다")
-    void parse_scope_string_and_dedup() {
-        var jwt = jwt("user-1", Map.of(
-                "scope", "reservation:USER, reservation:USER   reservation:USER, board:ADMIN",
-                "scopes", List.of("reservation:USER", "board:ADMIN", "reservation:USER")
+    @DisplayName("다른 namespace role은 role authority와 capability 확장 대상에서 제외한다")
+    void ignoresNamespaceRolesOutsideCurrentNamespace() {
+        var reservation = SimpleApplicationNamespace.of("reservation");
+        var reservationUser = SimpleNamespaceRole.from(reservation, Role.USER);
+        var boardAdmin = SimpleNamespaceRole.from(SimpleApplicationNamespace.of("board"), Role.ADMIN);
+        var capability = capability("reservation:read");
+
+        given(namespaceProvider.current()).willReturn(reservation);
+        given(deserializer.materialize(Set.of("reservation:USER", "board:ADMIN")))
+                .willReturn(Set.of(reservationUser, boardAdmin));
+        given(registry.resolve(Set.of(reservationUser))).willReturn(Set.of(capability));
+
+        var token = converter.convert(jwt(
+                "user-1",
+                Map.of("scopes", List.of("reservation:USER", "board:ADMIN"))
         ));
-
-        given(deserializer.tryMaterialize("reservation:USER")).willReturn(Optional.empty());
-        given(deserializer.tryMaterialize("board:ADMIN")).willReturn(Optional.empty());
-
-        var token = converter.convert(jwt);
 
         assertThat(token.getAuthorities())
                 .containsExactlyInAnyOrder(
-                        new SimpleGrantedAuthority("reservation:USER"),
-                        new SimpleGrantedAuthority("board:ADMIN")
+                        new SimpleGrantedAuthority("ROLE_USER"),
+                        new SimpleGrantedAuthority("reservation:read")
                 );
 
         var actor = (Actor) token.getPrincipal();
-
         assertThat(actor.capabilities())
-                .containsExactlyInAnyOrder(
-                        "reservation:USER",
-                        "board:ADMIN"
-                );
+                .extracting(Capability::scope)
+                .containsExactly("reservation:read");
     }
 
     @Test
-    @DisplayName("지원하지 않는 scope는 무시된다")
-    void ignore_unsupported_scope_claim() {
-        var jwt = jwt("user-1", Map.of("scope", 123, "scopes", Map.of("has", "reservation:USER")));
+    @DisplayName("scopes 문자열은 공백과 콤마 기준으로 읽어 deserializer에 전달한다")
+    @SuppressWarnings("unchecked")
+    void readsScopesStringClaim() {
+        var reservation = SimpleApplicationNamespace.of("reservation");
+        var role = SimpleNamespaceRole.from(reservation, Role.USER);
+        var scopesCaptor = ArgumentCaptor.forClass(Collection.class);
 
-        var token = converter.convert(jwt);
+        given(namespaceProvider.current()).willReturn(reservation);
+        given(deserializer.materialize(scopesCaptor.capture())).willReturn(Set.of(role));
+        given(registry.resolve(Set.of(role))).willReturn(Set.of());
 
-        assertThat(token.getAuthorities()).isEmpty();
+        converter.convert(jwt(
+                "user-1",
+                Map.of("scopes", "reservation:USER, reservation:USER   board:ADMIN")
+        ));
 
-        var actor = (Actor) token.getPrincipal();
+        assertThat(scopesCaptor.getValue())
+                .containsExactlyInAnyOrder("reservation:USER", "board:ADMIN");
+    }
 
-        assertThat(actor.capabilities()).isEmpty();
+    @Test
+    @DisplayName("subject가 없으면 예외를 던진다")
+    void throwsWhenSubjectIsMissing() {
+        var jwt = jwt(null, Map.of("scopes", List.of("reservation:USER")));
+
+        assertThatThrownBy(() -> converter.convert(jwt))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Missing jwt subject");
     }
 
     private Jwt jwt(String subject, Map<String, Object> claims) {
@@ -281,8 +162,13 @@ public class ActorContextJwtAuthenticationConverterTest {
     }
 
     private Capability capability(String scope) {
-        Capability capability = mock(Capability.class);
-        given(capability.scope()).willReturn(scope);
-        return capability;
+        return new TestCapability(scope);
+    }
+
+    private record TestCapability(String scope) implements Capability {
+        @Override
+        public String description() {
+            return scope;
+        }
     }
 }

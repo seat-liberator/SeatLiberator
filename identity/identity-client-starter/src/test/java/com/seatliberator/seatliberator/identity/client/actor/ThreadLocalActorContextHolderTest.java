@@ -79,7 +79,7 @@ public class ThreadLocalActorContextHolderTest {
     @DisplayName("Actor 정보는 ThreadLocal로 스레드 간 격리된다")
     void Actor_정보는_ThreadLocal로_스레드_간_격리된다() throws InterruptedException {
         // given
-        holder.setActor(SimpleActor.of("user-1", Set.of()));
+        holder.setActor(SimpleActor.of("main-user", Set.of()));
 
         var childThreadActor = new AtomicReference<Actor>();
         var childThreadException = new AtomicReference<Throwable>();
@@ -119,7 +119,7 @@ public class ThreadLocalActorContextHolderTest {
 
         Thread thread = new Thread(() -> {
             try {
-                holder.setActor(SimpleActor.of(childSubject.get(), Set.of()));
+                holder.setActor(SimpleActor.of("child-user", Set.of()));
                 childSubject.set(holder.getActor().subject());
             } finally {
                 holder.clear();
