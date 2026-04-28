@@ -72,6 +72,11 @@ public class ReservationFixture {
             return from(this);
         }
 
+        public Builder userId(String userId) {
+            this.userId = userId;
+            return this;
+        }
+
         public Builder seatId(String seatId) {
             this.locator = SimpleSeatLocator.of(locator.roomId(), seatId);
             return this;
