@@ -9,11 +9,13 @@ import com.seatliberator.seatliberator.reservation.application.usage.port.in.com
 import com.seatliberator.seatliberator.reservation.application.usage.port.in.result.UseReservationResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ReservationUsageService implements
         UseReservationUseCase {
     private final ReservationReader reader;
