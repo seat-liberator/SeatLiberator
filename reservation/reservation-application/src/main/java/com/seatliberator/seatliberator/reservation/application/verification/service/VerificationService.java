@@ -1,64 +1,42 @@
 package com.seatliberator.seatliberator.reservation.application.verification.service;
 
-import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationUsageMarker;
-import com.seatliberator.seatliberator.reservation.application.booking.contract.query.ReservationLocator;
-import com.seatliberator.seatliberator.reservation.application.booking.port.in.FindReservationUseCase;
-import com.seatliberator.seatliberator.reservation.application.booking.port.in.result.ReservationResult;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationOwnershipPolicy;
+import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
-import com.seatliberator.seatliberator.reservation.application.verification.in.FindReservationByPolicyUseCase;
-import com.seatliberator.seatliberator.reservation.application.verification.in.VerifyReservationUseCase;
-import com.seatliberator.seatliberator.reservation.application.verification.in.command.Requester;
-import com.seatliberator.seatliberator.reservation.application.verification.policy.ReservationPolicyEngine;
-import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.application.verification.port.in.UseReservationUseCase;
+import com.seatliberator.seatliberator.reservation.application.verification.port.in.command.UseReservationCommand;
+import com.seatliberator.seatliberator.reservation.application.verification.port.in.result.UseReservationResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Clock;
 
 @Service
 @RequiredArgsConstructor
 public class VerificationService implements
-        FindReservationByPolicyUseCase,
-        VerifyReservationUseCase {
-    private final FindReservationUseCase findReservationUseCase;
-    private final ReservationPolicyEngine reservationPolicyEngine;
-    private final ReservationUsageMarker reservationUsageMarker;
+        UseReservationUseCase {
+    private final ReservationReader reader;
+    private final ReservationOwnershipPolicy ownershipPolicy;
+
+    private final Clock clock;
 
     @Override
-    public ReservationResult read(ReservationLocator reservationLocator, Requester requester) {
-        var reservation = findReservationUseCase.find(reservationLocator);
+    public UseReservationResult use(UseReservationCommand command) {
+        var now = clock.instant();
+        var requester = command.requestedUser();
+        var reservationId = command.reservationId();
 
-        if (!reservationPolicyEngine.canRead(reservation.reservationId(), requester)) {
-            throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_READ_FORBIDDEN);
+        var reservation = reader.findById(reservationId)
+                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_NOT_FOUND));
+
+        var ownership = ownershipPolicy.evaluate(reservation, requester);
+
+        if (ownership.accepted()) {
+            reservation.use(now);
+            return UseReservationResult.accept(now);
+        } else {
+            return UseReservationResult.reject(ownership.reason().message(), now);
         }
-
-        return reservation;
-    }
-
-    @Override
-    @Transactional
-    public ReservationResult verify(ReservationLocator reservationLocator, Requester requester) {
-        var reservation = findReservationUseCase.find(reservationLocator);
-
-        if (!reservationPolicyEngine.canVerify(reservation.reservationId(), requester)) {
-            throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_VERIFY_FORBIDDEN);
-        }
-
-        var transition = reservationUsageMarker.markUsed(reservation.reservationId());
-
-        if (!transition.success()) {
-            throw new ReservationApplicationException(resolveErrorCode(transition.status()));
-        }
-
-        return reservation;
-    }
-
-    private ReservationApplicationErrorCode resolveErrorCode(ReservationStatus status) {
-        return switch (status) {
-            case EXPIRED -> ReservationApplicationErrorCode.RESERVATION_EXPIRED;
-            case USED -> ReservationApplicationErrorCode.RESERVATION_ALREADY_USED;
-            case RESERVED -> ReservationApplicationErrorCode.RESERVATION_USAGE_FORBIDDEN;
-            case CANCELED -> ReservationApplicationErrorCode.RESERVATION_ALREADY_CANCELED;
-        };
     }
 }
