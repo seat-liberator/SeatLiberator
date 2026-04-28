@@ -1,112 +1,121 @@
 # Reservation Application
 
-`reservation:reservation-application`은 좌석 관리, 예약, 좌석 가용성 조회, 좌석 점유 상태 조회, 대기열 요청을 처리하는 Spring Boot 애플리케이션 모듈입니다.
+`reservation:reservation-application`은 reservation 도메인의 application 계층 모듈입니다.
 
-## 모듈 개요
+이 모듈은 유스케이스와 application port를 통해 예약 도메인 흐름을 조립합니다.
 
-이 모듈은 reservation 도메인의 애플리케이션 계층을 포함합니다.
+## 역할
 
-- 좌석 생성/수정/삭제
-- 예약 생성/수정/취소/조회
-- 특정 시간 범위의 가용 좌석 조회
-- 특정 시간 범위의 좌석별 점유 상태 조회
-- 대기열 요청 생성/취소 및 예약 취소/만료 이벤트 기반 대기열 처리
+- 방/좌석 관리 유스케이스 제공
+- 예약 생성/수정/취소/조회 유스케이스 제공
+- 예약 사용 처리 유스케이스 제공
+- 좌석 가용성 및 점유 구간 조회 유스케이스 제공
+- 대기열 요청 생성/취소와 빈자리 발생 시 대기열 승격 흐름 처리
+- application 계층 공통 정책, 예외, notification relay 연계, seed 흐름 제공
 
-도메인 엔티티와 값 객체는 `reservation:reservation-domain`에 있고, 외부에 노출되는 API 타입은 `reservation:reservation-api`와 이 모듈의 웹 요청/응답 타입을 함께 사용합니다.
+## 계층 경계
 
-## 빌드 구성
+이 모듈은 hexagonal architecture 기준의 application 계층에 해당합니다.
 
-`build.gradle.kts` 기준 구성은 다음과 같습니다.
-
-- plugin: `seatliberator.resource-application`
-- API 의존성: `:reservation:reservation-api`
-- Domain 의존성: `:reservation:reservation-domain`
-- 테스트 fixture 의존성: `testFixtures(project(":reservation:reservation-domain"))`
-- 외부 API 의존성: `:notification:notification-api`
-
-모듈 단위 테스트는 다음 명령으로 실행합니다.
-
-```bash
-./gradlew :reservation:reservation-application:test
-```
+- `port/in`: 외부 어댑터가 호출하는 유스케이스 인터페이스와 command/query/result
+- `port/out`: 저장소, 외부 시스템 등 구현 어댑터가 제공해야 하는 outbound port
+- `service`: use case 구현체
+- `contract`: application 내부 협력 객체와 정책 인터페이스
+- `model`, `internal`, `handler`: application 흐름을 구성하는 내부 모델과 도메인 이벤트 처리
 
 ## 패키지 구조
 
-주요 패키지는 기능 단위로 나뉩니다.
+### `application.room`
 
-- `reservation.seat`: 좌석 관리 유스케이스와 포트
-- `reservation.book`: 예약 생성/수정/취소/조회, 예약 정책, 예약 조회 criteria
-- `reservation.availability`: 가용 좌석 조회와 좌석별 점유 상태 조회
-- `reservation.waitlist`: 대기열 요청, 대기열 승격, 빈자리 이벤트 처리
-- `reservation.verification`: 예약 사용 검증용 내부 유스케이스와 정책 엔진
-- `reservation.shared`: 공통 예외, seed, notification 연계
+방과 좌석 관리 유스케이스를 담당합니다.
 
-각 기능 패키지는 대체로 다음 구조를 따릅니다.
+- inbound port: `CreateRoomUseCase`, `UpdateRoomUseCase`, `DeleteRoomUseCase`, `ListRoomUseCase`, `FindRoomUseCase`
+- inbound port: `CreateSeatUseCase`, `UpdateSeatUseCase`, `MoveSeatUseCase`, `DeleteSeatUseCase`, `ListSeatUseCase`, `FindSeatUseCase`
+- outbound port: `RoomReader`, `RoomStore`, `SeatReader`, `SeatStore`
+- service: `RoomCommandService`, `RoomQueryService`, `SeatCommandService`, `SeatQueryService`
+- internal: `SeatAssignmentService`
 
-- `application/model`: 애플리케이션 계층 모델
-- `application/port/in`: 유스케이스 입력 포트와 command/query/result
-- `application/port/out`: 저장소/조회 포트와 조회 criteria
-- `application/service`: 유스케이스 구현
+### `application.booking`
 
-## 실행 설정
+예약 생성/수정/취소/조회와 예약 정책을 담당합니다.
 
-설정 파일은 `src/main/resources` 아래에 있습니다.
+- inbound port: `CreateReservationUseCase`, `UpdateReservationUseCase`, `CancelReservationUseCase`, `FindMyReservationUseCase`
+- outbound port: `ReservationReader`, `ReservationStore`
+- criteria: `ReservationFilter`, `ReservationSeatOverlapCriteria`, `ReservationRoomOverlapCriteria`, `ReservationRangeOverlapCriteria`, `ReservationSeatLookupCriteria`
+- service: `ReservationCommandService`, `ReservationQueryService`
+- contract: `ReservationPolicyChecker`, `ReservationOwnershipPolicy`, `OccupancySeatLocatorFinder`, `OccupancySeatRangeFinder`
+- model: `ReservationOccupancyPolicy`
 
-- `application.yml`: 기본 profile과 포트 설정
-- `application-local.yml`: 로컬 실행용 H2 datasource, JWK set URI, actuator 설정
-- `application-dev.yml`: 개발 환경 datasource, JWK set URI, JPA validate 설정
+`ReservationOwnershipPolicy`는 예약 소유자 또는 `BOOKING_MANAGE` capability 보유자를 예약 사용/접근 가능 주체로 판단합니다.
 
-주요 환경 변수는 다음과 같습니다.
+### `application.availability`
 
-- `PORT`: 애플리케이션 포트, 기본값 `8082`
-- `PROFILE`: Spring profile, 기본값 `local`
-- `LOCAL_JWKS_BASE_URL`, `JWKS_BASE_URL`: resource server JWK set base URL
-- `LOCAL_DB_URL`, `LOCAL_DB_USERNAME`, `LOCAL_DB_PASSWORD`: local profile datasource 설정
-- `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `DB_DIALECT`: dev profile datasource/JPA 설정
-- `app.seed.enabled`: local profile에서 시드 데이터 적재 여부
+좌석 가용성, 좌석별 예약 상태, 점유 구간 조회를 담당합니다.
 
-## Endpoint 구성
+- inbound port: `FindAvailableSeatsUseCase`, `FindSeatStatusesUseCase`, `FindSeatOccupancyRangesUseCase`
+- service: `SeatAvailabilityService`
+- model: `AvailableSeats`, `SeatReservationStatus`, `SeatReservationStatusClassifier`
 
-Gateway 경유 시 외부 경로는 `/api/v1` prefix가 붙고, 이 모듈의 컨트롤러는 아래 경로를 제공합니다.
+예약 점유 판단은 booking contract의 occupancy finder를 사용합니다.
 
-### Seat
+### `application.usage`
 
-- `POST /seat`
-- `PUT /seat`
-- `DELETE /seat/{roomId}/{seatId}`
+예약 사용 처리를 담당합니다.
 
-### Reservation
+- inbound port: `UseReservationUseCase`
+- command/result: `UseReservationCommand`, `UseReservationResult`
+- service: `ReservationUsageService`
 
-- `POST /reservation`
-- `PUT /reservation`
-- `DELETE /reservation`
-- `GET /reservation/me`
+`ReservationUsageService`는 예약을 ID로 조회하고, `ReservationOwnershipPolicy`로 요청 actor의 접근 가능 여부를 판단한 뒤 예약을 사용 처리합니다.
+상태 변경은 트랜잭션 안에서 수행됩니다.
 
-예약 생성/수정/취소/사용자별 조회에서 사용자 식별자는 요청 본문이 아니라 `ActorContextHolder`의 actor subject를 기준으로 처리합니다.
+### `application.waitlist`
 
-### Availability
+대기열 요청과 승격 흐름을 담당합니다.
 
-- `GET /rooms/{roomId}/available-seats?start={instant}&end={instant}`
-- `GET /rooms/{roomId}/seat-statuses?start={instant}&end={instant}`
+- inbound port: `CreateWaitlistUseCase`, `CancelWaitlistUseCase`
+- outbound port: `WaitlistStore`
+- service: `WaitlistService`
+- internal: `WaitlistPromotion`, `WaitlistPromotionResult`
+- handler: `SeatVacancyHandler`
+- model: `WaitlistRequests`, `WaitlistProcessingResult`, `WaitlistNotification`
 
-`available-seats`는 예약 가능한 좌석만 반환하고, `seat-statuses`는 방에 존재하는 좌석별 `OCCUPIED`/`AVAILABLE` 상태를 반환합니다.
+예약 취소/만료로 좌석이 비면 `SeatVacancyHandler`가 대기열 승격 흐름을 시작합니다.
 
-### Waitlist
+### `application.shared`
 
-- `POST /waitlist`
-- `DELETE /waitlist/{waitlistId}`
+application 계층 공통 구성을 제공합니다.
+
+- `ReservationApplicationConfiguration`: namespace provider, clock, notifier bean 구성
+- `ReservationCapability`: reservation application capability 정의
+- `ReservationApplicationException`, `ReservationApplicationErrorCode`: application 예외와 에러 코드
+- `PolicyDecision`, `PolicyReason`, `PolicyResult`: 내부 정책 결과 공통 계약
+- `Notifier`: notification event relay 연계
+- `ApplicationSeedRunner`, `RoomSeeder`: local seed 흐름
+
+## 빌드 구성
+
+주요 의존성은 다음과 같습니다.
+
+- `:reservation:reservation-api`
+- `:reservation:reservation-domain`
+- `:notification:notification-api`
+- `:bootstrap:application-starter`
+- `testFixtures(project(":reservation:reservation-domain"))`
+- `testFixtures(project(":identity:identity-core"))`
 
 ## 테스트
 
-테스트는 책임 경계별로 나뉩니다.
+모듈 테스트는 application 계층 경계를 중심으로 구성합니다.
 
-- application model test: `AvailableSeats`, `SeatReservationStatusClassifier`, `ReservationOccupancyPolicy`, `WaitlistRequests`
-- use case/service test: 예약, 좌석 가용성, 좌석 상태, 대기열 유스케이스의 포트 wiring과 결과 변환 검증
-- persistence integration test: `reservation-persistence` 모듈에서 JPA criteria, repository adapter, DB 기반 동시성/대기열 흐름 검증
+- use case/service test: inbound port 인터페이스를 기준으로 service 동작 검증
+- contract test: 예약 정책, 소유권 정책, occupancy finder 검증
+- model test: application 내부 모델과 classifier 검증
+- criteria test: outbound port 조회 criteria의 값 구성 검증
+- handler/internal test: 대기열 승격과 빈자리 처리 흐름 검증
 
-주요 실행 명령은 다음과 같습니다.
+실행 명령:
 
 ```bash
 ./gradlew :reservation:reservation-application:test
-./gradlew :reservation:reservation-domain:test
 ```
