@@ -1,37 +1,40 @@
 package com.seatliberator.seatliberator.identity.client.jwt;
 
-import com.seatliberator.seatliberator.identity.client.role.NamespaceRoleCapabilitiesRegistry;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleCapabilitiesRegistry;
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
 import com.seatliberator.seatliberator.identity.core.role.Capability;
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleDeserializer;
 import com.seatliberator.seatliberator.identity.core.role.Role;
+import com.seatliberator.seatliberator.kernel.ApplicationNamespace;
 import com.seatliberator.seatliberator.kernel.CurrentApplicationNamespaceProvider;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimAccessor;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ActorContextJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
-    private static final String SCOPE_CLAIM = "scope";
     private static final String SCOPES_CLAIM = "scopes";
+
     private final NamespaceRoleDeserializer deserializer;
     private final NamespaceRoleCapabilitiesRegistry registry;
-    private final CurrentApplicationNamespaceProvider currentApplicationNamespaceProvider;
+    private final CurrentApplicationNamespaceProvider namespaceProvider;
 
     public ActorContextJwtAuthenticationConverter(
             NamespaceRoleDeserializer deserializer,
             NamespaceRoleCapabilitiesRegistry registry,
-            CurrentApplicationNamespaceProvider currentApplicationNamespaceProvider
+            CurrentApplicationNamespaceProvider namespaceProvider
     ) {
         this.deserializer = deserializer;
         this.registry = registry;
-        this.currentApplicationNamespaceProvider = currentApplicationNamespaceProvider;
+        this.namespaceProvider = namespaceProvider;
     }
 
     @Override
@@ -39,15 +42,21 @@ public class ActorContextJwtAuthenticationConverter implements Converter<Jwt, Ab
         String subject = Optional.ofNullable(source)
                 .map(JwtClaimAccessor::getSubject)
                 .orElseThrow(() -> new IllegalArgumentException("Missing jwt subject"));
-        Set<String> scopes = extractScopes(source);
-        var authorities = scopes.stream()
-                .map(SimpleGrantedAuthority::new)
-                .toList();
+        Set<String> scopes = readScopesClaim(source.getClaim(SCOPES_CLAIM));
 
-        Actor actor = new SimpleActor(
-                subject,
-                scopes
-        );
+        ApplicationNamespace currentNamespace = namespaceProvider.current();
+        Set<NamespaceRole> currentNamespaceRoles = deserializer.materialize(scopes).stream()
+                .filter(namespaceRole ->  namespaceRole.namespace().isSame(currentNamespace))
+                .collect(Collectors.toSet());
+
+        Set<Role> currentRole = currentNamespaceRoles.stream()
+                .map(NamespaceRole::role)
+                .collect(Collectors.toUnmodifiableSet());
+        Set<Capability> currentCapability = registry.resolve(currentNamespaceRoles);
+
+        Actor actor = SimpleActor.of(subject, currentCapability);
+
+        var authorities = convertToAuthorities(currentRole, currentCapability);
 
         return new ActorContextAuthenticationToken(
                 actor,
@@ -56,33 +65,15 @@ public class ActorContextJwtAuthenticationConverter implements Converter<Jwt, Ab
         );
     }
 
-    private Set<String> extractScopes(Jwt source) {
-        var scopes = new LinkedHashSet<String>();
-        scopes.addAll(readScopesClaim(source.getClaim(SCOPES_CLAIM)));
-        scopes.addAll(readScopesClaim(source.getClaim(SCOPE_CLAIM)));
+    private Set<GrantedAuthority> convertToAuthorities(Set<Role> roles, Set<Capability> capabilities) {
+        var roleAuthorities = roles.stream()
+                .map(role -> "ROLE_%s".formatted(role.name()));
+        var capabilityAuthorities = capabilities.stream()
+                .map(Capability::scope);
 
-        var namespaceRoles = scopes.stream()
-                .map(deserializer::tryMaterialize)
-                .flatMap(Optional::stream)
-                .filter(r -> r.namespace().value().equals(currentApplicationNamespaceProvider.current().value()))
+        return Stream.concat(roleAuthorities, capabilityAuthorities)
+                .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toUnmodifiableSet());
-
-        var roles = namespaceRoles.stream()
-                .map(NamespaceRole::role)
-                .map(Role::name)
-                .map(roleName -> "ROLE_" + roleName)
-                .collect(Collectors.toUnmodifiableSet());
-
-        var capabilities = namespaceRoles.stream()
-                .map(registry::resolve)
-                .flatMap(Collection::stream)
-                .map(Capability::scope)
-                .collect(Collectors.toUnmodifiableSet());
-
-        scopes.addAll(roles);
-        scopes.addAll(capabilities);
-
-        return Set.copyOf(scopes);
     }
 
     private Set<String> readScopesClaim(Object claim) {

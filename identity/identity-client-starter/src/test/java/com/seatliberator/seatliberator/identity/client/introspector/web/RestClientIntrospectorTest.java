@@ -1,6 +1,7 @@
 package com.seatliberator.seatliberator.identity.client.introspector.web;
 
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
+import com.seatliberator.seatliberator.identity.core.role.Capability;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -34,7 +35,12 @@ class RestClientIntrospectorTest {
                           "expiration": 123,
                           "actor": {
                             "subject": "user-1",
-                            "scopes": ["reservation:USER"]
+                            "capabilities": [
+                              {
+                                "scope": "book:create",
+                                "description": "create book"
+                              }
+                            ]
                           }
                         }
                         """, MediaType.APPLICATION_JSON));
@@ -47,7 +53,11 @@ class RestClientIntrospectorTest {
                 .extracting(Actor::subject)
                 .isEqualTo("user-1");
         assertThat(introspection.actor().capabilities())
-                .containsExactly("reservation:USER");
+                .extracting(Capability::scope)
+                .containsExactly("book:create");
+        assertThat(introspection.actor().capabilities())
+                .extracting(Capability::description)
+                .containsExactly("create book");
 
         server.verify();
     }
