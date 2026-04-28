@@ -45,7 +45,7 @@ public class ActorContextJwtAuthenticationConverter implements Converter<Jwt, Ab
         Set<String> scopes = readScopesClaim(source.getClaim(SCOPES_CLAIM));
 
         ApplicationNamespace currentNamespace = namespaceProvider.current();
-        Set<NamespaceRole> currentNamespaceRoles = deserializer.materialize(scopes).stream()
+        Set<NamespaceRole> currentNamespaceRoles = materializeNamespaceRoles(scopes).stream()
                 .filter(namespaceRole ->  namespaceRole.namespace().isSame(currentNamespace))
                 .collect(Collectors.toSet());
 
@@ -74,6 +74,21 @@ public class ActorContextJwtAuthenticationConverter implements Converter<Jwt, Ab
         return Stream.concat(roleAuthorities, capabilityAuthorities)
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toUnmodifiableSet());
+    }
+
+    private Set<NamespaceRole> materializeNamespaceRoles(Set<String> scopes) {
+        return scopes.stream()
+                .map(this::materializeNamespaceRole)
+                .flatMap(Optional::stream)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    private Optional<NamespaceRole> materializeNamespaceRole(String scope) {
+        try {
+            return Optional.of(deserializer.materialize(scope));
+        } catch (IllegalArgumentException ignored) {
+            return Optional.empty();
+        }
     }
 
     private Set<String> readScopesClaim(Object claim) {
