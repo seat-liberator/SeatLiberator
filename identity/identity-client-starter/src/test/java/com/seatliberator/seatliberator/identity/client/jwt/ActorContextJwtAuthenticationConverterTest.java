@@ -12,14 +12,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.time.Instant;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +26,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ActorContextJwtAuthenticationConverter")
@@ -60,7 +59,7 @@ class ActorContextJwtAuthenticationConverterTest {
         );
 
         given(namespaceProvider.current()).willReturn(reservation);
-        given(deserializer.materialize(Set.of("reservation:ADMIN"))).willReturn(Set.of(role));
+        given(deserializer.materialize("reservation:ADMIN")).willReturn(role);
         given(registry.resolve(Set.of(role))).willReturn(capabilities);
 
         var token = converter.convert(jwt("user-1", Map.of("scopes", List.of("reservation:ADMIN"))));
@@ -90,8 +89,8 @@ class ActorContextJwtAuthenticationConverterTest {
         var capability = capability("reservation:read");
 
         given(namespaceProvider.current()).willReturn(reservation);
-        given(deserializer.materialize(Set.of("reservation:USER", "board:ADMIN")))
-                .willReturn(Set.of(reservationUser, boardAdmin));
+        given(deserializer.materialize("reservation:USER")).willReturn(reservationUser);
+        given(deserializer.materialize("board:ADMIN")).willReturn(boardAdmin);
         given(registry.resolve(Set.of(reservationUser))).willReturn(Set.of(capability));
 
         var token = converter.convert(jwt(
@@ -112,15 +111,15 @@ class ActorContextJwtAuthenticationConverterTest {
     }
 
     @Test
-    @DisplayName("scopes 문자열은 공백과 콤마 기준으로 읽어 deserializer에 전달한다")
-    @SuppressWarnings("unchecked")
+    @DisplayName("scopes 문자열은 공백과 콤마 기준으로 읽어 scope 단위로 deserializer에 전달한다")
     void readsScopesStringClaim() {
         var reservation = SimpleApplicationNamespace.of("reservation");
         var role = SimpleNamespaceRole.from(reservation, Role.USER);
-        var scopesCaptor = ArgumentCaptor.forClass(Collection.class);
+        var boardRole = SimpleNamespaceRole.from(SimpleApplicationNamespace.of("board"), Role.ADMIN);
 
         given(namespaceProvider.current()).willReturn(reservation);
-        given(deserializer.materialize(scopesCaptor.capture())).willReturn(Set.of(role));
+        given(deserializer.materialize("reservation:USER")).willReturn(role);
+        given(deserializer.materialize("board:ADMIN")).willReturn(boardRole);
         given(registry.resolve(Set.of(role))).willReturn(Set.of());
 
         converter.convert(jwt(
@@ -128,8 +127,32 @@ class ActorContextJwtAuthenticationConverterTest {
                 Map.of("scopes", "reservation:USER, reservation:USER   board:ADMIN")
         ));
 
-        assertThat(scopesCaptor.getValue())
-                .containsExactlyInAnyOrder("reservation:USER", "board:ADMIN");
+        verify(deserializer).materialize("reservation:USER");
+        verify(deserializer).materialize("board:ADMIN");
+    }
+
+    @Test
+    @DisplayName("유효하지 않은 scope는 무시하고 유효한 scope만 인증 토큰에 반영한다")
+    void ignoresInvalidScope() {
+        var reservation = SimpleApplicationNamespace.of("reservation");
+        var role = SimpleNamespaceRole.from(reservation, Role.USER);
+        var capability = capability("reservation:read");
+
+        given(namespaceProvider.current()).willReturn(reservation);
+        given(deserializer.materialize("reservation:USER")).willReturn(role);
+        given(deserializer.materialize("boom")).willThrow(new IllegalArgumentException("invalid namespace role"));
+        given(registry.resolve(Set.of(role))).willReturn(Set.of(capability));
+
+        var token = converter.convert(jwt(
+                "user-1",
+                Map.of("scopes", List.of("reservation:USER", "boom"))
+        ));
+
+        assertThat(token.getAuthorities())
+                .containsExactlyInAnyOrder(
+                        new SimpleGrantedAuthority("ROLE_USER"),
+                        new SimpleGrantedAuthority("reservation:read")
+                );
     }
 
     @Test
