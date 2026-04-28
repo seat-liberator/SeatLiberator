@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.application.verification.port.in.result;
+package com.seatliberator.seatliberator.reservation.application.usage.port.in.result;
 
 import java.time.Instant;
 

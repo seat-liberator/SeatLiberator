@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.verification.application;
+package com.seatliberator.seatliberator.reservation.usage.application;
 
 import com.seatliberator.seatliberator.identity.core.actor.ActorFixture;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationOwnershipPolicy;
@@ -7,9 +7,9 @@ import com.seatliberator.seatliberator.reservation.application.booking.contract.
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
-import com.seatliberator.seatliberator.reservation.application.verification.port.in.UseReservationUseCase;
-import com.seatliberator.seatliberator.reservation.application.verification.port.in.command.UseReservationCommand;
-import com.seatliberator.seatliberator.reservation.application.verification.service.VerificationService;
+import com.seatliberator.seatliberator.reservation.application.usage.port.in.UseReservationUseCase;
+import com.seatliberator.seatliberator.reservation.application.usage.port.in.command.UseReservationCommand;
+import com.seatliberator.seatliberator.reservation.application.usage.service.ReservationUsageService;
 import com.seatliberator.seatliberator.reservation.domain.fixture.ReservationFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +38,7 @@ public class UseReservationUseCaseTest {
 
     @BeforeEach
     void run() {
-        useCase = new VerificationService(reader, ownershipPolicy, fixedClock);
+        useCase = new ReservationUsageService(reader, ownershipPolicy, fixedClock);
     }
 
     @Test
