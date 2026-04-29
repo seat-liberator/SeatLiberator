@@ -1,5 +1,7 @@
 package com.seatliberator.seatliberator.reservation.book.application.port.out.criteria;
 
+import com.seatliberator.seatliberator.kernel.test.SequenceCounter;
+import com.seatliberator.seatliberator.kernel.test.UuidGenerator;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +13,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Reservation Filter")
 public class ReservationFilterTest {
+
+    UuidGenerator uuid = new UuidGenerator(new SequenceCounter());
+
     @Test
     @DisplayName("empty는 모든 필터 조건이 비어있다")
     void empty() {
@@ -24,16 +29,19 @@ public class ReservationFilterTest {
     @Test
     @DisplayName("withUserId는 userIds만 교체하고 나머지는 유지한다")
     void with_user_ids() {
+        var reservationId1 = uuid.generate();
+        var reservationId2 = uuid.generate();
+
         var filter = new ReservationFilter(
                 Set.of("user-1"),
-                Set.of(1L, 2L),
+                Set.of(reservationId1, reservationId2),
                 Set.of(ReservationStatus.RESERVED)
         );
 
         var updated = filter.withUserIds("user-2", "user-3");
 
         assertThat(updated.userIds()).containsExactlyInAnyOrder("user-2", "user-3");
-        assertThat(updated.excludedIds()).containsExactlyInAnyOrder(1L, 2L);
+        assertThat(updated.excludedIds()).containsExactlyInAnyOrder(reservationId1, reservationId2);
         assertThat(updated.statuses()).containsExactly(ReservationStatus.RESERVED);
     }
 
@@ -42,30 +50,38 @@ public class ReservationFilterTest {
     void with_excluded_ids() {
         var filter = new ReservationFilter(
                 Set.of("user-1"),
-                Set.of(1L, 2L),
+                Set.of(uuid.generate()),
                 Set.of(ReservationStatus.RESERVED)
         );
 
-        var updated = filter.withExcludeIds(10L, 20L);
+        var updatedReservationId1 = uuid.generate();
+        var updatedReservationId2 = uuid.generate();
+
+        var updated = filter.withExcludeIds(
+                updatedReservationId1,
+                updatedReservationId2
+        );
 
         assertThat(updated.userIds()).containsExactlyInAnyOrder("user-1");
-        assertThat(updated.excludedIds()).containsExactlyInAnyOrder(10L, 20L);
+        assertThat(updated.excludedIds()).containsExactlyInAnyOrder(updatedReservationId1, updatedReservationId2);
         assertThat(updated.statuses()).containsExactlyInAnyOrder(ReservationStatus.RESERVED);
     }
 
     @Test
     @DisplayName("withStatuses는 statuses만 교체하고 나머지는 유지한다")
     void with_statuses() {
+        var reservationId = uuid.generate();
+
         var filter = new ReservationFilter(
                 Set.of("user-1"),
-                Set.of(1L),
+                Set.of(reservationId),
                 Set.of(ReservationStatus.RESERVED)
         );
 
         var updated = filter.withStatuses(ReservationStatus.CANCELED);
 
         assertThat(updated.userIds()).containsExactly("user-1");
-        assertThat(updated.excludedIds()).containsExactly(1L);
+        assertThat(updated.excludedIds()).containsExactly(reservationId);
         assertThat(updated.statuses()).containsExactly(ReservationStatus.CANCELED);
     }
 

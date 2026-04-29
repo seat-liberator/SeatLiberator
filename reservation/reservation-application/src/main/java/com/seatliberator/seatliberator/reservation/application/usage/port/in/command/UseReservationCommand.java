@@ -2,8 +2,10 @@ package com.seatliberator.seatliberator.reservation.application.usage.port.in.co
 
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 
+import java.util.UUID;
+
 public record UseReservationCommand(
-        Long reservationId,
+        UUID reservationId,
         Actor requestedUser
 ) {
 }

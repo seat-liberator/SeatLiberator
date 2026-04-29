@@ -5,6 +5,7 @@ import com.seatliberator.seatliberator.reservation.domain.persistence.Reservatio
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.UUID;
 
 import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
@@ -33,7 +34,7 @@ public class ReservationFixture {
         return Reservation.create(INITIAL_USER_ID, INITIAL_ROOM_ID, INITIAL_SEAT_ID, startTime, endTime, status);
     }
 
-    public static void stubReservationId(Reservation reservation, Long id) {
+    public static void stubReservationId(Reservation reservation, UUID id) {
         try {
             var idField = Reservation.class.getDeclaredField("id");
             idField.setAccessible(true);

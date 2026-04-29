@@ -2,6 +2,8 @@ package com.seatliberator.seatliberator.reservation.infrastructure.web.usage;
 
 import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
+import com.seatliberator.seatliberator.kernel.test.SequenceCounter;
+import com.seatliberator.seatliberator.kernel.test.UuidGenerator;
 import com.seatliberator.seatliberator.reservation.application.usage.port.in.UseReservationUseCase;
 import com.seatliberator.seatliberator.reservation.application.usage.port.in.command.UseReservationCommand;
 import com.seatliberator.seatliberator.reservation.application.usage.port.in.result.UseReservationResult;
@@ -39,10 +41,13 @@ public class ReservationUsageControllerTest {
     @MockitoBean
     UseReservationUseCase useReservationUseCase;
 
+    UuidGenerator uuid = new UuidGenerator(new SequenceCounter());
+
     @Test
     @DisplayName("예약 사용 요청 시 path variable과 actor 정보를 기반으로 command를 만들어서 유스케이스에 전달한다")
     void use_build_command_and_calls_use_case() throws Exception {
         // given
+        var reservationId = uuid.generate();
         var actor = new SimpleActor("user-1", Set.of());
         var processedAt = Instant.parse("2026-04-14T10:00:00Z");
         var result = UseReservationResult.accept(processedAt);
@@ -52,7 +57,7 @@ public class ReservationUsageControllerTest {
                 .willReturn(result);
 
         // when
-        mockMvc.perform(post("/reservations/{reservationId}", 1L))
+        mockMvc.perform(post("/reservations/{reservationId}", reservationId))
                 .andExpect(status().isOk());
 
         // then
@@ -60,7 +65,7 @@ public class ReservationUsageControllerTest {
         verify(useReservationUseCase).use(captor.capture());
 
         var actual = captor.getValue();
-        assertThat(actual.reservationId()).isEqualTo(1L);
+        assertThat(actual.reservationId()).isEqualTo(reservationId);
         assertThat(actual.requestedUser()).isEqualTo(actor);
     }
 
@@ -68,6 +73,7 @@ public class ReservationUsageControllerTest {
     @DisplayName("예약 사용 요청 시 유스케이스 결과를 200 OK 응답으로 반환한다")
     void use_returns_ok_with_result() throws Exception {
         // given
+        var reservationId = uuid.generate();
         var actor = new SimpleActor("user-1", Set.of());
         var processedAt = Instant.parse("2026-04-14T10:00:00Z");
         var result = UseReservationResult.reject("해당 예약에 접근할 권한이 없습니다.", processedAt);
@@ -77,7 +83,7 @@ public class ReservationUsageControllerTest {
                 .willReturn(result);
 
         // when & then
-        mockMvc.perform(post("/reservations/{reservationId}", 1L)
+        mockMvc.perform(post("/reservations/{reservationId}", reservationId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(result)));
@@ -87,7 +93,7 @@ public class ReservationUsageControllerTest {
     @DisplayName("reservationId path variable 형식이 잘못되면 400 Bad Request를 반환한다")
     void use_returns_bad_request_when_reservation_id_is_invalid() throws Exception {
         // when & then
-        mockMvc.perform(post("/reservations/{reservationId}", "not-a-number"))
+        mockMvc.perform(post("/reservations/{reservationId}", "not-a-uuid"))
                 .andExpect(status().isBadRequest());
 
         verifyNoInteractions(actorContextHolder);

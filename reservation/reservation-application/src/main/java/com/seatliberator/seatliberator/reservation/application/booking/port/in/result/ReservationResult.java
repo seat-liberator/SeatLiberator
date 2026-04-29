@@ -4,9 +4,10 @@ import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
 
 import java.time.Instant;
+import java.util.UUID;
 
 public record ReservationResult(
-        Long reservationId,
+        UUID reservationId,
         String actorId,
         String roomId,
         String seatId,
