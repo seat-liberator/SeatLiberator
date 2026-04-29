@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public class JpaReservationPersistenceAdapter implements ReservationStore, Reser
     }
 
     @Override
-    public Optional<Reservation> findById(Long reservationId) {
+    public Optional<Reservation> findById(UUID reservationId) {
         return repository.findById(reservationId);
     }
 

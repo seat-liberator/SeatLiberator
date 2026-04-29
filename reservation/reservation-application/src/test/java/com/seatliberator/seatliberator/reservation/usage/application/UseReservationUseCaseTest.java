@@ -1,6 +1,8 @@
 package com.seatliberator.seatliberator.reservation.usage.application;
 
 import com.seatliberator.seatliberator.identity.core.actor.ActorFixture;
+import com.seatliberator.seatliberator.kernel.test.SequenceCounter;
+import com.seatliberator.seatliberator.kernel.test.UuidGenerator;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationOwnershipPolicy;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.result.ReservationPolicyReason;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.result.ReservationPolicyResult;
@@ -36,6 +38,8 @@ public class UseReservationUseCaseTest {
 
     UseReservationUseCase useCase;
 
+    UuidGenerator uuid = new UuidGenerator(new SequenceCounter());
+
     @BeforeEach
     void run() {
         useCase = new ReservationUsageService(reader, ownershipPolicy, fixedClock);
@@ -44,8 +48,9 @@ public class UseReservationUseCaseTest {
     @Test
     @DisplayName("예약 소유권 정책이 승인하면 예약을 사용 처리하고 승인 결과를 반환한다")
     void use_reservation_when_ownership_policy_accepts() {
+        var reservationId = uuid.generate();
         var actor = new ActorFixture.Builder().subject("user-1").build();
-        var command = new UseReservationCommand(1L, actor);
+        var command = new UseReservationCommand(reservationId, actor);
         var reservation = new ReservationFixture.Builder()
                 .userId(actor.subject())
                 .startAt(fixedClock.instant().minusSeconds(60))
@@ -71,8 +76,9 @@ public class UseReservationUseCaseTest {
     @Test
     @DisplayName("예약 소유권 정책이 거절하면 예약을 사용 처리하지 않고 거절 결과를 반환한다")
     void reject_use_reservation_when_ownership_policy_rejects() {
+        var reservationId = uuid.generate();
         var actor = new ActorFixture.Builder().subject("user-2").build();
-        var command = new UseReservationCommand(1L, actor);
+        var command = new UseReservationCommand(reservationId, actor);
         var reservation = new ReservationFixture.Builder()
                 .userId("user-1")
                 .startAt(fixedClock.instant().minusSeconds(60))
@@ -99,8 +105,9 @@ public class UseReservationUseCaseTest {
     @Test
     @DisplayName("예약이 없으면 RESERVATION_NOT_FOUND 예외를 던진다")
     void throw_exception_when_reservation_not_found() {
+        var reservationId = uuid.generate();
         var actor = new ActorFixture.Builder().subject("user-1").build();
-        var command = new UseReservationCommand(1L, actor);
+        var command = new UseReservationCommand(reservationId, actor);
 
         when(reader.findById(command.reservationId()))
                 .thenReturn(Optional.empty());

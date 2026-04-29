@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @Tag(name = "Reservations", description = "스터디룸 좌석 예약 관련 API")
 @Slf4j
 @RestController
@@ -34,8 +36,8 @@ public class ReservationUsageController {
     })
     @PostMapping("/{reservationId}")
     public ResponseEntity<UseReservationResult> use(
-            @Parameter(description = "예약 ID", example = "1")
-            @PathVariable("reservationId") Long reservationId
+            @Parameter(description = "예약 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("reservationId") UUID reservationId
     ) {
         var actor = actorContextHolder.getActor();
         var command = new UseReservationCommand(reservationId, actor);

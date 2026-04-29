@@ -5,10 +5,11 @@ import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 public record ReservationFilter(
         Set<String> userIds,
-        Set<Long> excludedIds,
+        Set<UUID> excludedIds,
         Set<ReservationStatus> statuses
 ) {
     public ReservationFilter {
@@ -29,11 +30,11 @@ public record ReservationFilter(
         return new ReservationFilter(Set.of(userIds), excludedIds, statuses);
     }
 
-    public ReservationFilter withExcludeIds(Collection<Long> ids) {
+    public ReservationFilter withExcludeIds(Collection<UUID> ids) {
         return new ReservationFilter(userIds, Set.copyOf(ids), statuses);
     }
 
-    public ReservationFilter withExcludeIds(Long... ids) {
+    public ReservationFilter withExcludeIds(UUID... ids) {
         return new ReservationFilter(userIds, Set.of(ids), statuses);
     }
 

@@ -8,9 +8,10 @@ import com.seatliberator.seatliberator.reservation.domain.persistence.Reservatio
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ReservationReader {
-    Optional<Reservation> findById(Long id);
+    Optional<Reservation> findById(UUID id);
 
     Optional<Reservation> findByUserId(String userId);
 
