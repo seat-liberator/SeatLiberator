@@ -2,8 +2,10 @@ package com.seatliberator.seatliberator.reservation.application.availability.por
 
 import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
 
+import java.util.UUID;
+
 public record AvailableSeatResult(
-        Long id,
+        UUID id,
         String roomId,
         String seatId
 ) {

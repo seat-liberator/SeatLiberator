@@ -1,18 +1,15 @@
 package com.seatliberator.seatliberator.reservation.application.room.port.out.criteria;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public record SeatExclusion(
-        Set<Long> ids
+        Set<UUID> ids
 ) {
     public SeatExclusion {
         Objects.requireNonNull(ids);
     }
 
-    public static SeatExclusion of(Collection<Long> ids) {
+    public static SeatExclusion of(Collection<UUID> ids) {
         return new SeatExclusion(new HashSet<>(ids));
     }
 
