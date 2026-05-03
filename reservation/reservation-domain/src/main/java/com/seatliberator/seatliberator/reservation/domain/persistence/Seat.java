@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.domain.persistence;
 
+import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SeatStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
@@ -50,17 +51,10 @@ public class Seat {
             SeatStatus status,
             Instant createdAt
     ) {
-        if (room == null) throw new IllegalArgumentException("room must not be null.");
-        if (seatId == null || seatId.isBlank()) throw new IllegalArgumentException("seatId must not be null or blank.");
-        if (status == null) throw new IllegalArgumentException("status must not be null.");
-        if (createdAt == null) throw new IllegalArgumentException("createdAt must not be null.");
-
-        this.room = room;
-        this.seatId = seatId;
-        this.status = status;
-        this.createdAt = createdAt;
-
-        room.attachSeat(this);
+        this.room = Preconditions.requireNonNull(room, "room");
+        this.seatId = Preconditions.requireNonBlank(seatId, "seatId");
+        this.status = Preconditions.requireNonNull(status, "status");
+        this.createdAt = Preconditions.requireNonNull(createdAt, "createdAt");
 
         switch (status) {
             case ACTIVE -> this.lastActivatedAt = createdAt;
@@ -81,22 +75,18 @@ public class Seat {
     }
 
     public void updateSeatId(String seatId) {
-        if (seatId == null || seatId.isBlank()) throw new IllegalArgumentException("seatId must not be null or blank.");
+        Preconditions.requireNonBlank(seatId, "seatId");
         this.seatId = seatId;
     }
 
     public void updateRoom(Room room) {
-        if (room == null) throw new IllegalArgumentException("room must not be null.");
+        Preconditions.requireNonNull(room, "room");
         if (this.room.equals(room)) return;
-
-        var oldRoom = this.room;
-        oldRoom.detachSeat(this);
         this.room = room;
-        room.attachSeat(this);
     }
 
     public void active(Instant activatedAt) {
-        if (activatedAt == null) throw new IllegalArgumentException("activatedAt must not be null.");
+        Preconditions.requireNonNull(activatedAt, "activatedAt");
 
         ensureDifferentStatus(SeatStatus.ACTIVE);
         ensureNotBefore(activatedAt, "activatedAt", createdAt, "createdAt");
@@ -107,7 +97,7 @@ public class Seat {
     }
 
     public void inactive(Instant inactivatedAt) {
-        if (inactivatedAt == null) throw new IllegalArgumentException("inactivatedAt must not be null.");
+        Preconditions.requireNonNull(inactivatedAt, "inactivatedAt");
 
         ensureDifferentStatus(SeatStatus.INACTIVE);
         ensureNotBefore(inactivatedAt, "inactivatedAt", createdAt, "createdAt");

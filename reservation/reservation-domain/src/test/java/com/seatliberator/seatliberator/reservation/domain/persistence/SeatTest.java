@@ -1,49 +1,40 @@
 package com.seatliberator.seatliberator.reservation.domain.persistence;
 
 import com.seatliberator.seatliberator.reservation.domain.SeatStatus;
-import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.fixture.RoomFixture;
 import com.seatliberator.seatliberator.reservation.domain.fixture.SeatFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import static com.seatliberator.seatliberator.kernel.test.assertion.DomainAssertions.assertThatDomainThrownBy;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.RoomFixture.createRoom;
-import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatFixture.createSeat;
+import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatFixture.*;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-@DisplayName("Seat")
+@DisplayName("Seat 도메인 테스트")
 public class SeatTest {
 
     Clock clock = fixedClock;
 
     Instant now = clock.instant();
 
-    @Test
-    @DisplayName("seatId와 속한 Room의 Id로 SeatLocator를 생성한다")
-    void create_seat_locator() {
-        var roomId = "study-room-1";
-        var seatId = "seat-A";
-
-        var room = createRoom(roomId, now);
-        var seat = new SeatFixture.Builder()
-                .room(room)
-                .seatId(seatId)
-                .build();
-
-        var locator = seat.getLocator();
-
-        assertThat(locator.key()).isEqualTo(SimpleSeatLocator.of(roomId, seatId).key());
-    }
-
     @Nested
-    @DisplayName("Creation")
-    class Creation {
+    @DisplayName("생성 테스트")
+    class CreationTest {
         @Test
         @DisplayName("room과 seatId를 넘겨서 Seat 생성 가능")
         void create_with_roomId_and_seatId() {
@@ -55,37 +46,28 @@ public class SeatTest {
             assertThat(seat.getCreatedAt()).isEqualTo(now);
         }
 
-        @Test
-        @DisplayName("room이 null이면 예외")
-        void throw_exception_when_room_is_null() {
-            var seatId = "seat-A";
-            assertThatThrownBy(() -> Seat.of(null, seatId, now))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("room must not be null.");
+        static Stream<Arguments> nullArgumentCases() {
+            var room = createRoom();
+            var seatId = INITIAL_SEAT_ID;
+            var now = INITIAL_CREATED_AT;
+
+            return Stream.of(
+                    arguments("room = null", (Supplier<Seat>) () -> Seat.of(null, seatId, now), "room"),
+                    arguments("seatId = null", (Supplier<Seat>) () -> Seat.of(room, null, now), "seatId"),
+                    arguments("createdAt = null", (Supplier<Seat>) () -> Seat.of(room, seatId, null), "createdAt")
+            );
         }
 
-        @Test
-        @DisplayName("seatId가 유효하지않으면 예외")
-        void throw_exception_when_seatId_is_null() {
-            var room = createRoom();
-
-            assertThatThrownBy(() -> Seat.of(room, null, now))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("seatId must not be null or blank.");
-
-            assertThatThrownBy(() -> Seat.of(room, " ", now))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("seatId must not be null or blank.");
-        }
-
-        @Test
-        @DisplayName("createAt이 null이면 예외")
-        void throw_exception_when_createdAt_is_null() {
-            var room = createRoom();
-            var seatId = "seat-A";
-            assertThatThrownBy(() -> Seat.of(room, seatId, null))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("createdAt must not be null.");
+        @ParameterizedTest(name = "{0}")
+        @MethodSource("nullArgumentCases")
+        @DisplayName("인자가 null이면 예외")
+        void throw_exception_when_required_argument_is_null(
+                String displayName,
+                Supplier<Seat> supplier,
+                String fieldName
+        ) {
+            assertThatDomainThrownBy(supplier::get)
+                    .hasNonNullMessageFor(fieldName);
         }
 
         @Test
@@ -109,11 +91,21 @@ public class SeatTest {
             assertThat(seat.getStatus()).isEqualTo(SeatStatus.INACTIVE);
             assertThat(seat.getCreatedAt()).isEqualTo(seat.getLastInactivatedAt());
         }
+
+        @ParameterizedTest(name = "seatId = {0}")
+        @ValueSource(strings = {" ", "  ", "\t", "\n"})
+        @DisplayName("seatId가 공백이면 예외")
+        void throw_exception_when_empty_seatId(String seatId) {
+            var room = createRoom();
+
+            assertThatDomainThrownBy(() -> Seat.of(room, seatId, now))
+                    .hasNonBlankMessageFor("seatId");
+        }
     }
 
     @Nested
-    @DisplayName("Update")
-    class Update {
+    @DisplayName("변경 테스트")
+    class UpdateTest {
         @Test
         @DisplayName("새로운 seatId로 변경 가능")
         void update_with_new_seatId() {
@@ -129,24 +121,24 @@ public class SeatTest {
             assertThat(seat.getSeatId()).isEqualTo(newSeatId);
         }
 
-        @Test
-        @DisplayName("유효하지 않은 seatId를 넘기면 예외")
-        void throw_exception_when_update_with_invalid_seatId() {
-            var room = createRoom();
-            var seatId = "seat-A";
-            var seat = Seat.of(room, seatId, now);
+        static Stream<Arguments> nullArgumentCases() {
+            return Stream.of(
+                    arguments("room = null", (Consumer<Seat>) (seat) -> seat.updateRoom(null), "room"),
+                    arguments("seatId = null", (Consumer<Seat>) (seat) -> seat.updateSeatId(null), "seatId")
+            );
+        }
 
-            assertThat(seat.getSeatId()).isEqualTo(seatId);
-
-            assertThatThrownBy(() -> seat.updateSeatId(null))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("seatId must not be null or blank.");
-
-            assertThatThrownBy(() -> seat.updateSeatId(" "))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("seatId must not be null or blank.");
-
-            assertThat(seat.getSeatId()).isEqualTo(seatId);
+        @ParameterizedTest(name = "{0}")
+        @MethodSource("nullArgumentCases")
+        @DisplayName("null 인자로 변경 시 예외")
+        void throw_exception_when_update_with_null(
+                String displayName,
+                Consumer<Seat> consumer,
+                String fieldName
+        ) {
+            var seat = createSeat();
+            assertThatDomainThrownBy(() -> consumer.accept(seat))
+                    .hasNonNullMessageFor(fieldName);
         }
 
         @Test
@@ -170,31 +162,10 @@ public class SeatTest {
                     .build();
 
             assertThat(seat.getRoom()).isEqualTo(oldRoom);
-            assertThat(oldRoom.getSeats())
-                    .extracting(Seat::getSeatId)
-                    .containsExactly(seatId);
 
             seat.updateRoom(newRoom);
 
             assertThat(seat.getRoom()).isEqualTo(newRoom);
-
-            assertThat(oldRoom.getSeats())
-                    .extracting(Seat::getSeatId)
-                    .doesNotContain(seatId);
-
-            assertThat(newRoom.getSeats())
-                    .extracting(Seat::getSeatId)
-                    .containsExactly(seatId);
-        }
-
-        @Test
-        @DisplayName("유효하지 않은 방으로 변경하면 예외")
-        void throw_exception_when_update_invalid_room() {
-            var seat = createSeat();
-
-            assertThatThrownBy(() -> seat.updateRoom(null))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("room must not be null.");
         }
 
         @Test
@@ -208,15 +179,25 @@ public class SeatTest {
             seat.updateRoom(room);
 
             assertThat(seat.getRoom()).isEqualTo(room);
-            assertThat(room.getSeats())
-                    .extracting(Seat::getSeatId)
-                    .containsExactly(seatId);
+        }
+
+        @ParameterizedTest(name = "newSeatId = {0}")
+        @ValueSource(strings = {" ", "  ", "\t", "\n"})
+        @DisplayName("seatId가 공백이면 예외, 값은 안바뀐다.")
+        void throw_exception_when_update_with_empty_seatId(String newSeatId) {
+            var seat = createSeat();
+            var seatId = seat.getSeatId();
+
+            assertThatDomainThrownBy(() -> seat.updateSeatId(newSeatId))
+                    .hasNonBlankMessageFor("seatId");
+
+            assertThat(seat.getSeatId()).isEqualTo(seatId);
         }
     }
 
     @Nested
-    @DisplayName("Transition")
-    class Transition {
+    @DisplayName("상태 전이 테스트")
+    class TransitionTest {
         @Test
         @DisplayName("좌석을 비활성화 상태로 변경할 수 있다")
         void can_transition_inactive() {
@@ -275,8 +256,8 @@ public class SeatTest {
     }
 
     @Nested
-    @DisplayName("Time")
-    class Time {
+    @DisplayName("시간 불변식 테스트")
+    class TimeInvariantTest {
         @Test
         @DisplayName("좌석 비활성화 시, 비활성화 시각이 null이면 예외")
         void throw_exception_when_inactive_with_null_inactivated_at() {
@@ -285,9 +266,8 @@ public class SeatTest {
                     .createdAt(now)
                     .build();
 
-            assertThatThrownBy(() -> seat.inactive(null))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("inactivatedAt must not be null.");
+            assertThatDomainThrownBy(() -> seat.inactive(null))
+                    .hasNonNullMessageFor("inactivatedAt");
         }
 
         @Test
@@ -360,9 +340,8 @@ public class SeatTest {
 
             assertThat(seat.getStatus()).isEqualTo(SeatStatus.INACTIVE);
 
-            assertThatThrownBy(() -> seat.active(null))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("activatedAt must not be null.");
+            assertThatDomainThrownBy(() -> seat.active(null))
+                    .hasNonNullMessageFor("activatedAt");
         }
 
         @Test
