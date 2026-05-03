@@ -1,7 +1,5 @@
-package com.seatliberator.seatliberator.reservation.domain.persistence;
+package com.seatliberator.seatliberator.reservation.domain.waitlist;
 
-import com.seatliberator.seatliberator.reservation.domain.WaitlistResolution;
-import com.seatliberator.seatliberator.reservation.domain.WaitlistStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
@@ -13,8 +11,8 @@ import lombok.NonNull;
 
 import java.time.Instant;
 
-import static com.seatliberator.seatliberator.reservation.domain.validator.WaitlistStateValidator.ensureStateIn;
-import static com.seatliberator.seatliberator.reservation.domain.validator.WaitlistStateValidator.validate;
+import static com.seatliberator.seatliberator.reservation.domain.waitlist.validator.WaitlistStateValidator.ensureStateIn;
+import static com.seatliberator.seatliberator.reservation.domain.waitlist.validator.WaitlistStateValidator.validate;
 
 @Embeddable
 @Getter

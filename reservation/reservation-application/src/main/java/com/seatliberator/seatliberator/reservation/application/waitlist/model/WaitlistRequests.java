@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.application.waitlist.model;
 
 import com.seatliberator.seatliberator.reservation.application.waitlist.internal.WaitlistPromotionResult;
-import com.seatliberator.seatliberator.reservation.domain.WaitlistBehavior;
-import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
+import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
+import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistBehavior;
 
 import java.time.Instant;
 import java.util.ArrayList;

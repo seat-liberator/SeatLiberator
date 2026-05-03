@@ -7,11 +7,11 @@ import com.seatliberator.seatliberator.reservation.application.waitlist.internal
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.WaitlistStore;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
-import com.seatliberator.seatliberator.reservation.domain.WaitlistStatus;
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationCanceled;
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationExpired;
-import com.seatliberator.seatliberator.reservation.domain.fixture.WaitlistFixtureBuilder;
-import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
+import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
+import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistFixtureBuilder;
+import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

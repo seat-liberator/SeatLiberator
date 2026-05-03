@@ -1,16 +1,14 @@
-package com.seatliberator.seatliberator.reservation.domain.fixture;
+package com.seatliberator.seatliberator.reservation.domain.waitlist;
 
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.TimeRange;
-import com.seatliberator.seatliberator.reservation.domain.WaitlistBehavior;
-import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
 
 import java.time.Instant;
 
 import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
-import static com.seatliberator.seatliberator.reservation.domain.fixture.WaitlistFixture.INITIAL_USER_ID;
+import static com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistFixture.INITIAL_USER_ID;
 
 public class WaitlistFixtureBuilder {
     private String userId = INITIAL_USER_ID;

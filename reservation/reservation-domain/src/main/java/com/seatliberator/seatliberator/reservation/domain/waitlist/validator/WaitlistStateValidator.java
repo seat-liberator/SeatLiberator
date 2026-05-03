@@ -1,8 +1,8 @@
-package com.seatliberator.seatliberator.reservation.domain.validator;
+package com.seatliberator.seatliberator.reservation.domain.waitlist.validator;
 
-import com.seatliberator.seatliberator.reservation.domain.WaitlistResolution;
-import com.seatliberator.seatliberator.reservation.domain.WaitlistStatus;
-import com.seatliberator.seatliberator.reservation.domain.persistence.WaitlistState;
+import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistResolution;
+import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistState;
+import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistStatus;
 
 public class WaitlistStateValidator {
     public static void ensureStateIn(WaitlistState state, WaitlistStatus... allowed) {

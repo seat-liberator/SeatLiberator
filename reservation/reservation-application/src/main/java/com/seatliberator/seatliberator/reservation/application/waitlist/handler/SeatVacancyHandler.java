@@ -8,9 +8,9 @@ import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.WaitlistStore;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.TimeRange;
-import com.seatliberator.seatliberator.reservation.domain.WaitlistStatus;
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationCanceled;
 import com.seatliberator.seatliberator.reservation.domain.event.ReservationExpired;
+import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

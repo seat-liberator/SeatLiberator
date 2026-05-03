@@ -1,8 +1,5 @@
-package com.seatliberator.seatliberator.reservation.domain.persistence;
+package com.seatliberator.seatliberator.reservation.domain.waitlist;
 
-import com.seatliberator.seatliberator.reservation.domain.WaitlistBehavior;
-import com.seatliberator.seatliberator.reservation.domain.WaitlistResolution;
-import com.seatliberator.seatliberator.reservation.domain.WaitlistStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
-import static com.seatliberator.seatliberator.reservation.domain.fixture.WaitlistFixture.INITIAL_USER_ID;
-import static com.seatliberator.seatliberator.reservation.domain.fixture.WaitlistFixture.createWaitlist;
+import static com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistFixture.INITIAL_USER_ID;
+import static com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistFixture.createWaitlist;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

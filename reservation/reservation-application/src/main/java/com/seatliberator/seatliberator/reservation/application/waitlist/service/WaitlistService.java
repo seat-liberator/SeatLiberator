@@ -13,8 +13,8 @@ import com.seatliberator.seatliberator.reservation.application.waitlist.port.out
 import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
-import com.seatliberator.seatliberator.reservation.domain.WaitlistStatus;
-import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
+import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
+import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;

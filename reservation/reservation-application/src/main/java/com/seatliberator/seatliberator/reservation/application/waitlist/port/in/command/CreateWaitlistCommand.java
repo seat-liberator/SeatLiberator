@@ -2,7 +2,7 @@ package com.seatliberator.seatliberator.reservation.application.waitlist.port.in
 
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.TimeRange;
-import com.seatliberator.seatliberator.reservation.domain.WaitlistBehavior;
+import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistBehavior;
 
 import java.time.Instant;
 
