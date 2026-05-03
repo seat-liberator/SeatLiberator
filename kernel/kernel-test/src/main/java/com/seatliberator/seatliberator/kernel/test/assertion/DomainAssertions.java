@@ -35,5 +35,49 @@ public final class DomainAssertions {
             hasMessageContaining("must not be blank");
             return this;
         }
+
+        public DomainThrowableAssert hasNegativeMessage() {
+            hasMessageContaining("must be negative");
+            return this;
+        }
+
+        public DomainThrowableAssert hasNegativeMessageFor(String fieldName) {
+            hasMessageContaining(fieldName);
+            hasMessageContaining("must be negative");
+            return this;
+        }
+
+        public DomainThrowableAssert hasNonNegativeMessage() {
+            hasMessageContaining("must be non-negative");
+            return this;
+        }
+
+        public DomainThrowableAssert hasNonNegativeMessageFor(String fieldName) {
+            hasMessageContaining(fieldName);
+            hasMessageContaining("must be non-negative");
+            return this;
+        }
+
+        public DomainThrowableAssert hasPositiveMessage() {
+            hasMessageContaining("must be positive");
+            return this;
+        }
+
+        public DomainThrowableAssert hasPositiveMessageFor(String fieldName) {
+            hasMessageContaining(fieldName);
+            hasMessageContaining("must be positive");
+            return this;
+        }
+
+        public DomainThrowableAssert hasNonPositiveMessage() {
+            hasMessageContaining("must be non-positive");
+            return this;
+        }
+
+        public DomainThrowableAssert hasNonPositiveMessageFor(String fieldName) {
+            hasMessageContaining(fieldName);
+            hasMessageContaining("must be non-positive");
+            return this;
+        }
     }
 }
