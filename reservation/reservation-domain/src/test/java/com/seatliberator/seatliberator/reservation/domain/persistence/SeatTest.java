@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.domain.persistence;
 
+import com.seatliberator.seatliberator.reservation.domain.ActiveInactiveTransitionContractTest;
 import com.seatliberator.seatliberator.reservation.domain.SeatStatus;
 import com.seatliberator.seatliberator.reservation.domain.fixture.RoomFixture;
 import com.seatliberator.seatliberator.reservation.domain.fixture.SeatFixture;
@@ -22,7 +23,6 @@ import static com.seatliberator.seatliberator.reservation.domain.fixture.RoomFix
 import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatFixture.*;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @DisplayName("Seat 도메인 테스트")
@@ -124,7 +124,9 @@ public class SeatTest {
         static Stream<Arguments> nullArgumentCases() {
             return Stream.of(
                     arguments("room = null", (Consumer<Seat>) (seat) -> seat.updateRoom(null), "room"),
-                    arguments("seatId = null", (Consumer<Seat>) (seat) -> seat.updateSeatId(null), "seatId")
+                    arguments("seatId = null", (Consumer<Seat>) (seat) -> seat.updateSeatId(null), "seatId"),
+                    arguments("activatedAt = null", (Consumer<Seat>) (seat) -> seat.active(null), "activatedAt"),
+                    arguments("inactivatedAt = null", (Consumer<Seat>) (seat) -> seat.inactive(null), "inactivatedAt")
             );
         }
 
@@ -197,200 +199,47 @@ public class SeatTest {
 
     @Nested
     @DisplayName("상태 전이 테스트")
-    class TransitionTest {
-        @Test
-        @DisplayName("좌석을 비활성화 상태로 변경할 수 있다")
-        void can_transition_inactive() {
-            var seat = new SeatFixture.Builder()
-                    .status(SeatStatus.ACTIVE)
-                    .createdAt(now)
-                    .build();
-
-            var inactivatedAt = now.plusSeconds(5);
-            seat.inactive(inactivatedAt);
-
-            assertThat(seat.getStatus()).isEqualTo(SeatStatus.INACTIVE);
+    class TransitionTest implements ActiveInactiveTransitionContractTest<Seat> {
+        @Override
+        public Seat createActive(Instant createdAt) {
+            return new SeatFixture.Builder().createdAt(createdAt).status(SeatStatus.ACTIVE).build();
         }
 
-        @Test
-        @DisplayName("비활성화된 좌석을 또 비활성화할 수 없다")
-        void can_not_transition_to_inactive_from_inactive() {
-            var seat = new SeatFixture.Builder()
-                    .status(SeatStatus.INACTIVE)
-                    .createdAt(now)
-                    .build();
-
-            assertThatThrownBy(() -> seat.inactive(now))
-                    .isInstanceOf(IllegalStateException.class)
-                    .hasMessage("Can not transition to inactive from inactive");
+        @Override
+        public Seat createInactive(Instant createdAt) {
+            return new SeatFixture.Builder().createdAt(createdAt).status(SeatStatus.INACTIVE).build();
         }
 
-        @Test
-        @DisplayName("비활성화된 좌석은 다시 활성화할 수 있다")
-        void can_transition_to_active_from_inactive() {
-            var seat = new SeatFixture.Builder()
-                    .status(SeatStatus.INACTIVE)
-                    .createdAt(now)
-                    .build();
-
-            assertThat(seat.getStatus()).isEqualTo(SeatStatus.INACTIVE);
-
-            var activatedAt = now.plusSeconds(5);
-            seat.active(activatedAt);
-
-            assertThat(seat.getStatus()).isEqualTo(SeatStatus.ACTIVE);
+        @Override
+        public Seat activate(Seat domain, Instant activatedAt) {
+            domain.active(activatedAt);
+            return domain;
         }
 
-        @Test
-        @DisplayName("활성화된 좌석은 다시 활성화할 수 없다")
-        void can_not_transition_to_active_from_active() {
-            var seat = new SeatFixture.Builder()
-                    .status(SeatStatus.ACTIVE)
-                    .createdAt(now)
-                    .build();
-
-            assertThatThrownBy(() -> seat.active(now.plusSeconds(5)))
-                    .isInstanceOf(IllegalStateException.class)
-                    .hasMessage("Can not transition to active from active");
-        }
-    }
-
-    @Nested
-    @DisplayName("시간 불변식 테스트")
-    class TimeInvariantTest {
-        @Test
-        @DisplayName("좌석 비활성화 시, 비활성화 시각이 null이면 예외")
-        void throw_exception_when_inactive_with_null_inactivated_at() {
-            var seat = new SeatFixture.Builder()
-                    .status(SeatStatus.ACTIVE)
-                    .createdAt(now)
-                    .build();
-
-            assertThatDomainThrownBy(() -> seat.inactive(null))
-                    .hasNonNullMessageFor("inactivatedAt");
+        @Override
+        public Seat inactivate(Seat domain, Instant inactivatedAt) {
+            domain.inactive(inactivatedAt);
+            return domain;
         }
 
-        @Test
-        @DisplayName("좌석 비활성화 시, 비활성화 시각이 생성 시각보다 과거면 예외")
-        void throw_exception_when_inactivated_at_is_before_than_created_at() {
-            var seat = new SeatFixture.Builder()
-                    .status(SeatStatus.ACTIVE)
-                    .createdAt(now)
-                    .build();
-
-            var inactivatedAt = now.minusSeconds(5);
-            assertThatThrownBy(() -> seat.inactive(inactivatedAt))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("inactivatedAt can not be earlier than createdAt.");
+        @Override
+        public boolean isActive(Seat domain) {
+            return domain.getStatus() == SeatStatus.ACTIVE;
         }
 
-        @Test
-        @DisplayName("좌석 비활성화 시, 비활성화 시각이 직전 활성화 시각보다 과거면 예외")
-        void throw_exception_when_inactivated_at_is_before_than_last_activated_at() {
-            var seat = new SeatFixture.Builder()
-                    .status(SeatStatus.INACTIVE)
-                    .createdAt(now)
-                    .build();
-
-            var activatedAt = now.plusSeconds(5);
-            seat.active(activatedAt);
-
-            var inactivatedAt = activatedAt.minusSeconds(2);
-            assertThatThrownBy(() -> seat.inactive(inactivatedAt))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("inactivatedAt can not be earlier than lastActivatedAt.");
+        @Override
+        public Instant getCreatedAt(Seat domain) {
+            return domain.getCreatedAt();
         }
 
-        @Test
-        @DisplayName("비활성화 시각이 생성 시각과 같으면 허용된다")
-        void can_inactive_with_inactivatedAt_same_as_createdAt() {
-            var seat = new SeatFixture.Builder()
-                    .status(SeatStatus.ACTIVE)
-                    .createdAt(now)
-                    .build();
-
-            seat.inactive(now);
-
-            assertThat(seat.getLastInactivatedAt()).isEqualTo(now);
+        @Override
+        public Instant getLastActivatedAt(Seat domain) {
+            return domain.getLastActivatedAt();
         }
 
-        @Test
-        @DisplayName("활성화된 좌석은 activatedAt을 갖는다")
-        void store_activated_at_when_active_seat() {
-            var seat = new SeatFixture.Builder()
-                    .status(SeatStatus.INACTIVE)
-                    .createdAt(now)
-                    .build();
-
-            assertThat(seat.getStatus()).isEqualTo(SeatStatus.INACTIVE);
-
-            var activatedAt = now.plusSeconds(5);
-            seat.active(activatedAt);
-
-            assertThat(seat.getLastActivatedAt()).isEqualTo(activatedAt);
-        }
-
-        @Test
-        @DisplayName("좌석 활성화 시, activatedAt이 null이면 예외")
-        void throw_exception_when_active_with_null_activated_at() {
-            var seat = new SeatFixture.Builder()
-                    .status(SeatStatus.INACTIVE)
-                    .createdAt(now)
-                    .build();
-
-            assertThat(seat.getStatus()).isEqualTo(SeatStatus.INACTIVE);
-
-            assertThatDomainThrownBy(() -> seat.active(null))
-                    .hasNonNullMessageFor("activatedAt");
-        }
-
-        @Test
-        @DisplayName("좌석 활성화 시, activatedAt이 createdAt보다 과거면 예외")
-        void throw_exception_when_activated_at_is_before_than_created_at() {
-            var seat = new SeatFixture.Builder()
-                    .status(SeatStatus.INACTIVE)
-                    .createdAt(now)
-                    .build();
-
-            assertThat(seat.getStatus()).isEqualTo(SeatStatus.INACTIVE);
-
-            var activatedAt = now.minusSeconds(5);
-            assertThatThrownBy(() -> seat.active(activatedAt))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("activatedAt can not be earlier than createdAt.");
-        }
-
-        @Test
-        @DisplayName("좌석 활성화 시, 활성화 시각이 직전 비활성화 시각보다 과거면 예외")
-        void throw_exception_when_activated_at_is_before_than_last_inactivated_at() {
-            var seat = new SeatFixture.Builder()
-                    .status(SeatStatus.ACTIVE)
-                    .createdAt(now)
-                    .build();
-
-            var inactivatedAt = now.plusSeconds(5);
-            seat.inactive(inactivatedAt);
-
-            var activatedAt = inactivatedAt.minusSeconds(2);
-            assertThatThrownBy(() -> seat.active(activatedAt))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("activatedAt can not be earlier than lastInactivatedAt.");
-        }
-
-        @Test
-        @DisplayName("활성화 시각이 생성 시각과 같으면 허용된다")
-        void can_active_with_activatedAt_same_as_createdAt() {
-            var seat = new SeatFixture.Builder()
-                    .status(SeatStatus.ACTIVE)
-                    .createdAt(now)
-                    .build();
-
-            assertThat(seat.getStatus()).isEqualTo(SeatStatus.ACTIVE);
-
-            seat.inactive(now);
-            seat.active(now);
-
-            assertThat(seat.getLastActivatedAt()).isEqualTo(now);
+        @Override
+        public Instant getLastInactivatedAt(Seat domain) {
+            return domain.getLastInactivatedAt();
         }
     }
 }
