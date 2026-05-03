@@ -2,8 +2,8 @@ package com.seatliberator.seatliberator.reservation.application.waitlist.port.ou
 
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.TimeRange;
-import com.seatliberator.seatliberator.reservation.domain.WaitlistStatus;
-import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
+import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
+import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistStatus;
 
 import java.util.List;
 import java.util.Optional;

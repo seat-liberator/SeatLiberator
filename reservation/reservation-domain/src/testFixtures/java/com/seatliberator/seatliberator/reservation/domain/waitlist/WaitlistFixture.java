@@ -1,6 +1,4 @@
-package com.seatliberator.seatliberator.reservation.domain.fixture;
-
-import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
+package com.seatliberator.seatliberator.reservation.domain.waitlist;
 
 import java.time.Instant;
 

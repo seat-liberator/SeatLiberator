@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.domain;
+package com.seatliberator.seatliberator.reservation.domain.waitlist;
 
 public enum WaitlistBehavior {
     // 대기열 등록 없이 알림만 전송함

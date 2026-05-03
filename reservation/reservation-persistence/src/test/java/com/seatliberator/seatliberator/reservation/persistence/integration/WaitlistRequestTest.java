@@ -11,7 +11,7 @@ import com.seatliberator.seatliberator.reservation.application.shared.exception.
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.CancelWaitlistUseCase;
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.CreateWaitlistUseCase;
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.WaitlistStore;
-import com.seatliberator.seatliberator.reservation.domain.WaitlistStatus;
+import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;

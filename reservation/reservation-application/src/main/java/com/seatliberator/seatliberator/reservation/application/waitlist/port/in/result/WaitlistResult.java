@@ -2,7 +2,7 @@ package com.seatliberator.seatliberator.reservation.application.waitlist.port.in
 
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
-import com.seatliberator.seatliberator.reservation.domain.persistence.Waitlist;
+import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
 
 public record WaitlistResult(
         String userId,

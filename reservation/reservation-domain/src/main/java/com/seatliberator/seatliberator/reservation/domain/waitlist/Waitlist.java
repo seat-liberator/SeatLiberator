@@ -1,6 +1,9 @@
-package com.seatliberator.seatliberator.reservation.domain.persistence;
+package com.seatliberator.seatliberator.reservation.domain.waitlist;
 
-import com.seatliberator.seatliberator.reservation.domain.*;
+import com.seatliberator.seatliberator.reservation.domain.EmbeddableSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.EmbeddableTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.TimeRange;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

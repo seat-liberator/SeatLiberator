@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.domain;
+package com.seatliberator.seatliberator.reservation.domain.waitlist;
 
 public enum WaitlistResolution {
     PENDING,

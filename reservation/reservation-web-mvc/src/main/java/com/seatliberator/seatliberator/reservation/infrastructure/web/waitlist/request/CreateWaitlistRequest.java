@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.infrastructure.web.waitlist.request;
 
-import com.seatliberator.seatliberator.reservation.domain.WaitlistBehavior;
+import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistBehavior;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;
