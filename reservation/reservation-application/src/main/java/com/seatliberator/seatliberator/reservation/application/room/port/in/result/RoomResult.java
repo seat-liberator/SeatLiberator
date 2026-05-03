@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.application.room.port.in.result;
 
-import com.seatliberator.seatliberator.reservation.domain.persistence.Room;
+import com.seatliberator.seatliberator.reservation.domain.room.Room;
 
 import java.time.Instant;
 
