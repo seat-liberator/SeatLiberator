@@ -12,8 +12,12 @@ public class UuidGenerator implements Generator<UUID> {
         this.counter = counter;
     }
 
+    public static UUID generate(long value) {
+        return new UUID(0L, value);
+    }
+
     @Override
     public UUID generate() {
-        return new UUID(0L, counter.next());
+        return generate(counter.next());
     }
 }
