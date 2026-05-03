@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.application.availability.port.in.result;
 
-import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
+import com.seatliberator.seatliberator.reservation.domain.seat.Seat;
 
 import java.util.UUID;
 

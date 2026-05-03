@@ -9,7 +9,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.contract.
 import com.seatliberator.seatliberator.reservation.application.booking.contract.OccupancySeatRangeFinder;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.domain.fixture.RoomFixture;
-import com.seatliberator.seatliberator.reservation.domain.fixture.SeatFixture;
+import com.seatliberator.seatliberator.reservation.domain.seat.SeatFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,9 +1,9 @@
-package com.seatliberator.seatliberator.reservation.domain.persistence;
+package com.seatliberator.seatliberator.reservation.domain.seat;
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.SeatStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.persistence.Room;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

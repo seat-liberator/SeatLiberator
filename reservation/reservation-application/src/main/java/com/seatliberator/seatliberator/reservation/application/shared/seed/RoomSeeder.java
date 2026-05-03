@@ -3,7 +3,7 @@ package com.seatliberator.seatliberator.reservation.application.shared.seed;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomStore;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Room;
-import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
+import com.seatliberator.seatliberator.reservation.domain.seat.Seat;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

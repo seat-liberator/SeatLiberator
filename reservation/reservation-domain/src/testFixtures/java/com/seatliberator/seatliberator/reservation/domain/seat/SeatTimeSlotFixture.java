@@ -1,15 +1,13 @@
-package com.seatliberator.seatliberator.reservation.domain.fixture;
+package com.seatliberator.seatliberator.reservation.domain.seat;
 
 import com.seatliberator.seatliberator.reservation.domain.TimeRange;
-import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
-import com.seatliberator.seatliberator.reservation.domain.persistence.SeatTimeSlot;
-import com.seatliberator.seatliberator.reservation.domain.persistence.SeatTimeSlotStatus;
+import com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatFixture.createSeat;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
+import static com.seatliberator.seatliberator.reservation.domain.seat.SeatFixture.createSeat;
 
 public class SeatTimeSlotFixture {
     public static final Seat SEAT = createSeat();
