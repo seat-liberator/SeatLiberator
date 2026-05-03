@@ -7,15 +7,31 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 
+import static com.seatliberator.seatliberator.kernel.test.assertion.DomainAssertions.assertThatDomainThrownBy;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("Domain: Embeddable Time Range")
-public class EmbeddableTimeRangeTest {
+public class EmbeddableTimeRangeTest implements TimeRangeContractTest<EmbeddableTimeRange> {
 
     Instant startAt = fixedClock.instant();
     Instant endAt = startAt.plusSeconds(60 * 30);
+
+    @Override
+    public EmbeddableTimeRange create(Instant startAt, Instant endAt) {
+        return EmbeddableTimeRange.from(startAt, endAt);
+    }
+
+    @Override
+    public Instant getStartAt() {
+        return startAt;
+    }
+
+    @Override
+    public Instant getEndAt() {
+        return endAt;
+    }
 
     @Nested
     @DisplayName("Creation")
@@ -32,17 +48,15 @@ public class EmbeddableTimeRangeTest {
         @Test
         @DisplayName("시작 시간이 null이면 예외를 던진다")
         void throw_exception_when_start_at_is_null() {
-            assertThatThrownBy(() -> new EmbeddableTimeRange(null, endAt))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("startAt must not be null.");
+            assertThatDomainThrownBy(() -> new EmbeddableTimeRange(null, endAt))
+                    .hasNonNullMessageFor("startAt");
         }
 
         @Test
         @DisplayName("종료 시간이 null이면 예외를 던진다")
         void throw_exception_when_end_at_is_null() {
-            assertThatThrownBy(() -> new EmbeddableTimeRange(startAt, null))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("endAt must not be null.");
+            assertThatDomainThrownBy(() -> new EmbeddableTimeRange(startAt, null))
+                    .hasNonNullMessageFor("endAt");
         }
 
         @Test
