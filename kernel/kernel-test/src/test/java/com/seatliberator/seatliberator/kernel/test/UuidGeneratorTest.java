@@ -36,5 +36,13 @@ public class UuidGeneratorTest {
             assertThat(generator.generate()).isEqualTo(new UUID(0L, 1L));
             assertThat(generator.generate()).isEqualTo(new UUID(0L, 2L));
         }
+
+        @Test
+        @DisplayName("int 값을 UUID 하위 비트로 사용한다")
+        void generate_uuid_with_int() {
+            var generated = UuidGenerator.generate(1);
+
+            assertThat(generated).isEqualTo(new UUID(0L, 1L));
+        }
     }
 }
