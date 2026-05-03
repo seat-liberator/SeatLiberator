@@ -1,8 +1,7 @@
-package com.seatliberator.seatliberator.reservation.domain.fixture;
+package com.seatliberator.seatliberator.reservation.domain.room;
 
 import com.seatliberator.seatliberator.reservation.domain.TimeRange;
-import com.seatliberator.seatliberator.reservation.domain.persistence.RoomOperationPolicy;
-import com.seatliberator.seatliberator.reservation.domain.persistence.RoomOperationStatus;
+import com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;

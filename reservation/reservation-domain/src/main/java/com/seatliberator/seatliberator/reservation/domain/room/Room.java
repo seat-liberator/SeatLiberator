@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.domain.persistence;
+package com.seatliberator.seatliberator.reservation.domain.room;
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 import jakarta.persistence.*;

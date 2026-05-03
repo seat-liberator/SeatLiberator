@@ -11,7 +11,7 @@ import com.seatliberator.seatliberator.reservation.application.room.port.out.Roo
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomStore;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
-import com.seatliberator.seatliberator.reservation.domain.persistence.Room;
+import com.seatliberator.seatliberator.reservation.domain.room.Room;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,6 +1,5 @@
-package com.seatliberator.seatliberator.reservation.domain.persistence;
+package com.seatliberator.seatliberator.reservation.domain.room;
 
-import com.seatliberator.seatliberator.reservation.domain.fixture.RoomOperationPolicyFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;

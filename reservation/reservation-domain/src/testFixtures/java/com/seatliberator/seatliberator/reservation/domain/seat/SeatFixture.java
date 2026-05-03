@@ -1,11 +1,11 @@
 package com.seatliberator.seatliberator.reservation.domain.seat;
 
-import com.seatliberator.seatliberator.reservation.domain.persistence.Room;
+import com.seatliberator.seatliberator.reservation.domain.room.Room;
 
 import java.time.Instant;
 
-import static com.seatliberator.seatliberator.reservation.domain.fixture.RoomFixture.createRoom;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
+import static com.seatliberator.seatliberator.reservation.domain.room.RoomFixture.createRoom;
 
 public class SeatFixture {
     public static final Room INITIAL_ROOM = createRoom();

@@ -6,8 +6,8 @@ import com.seatliberator.seatliberator.reservation.application.room.port.out.Sea
 import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
-import com.seatliberator.seatliberator.reservation.domain.fixture.RoomFixture;
-import com.seatliberator.seatliberator.reservation.domain.persistence.Room;
+import com.seatliberator.seatliberator.reservation.domain.room.Room;
+import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
 import com.seatliberator.seatliberator.reservation.domain.seat.Seat;
 import com.seatliberator.seatliberator.reservation.domain.seat.SeatFixture;
 import org.junit.jupiter.api.BeforeEach;
