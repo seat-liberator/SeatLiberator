@@ -14,9 +14,9 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static com.seatliberator.seatliberator.kernel.test.assertion.DomainAssertions.assertThatDomainThrownBy;
-import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static com.seatliberator.seatliberator.reservation.domain.room.RoomFixture.INITIAL_ROOM_ID;
 import static com.seatliberator.seatliberator.reservation.domain.seat.SeatFixture.INITIAL_CREATED_AT;
+import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 

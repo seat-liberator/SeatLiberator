@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.application.availability.port.in.result;
 
 import com.seatliberator.seatliberator.reservation.application.availability.model.SeatReservationStatus;
-import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 
 public record SeatStatusesResult(
         String roomId,

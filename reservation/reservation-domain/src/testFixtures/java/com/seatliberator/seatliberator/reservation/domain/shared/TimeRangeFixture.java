@@ -1,12 +1,9 @@
-package com.seatliberator.seatliberator.reservation.domain.fixture;
-
-import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
-import com.seatliberator.seatliberator.reservation.domain.TimeRange;
+package com.seatliberator.seatliberator.reservation.domain.shared;
 
 import java.time.Duration;
 import java.time.Instant;
 
-import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
+import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
 
 public class TimeRangeFixture {
     public static final Duration INITIAL_DURATION = Duration.ofMinutes(30);

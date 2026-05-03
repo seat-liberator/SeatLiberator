@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.domain.seat;
 
-import com.seatliberator.seatliberator.reservation.domain.ActiveInactiveTransitionContractTest;
+import com.seatliberator.seatliberator.reservation.domain.shared.ActiveInactiveTransitionContractTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;

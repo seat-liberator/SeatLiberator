@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.application.room.port.out;
 
 import com.seatliberator.seatliberator.reservation.application.room.port.out.criteria.SeatExclusion;
-import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.seat.Seat;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 
 import java.util.List;
 import java.util.Optional;

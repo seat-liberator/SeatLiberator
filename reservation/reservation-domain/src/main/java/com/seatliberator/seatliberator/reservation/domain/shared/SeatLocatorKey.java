@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.domain;
+package com.seatliberator.seatliberator.reservation.domain.shared;
 
 public record SeatLocatorKey(String roomId, String seatId) implements Comparable<SeatLocatorKey> {
     public SeatLocatorKey {

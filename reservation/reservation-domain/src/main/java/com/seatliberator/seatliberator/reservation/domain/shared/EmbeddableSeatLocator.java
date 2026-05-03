@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.domain;
+package com.seatliberator.seatliberator.reservation.domain.shared;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

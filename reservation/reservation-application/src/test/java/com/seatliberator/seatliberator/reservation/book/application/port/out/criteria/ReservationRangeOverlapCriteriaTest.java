@@ -2,11 +2,11 @@ package com.seatliberator.seatliberator.reservation.book.application.port.out.cr
 
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationRangeOverlapCriteria;
-import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
+import static com.seatliberator.seatliberator.reservation.domain.shared.TimeRangeFixture.createRange;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Reservation Range Overlap Criteria")

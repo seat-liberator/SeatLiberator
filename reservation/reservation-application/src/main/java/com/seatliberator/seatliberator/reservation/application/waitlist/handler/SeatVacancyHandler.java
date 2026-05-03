@@ -6,10 +6,10 @@ import com.seatliberator.seatliberator.reservation.application.waitlist.model.Wa
 import com.seatliberator.seatliberator.reservation.application.waitlist.model.WaitlistRequests;
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.result.WaitlistResult;
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.WaitlistStore;
-import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.TimeRange;
 import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationCanceled;
 import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationExpired;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;

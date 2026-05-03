@@ -8,8 +8,8 @@ import com.seatliberator.seatliberator.reservation.application.availability.port
 import com.seatliberator.seatliberator.reservation.application.availability.port.in.query.FindSeatStatusesQuery;
 import com.seatliberator.seatliberator.reservation.application.availability.port.in.result.AvailableSeatResult;
 import com.seatliberator.seatliberator.reservation.application.availability.port.in.result.SeatStatusesResult;
-import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

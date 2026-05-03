@@ -1,12 +1,12 @@
 package com.seatliberator.seatliberator.reservation.domain.room;
 
-import com.seatliberator.seatliberator.reservation.domain.TimeRange;
-import com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport;
+import com.seatliberator.seatliberator.reservation.domain.shared.TestSupport;
+import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
-import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
+import static com.seatliberator.seatliberator.reservation.domain.shared.TimeRangeFixture.createRange;
 
 public class RoomOperationPolicyFixture {
     public static final Integer MAX_RESERVATION_PER_USER = 5;

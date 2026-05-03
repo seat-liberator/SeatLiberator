@@ -2,13 +2,13 @@ package com.seatliberator.seatliberator.reservation.availability.application.mod
 
 import com.seatliberator.seatliberator.reservation.application.availability.model.SeatReservationStatus;
 import com.seatliberator.seatliberator.reservation.application.availability.model.SeatReservationStatusClassifier;
-import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLocatorFixture.createLocator;
+import static com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture.createLocator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
