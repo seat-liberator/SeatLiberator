@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.kernel.condition;
 
+import java.time.Duration;
 import java.util.Objects;
 
 public class Preconditions {
@@ -35,6 +36,30 @@ public class Preconditions {
     public static Integer requireNonPositive(Integer value, String name) {
         Objects.requireNonNull(value, name + " must not be null.");
         if (value > 0) throw new IllegalArgumentException(name + " must be non-positive.");
+        return value;
+    }
+
+    public static Duration requireNegative(Duration value, String name) {
+        Objects.requireNonNull(value, name + " must not be null.");
+        if (!value.isNegative()) throw new IllegalArgumentException(name + " must be negative.");
+        return value;
+    }
+
+    public static Duration requireNonNegative(Duration value, String name) {
+        Objects.requireNonNull(value, name + " must not be null.");
+        if (value.isNegative()) throw new IllegalArgumentException(name + " must be non-negative.");
+        return value;
+    }
+
+    public static Duration requirePositive(Duration value, String name) {
+        Objects.requireNonNull(value, name + " must not be null.");
+        if (!value.isPositive()) throw new IllegalArgumentException(name + " must be positive.");
+        return value;
+    }
+
+    public static Duration requireNonPositive(Duration value, String name) {
+        Objects.requireNonNull(value, name + " must not be null.");
+        if (value.isPositive()) throw new IllegalArgumentException(name + " must be non-positive.");
         return value;
     }
 }
