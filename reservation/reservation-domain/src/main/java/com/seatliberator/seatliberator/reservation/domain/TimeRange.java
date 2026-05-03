@@ -14,4 +14,8 @@ public interface TimeRange {
     default boolean isEnded(Instant time) {
         return !time.isBefore(endAt());
     }
+
+    default boolean isSame(TimeRange other) {
+        return startAt().equals(other.startAt()) && endAt().equals(other.endAt());
+    }
 }

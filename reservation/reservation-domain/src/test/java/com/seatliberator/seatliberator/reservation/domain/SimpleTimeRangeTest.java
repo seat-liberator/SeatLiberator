@@ -11,10 +11,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("Domain: Simple Time Range")
-public class SimpleTimeRangeTest {
+public class SimpleTimeRangeTest implements TimeRangeContractTest<SimpleTimeRange> {
 
     Instant startAt = fixedClock.instant();
     Instant endAt = startAt.plusSeconds(60 * 30);
+
+    @Override
+    public SimpleTimeRange create(Instant startAt, Instant endAt) {
+        return SimpleTimeRange.of(startAt, endAt);
+    }
+
+    @Override
+    public Instant getStartAt() {
+        return startAt;
+    }
+
+    @Override
+    public Instant getEndAt() {
+        return endAt;
+    }
 
     @Nested
     @DisplayName("Creation")
