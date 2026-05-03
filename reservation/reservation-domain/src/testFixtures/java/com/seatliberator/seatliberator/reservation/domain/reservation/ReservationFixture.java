@@ -1,17 +1,17 @@
 package com.seatliberator.seatliberator.reservation.domain.reservation;
 
-import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
-import com.seatliberator.seatliberator.reservation.domain.TimeRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 
-import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLocatorFixture.createLocator;
-import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
-import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
+import static com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture.createLocator;
+import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
+import static com.seatliberator.seatliberator.reservation.domain.shared.TimeRangeFixture.createRange;
 import static org.assertj.core.api.Fail.fail;
 
 public class ReservationFixture {

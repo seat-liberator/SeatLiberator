@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.domain;
+package com.seatliberator.seatliberator.reservation.domain.shared;
 
 public interface SeatLocator {
     String roomId();

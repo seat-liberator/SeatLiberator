@@ -6,8 +6,8 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.in.r
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationRangeOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.application.booking.service.ReservationQueryService;
-import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,8 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
 import static com.seatliberator.seatliberator.reservation.domain.reservation.ReservationFixture.createReservation;
+import static com.seatliberator.seatliberator.reservation.domain.shared.TimeRangeFixture.createRange;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;

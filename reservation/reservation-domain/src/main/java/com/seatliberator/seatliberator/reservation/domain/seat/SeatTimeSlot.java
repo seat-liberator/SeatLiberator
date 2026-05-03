@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.domain.seat;
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
-import com.seatliberator.seatliberator.reservation.domain.EmbeddableTimeRange;
-import com.seatliberator.seatliberator.reservation.domain.TimeRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -5,10 +5,10 @@ import com.seatliberator.seatliberator.reservation.application.waitlist.handler.
 import com.seatliberator.seatliberator.reservation.application.waitlist.internal.WaitlistPromotion;
 import com.seatliberator.seatliberator.reservation.application.waitlist.internal.WaitlistPromotionResult;
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.WaitlistStore;
-import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationCanceled;
 import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationExpired;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistFixtureBuilder;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistStatus;

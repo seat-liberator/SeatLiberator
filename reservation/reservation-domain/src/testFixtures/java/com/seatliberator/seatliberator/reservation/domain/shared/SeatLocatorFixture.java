@@ -1,7 +1,4 @@
-package com.seatliberator.seatliberator.reservation.domain.fixture;
-
-import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.SimpleSeatLocator;
+package com.seatliberator.seatliberator.reservation.domain.shared;
 
 public class SeatLocatorFixture {
     public static final String INITIAL_ROOM_ID = "room-1";

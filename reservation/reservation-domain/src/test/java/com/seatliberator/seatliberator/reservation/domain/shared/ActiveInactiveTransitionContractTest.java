@@ -1,6 +1,5 @@
-package com.seatliberator.seatliberator.reservation.domain;
+package com.seatliberator.seatliberator.reservation.domain.shared;
 
-import com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

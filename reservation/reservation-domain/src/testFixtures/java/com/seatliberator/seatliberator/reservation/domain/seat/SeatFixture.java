@@ -4,8 +4,8 @@ import com.seatliberator.seatliberator.reservation.domain.room.Room;
 
 import java.time.Instant;
 
-import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static com.seatliberator.seatliberator.reservation.domain.room.RoomFixture.createRoom;
+import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
 
 public class SeatFixture {
     public static final Room INITIAL_ROOM = createRoom();

@@ -4,8 +4,8 @@ import com.seatliberator.seatliberator.reservation.application.booking.contract.
 import com.seatliberator.seatliberator.reservation.application.booking.contract.result.ReservationRejectReason;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.CreateReservationUseCase;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CreateReservationCommand;
-import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.TimeRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

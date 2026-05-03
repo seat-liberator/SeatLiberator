@@ -19,8 +19,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Instant;
 import java.util.List;
 
-import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
-import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
+import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
+import static com.seatliberator.seatliberator.reservation.domain.shared.TimeRangeFixture.createRange;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 

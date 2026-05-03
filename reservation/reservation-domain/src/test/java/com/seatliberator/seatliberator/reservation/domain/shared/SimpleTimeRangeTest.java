@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.domain;
+package com.seatliberator.seatliberator.reservation.domain.shared;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 
-import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
+import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
