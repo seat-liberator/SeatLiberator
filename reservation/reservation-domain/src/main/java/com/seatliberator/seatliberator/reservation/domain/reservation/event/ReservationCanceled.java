@@ -1,10 +1,13 @@
-package com.seatliberator.seatliberator.reservation.domain.event;
+package com.seatliberator.seatliberator.reservation.domain.reservation.event;
 
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.TimeRange;
 
-public record ReservationCreated(
+import java.time.Instant;
+
+public record ReservationCanceled(
         SeatLocator locator,
-        TimeRange range
+        TimeRange range,
+        Instant canceledAt
 ) implements DomainEvent {
 }

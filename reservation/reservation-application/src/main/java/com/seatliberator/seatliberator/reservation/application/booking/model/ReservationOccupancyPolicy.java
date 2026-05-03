@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.application.booking.model;
 
-import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
 
 import java.util.EnumSet;
 import java.util.Set;

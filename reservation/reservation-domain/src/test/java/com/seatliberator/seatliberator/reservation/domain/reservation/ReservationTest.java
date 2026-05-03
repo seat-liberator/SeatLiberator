@@ -1,17 +1,16 @@
-package com.seatliberator.seatliberator.reservation.domain.persistence;
+package com.seatliberator.seatliberator.reservation.domain.reservation;
 
-import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
-import com.seatliberator.seatliberator.reservation.domain.event.ReservationCanceled;
-import com.seatliberator.seatliberator.reservation.domain.event.ReservationCreated;
-import com.seatliberator.seatliberator.reservation.domain.event.ReservationExpired;
+import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationCanceled;
+import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationCreated;
+import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationExpired;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static com.seatliberator.seatliberator.reservation.domain.fixture.ReservationFixture.*;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
+import static com.seatliberator.seatliberator.reservation.domain.reservation.ReservationFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

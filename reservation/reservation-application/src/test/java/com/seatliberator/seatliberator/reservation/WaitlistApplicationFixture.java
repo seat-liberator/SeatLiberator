@@ -8,9 +8,9 @@ import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistBehav
 
 import java.util.UUID;
 
-import static com.seatliberator.seatliberator.reservation.domain.fixture.ReservationFixture.INITIAL_USER_ID;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
+import static com.seatliberator.seatliberator.reservation.domain.reservation.ReservationFixture.INITIAL_USER_ID;
 
 public class WaitlistApplicationFixture {
     public static CreateWaitlistCommand createWaitlistCreateCommand(
