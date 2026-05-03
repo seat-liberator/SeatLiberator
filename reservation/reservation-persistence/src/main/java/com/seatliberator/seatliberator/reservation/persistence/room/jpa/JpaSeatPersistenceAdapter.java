@@ -4,7 +4,7 @@ import com.seatliberator.seatliberator.reservation.application.room.port.out.Sea
 import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.criteria.SeatExclusion;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
+import com.seatliberator.seatliberator.reservation.domain.seat.Seat;
 import com.seatliberator.seatliberator.reservation.persistence.room.jpa.repository.SeatRepository;
 import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.CommonPredicates;
 import lombok.RequiredArgsConstructor;

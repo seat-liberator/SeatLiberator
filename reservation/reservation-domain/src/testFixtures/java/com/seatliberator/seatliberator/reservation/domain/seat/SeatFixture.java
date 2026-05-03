@@ -1,8 +1,6 @@
-package com.seatliberator.seatliberator.reservation.domain.fixture;
+package com.seatliberator.seatliberator.reservation.domain.seat;
 
-import com.seatliberator.seatliberator.reservation.domain.SeatStatus;
 import com.seatliberator.seatliberator.reservation.domain.persistence.Room;
-import com.seatliberator.seatliberator.reservation.domain.persistence.Seat;
 
 import java.time.Instant;
 

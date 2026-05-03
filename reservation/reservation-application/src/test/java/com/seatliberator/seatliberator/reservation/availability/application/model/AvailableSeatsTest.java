@@ -2,7 +2,7 @@ package com.seatliberator.seatliberator.reservation.availability.application.mod
 
 import com.seatliberator.seatliberator.reservation.application.availability.model.AvailableSeats;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.fixture.SeatFixture;
+import com.seatliberator.seatliberator.reservation.domain.seat.SeatFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

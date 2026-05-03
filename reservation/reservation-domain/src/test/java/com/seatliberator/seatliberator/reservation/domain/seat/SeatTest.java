@@ -1,9 +1,7 @@
-package com.seatliberator.seatliberator.reservation.domain.persistence;
+package com.seatliberator.seatliberator.reservation.domain.seat;
 
 import com.seatliberator.seatliberator.reservation.domain.ActiveInactiveTransitionContractTest;
-import com.seatliberator.seatliberator.reservation.domain.SeatStatus;
 import com.seatliberator.seatliberator.reservation.domain.fixture.RoomFixture;
-import com.seatliberator.seatliberator.reservation.domain.fixture.SeatFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,7 +18,7 @@ import java.util.stream.Stream;
 
 import static com.seatliberator.seatliberator.kernel.test.assertion.DomainAssertions.assertThatDomainThrownBy;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.RoomFixture.createRoom;
-import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatFixture.*;
+import static com.seatliberator.seatliberator.reservation.domain.seat.SeatFixture.*;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TestSupport.fixedClock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
