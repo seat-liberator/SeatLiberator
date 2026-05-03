@@ -12,7 +12,7 @@ import com.seatliberator.seatliberator.reservation.application.shared.exception.
 import com.seatliberator.seatliberator.reservation.application.usage.port.in.UseReservationUseCase;
 import com.seatliberator.seatliberator.reservation.application.usage.port.in.command.UseReservationCommand;
 import com.seatliberator.seatliberator.reservation.application.usage.service.ReservationUsageService;
-import com.seatliberator.seatliberator.reservation.domain.fixture.ReservationFixture;
+import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

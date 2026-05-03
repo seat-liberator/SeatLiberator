@@ -22,9 +22,9 @@ import java.time.Instant;
 
 import static com.seatliberator.seatliberator.reservation.WaitlistApplicationFixture.createWaitlistCancelCommand;
 import static com.seatliberator.seatliberator.reservation.WaitlistApplicationFixture.createWaitlistCreateCommand;
-import static com.seatliberator.seatliberator.reservation.domain.fixture.ReservationFixture.INITIAL_USER_ID;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.fixture.TimeRangeFixture.createRange;
+import static com.seatliberator.seatliberator.reservation.domain.reservation.ReservationFixture.INITIAL_USER_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

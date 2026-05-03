@@ -5,8 +5,8 @@ import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.FindMyReservationUseCase;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.query.FindMyReservationQuery;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.result.ReservationResult;
-import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SimpleTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.infrastructure.web.book.controller.ReservationQueryController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 
-import static com.seatliberator.seatliberator.reservation.domain.fixture.ReservationFixture.createReservation;
+import static com.seatliberator.seatliberator.reservation.domain.reservation.ReservationFixture.createReservation;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;

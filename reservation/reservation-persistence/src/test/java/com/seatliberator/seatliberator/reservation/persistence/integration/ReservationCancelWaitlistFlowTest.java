@@ -18,10 +18,10 @@ import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.command.CancelWaitlistCommand;
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.result.WaitlistResult;
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.WaitlistStore;
-import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.TimeRange;
-import com.seatliberator.seatliberator.reservation.domain.event.ReservationExpired;
+import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationExpired;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistBehavior;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistResolution;

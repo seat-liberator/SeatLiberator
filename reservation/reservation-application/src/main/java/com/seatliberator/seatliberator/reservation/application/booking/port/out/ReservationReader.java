@@ -4,7 +4,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.out.
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationRoomOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationSeatLookupCriteria;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationSeatOverlapCriteria;
-import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
+import com.seatliberator.seatliberator.reservation.domain.reservation.Reservation;
 
 import java.util.List;
 import java.util.Optional;

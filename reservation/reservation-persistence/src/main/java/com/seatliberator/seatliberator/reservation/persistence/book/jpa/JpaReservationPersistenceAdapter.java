@@ -3,7 +3,7 @@ package com.seatliberator.seatliberator.reservation.persistence.book.jpa;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.*;
-import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
+import com.seatliberator.seatliberator.reservation.domain.reservation.Reservation;
 import com.seatliberator.seatliberator.reservation.persistence.book.jpa.repository.ReservationRepository;
 import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.CommonPredicates;
 import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.SeatLocatorPredicates;

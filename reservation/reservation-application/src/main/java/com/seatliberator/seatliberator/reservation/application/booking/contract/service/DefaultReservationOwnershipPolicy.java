@@ -5,7 +5,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.contract.
 import com.seatliberator.seatliberator.reservation.application.booking.contract.result.ReservationPolicyReason;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.result.ReservationPolicyResult;
 import com.seatliberator.seatliberator.reservation.application.shared.configuration.ReservationCapability;
-import com.seatliberator.seatliberator.reservation.domain.persistence.Reservation;
+import com.seatliberator.seatliberator.reservation.domain.reservation.Reservation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

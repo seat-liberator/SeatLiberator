@@ -5,9 +5,9 @@ import com.seatliberator.seatliberator.reservation.application.booking.model.Res
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationRoomOverlapCriteria;
-import com.seatliberator.seatliberator.reservation.domain.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.fixture.ReservationFixture;
+import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationFixture;
+import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
