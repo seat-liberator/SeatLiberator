@@ -1,11 +1,17 @@
 package com.seatliberator.seatliberator.reservation.application.room.service;
 
+import com.seatliberator.seatliberator.reservation.application.room.internal.RoomOperationPolicyFactory;
+import com.seatliberator.seatliberator.reservation.application.room.internal.RoomOperationPolicyFactoryCommand;
+import com.seatliberator.seatliberator.reservation.application.room.internal.RoomOperationPolicyProvisioner;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.CreateRoomUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.DeleteRoomUseCase;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.UpdateRoomOperationPolicyUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.UpdateRoomUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.CreateRoomCommand;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.DeleteRoomCommand;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.UpdateRoomCommand;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.command.UpdateRoomOperationPolicyCommand;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.result.RoomOperationPolicyResult;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.result.RoomResult;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomReader;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomStore;
@@ -24,16 +30,21 @@ import java.time.Clock;
 public class RoomCommandService implements
         CreateRoomUseCase,
         UpdateRoomUseCase,
-        DeleteRoomUseCase {
+        DeleteRoomUseCase,
+        UpdateRoomOperationPolicyUseCase {
     private final RoomReader reader;
     private final RoomStore store;
+
+    private final RoomOperationPolicyProvisioner policyProvisioner;
+    private final RoomOperationPolicyFactory policyFactory;
     private final Clock clock;
 
     @Override
     public RoomResult create(CreateRoomCommand command) {
         ensureRoomNotExists(command.roomId());
 
-        var room = Room.of(command.roomId(), clock.instant());
+        var operationPolicy = policyProvisioner.provide();
+        var room = Room.of(command.roomId(), operationPolicy, clock.instant());
         store.save(room);
 
         return RoomResult.from(room);
@@ -66,5 +77,20 @@ public class RoomCommandService implements
     private void ensureRoomNotExists(String roomId) {
         var exists = reader.existsByRoomId(roomId);
         if (exists) throw new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_ALREADY_EXISTS);
+    }
+
+    @Override
+    @Transactional
+    public RoomOperationPolicyResult update(UpdateRoomOperationPolicyCommand command) {
+        var room = reader.findByRoomId(command.roomId())
+                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_NOT_FOUND));
+
+        var operationPolicy = policyFactory.create(RoomOperationPolicyFactoryCommand.from(command));
+
+        room.updateOperationPolicy(operationPolicy);
+
+        store.save(room);
+
+        return RoomOperationPolicyResult.from(operationPolicy);
     }
 }

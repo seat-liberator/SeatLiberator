@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.application.shared.seed;
 
+import com.seatliberator.seatliberator.reservation.application.room.internal.RoomOperationPolicyProvisioner;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomStore;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.domain.room.Room;
@@ -23,6 +24,7 @@ public class RoomSeeder {
 
     private final RoomStore roomStore;
     private final SeatStore seatStore;
+    private final RoomOperationPolicyProvisioner operationPolicyProvisioner;
     private final Clock clock;
 
     public void seed() {
@@ -35,9 +37,10 @@ public class RoomSeeder {
 
     private List<Room> seedRoom() {
         var result = new ArrayList<Room>();
+        var operationPolicy = operationPolicyProvisioner.provide();
         for (int i = 0; i < roomNumber; i++) {
             var roomId = String.format("%s-%s", roomIdPrefix, i);
-            var room = Room.of(roomId, clock.instant());
+            var room = Room.of(roomId, operationPolicy, clock.instant());
             roomStore.save(room);
             result.add(room);
         }

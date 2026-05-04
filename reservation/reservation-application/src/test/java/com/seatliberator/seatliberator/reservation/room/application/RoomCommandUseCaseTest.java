@@ -1,17 +1,26 @@
 package com.seatliberator.seatliberator.reservation.room.application;
 
+import com.seatliberator.seatliberator.reservation.application.room.internal.RoomOperationPolicyFactory;
+import com.seatliberator.seatliberator.reservation.application.room.internal.RoomOperationPolicyFactoryCommand;
+import com.seatliberator.seatliberator.reservation.application.room.internal.RoomOperationPolicyProvisioner;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.CreateRoomUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.DeleteRoomUseCase;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.UpdateRoomOperationPolicyUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.UpdateRoomUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.CreateRoomCommand;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.DeleteRoomCommand;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.UpdateRoomCommand;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.command.UpdateRoomOperationPolicyCommand;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.result.RoomOperationPolicyResult;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomReader;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomStore;
 import com.seatliberator.seatliberator.reservation.application.room.service.RoomCommandService;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.domain.room.Room;
+import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
+import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicyFixture;
+import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,7 +31,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalTime;
 import java.util.Optional;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
@@ -40,6 +51,12 @@ public class RoomCommandUseCaseTest {
     @Mock
     RoomStore store;
 
+    @Mock
+    RoomOperationPolicyProvisioner policyProvisioner;
+
+    @Mock
+    RoomOperationPolicyFactory policyFactory;
+
     Clock clock = fixedClock;
 
     Instant now = clock.instant();
@@ -51,7 +68,7 @@ public class RoomCommandUseCaseTest {
 
         @BeforeEach
         void run() {
-            useCase = new RoomCommandService(reader, store, clock);
+            useCase = new RoomCommandService(reader, store, policyProvisioner, policyFactory, clock);
         }
 
         @Test
@@ -61,6 +78,7 @@ public class RoomCommandUseCaseTest {
             var command = new CreateRoomCommand(roomId);
 
             when(reader.existsByRoomId(roomId)).thenReturn(false);
+            when(policyProvisioner.provide()).thenReturn(RoomOperationPolicyFixture.get());
 
             useCase.create(command);
 
@@ -92,7 +110,7 @@ public class RoomCommandUseCaseTest {
 
         @BeforeEach
         void run() {
-            useCase = new RoomCommandService(reader, store, clock);
+            useCase = new RoomCommandService(reader, store, policyProvisioner, policyFactory, clock);
         }
 
         @Test
@@ -102,7 +120,7 @@ public class RoomCommandUseCaseTest {
             var newRoomId = "new-room-1";
             var command = new UpdateRoomCommand(oldRoomId, newRoomId);
 
-            var oldRoom = Room.of(oldRoomId, now);
+            var oldRoom = new RoomFixture.Builder().roomId(oldRoomId).createdAt(now).build();
             when(reader.findByRoomId(oldRoomId)).thenReturn(Optional.of(oldRoom));
 
             var result = useCase.update(command);
@@ -123,7 +141,7 @@ public class RoomCommandUseCaseTest {
             var oldRoomId = "old-room-1";
             var command = new UpdateRoomCommand(oldRoomId, oldRoomId);
 
-            var oldRoom = Room.of(oldRoomId, now);
+            var oldRoom = new RoomFixture.Builder().roomId(oldRoomId).createdAt(now).build();
             when(reader.findByRoomId(oldRoomId)).thenReturn(Optional.of(oldRoom));
 
             var result = useCase.update(command);
@@ -160,7 +178,7 @@ public class RoomCommandUseCaseTest {
 
         @BeforeEach
         void run() {
-            useCase = new RoomCommandService(reader, store, clock);
+            useCase = new RoomCommandService(reader, store, policyProvisioner, policyFactory, clock);
         }
 
         @Test
@@ -192,6 +210,59 @@ public class RoomCommandUseCaseTest {
 
             verify(reader).existsByRoomId(roomId);
             verify(store).deleteByRoomId(roomId);
+        }
+    }
+
+    @Nested
+    @DisplayName("UpdateRoomOperationPolicyUseCase 테스트")
+    class UpdateRoomOperationPolicyUseCaseTest {
+        UpdateRoomOperationPolicyUseCase useCase;
+
+        @BeforeEach
+        void run() {
+            useCase = new RoomCommandService(reader, store, policyProvisioner, policyFactory, clock);
+        }
+
+        @Test
+        @DisplayName("방 운영 정책 변경 시 해당하는 roomId 없으면 예외")
+        void throw_exception_when_roomId_not_found() {
+            var roomId = "study-room-1";
+            var command = new UpdateRoomOperationPolicyCommand(roomId, 4, Duration.ofHours(2), RoomOperationStatus.CLOSE, LocalTime.of(8, 0), LocalTime.of(10, 0));
+
+            when(reader.findByRoomId(roomId)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> useCase.update(command))
+                    .isInstanceOf(ReservationApplicationException.class)
+                    .extracting("errorCode")
+                    .isEqualTo(ReservationApplicationErrorCode.ROOM_NOT_FOUND);
+
+            verify(reader).findByRoomId(roomId);
+            verify(policyFactory, never()).create(any());
+            verify(store, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("roomId에 해당하는 방의 운영 정책을 새로운 운영 정책으로 바꾼다.")
+        void update_operation_policy() {
+            var roomId = "study-room-1";
+            var command = new UpdateRoomOperationPolicyCommand(roomId, 4, Duration.ofHours(2), RoomOperationStatus.CLOSE, LocalTime.of(8, 0), LocalTime.of(10, 0));
+
+            var room = RoomFixture.get();
+            var operationPolicy = RoomOperationPolicyFixture.get();
+            when(reader.findByRoomId(roomId)).thenReturn(Optional.of(room));
+            when(policyFactory.create(RoomOperationPolicyFactoryCommand.from(command))).thenReturn(operationPolicy);
+
+            var result = useCase.update(command);
+
+            var roomCaptor = ArgumentCaptor.forClass(Room.class);
+            verify(reader).findByRoomId(roomId);
+            verify(policyFactory).create(RoomOperationPolicyFactoryCommand.from(command));
+            verify(store).save(roomCaptor.capture());
+
+            var saved = roomCaptor.getValue();
+            assertThat(saved).isSameAs(room);
+            assertThat(saved.getOperationPolicy()).isSameAs(operationPolicy);
+            assertThat(result).isEqualTo(RoomOperationPolicyResult.from(operationPolicy));
         }
     }
 }
