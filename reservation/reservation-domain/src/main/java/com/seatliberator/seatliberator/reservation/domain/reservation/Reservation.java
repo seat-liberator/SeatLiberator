@@ -1,11 +1,14 @@
 package com.seatliberator.seatliberator.reservation.domain.reservation;
 
+import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 import com.seatliberator.seatliberator.reservation.domain.reservation.event.DomainEvent;
 import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationCanceled;
 import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationCreated;
 import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationExpired;
 import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableSeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -66,6 +69,17 @@ public class Reservation {
         var range = EmbeddableTimeRange.from(startAt, endAt);
         var reservation = new Reservation(userId, locator, range, status);
 
+        reservation.registerCreatedEvent();
+        return reservation;
+    }
+
+    public static Reservation of(String userId, SeatLocator locator, TimeRange range, ReservationStatus status) {
+        var reservation = new Reservation(
+                userId,
+                EmbeddableSeatLocator.of(Preconditions.requireNonNull(locator, "locator")),
+                EmbeddableTimeRange.of(Preconditions.requireNonNull(range, "range")),
+                status
+        );
         reservation.registerCreatedEvent();
         return reservation;
     }

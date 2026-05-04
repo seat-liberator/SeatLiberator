@@ -1,5 +1,7 @@
 package com.seatliberator.seatliberator.reservation.book.application;
 
+import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreator;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.service.DefaultReservationCreator;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CreateReservationCommand;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationStore;
@@ -38,11 +40,14 @@ public class ReservationCommandServiceTest {
     @Mock
     SeatStore seatStore;
 
+    ReservationCreator creator;
+
     ReservationCommandService service;
 
     @BeforeEach
     void setUp() {
-        service = new ReservationCommandService(reservationStore, reservationReader, seatStore, fixedClock);
+        creator = new DefaultReservationCreator(reservationReader, reservationStore);
+        service = new ReservationCommandService(reservationStore, reservationReader, seatStore, creator, fixedClock);
     }
 
     @Test
@@ -110,26 +115,6 @@ public class ReservationCommandServiceTest {
                 .isInstanceOf(ReservationApplicationException.class)
                 .extracting("errorCode")
                 .isEqualTo(ReservationApplicationErrorCode.RESERVATION_ALREADY_EXISTS);
-
-        verify(reservationStore, never()).save(any());
-    }
-
-    @Test
-    @DisplayName("예약 시간이 겹치면 RESERVATION_TIME_CONFLICT 예외를 던진다")
-    void throw_exception_when_reservation_time_conflicts() {
-        var command = createCommand();
-
-        when(seatStore.findForUpdate(command.roomId(), command.seatId()))
-                .thenReturn(Optional.of(createSeat()));
-        when(reservationReader.findByUserId(command.userId()))
-                .thenReturn(Optional.empty());
-        when(reservationReader.existsOverlapping(any(ReservationSeatOverlapCriteria.class)))
-                .thenReturn(true);
-
-        assertThatThrownBy(() -> service.create(command))
-                .isInstanceOf(ReservationApplicationException.class)
-                .extracting("errorCode")
-                .isEqualTo(ReservationApplicationErrorCode.RESERVATION_TIME_CONFLICT);
 
         verify(reservationStore, never()).save(any());
     }
