@@ -13,6 +13,10 @@ public class ActorFixture {
             CapabilityFixture.createCapability("capability-3")
     );
 
+    public static Actor get() {
+        return new SimpleActor(INITIAL_SUBJECT, INITIAL_CAPABILITIES);
+    }
+
     public static class Builder {
         private String subject = INITIAL_SUBJECT;
         private Set<Capability> capabilities = INITIAL_CAPABILITIES;

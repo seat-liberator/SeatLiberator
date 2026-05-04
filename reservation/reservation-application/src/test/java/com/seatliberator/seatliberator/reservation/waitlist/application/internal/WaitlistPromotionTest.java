@@ -1,10 +1,11 @@
 package com.seatliberator.seatliberator.reservation.waitlist.application.internal;
 
-import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationPolicyChecker;
-import com.seatliberator.seatliberator.reservation.application.booking.contract.result.ReservationPolicyCheckResult;
-import com.seatliberator.seatliberator.reservation.application.booking.contract.result.ReservationRejectReason;
-import com.seatliberator.seatliberator.reservation.application.booking.port.in.CreateReservationUseCase;
-import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CreateReservationCommand;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreatePolicy;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreator;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.command.ReservationCreatePolicyCommand;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.command.ReservationCreatorCommand;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.result.ReservationPolicyReason;
+import com.seatliberator.seatliberator.reservation.application.shared.policy.SimplePolicyResult;
 import com.seatliberator.seatliberator.reservation.application.waitlist.internal.WaitlistPromotion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,16 +25,16 @@ import static org.mockito.Mockito.*;
 class WaitlistPromotionTest {
 
     @Mock
-    ReservationPolicyChecker policyChecker;
+    ReservationCreatePolicy createPolicy;
 
     @Mock
-    CreateReservationUseCase createReservationUseCase;
+    ReservationCreator creator;
 
     WaitlistPromotion promotion;
 
     @BeforeEach
     void setUp() {
-        promotion = new WaitlistPromotion(policyChecker, createReservationUseCase);
+        promotion = new WaitlistPromotion(createPolicy, creator);
     }
 
     @Test
@@ -42,14 +43,14 @@ class WaitlistPromotionTest {
         var userId = "user-1";
         var locator = createLocator();
         var range = createRange();
-        when(policyChecker.check(userId, locator, range))
-                .thenReturn(ReservationPolicyCheckResult.reject(ReservationRejectReason.SEAT_ALREADY_TAKEN));
+        when(createPolicy.evaluate(ReservationCreatePolicyCommand.of(userId, locator, range)))
+                .thenReturn(SimplePolicyResult.reject(ReservationPolicyReason.SEAT_ALREADY_TAKEN));
 
         var result = promotion.promote(userId, locator, range);
 
         assertThat(result.succeed()).isFalse();
-        assertThat(result.failReason()).isEqualTo("이미 예약된 좌석");
-        verifyNoInteractions(createReservationUseCase);
+        assertThat(result.failReason()).isEqualTo(ReservationPolicyReason.SEAT_ALREADY_TAKEN.message());
+        verifyNoInteractions(creator);
     }
 
     @Test
@@ -58,16 +59,16 @@ class WaitlistPromotionTest {
         var userId = "user-1";
         var locator = createLocator();
         var range = createRange();
-        when(policyChecker.check(userId, locator, range))
-                .thenReturn(ReservationPolicyCheckResult.accept());
+        when(createPolicy.evaluate(ReservationCreatePolicyCommand.of(userId, locator, range)))
+                .thenReturn(SimplePolicyResult.accept(ReservationPolicyReason.RESERVATION_CREATABLE));
 
         var result = promotion.promote(userId, locator, range);
 
         assertThat(result.succeed()).isTrue();
 
-        var commandCaptor = ArgumentCaptor.forClass(CreateReservationCommand.class);
-        verify(createReservationUseCase).create(commandCaptor.capture());
-        assertThat(commandCaptor.getValue()).isEqualTo(CreateReservationCommand.of(userId, locator, range));
+        var commandCaptor = ArgumentCaptor.forClass(ReservationCreatorCommand.class);
+        verify(creator).create(commandCaptor.capture());
+        assertThat(commandCaptor.getValue()).isEqualTo(ReservationCreatorCommand.of(userId, locator, range));
     }
 
     @Test
@@ -76,11 +77,11 @@ class WaitlistPromotionTest {
         var userId = "user-1";
         var locator = createLocator();
         var range = createRange();
-        when(policyChecker.check(userId, locator, range))
-                .thenReturn(ReservationPolicyCheckResult.accept());
+        when(createPolicy.evaluate(ReservationCreatePolicyCommand.of(userId, locator, range)))
+                .thenReturn(SimplePolicyResult.accept(ReservationPolicyReason.RESERVATION_CREATABLE));
         doThrow(new IllegalStateException("boom"))
-                .when(createReservationUseCase)
-                .create(CreateReservationCommand.of(userId, locator, range));
+                .when(creator)
+                .create(ReservationCreatorCommand.of(userId, locator, range));
 
         var result = promotion.promote(userId, locator, range);
 

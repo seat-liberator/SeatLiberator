@@ -1,5 +1,8 @@
 package com.seatliberator.seatliberator.reservation;
 
+import com.seatliberator.seatliberator.identity.core.actor.Actor;
+import com.seatliberator.seatliberator.identity.core.actor.ActorFixture;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.command.ReservationCreatePolicyCommand;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.command.ReservationCreatorCommand;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CreateReservationCommand;
 import com.seatliberator.seatliberator.reservation.domain.reservation.Reservation;
@@ -19,13 +22,18 @@ public class ReservationTestSupport {
     public static final String ROOM_ID = "room-1";
     public static final String SEAT_ID = "seat-1";
     public static final SeatLocator LOCATOR = SimpleSeatLocator.of(ROOM_ID, SEAT_ID);
+    public static final Actor ACTOR = ActorFixture.get();
 
     public static CreateReservationCommand createReservationCommand() {
-        return new CreateReservationCommand(USER_ID, LOCATOR, RANGE);
+        return CreateReservationCommand.of(USER_ID, LOCATOR, RANGE, ACTOR);
+    }
+
+    public static ReservationCreatePolicyCommand reservationCreatePolicyCommand() {
+        return ReservationCreatePolicyCommand.of(USER_ID, LOCATOR, RANGE);
     }
 
     public static ReservationCreatorCommand reservationCreatorCommand() {
-        return new ReservationCreatorCommand(USER_ID, LOCATOR, RANGE);
+        return ReservationCreatorCommand.of(USER_ID, LOCATOR, RANGE);
     }
 
     public static Reservation reservation() {

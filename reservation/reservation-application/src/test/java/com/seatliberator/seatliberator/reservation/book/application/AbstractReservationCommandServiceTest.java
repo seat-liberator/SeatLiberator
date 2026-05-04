@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.book.application;
 
+import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreateAuthorizedPolicy;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreatePolicy;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreator;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
@@ -25,6 +26,9 @@ public abstract class AbstractReservationCommandServiceTest {
     SeatStore seatStore;
 
     @Mock
+    ReservationCreateAuthorizedPolicy createAuthorizedPolicy;
+
+    @Mock
     ReservationCreatePolicy createPolicy;
 
     @Mock
@@ -34,6 +38,6 @@ public abstract class AbstractReservationCommandServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new ReservationCommandService(store, reader, seatStore, createPolicy, creator, fixedClock);
+        service = new ReservationCommandService(store, reader, seatStore, createAuthorizedPolicy, createPolicy, creator, fixedClock);
     }
 }
