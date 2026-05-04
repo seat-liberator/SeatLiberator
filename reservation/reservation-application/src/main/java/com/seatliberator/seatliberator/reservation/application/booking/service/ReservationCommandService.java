@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.application.booking.service;
 
+import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreatePolicy;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreator;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.command.ReservationCreatorCommand;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.CancelReservationUseCase;
@@ -36,6 +37,7 @@ public class ReservationCommandService implements
     private final ReservationReader reader;
     private final SeatStore seatStore;
 
+    private final ReservationCreatePolicy createPolicy;
     private final ReservationCreator creator;
 
     private final Clock clock;

@@ -17,6 +17,11 @@ public enum ReservationPolicyReason implements PolicyReason {
             "reservation.accepted.seat-available",
             "예약 가능한 좌석입니다."
     ),
+    RESERVATION_CREATABLE(
+            PolicyDecision.ACCEPTED,
+            "reservation.accepted.reservation-creatable",
+            "예약 생성이 가능합니다."
+    ),
     RESERVATION_OWNER(
             PolicyDecision.ACCEPTED,
             "reservation.accepted.reservation-owner",
@@ -42,6 +47,11 @@ public enum ReservationPolicyReason implements PolicyReason {
             PolicyDecision.REJECTED,
             "reservation.rejected.unauthorized-reservation-access",
             "해당 예약에 접근할 권한이 없습니다."
+    ),
+    UNAUTHORIZED_RESERVATION_CREATE(
+            PolicyDecision.REJECTED,
+            "reservation.rejected.unauthorized-reservation-create",
+            "예약을 생성할 권한이 없습니다."
     );
 
     private final PolicyDecision decision;
