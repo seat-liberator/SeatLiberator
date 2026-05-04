@@ -21,7 +21,7 @@ public class ReservationTestSupport {
     public static final SeatLocator LOCATOR = SimpleSeatLocator.of(ROOM_ID, SEAT_ID);
 
     public static CreateReservationCommand createReservationCommand() {
-        return new CreateReservationCommand(USER_ID, ROOM_ID, SEAT_ID, START_AT, END_AT);
+        return new CreateReservationCommand(USER_ID, LOCATOR, RANGE);
     }
 
     public static ReservationCreatorCommand reservationCreatorCommand() {

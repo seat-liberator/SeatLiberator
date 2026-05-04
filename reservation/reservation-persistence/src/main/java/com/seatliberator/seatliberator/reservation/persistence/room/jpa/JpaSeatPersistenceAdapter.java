@@ -42,6 +42,11 @@ public class JpaSeatPersistenceAdapter implements SeatStore, SeatReader {
     }
 
     @Override
+    public Optional<Seat> findForUpdate(SeatLocator locator) {
+        return repository.findForUpdate(locator.roomId(), locator.seatId());
+    }
+
+    @Override
     public List<Seat> findByRoomId(String roomId) {
         return repository.findByRoom_RoomId(roomId);
     }

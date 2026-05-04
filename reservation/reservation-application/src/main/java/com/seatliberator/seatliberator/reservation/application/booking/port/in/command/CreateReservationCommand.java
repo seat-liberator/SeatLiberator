@@ -3,22 +3,16 @@ package com.seatliberator.seatliberator.reservation.application.booking.port.in.
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 
-import java.time.Instant;
-
 public record CreateReservationCommand(
         String userId,
-        String roomId,
-        String seatId,
-        Instant startTime,
-        Instant endTime
+        SeatLocator locator,
+        TimeRange range
 ) {
     public static CreateReservationCommand of(String userId, SeatLocator locator, TimeRange range) {
         return new CreateReservationCommand(
                 userId,
-                locator.roomId(),
-                locator.seatId(),
-                range.startAt(),
-                range.endAt()
+                locator,
+                range
         );
     }
 }
