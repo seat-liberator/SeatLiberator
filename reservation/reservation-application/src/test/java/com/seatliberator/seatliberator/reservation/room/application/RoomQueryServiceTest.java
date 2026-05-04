@@ -7,6 +7,7 @@ import com.seatliberator.seatliberator.reservation.application.room.port.out.Roo
 import com.seatliberator.seatliberator.reservation.application.room.service.RoomQueryService;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
+import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static com.seatliberator.seatliberator.reservation.domain.room.RoomFixture.createRoom;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
@@ -43,7 +43,7 @@ public class RoomQueryServiceTest {
         @Test
         @DisplayName("전체 방 목록을 조회한다")
         void list_rooms() {
-            var room = createRoom();
+            var room = RoomFixture.get();
             when(reader.findAll()).thenReturn(List.of(room));
 
             var result = useCase.list();
@@ -71,7 +71,7 @@ public class RoomQueryServiceTest {
         @Test
         @DisplayName("roomId에 해당하는 방을 조회한다")
         void find_room() {
-            var room = createRoom();
+            var room = RoomFixture.get();
             var query = new FindRoomQuery(room.getRoomId());
             when(reader.findByRoomId(room.getRoomId())).thenReturn(Optional.of(room));
 

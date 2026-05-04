@@ -1,8 +1,6 @@
 package com.seatliberator.seatliberator.reservation.domain.room;
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
-import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableTimeRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,31 +24,26 @@ public class RoomOperationPolicy {
     private RoomOperationStatus operationStatus;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "startAt", column = @Column(name = "operation_start_at", nullable = false)),
-            @AttributeOverride(name = "endAt", column = @Column(name = "operation_end_at", nullable = false))
-    })
-    private EmbeddableTimeRange operationRange;
+    private OperationHours operationHours;
 
     private RoomOperationPolicy(
             Integer maxReservationPerUser,
             Duration maxReservationDuration,
             RoomOperationStatus operationStatus,
-            EmbeddableTimeRange operationRange
+            OperationHours operationHours
     ) {
         this.maxReservationDuration = Preconditions.requirePositive(maxReservationDuration, "maxReservationDuration");
         this.maxReservationPerUser = Preconditions.requirePositive(maxReservationPerUser, "maxReservationPerUser");
         this.operationStatus = Preconditions.requireNonNull(operationStatus, "operationStatus");
-        this.operationRange = Preconditions.requireNonNull(operationRange, "operationRange");
+        this.operationHours = Preconditions.requireNonNull(operationHours, "operationHours");
     }
 
-    public static RoomOperationPolicy of(Integer maxReservationPerUser, Duration maxReservationDuration, RoomOperationStatus operationStatus, TimeRange operationRange) {
-        Preconditions.requireNonNull(operationRange, "operationRange");
+    public static RoomOperationPolicy of(Integer maxReservationPerUser, Duration maxReservationDuration, RoomOperationStatus operationStatus, OperationHours operationHours) {
         return new RoomOperationPolicy(
                 maxReservationPerUser,
                 maxReservationDuration,
                 operationStatus,
-                EmbeddableTimeRange.of(operationRange)
+                operationHours
         );
     }
 
@@ -66,9 +59,7 @@ public class RoomOperationPolicy {
         this.operationStatus = Preconditions.requireNonNull(operationStatus, "operationStatus");
     }
 
-    public void updateOperationRange(TimeRange operationRange) {
-        this.operationRange = EmbeddableTimeRange.of(
-                Preconditions.requireNonNull(operationRange, "operationRange")
-        );
+    public void updateOperationHours(OperationHours operationHours) {
+        this.operationHours = Preconditions.requireNonNull(operationHours, "operationHours");
     }
 }

@@ -1,14 +1,14 @@
 package com.seatliberator.seatliberator.reservation.domain.seat;
 
 import com.seatliberator.seatliberator.reservation.domain.room.Room;
+import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
 
 import java.time.Instant;
 
-import static com.seatliberator.seatliberator.reservation.domain.room.RoomFixture.createRoom;
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
 
 public class SeatFixture {
-    public static final Room INITIAL_ROOM = createRoom();
+    public static final Room INITIAL_ROOM = RoomFixture.get();
     public static final String INITIAL_SEAT_ID = "seat-a";
     public static final SeatStatus INITIAL_STATUS = SeatStatus.ACTIVE;
     public static final Instant INITIAL_CREATED_AT = fixedClock.instant();

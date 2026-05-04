@@ -6,18 +6,20 @@ import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupp
 
 public class RoomFixture {
     public static final String INITIAL_ROOM_ID = "study-room-1";
+    public static final RoomOperationPolicy OPERATION_POLICY = RoomOperationPolicyFixture.get();
     private static final Instant INITIAL_CREATED_AT = fixedClock.instant();
 
-    public static Room createRoom() {
-        return Room.of(INITIAL_ROOM_ID, INITIAL_CREATED_AT);
+    public static Room get() {
+        return Room.of(INITIAL_ROOM_ID, OPERATION_POLICY, INITIAL_CREATED_AT);
     }
 
-    public static Room createRoom(String roomId, Instant createdAt) {
-        return Room.of(roomId, createdAt);
+    public static Room get(String roomId, RoomOperationPolicy operationPolicy, Instant createdAt) {
+        return Room.of(roomId, operationPolicy, createdAt);
     }
 
     public static class Builder {
         private String roomId = INITIAL_ROOM_ID;
+        private RoomOperationPolicy operationPolicy = OPERATION_POLICY;
         private Instant createdAt = INITIAL_CREATED_AT;
 
         public Builder() {
@@ -41,13 +43,18 @@ public class RoomFixture {
             return this;
         }
 
+        public Builder operationPolicy(RoomOperationPolicy operationPolicy) {
+            this.operationPolicy = operationPolicy;
+            return this;
+        }
+
         public Builder createdAt(Instant createdAt) {
             this.createdAt = createdAt;
             return this;
         }
 
         public Room build() {
-            return Room.of(roomId, createdAt);
+            return Room.of(roomId, operationPolicy, createdAt);
         }
     }
 }

@@ -9,6 +9,7 @@ import com.seatliberator.seatliberator.reservation.application.room.port.out.Sea
 import com.seatliberator.seatliberator.reservation.application.room.service.SeatQueryService;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
+import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +23,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static com.seatliberator.seatliberator.reservation.domain.room.RoomFixture.createRoom;
 import static com.seatliberator.seatliberator.reservation.domain.seat.SeatFixture.create;
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,7 +52,7 @@ public class SeatQueryServiceTest {
         @Test
         @DisplayName("roomId에 해당하는 좌석 목록을 조회한다")
         void list_seats() {
-            var room = createRoom();
+            var room = RoomFixture.get();
             var seat = create(room, "seat-a", fixedClock.instant());
             var query = new ListSeatQuery(room.getRoomId());
 
@@ -101,7 +101,7 @@ public class SeatQueryServiceTest {
         @Test
         @DisplayName("roomId와 seatId에 해당하는 좌석을 조회한다")
         void find_seat() {
-            var room = createRoom();
+            var room = RoomFixture.get();
             var seat = create(room, "seat-a", fixedClock.instant());
             var query = new FindSeatQuery(room.getRoomId(), seat.getSeatId());
 
@@ -140,7 +140,7 @@ public class SeatQueryServiceTest {
         @Test
         @DisplayName("seatId에 해당하는 좌석이 없으면 SEAT_NOT_FOUND 예외")
         void throw_exception_when_seat_not_found() {
-            var room = createRoom();
+            var room = RoomFixture.get();
             var query = new FindSeatQuery(room.getRoomId(), "missing-seat");
 
             when(roomReader.existsByRoomId(room.getRoomId())).thenReturn(true);

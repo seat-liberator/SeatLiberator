@@ -17,7 +17,6 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static com.seatliberator.seatliberator.kernel.test.assertion.DomainAssertions.assertThatDomainThrownBy;
-import static com.seatliberator.seatliberator.reservation.domain.room.RoomFixture.createRoom;
 import static com.seatliberator.seatliberator.reservation.domain.seat.SeatFixture.*;
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,19 +32,8 @@ public class SeatTest {
     @Nested
     @DisplayName("생성 테스트")
     class CreationTest {
-        @Test
-        @DisplayName("room과 seatId를 넘겨서 Seat 생성 가능")
-        void create_with_roomId_and_seatId() {
-            var room = createRoom();
-            var seatId = "seat-A";
-            var seat = Seat.of(room, seatId, now);
-
-            assertThat(seat.getSeatId()).isEqualTo(seatId);
-            assertThat(seat.getCreatedAt()).isEqualTo(now);
-        }
-
         static Stream<Arguments> nullArgumentCases() {
-            var room = createRoom();
+            var room = RoomFixture.get();
             var seatId = INITIAL_SEAT_ID;
             var now = INITIAL_CREATED_AT;
 
@@ -54,6 +42,17 @@ public class SeatTest {
                     arguments("seatId = null", (Supplier<Seat>) () -> Seat.of(room, null, now), "seatId"),
                     arguments("createdAt = null", (Supplier<Seat>) () -> Seat.of(room, seatId, null), "createdAt")
             );
+        }
+
+        @Test
+        @DisplayName("room과 seatId를 넘겨서 Seat 생성 가능")
+        void create_with_roomId_and_seatId() {
+            var room = RoomFixture.get();
+            var seatId = "seat-A";
+            var seat = Seat.of(room, seatId, now);
+
+            assertThat(seat.getSeatId()).isEqualTo(seatId);
+            assertThat(seat.getCreatedAt()).isEqualTo(now);
         }
 
         @ParameterizedTest(name = "{0}")
@@ -71,7 +70,7 @@ public class SeatTest {
         @Test
         @DisplayName("초기 상태를 전달하지 않으면 ACTIVE로 초기화되고 lastActivatedAt은 createdAt과 같다")
         void active_when_created() {
-            var room = createRoom();
+            var room = RoomFixture.get();
             var seatId = "seat-A";
             var seat = Seat.of(room, seatId, now);
 
@@ -82,7 +81,7 @@ public class SeatTest {
         @Test
         @DisplayName("INACTIVE 상태로 생성하면 lastInactivatedAt은 createdAt과 같다")
         void inactive_when_created() {
-            var room = createRoom();
+            var room = RoomFixture.get();
             var seatId = "seat-A";
             var seat = Seat.of(room, seatId, SeatStatus.INACTIVE, now);
 
@@ -94,7 +93,7 @@ public class SeatTest {
         @ValueSource(strings = {" ", "  ", "\t", "\n"})
         @DisplayName("seatId가 공백이면 예외")
         void throw_exception_when_empty_seatId(String seatId) {
-            var room = createRoom();
+            var room = RoomFixture.get();
 
             assertThatDomainThrownBy(() -> Seat.of(room, seatId, now))
                     .hasNonBlankMessageFor("seatId");
@@ -107,7 +106,7 @@ public class SeatTest {
         @Test
         @DisplayName("새로운 seatId로 변경 가능")
         void update_with_new_seatId() {
-            var room = createRoom();
+            var room = RoomFixture.get();
             var seatId = "seat-A";
             var seat = Seat.of(room, seatId, now);
 
