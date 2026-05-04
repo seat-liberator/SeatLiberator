@@ -2,8 +2,8 @@ package com.seatliberator.seatliberator.reservation.infrastructure.web.book.cont
 
 import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.CreateReservationUseCase;
-import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CreateReservationCommand;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.result.ReservationResult;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.infrastructure.web.book.request.ReservationCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,17 +38,10 @@ public class CreateReservationController {
             @PathVariable("seatId") String seatId,
             @RequestBody ReservationCreateRequest request
     ) {
-        var userId = actorContextHolder.getActor().subject();
-
-        var command = new CreateReservationCommand(
-                userId,
-                roomId,
-                seatId,
-                request.startAt(),
-                request.endAt()
-        );
-        var result = createReservationUseCase.create(command);
-
+        var actor = actorContextHolder.getActor();
+        var userId = actor.subject();
+        var locator = SimpleSeatLocator.of(roomId, seatId);
+        var result = createReservationUseCase.create(request.toCommand(userId, locator, actor));
         return ResponseEntity.ok(result);
     }
 }
