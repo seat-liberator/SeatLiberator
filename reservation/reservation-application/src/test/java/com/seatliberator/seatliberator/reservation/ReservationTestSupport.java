@@ -1,6 +1,7 @@
 package com.seatliberator.seatliberator.reservation;
 
 import com.seatliberator.seatliberator.reservation.application.booking.contract.command.ReservationCreatorCommand;
+import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CreateReservationCommand;
 import com.seatliberator.seatliberator.reservation.domain.reservation.Reservation;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationFixture;
 import com.seatliberator.seatliberator.reservation.domain.shared.*;
@@ -18,6 +19,10 @@ public class ReservationTestSupport {
     public static final String ROOM_ID = "room-1";
     public static final String SEAT_ID = "seat-1";
     public static final SeatLocator LOCATOR = SimpleSeatLocator.of(ROOM_ID, SEAT_ID);
+
+    public static CreateReservationCommand createReservationCommand() {
+        return new CreateReservationCommand(USER_ID, ROOM_ID, SEAT_ID, START_AT, END_AT);
+    }
 
     public static ReservationCreatorCommand reservationCreatorCommand() {
         return new ReservationCreatorCommand(USER_ID, LOCATOR, RANGE);
