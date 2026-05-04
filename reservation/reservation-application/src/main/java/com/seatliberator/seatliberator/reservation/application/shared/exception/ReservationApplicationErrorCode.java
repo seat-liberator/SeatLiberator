@@ -25,7 +25,9 @@ public enum ReservationApplicationErrorCode implements ErrorCode {
     UNAUTHORIZED_CANCELLATION("RS202", "대기열 요청을 취소할 권한이 없습니다."),
 
     ROOM_ALREADY_EXISTS("RS301", "방이 이미 존재합니다."),
-    ROOM_NOT_FOUND("RS302", "방이 존재하지 않습니다.");
+    ROOM_NOT_FOUND("RS302", "방이 존재하지 않습니다."),
+
+    RESERVATION_POLICY_REJECTED("RS401", "예약 정책 거절");
 
     private final String code;
     private final String message;

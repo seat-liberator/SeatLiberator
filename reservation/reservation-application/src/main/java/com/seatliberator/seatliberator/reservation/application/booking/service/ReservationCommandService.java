@@ -3,6 +3,7 @@ package com.seatliberator.seatliberator.reservation.application.booking.service;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreateAuthorizedPolicy;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreatePolicy;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreator;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.command.ReservationCreatePolicyCommand;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.command.ReservationCreatorCommand;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.CancelReservationUseCase;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.CreateReservationUseCase;
@@ -18,6 +19,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.out.
 import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
+import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationPolicyException;
 import com.seatliberator.seatliberator.reservation.domain.reservation.Reservation;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
@@ -38,6 +40,7 @@ public class ReservationCommandService implements
     private final ReservationReader reader;
     private final SeatStore seatStore;
 
+    private final ReservationCreateAuthorizedPolicy createAuthorizedPolicy;
     private final ReservationCreatePolicy createPolicy;
     private final ReservationCreator creator;
 
@@ -52,6 +55,15 @@ public class ReservationCommandService implements
         reader.findByUserId(command.userId()).ifPresent(e -> {
             throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_ALREADY_EXISTS);
         });
+
+        var authorizedPolicyResult = createAuthorizedPolicy.evaluate(command.requester());
+        if (authorizedPolicyResult.rejected())
+            throw new ReservationApplicationPolicyException(authorizedPolicyResult.reason());
+
+        var createPolicyResult = createPolicy.evaluate(ReservationCreatePolicyCommand.from(command));
+        if (createPolicyResult.rejected())
+            throw new ReservationApplicationPolicyException(createPolicyResult.reason());
+
         var created = creator.create(ReservationCreatorCommand.from(command));
 
         return ReservationResult.of(created);
