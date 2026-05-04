@@ -24,20 +24,29 @@ public class Room {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
+    @Embedded
+    private RoomOperationPolicy operationPolicy;
+
     private Room(
             String roomId,
+            RoomOperationPolicy operationPolicy,
             Instant createdAt
     ) {
         this.roomId = Preconditions.requireNonBlank(roomId, "roomId");
+        this.operationPolicy = Preconditions.requireNonNull(operationPolicy, "operationPolicy");
         this.createdAt = Preconditions.requireNonNull(createdAt, "createdAt");
     }
 
-    public static Room of(String roomId, Instant createdAt) {
-        return new Room(roomId, createdAt);
+    public static Room of(String roomId, RoomOperationPolicy operationPolicy, Instant createdAt) {
+        return new Room(roomId, operationPolicy, createdAt);
     }
 
     public void updateRoomId(String roomId) {
         Preconditions.requireNonBlank(roomId, "roomId");
         this.roomId = roomId;
+    }
+
+    public void updateOperationPolicy(RoomOperationPolicy operationPolicy) {
+        this.operationPolicy = Preconditions.requireNonNull(operationPolicy, "operationPolicy");
     }
 }
