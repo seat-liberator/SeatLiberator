@@ -13,5 +13,7 @@ public interface SeatStore {
 
     Optional<Seat> findForUpdate(String roomId, String seatId);
 
+    Optional<Seat> findForUpdate(SeatLocator locator);
+
     void deleteByLocator(SeatLocator locator);
 }

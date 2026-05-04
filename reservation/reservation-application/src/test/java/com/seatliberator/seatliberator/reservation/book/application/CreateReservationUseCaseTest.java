@@ -25,7 +25,7 @@ public class CreateReservationUseCaseTest extends AbstractReservationCommandServ
         var command = createReservationCommand();
         var created = reservation();
 
-        when(seatStore.findForUpdate(command.roomId(), command.seatId()))
+        when(seatStore.findForUpdate(command.locator()))
                 .thenReturn(Optional.of(createSeat()));
         when(reader.findByUserId(command.userId()))
                 .thenReturn(Optional.empty());
@@ -34,7 +34,7 @@ public class CreateReservationUseCaseTest extends AbstractReservationCommandServ
 
         service.create(command);
 
-        verify(seatStore).findForUpdate(command.roomId(), command.seatId());
+        verify(seatStore).findForUpdate(command.locator());
         verify(reader).findByUserId(command.userId());
         verify(creator).create(ReservationCreatorCommand.from(command));
     }
@@ -44,7 +44,7 @@ public class CreateReservationUseCaseTest extends AbstractReservationCommandServ
     void throw_exception_when_seat_not_found() {
         var command = createReservationCommand();
 
-        when(seatStore.findForUpdate(command.roomId(), command.seatId()))
+        when(seatStore.findForUpdate(command.locator()))
                 .thenReturn(Optional.empty());
 
         assertThatApplicationThrownBy(() -> service.create(command))
@@ -60,7 +60,7 @@ public class CreateReservationUseCaseTest extends AbstractReservationCommandServ
         var command = createReservationCommand();
         var existing = reservation();
 
-        when(seatStore.findForUpdate(command.roomId(), command.seatId()))
+        when(seatStore.findForUpdate(command.locator()))
                 .thenReturn(Optional.of(createSeat()));
         when(reader.findByUserId(command.userId()))
                 .thenReturn(Optional.of(existing));

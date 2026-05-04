@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.application.booking.service;
 
+import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreateAuthorizedPolicy;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreatePolicy;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreator;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.command.ReservationCreatorCommand;
@@ -45,13 +46,12 @@ public class ReservationCommandService implements
     @Override
     @Transactional
     public ReservationResult create(CreateReservationCommand command) {
-        seatStore.findForUpdate(command.roomId(), command.seatId())
+        seatStore.findForUpdate(command.locator())
                 .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND));
 
         reader.findByUserId(command.userId()).ifPresent(e -> {
             throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_ALREADY_EXISTS);
         });
-
         var created = creator.create(ReservationCreatorCommand.from(command));
 
         return ReservationResult.of(created);
