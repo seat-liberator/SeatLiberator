@@ -2,10 +2,13 @@ package com.seatliberator.seatliberator.reservation.infrastructure.web.room.cont
 
 import com.seatliberator.seatliberator.reservation.application.room.port.in.CreateRoomUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.DeleteRoomUseCase;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.UpdateRoomOperationPolicyUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.UpdateRoomUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.DeleteRoomCommand;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.result.RoomOperationPolicyResult;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.result.RoomResult;
 import com.seatliberator.seatliberator.reservation.infrastructure.web.room.request.CreateRoomRequest;
+import com.seatliberator.seatliberator.reservation.infrastructure.web.room.request.UpdateRoomOperationPolicyRequest;
 import com.seatliberator.seatliberator.reservation.infrastructure.web.room.request.UpdateRoomRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,6 +32,8 @@ public class RoomCommandController {
     private final CreateRoomUseCase createRoomUseCase;
     private final UpdateRoomUseCase updateRoomUseCase;
     private final DeleteRoomUseCase deleteRoomUseCase;
+
+    private final UpdateRoomOperationPolicyUseCase updateRoomOperationPolicyUseCase;
 
     @Operation(summary = "방 생성", description = "특정 Id의 방을 생성합니다.")
     @ApiResponses({
@@ -59,6 +64,23 @@ public class RoomCommandController {
     ) {
         var command = request.toCommand(roomId);
         var result = updateRoomUseCase.update(command);
+        return ResponseEntity.ok(result);
+    }
+
+    @Operation(summary = "방 운영 정책 변경", description = "특정 방의 운영 정책을 변경합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "변경 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "401", description = "권한 없음")
+    })
+    @PutMapping("/{roomId}/policy")
+    public ResponseEntity<RoomOperationPolicyResult> updateRoomOperationPolicy(
+            @Parameter(description = "변경할 방 ID", example = "study-room-1")
+            @PathVariable("roomId") String roomId,
+            @Valid @RequestBody UpdateRoomOperationPolicyRequest request
+    ) {
+        var command = request.toCommand(roomId);
+        var result = updateRoomOperationPolicyUseCase.update(command);
         return ResponseEntity.ok(result);
     }
 
