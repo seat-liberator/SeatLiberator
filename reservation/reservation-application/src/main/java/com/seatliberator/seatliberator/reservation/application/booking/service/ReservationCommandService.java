@@ -1,5 +1,7 @@
 package com.seatliberator.seatliberator.reservation.application.booking.service;
 
+import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreator;
+import com.seatliberator.seatliberator.reservation.application.booking.contract.command.ReservationCreatorCommand;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.CancelReservationUseCase;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.CreateReservationUseCase;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.UpdateReservationUseCase;
@@ -26,7 +28,6 @@ import java.time.Clock;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ReservationCommandService implements
         CreateReservationUseCase,
         UpdateReservationUseCase,
@@ -35,9 +36,12 @@ public class ReservationCommandService implements
     private final ReservationReader reader;
     private final SeatStore seatStore;
 
+    private final ReservationCreator creator;
+
     private final Clock clock;
 
     @Override
+    @Transactional
     public ReservationResult create(CreateReservationCommand command) {
         seatStore.findForUpdate(command.roomId(), command.seatId())
                 .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND));
@@ -46,27 +50,9 @@ public class ReservationCommandService implements
             throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_ALREADY_EXISTS);
         });
 
-        var locator = SimpleSeatLocator.of(command.roomId(), command.seatId());
-        var range = SimpleTimeRange.of(command.startTime(), command.endTime());
+        var created = creator.create(ReservationCreatorCommand.from(command));
 
-        var criteria = ReservationSeatOverlapCriteria.of(locator, range)
-                .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
-        var conflict = reader.existsOverlapping(criteria);
-
-        if (conflict)
-            throw new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_TIME_CONFLICT);
-
-        var reservation = Reservation.create(
-                command.userId(),
-                command.roomId(),
-                command.seatId(),
-                command.startTime(),
-                command.endTime()
-        );
-
-        var saved = reservationStore.save(reservation);
-
-        return ReservationResult.of(saved);
+        return ReservationResult.of(created);
     }
 
     @Transactional
