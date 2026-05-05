@@ -10,8 +10,8 @@ public record RoomOperationPolicyResult(
         Integer maxReservationPerUser,
         Duration maxReservationDuration,
         RoomOperationStatus operationStatus,
-        LocalTime operationOpenAt,
-        LocalTime operationCloset
+        LocalTime openAt,
+        LocalTime closeAt
 ) {
     public static RoomOperationPolicyResult from(RoomOperationPolicy operationPolicy) {
         return new RoomOperationPolicyResult(
