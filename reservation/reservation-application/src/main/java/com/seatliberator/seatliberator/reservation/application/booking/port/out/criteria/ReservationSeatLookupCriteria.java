@@ -1,15 +1,15 @@
 package com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria;
 
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 
 import java.util.Objects;
 
 public record ReservationSeatLookupCriteria(
         SimpleSeatLocator locator,
-        SimpleTimeRange range,
+        SimpleInstantRange range,
         ReservationFilter filter
 ) {
     public ReservationSeatLookupCriteria {
@@ -20,11 +20,11 @@ public record ReservationSeatLookupCriteria(
 
     public static ReservationSeatLookupCriteria of(
             SeatLocator locator,
-            TimeRange range
+            InstantRange range
     ) {
         return new ReservationSeatLookupCriteria(
                 SimpleSeatLocator.from(locator),
-                SimpleTimeRange.from(range),
+                SimpleInstantRange.from(range),
                 ReservationFilter.empty()
         );
     }

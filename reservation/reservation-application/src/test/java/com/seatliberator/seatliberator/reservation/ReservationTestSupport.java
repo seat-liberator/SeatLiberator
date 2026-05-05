@@ -17,7 +17,7 @@ public class ReservationTestSupport {
     public static final Instant NOW = CLOCK.instant();
     public static final Instant START_AT = NOW;
     public static final Instant END_AT = NOW.plusSeconds(60);
-    public static final TimeRange RANGE = SimpleTimeRange.of(START_AT, END_AT);
+    public static final InstantRange RANGE = SimpleInstantRange.of(START_AT, END_AT);
     public static final String USER_ID = "user-1";
     public static final String ROOM_ID = "room-1";
     public static final String SEAT_ID = "seat-1";

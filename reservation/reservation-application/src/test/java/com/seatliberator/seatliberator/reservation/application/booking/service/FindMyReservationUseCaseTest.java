@@ -6,7 +6,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.in.r
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationRangeOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,7 +54,7 @@ public class FindMyReservationUseCaseTest {
 
         var actual = captor.getValue();
 
-        assertThat(actual.range()).isEqualTo(SimpleTimeRange.from(range));
+        assertThat(actual.range()).isEqualTo(SimpleInstantRange.from(range));
         assertThat(actual.filter().userIds()).containsExactlyInAnyOrder("user-1");
         assertThat(actual.filter().statuses()).containsExactly(ReservationStatus.RESERVED);
         assertThat(actual.filter().excludedIds()).isEmpty();

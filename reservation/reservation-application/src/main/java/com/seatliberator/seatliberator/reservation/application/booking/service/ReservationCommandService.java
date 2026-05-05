@@ -22,8 +22,8 @@ import com.seatliberator.seatliberator.reservation.application.shared.exception.
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationPolicyException;
 import com.seatliberator.seatliberator.reservation.domain.reservation.Reservation;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,7 +83,7 @@ public class ReservationCommandService implements
         );
 
         var currentLocator = SimpleSeatLocator.of(command.roomId(), command.seatId());
-        var currentRange = SimpleTimeRange.of(command.startTime(), command.endTime());
+        var currentRange = SimpleInstantRange.of(command.startTime(), command.endTime());
 
         var criteria = ReservationSeatOverlapCriteria.of(currentLocator, currentRange)
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED, ReservationStatus.USED));

@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.domain.waitlist;
 
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 
 import java.time.Instant;
 
@@ -15,7 +15,7 @@ public class WaitlistFixtureBuilder {
 
     private SeatLocator locator = createLocator();
 
-    private TimeRange range = createRange();
+    private InstantRange range = createRange();
 
     private Instant requestedAt = fixedClock.instant();
 
@@ -27,7 +27,7 @@ public class WaitlistFixtureBuilder {
     public WaitlistFixtureBuilder(
             String userId,
             SeatLocator locator,
-            TimeRange range,
+            InstantRange range,
             Instant requestedAt,
             WaitlistBehavior behavior
     ) {
@@ -52,7 +52,7 @@ public class WaitlistFixtureBuilder {
         return this;
     }
 
-    public WaitlistFixtureBuilder range(TimeRange range) {
+    public WaitlistFixtureBuilder range(InstantRange range) {
         this.range = range;
         return this;
     }

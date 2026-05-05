@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.reservation.domain.reservation;
 
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -49,13 +49,13 @@ public class ReservationFixture {
     public static class Builder {
         private String userId = INITIAL_USER_ID;
         private SeatLocator locator = createLocator();
-        private TimeRange range = createRange();
+        private InstantRange range = createRange();
         private ReservationStatus status = ReservationStatus.RESERVED;
 
         public Builder() {
         }
 
-        public Builder(String userId, SeatLocator locator, TimeRange range, ReservationStatus status) {
+        public Builder(String userId, SeatLocator locator, InstantRange range, ReservationStatus status) {
             this.userId = userId;
             this.locator = locator;
             this.range = range;
@@ -66,7 +66,7 @@ public class ReservationFixture {
             return new Builder(
                     other.userId,
                     SimpleSeatLocator.from(other.locator),
-                    SimpleTimeRange.from(other.range),
+                    SimpleInstantRange.from(other.range),
                     other.status
             );
         }
@@ -96,17 +96,17 @@ public class ReservationFixture {
         }
 
         public Builder startAt(Instant startAt) {
-            this.range = SimpleTimeRange.of(startAt, range.endAt());
+            this.range = SimpleInstantRange.of(startAt, range.endAt());
             return this;
         }
 
         public Builder endAt(Instant endAt) {
-            this.range = SimpleTimeRange.of(range.startAt(), endAt);
+            this.range = SimpleInstantRange.of(range.startAt(), endAt);
             return this;
         }
 
-        public Builder range(TimeRange range) {
-            this.range = SimpleTimeRange.from(range);
+        public Builder range(InstantRange range) {
+            this.range = SimpleInstantRange.from(range);
             return this;
         }
 

@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.application.waitlist.port.out;
 
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistStatus;
 
@@ -11,13 +11,13 @@ import java.util.UUID;
 
 public interface WaitlistStore {
 
-    boolean existsByUserIdAndLocatorAndRangeAndStatus(String userId, SeatLocator locator, TimeRange range, WaitlistStatus status);
+    boolean existsByUserIdAndLocatorAndRangeAndStatus(String userId, SeatLocator locator, InstantRange range, WaitlistStatus status);
 
     Optional<Waitlist> findById(UUID id);
 
-    List<Waitlist> findByLocatorAndRange(SeatLocator locator, TimeRange range);
+    List<Waitlist> findByLocatorAndRange(SeatLocator locator, InstantRange range);
 
-    List<Waitlist> findByLocatorAndRangeAndStatus(SeatLocator locator, TimeRange range, WaitlistStatus status);
+    List<Waitlist> findByLocatorAndRangeAndStatus(SeatLocator locator, InstantRange range, WaitlistStatus status);
 
     Waitlist save(Waitlist waitlist);
 

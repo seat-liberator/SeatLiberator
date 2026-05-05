@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.persistence.waitlist.jpa;
 
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.WaitlistStore;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistStatus;
 import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.CommonPredicates;
@@ -24,14 +24,14 @@ public class JpaWaitlistStore implements
     private final WaitlistRepository repository;
 
     @Override
-    public List<Waitlist> findByLocatorAndRangeAndStatus(SeatLocator locator, TimeRange range, WaitlistStatus status) {
+    public List<Waitlist> findByLocatorAndRangeAndStatus(SeatLocator locator, InstantRange range, WaitlistStatus status) {
         var spec = createLocatorAndRangeSpecification(locator, range)
                 .and(CommonPredicates.eq(status, from -> from.get("state").get("status")));
         return repository.findAll(spec);
     }
 
     @Override
-    public boolean existsByUserIdAndLocatorAndRangeAndStatus(String userId, SeatLocator locator, TimeRange range, WaitlistStatus status) {
+    public boolean existsByUserIdAndLocatorAndRangeAndStatus(String userId, SeatLocator locator, InstantRange range, WaitlistStatus status) {
         var spec = Specification.<Waitlist>unrestricted()
                 .and(SeatLocatorPredicates.eq(locator, from -> from.get("locator")))
                 .and(TimeRangePredicates.eq(range, from -> from.get("range")))
@@ -46,7 +46,7 @@ public class JpaWaitlistStore implements
     }
 
     @Override
-    public List<Waitlist> findByLocatorAndRange(SeatLocator locator, TimeRange range) {
+    public List<Waitlist> findByLocatorAndRange(SeatLocator locator, InstantRange range) {
         var spec = createLocatorAndRangeSpecification(locator, range);
         return repository.findAll(spec);
     }
@@ -61,7 +61,7 @@ public class JpaWaitlistStore implements
         return repository.saveAll(waitlists);
     }
 
-    private Specification<Waitlist> createLocatorAndRangeSpecification(SeatLocator locator, TimeRange range) {
+    private Specification<Waitlist> createLocatorAndRangeSpecification(SeatLocator locator, InstantRange range) {
         return Specification.<Waitlist>unrestricted()
                 .and(SeatLocatorPredicates.eq(locator, from -> from.get("locator")))
                 .and(TimeRangePredicates.overlap(range, from -> from.get("range")));

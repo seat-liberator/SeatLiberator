@@ -11,8 +11,8 @@ import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.command.CreateWaitlistCommand;
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.WaitlistStore;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistStatus;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class WaitlistService implements
     @Override
     public Waitlist create(CreateWaitlistCommand command) {
         var locator = SimpleSeatLocator.of(command.roomId(), command.seatId());
-        var range = SimpleTimeRange.of(command.startTime(), command.endTime());
+        var range = SimpleInstantRange.of(command.startTime(), command.endTime());
 
         var criteria = ReservationSeatOverlapCriteria.of(locator, range)
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));

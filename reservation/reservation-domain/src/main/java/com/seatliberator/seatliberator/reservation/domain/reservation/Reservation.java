@@ -5,10 +5,10 @@ import com.seatliberator.seatliberator.reservation.domain.reservation.event.Doma
 import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationCanceled;
 import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationCreated;
 import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationExpired;
+import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -42,13 +42,13 @@ public class Reservation {
             @AttributeOverride(name = "startAt", column = @Column(name = "target_start_at")),
             @AttributeOverride(name = "endAt", column = @Column(name = "target_end_at"))
     })
-    private EmbeddableTimeRange range;
+    private EmbeddableInstantRange range;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReservationStatus status;
 
-    private Reservation(String userId, EmbeddableSeatLocator locator, EmbeddableTimeRange range, ReservationStatus status) {
+    private Reservation(String userId, EmbeddableSeatLocator locator, EmbeddableInstantRange range, ReservationStatus status) {
         this.userId = userId;
         this.locator = locator;
         this.range = range;
@@ -57,7 +57,7 @@ public class Reservation {
 
     public static Reservation create(String userId, String roomId, String seatId, Instant startAt, Instant endAt) {
         var locator = EmbeddableSeatLocator.from(roomId, seatId);
-        var range = EmbeddableTimeRange.from(startAt, endAt);
+        var range = EmbeddableInstantRange.of(startAt, endAt);
         var reservation = new Reservation(userId, locator, range, ReservationStatus.RESERVED);
 
         reservation.registerCreatedEvent();
@@ -66,18 +66,18 @@ public class Reservation {
 
     public static Reservation create(String userId, String roomId, String seatId, Instant startAt, Instant endAt, ReservationStatus status) {
         var locator = EmbeddableSeatLocator.from(roomId, seatId);
-        var range = EmbeddableTimeRange.from(startAt, endAt);
+        var range = EmbeddableInstantRange.of(startAt, endAt);
         var reservation = new Reservation(userId, locator, range, status);
 
         reservation.registerCreatedEvent();
         return reservation;
     }
 
-    public static Reservation of(String userId, SeatLocator locator, TimeRange range, ReservationStatus status) {
+    public static Reservation of(String userId, SeatLocator locator, InstantRange range, ReservationStatus status) {
         var reservation = new Reservation(
                 userId,
                 EmbeddableSeatLocator.of(Preconditions.requireNonNull(locator, "locator")),
-                EmbeddableTimeRange.of(Preconditions.requireNonNull(range, "range")),
+                EmbeddableInstantRange.from(Preconditions.requireNonNull(range, "range")),
                 status
         );
         reservation.registerCreatedEvent();

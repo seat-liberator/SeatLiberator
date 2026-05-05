@@ -7,7 +7,7 @@ import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public interface TimeRangeContractTest<T extends TimeRange> {
+public interface InstantRangeContractTest<T extends InstantRange> {
 
     T create(Instant startAt, Instant endAt);
 
@@ -90,8 +90,8 @@ public interface TimeRangeContractTest<T extends TimeRange> {
     default void is_same_across_different_implementations() {
         var startAt = getStartAt();
         var endAt = getEndAt();
-        var simple = SimpleTimeRange.of(startAt, endAt);
-        var embeddable = EmbeddableTimeRange.from(startAt, endAt);
+        var simple = SimpleInstantRange.of(startAt, endAt);
+        var embeddable = EmbeddableInstantRange.of(startAt, endAt);
 
         assertThat(simple.isSame(embeddable)).isTrue();
         assertThat(embeddable.isSame(simple)).isTrue();

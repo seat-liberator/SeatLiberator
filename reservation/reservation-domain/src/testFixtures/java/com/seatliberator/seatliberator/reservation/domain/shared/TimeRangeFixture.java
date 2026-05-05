@@ -10,16 +10,16 @@ public class TimeRangeFixture {
     public static final Instant INITIAL_START_AT = fixedClock.instant().plusSeconds(60);
     public static final Instant INITIAL_END_AT = INITIAL_START_AT.plus(INITIAL_DURATION);
 
-    public static TimeRange createRange() {
+    public static InstantRange createRange() {
         return createRange(INITIAL_START_AT, INITIAL_END_AT);
     }
 
-    public static TimeRange createRange(Instant startAt) {
+    public static InstantRange createRange(Instant startAt) {
         var endAt = startAt.plus(INITIAL_DURATION);
         return createRange(startAt, endAt);
     }
 
-    public static TimeRange createRange(Instant startAt, Instant endAt) {
-        return SimpleTimeRange.of(startAt, endAt);
+    public static InstantRange createRange(Instant startAt, Instant endAt) {
+        return SimpleInstantRange.of(startAt, endAt);
     }
 }

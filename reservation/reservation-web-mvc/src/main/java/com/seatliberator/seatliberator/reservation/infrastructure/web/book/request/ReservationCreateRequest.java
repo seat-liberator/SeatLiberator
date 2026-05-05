@@ -3,7 +3,7 @@ package com.seatliberator.seatliberator.reservation.infrastructure.web.book.requ
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CreateReservationCommand;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;
@@ -16,7 +16,7 @@ public record ReservationCreateRequest(
         Instant endAt
 ) {
     public CreateReservationCommand toCommand(String userId, SeatLocator locator, Actor requester) {
-        var range = SimpleTimeRange.of(startAt, endAt);
+        var range = SimpleInstantRange.of(startAt, endAt);
         return CreateReservationCommand.of(userId, locator, range, requester);
     }
 }

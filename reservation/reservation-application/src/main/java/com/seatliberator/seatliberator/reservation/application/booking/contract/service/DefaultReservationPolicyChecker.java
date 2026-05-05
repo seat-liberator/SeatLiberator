@@ -7,8 +7,8 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.out.
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationSeatLookupCriteria;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ public class DefaultReservationPolicyChecker implements ReservationPolicyChecker
     private final ReservationReader reader;
 
     @Override
-    public ReservationPolicyCheckResult check(String userId, SeatLocator locator, TimeRange range) {
+    public ReservationPolicyCheckResult check(String userId, SeatLocator locator, InstantRange range) {
         var criteria = ReservationSeatLookupCriteria.of(locator, range)
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
         var exists = reader.existsOne(criteria);

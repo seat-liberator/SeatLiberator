@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.domain.seat;
 
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.TestSupport;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -11,7 +11,7 @@ import static com.seatliberator.seatliberator.reservation.domain.shared.TimeRang
 
 public class SeatTimeSlotFixture {
     public static final Seat SEAT = createSeat();
-    public static final TimeRange SLOT_RANGE = createRange(
+    public static final InstantRange SLOT_RANGE = createRange(
             TestSupport.fixedClock.instant(),
             TestSupport.fixedClock.instant().plus(30, ChronoUnit.MINUTES)
     );
@@ -24,7 +24,7 @@ public class SeatTimeSlotFixture {
 
     public static class Builder {
         private Seat seat = SEAT;
-        private TimeRange slotRange = SLOT_RANGE;
+        private InstantRange slotRange = SLOT_RANGE;
         private SeatTimeSlotStatus slotStatus = SLOT_STATUS;
         private Instant createdAt = CREATED_AT;
 
@@ -33,7 +33,7 @@ public class SeatTimeSlotFixture {
             return this;
         }
 
-        public Builder slotRange(TimeRange slotRange) {
+        public Builder slotRange(InstantRange slotRange) {
             this.slotRange = slotRange;
             return this;
         }
