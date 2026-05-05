@@ -1,15 +1,15 @@
 package com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria;
 
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 
 import java.util.Objects;
 
 public record ReservationSeatOverlapCriteria(
         SimpleSeatLocator locator,
-        SimpleTimeRange range,
+        SimpleInstantRange range,
         ReservationFilter filter
 ) {
     public ReservationSeatOverlapCriteria {
@@ -18,10 +18,10 @@ public record ReservationSeatOverlapCriteria(
         Objects.requireNonNull(filter);
     }
 
-    public static ReservationSeatOverlapCriteria of(SeatLocator locator, TimeRange range) {
+    public static ReservationSeatOverlapCriteria of(SeatLocator locator, InstantRange range) {
         return new ReservationSeatOverlapCriteria(
                 SimpleSeatLocator.from(locator),
-                SimpleTimeRange.from(range),
+                SimpleInstantRange.from(range),
                 ReservationFilter.empty()
         );
     }

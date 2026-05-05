@@ -8,8 +8,8 @@ import com.seatliberator.seatliberator.reservation.application.shared.exception.
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.command.CreateWaitlistCommand;
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.WaitlistStore;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +54,7 @@ public class WaitlistServiceTest {
         var command = createWaitlistCreateCommand();
 
         var locator = SimpleSeatLocator.of(command.roomId(), command.seatId());
-        var range = SimpleTimeRange.of(command.startTime(), command.endTime());
+        var range = SimpleInstantRange.of(command.startTime(), command.endTime());
 
         var criteria = ReservationSeatOverlapCriteria.of(locator, range)
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
@@ -71,7 +71,7 @@ public class WaitlistServiceTest {
     void throw_exception_when_active_request_already_exists() {
         var command = createWaitlistCreateCommand();
         var locator = SimpleSeatLocator.of(command.roomId(), command.seatId());
-        var range = SimpleTimeRange.of(command.startTime(), command.endTime());
+        var range = SimpleInstantRange.of(command.startTime(), command.endTime());
 
         var criteria = ReservationSeatOverlapCriteria.of(locator, range)
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
@@ -90,7 +90,7 @@ public class WaitlistServiceTest {
     void save_request_when_no_active_request_exists() {
         var command = createWaitlistCreateCommand();
         var locator = SimpleSeatLocator.of(command.roomId(), command.seatId());
-        var range = SimpleTimeRange.of(command.startTime(), command.endTime());
+        var range = SimpleInstantRange.of(command.startTime(), command.endTime());
 
         var criteria = ReservationSeatOverlapCriteria.of(locator, range)
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
@@ -112,7 +112,7 @@ public class WaitlistServiceTest {
     void throw_duplicated_request_when_save_raises_data_integrity_violation() {
         var command = createWaitlistCreateCommand();
         var locator = SimpleSeatLocator.of(command.roomId(), command.seatId());
-        var range = SimpleTimeRange.of(command.startTime(), command.endTime());
+        var range = SimpleInstantRange.of(command.startTime(), command.endTime());
 
         var criteria = ReservationSeatOverlapCriteria.of(locator, range)
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
@@ -177,7 +177,7 @@ public class WaitlistServiceTest {
 
     private void whenActiveWaitlistExists(CreateWaitlistCommand command, boolean value) {
         var locator = SimpleSeatLocator.of(command.roomId(), command.seatId());
-        var range = SimpleTimeRange.of(command.startTime(), command.endTime());
+        var range = SimpleInstantRange.of(command.startTime(), command.endTime());
         when(store.existsByUserIdAndLocatorAndRangeAndStatus(command.userId(), locator, range, WaitlistStatus.ACTIVE))
                 .thenReturn(value);
     }

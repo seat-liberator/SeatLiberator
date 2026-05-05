@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.reservation.domain.waitlist;
 
+import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -37,7 +37,7 @@ public class Waitlist {
             @AttributeOverride(name = "startAt", column = @Column(name = "target_start_at")),
             @AttributeOverride(name = "endAt", column = @Column(name = "target_end_at"))
     })
-    private EmbeddableTimeRange range;
+    private EmbeddableInstantRange range;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "behavior", nullable = false)
@@ -49,7 +49,7 @@ public class Waitlist {
     private Waitlist(
             String userId,
             EmbeddableSeatLocator locator,
-            EmbeddableTimeRange range,
+            EmbeddableInstantRange range,
             WaitlistBehavior behavior,
             WaitlistState state
     ) {
@@ -67,14 +67,14 @@ public class Waitlist {
     public static Waitlist create(
             String userId,
             SeatLocator locator,
-            TimeRange range,
+            InstantRange range,
             WaitlistBehavior actionType,
             Instant requestedAt
     ) {
         return new Waitlist(
                 userId,
                 EmbeddableSeatLocator.of(locator),
-                EmbeddableTimeRange.of(range),
+                EmbeddableInstantRange.from(range),
                 actionType,
                 WaitlistState.requestedAt(requestedAt)
         );
@@ -83,7 +83,7 @@ public class Waitlist {
     public static Waitlist notifyOnly(
             String userId,
             SeatLocator locator,
-            TimeRange range,
+            InstantRange range,
             Instant requestedAt
     ) {
         return create(userId, locator, range, WaitlistBehavior.NOTIFY_ONLY, requestedAt);
@@ -92,7 +92,7 @@ public class Waitlist {
     public static Waitlist autoClaim(
             String userId,
             SeatLocator locator,
-            TimeRange range,
+            InstantRange range,
             Instant requestedAt
     ) {
         return create(userId, locator, range, WaitlistBehavior.AUTO_CLAIM, requestedAt);

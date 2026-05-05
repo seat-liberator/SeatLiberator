@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.application.waitlist.model;
 
 import com.seatliberator.seatliberator.reservation.application.waitlist.internal.WaitlistPromotionResult;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -131,7 +131,7 @@ class WaitlistRequestsTest {
 
     private List<Waitlist> createRequests(
             SeatLocator locator,
-            TimeRange range,
+            InstantRange range,
             WaitlistBehavior behavior,
             List<RequestSpec> requestSpecs
     ) {
@@ -149,7 +149,7 @@ class WaitlistRequestsTest {
                 .toList();
     }
 
-    private Waitlist autoClaimRequest(String userId, SeatLocator locator, TimeRange range, java.time.Instant requestedAt) {
+    private Waitlist autoClaimRequest(String userId, SeatLocator locator, InstantRange range, java.time.Instant requestedAt) {
         return new WaitlistFixtureBuilder()
                 .locator(locator)
                 .range(range)
@@ -159,7 +159,7 @@ class WaitlistRequestsTest {
                 .build();
     }
 
-    private Waitlist notifyOnlyRequest(String userId, SeatLocator locator, TimeRange range, java.time.Instant requestedAt) {
+    private Waitlist notifyOnlyRequest(String userId, SeatLocator locator, InstantRange range, java.time.Instant requestedAt) {
         return new WaitlistFixtureBuilder()
                 .locator(locator)
                 .range(range)

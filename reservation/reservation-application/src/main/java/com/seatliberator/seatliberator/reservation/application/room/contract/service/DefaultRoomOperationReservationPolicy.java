@@ -7,8 +7,8 @@ import com.seatliberator.seatliberator.reservation.application.room.port.out.Roo
 import com.seatliberator.seatliberator.reservation.domain.room.OperationHours;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicy;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,13 +24,13 @@ public class DefaultRoomOperationReservationPolicy implements RoomOperationReser
     private final Clock clock;
 
     @Override
-    public RoomPolicyResult evaluate(SeatLocator locator, TimeRange range) {
+    public RoomPolicyResult evaluate(SeatLocator locator, InstantRange range) {
         return roomReader.findByRoomId(locator.roomId())
                 .map(room -> evaluate(room.getOperationPolicy(), range))
                 .orElseGet(() -> RoomPolicyResult.reject(RoomPolicyReason.ROOM_NOT_FOUND));
     }
 
-    private RoomPolicyResult evaluate(RoomOperationPolicy policy, TimeRange range) {
+    private RoomPolicyResult evaluate(RoomOperationPolicy policy, InstantRange range) {
         if (policy.getOperationStatus() != RoomOperationStatus.OPEN) {
             return RoomPolicyResult.reject(RoomPolicyReason.ROOM_OPERATION_CLOSED);
         }
@@ -46,7 +46,7 @@ public class DefaultRoomOperationReservationPolicy implements RoomOperationReser
         return RoomPolicyResult.accept(RoomPolicyReason.ROOM_OPERATION_AVAILABLE);
     }
 
-    private boolean contains(OperationHours operationHours, TimeRange range) {
+    private boolean contains(OperationHours operationHours, InstantRange range) {
         var startAt = LocalDateTime.ofInstant(range.startAt(), clock.getZone());
         var endAt = LocalDateTime.ofInstant(range.endAt(), clock.getZone());
         var openAt = operationHours.getOpenAt();

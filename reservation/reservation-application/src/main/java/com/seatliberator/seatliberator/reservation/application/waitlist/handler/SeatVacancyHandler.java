@@ -8,8 +8,8 @@ import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.WaitlistStore;
 import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationCanceled;
 import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationExpired;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -42,7 +42,7 @@ public class SeatVacancyHandler {
         processVacancy(locator, range);
     }
 
-    private void processVacancy(SeatLocator locator, TimeRange range) {
+    private void processVacancy(SeatLocator locator, InstantRange range) {
         var requests = store.findByLocatorAndRangeAndStatus(locator, range, WaitlistStatus.ACTIVE);
         var processingResult = WaitlistRequests.from(requests)
                 .process(clock.instant(), request -> promotion.promote(request.getUserId(), request.getLocator(), request.getRange()));

@@ -6,7 +6,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.in.F
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.query.FindMyReservationQuery;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.infrastructure.web.book.controller.ReservationQueryController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,7 +68,7 @@ public class ReservationControllerTest {
         var actual = captor.getValue();
         assertThat(actual).isNotNull();
         assertThat(actual.userId()).isEqualTo("user-1");
-        assertThat(actual.range()).isEqualTo(SimpleTimeRange.of(startAt, endAt));
+        assertThat(actual.range()).isEqualTo(SimpleInstantRange.of(startAt, endAt));
         assertThat(actual.status()).isEqualTo(ReservationStatus.RESERVED);
     }
 

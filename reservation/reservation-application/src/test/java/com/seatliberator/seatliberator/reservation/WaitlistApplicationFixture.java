@@ -2,8 +2,8 @@ package com.seatliberator.seatliberator.reservation;
 
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.command.CancelWaitlistCommand;
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.command.CreateWaitlistCommand;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistBehavior;
 
 import java.util.UUID;
@@ -16,7 +16,7 @@ public class WaitlistApplicationFixture {
     public static CreateWaitlistCommand createWaitlistCreateCommand(
             String userId,
             SeatLocator locator,
-            TimeRange range,
+            InstantRange range,
             WaitlistBehavior behavior
     ) {
         return CreateWaitlistCommand.from(userId, locator, range, behavior);
@@ -24,7 +24,7 @@ public class WaitlistApplicationFixture {
 
     public static CreateWaitlistCommand createWaitlistCreateCommand(
             SeatLocator locator,
-            TimeRange range
+            InstantRange range
     ) {
         return CreateWaitlistCommand.from(
                 INITIAL_USER_ID,

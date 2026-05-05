@@ -7,10 +7,10 @@ import com.seatliberator.seatliberator.reservation.domain.room.Room;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
 import com.seatliberator.seatliberator.reservation.domain.seat.Seat;
 import com.seatliberator.seatliberator.reservation.domain.seat.SeatFixture;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistBehavior;
 
@@ -41,24 +41,24 @@ public class TestSupport {
         return now().plus(Duration.ofHours(1));
     }
 
-    public static TimeRange reservationRange() {
+    public static InstantRange reservationRange() {
         return range(reservationStartAt(), reservationStartAt().plus(RESERVATION_DURATION));
     }
 
-    public static TimeRange overlappingRange() {
+    public static InstantRange overlappingRange() {
         return range(
                 reservationStartAt().plus(Duration.ofMinutes(10)),
                 reservationStartAt().plus(Duration.ofMinutes(20))
         );
     }
 
-    public static TimeRange nonOverlappingRange() {
+    public static InstantRange nonOverlappingRange() {
         var startAt = reservationStartAt().plus(RESERVATION_DURATION);
         return range(startAt, startAt.plus(RESERVATION_DURATION));
     }
 
-    public static TimeRange range(Instant startAt, Instant endAt) {
-        return SimpleTimeRange.of(startAt, endAt);
+    public static InstantRange range(Instant startAt, Instant endAt) {
+        return SimpleInstantRange.of(startAt, endAt);
     }
 
     public static SeatLocator locator() {
@@ -95,11 +95,11 @@ public class TestSupport {
         return reservation(USER_ID, locator(), reservationRange(), status);
     }
 
-    public static Reservation reservation(String userId, SeatLocator locator, TimeRange range) {
+    public static Reservation reservation(String userId, SeatLocator locator, InstantRange range) {
         return reservation(userId, locator, range, ReservationStatus.RESERVED);
     }
 
-    public static Reservation reservation(String userId, SeatLocator locator, TimeRange range, ReservationStatus status) {
+    public static Reservation reservation(String userId, SeatLocator locator, InstantRange range, ReservationStatus status) {
         return Reservation.of(userId, locator, range, status);
     }
 
@@ -107,11 +107,11 @@ public class TestSupport {
         return waitlist(USER_ID, locator(), reservationRange());
     }
 
-    public static Waitlist waitlist(String userId, SeatLocator locator, TimeRange range) {
+    public static Waitlist waitlist(String userId, SeatLocator locator, InstantRange range) {
         return waitlist(userId, locator, range, WaitlistBehavior.AUTO_CLAIM);
     }
 
-    public static Waitlist waitlist(String userId, SeatLocator locator, TimeRange range, WaitlistBehavior behavior) {
+    public static Waitlist waitlist(String userId, SeatLocator locator, InstantRange range, WaitlistBehavior behavior) {
         return Waitlist.create(userId, locator, range, behavior, range.startAt().minus(Duration.ofMinutes(1)));
     }
 }

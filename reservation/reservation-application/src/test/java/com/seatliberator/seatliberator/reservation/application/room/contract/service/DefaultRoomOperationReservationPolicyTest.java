@@ -7,9 +7,9 @@ import com.seatliberator.seatliberator.reservation.domain.room.OperationHourFixt
 import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicyFixture;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -161,7 +161,7 @@ public class DefaultRoomOperationReservationPolicyTest {
         assertThat(result.reason()).isEqualTo(RoomPolicyReason.ROOM_OPERATION_AVAILABLE);
     }
 
-    private TimeRange range(String startAt, String endAt) {
-        return SimpleTimeRange.of(Instant.parse(startAt), Instant.parse(endAt));
+    private InstantRange range(String startAt, String endAt) {
+        return SimpleInstantRange.of(Instant.parse(startAt), Instant.parse(endAt));
     }
 }

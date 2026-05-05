@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification;
 
-import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableTimeRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableInstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Path;
 import org.springframework.data.jpa.domain.PredicateSpecification;
@@ -11,8 +11,8 @@ import java.util.function.Function;
 
 public class TimeRangePredicates {
     public static <T> PredicateSpecification<T> eq(
-            TimeRange range,
-            Function<From<?, T>, Path<EmbeddableTimeRange>> pathFunction
+            InstantRange range,
+            Function<From<?, T>, Path<EmbeddableInstantRange>> pathFunction
     ) {
         return (from, cb) -> {
             var path = pathFunction.apply(from);
@@ -25,8 +25,8 @@ public class TimeRangePredicates {
     }
 
     public static <T> PredicateSpecification<T> overlap(
-            TimeRange range,
-            Function<From<?, T>, Path<EmbeddableTimeRange>> pathFunction
+            InstantRange range,
+            Function<From<?, T>, Path<EmbeddableInstantRange>> pathFunction
     ) {
         return (from, cb) -> {
             var path = pathFunction.apply(from);
@@ -39,8 +39,8 @@ public class TimeRangePredicates {
     }
 
     public static <T> PredicateSpecification<T> containedBy(
-            TimeRange range,
-            Function<From<?, T>, Path<EmbeddableTimeRange>> pathFunction
+            InstantRange range,
+            Function<From<?, T>, Path<EmbeddableInstantRange>> pathFunction
     ) {
         return (from, cb) -> {
             var path = pathFunction.apply(from);
@@ -53,8 +53,8 @@ public class TimeRangePredicates {
     }
 
     public static <T> PredicateSpecification<T> contains(
-            TimeRange range,
-            Function<From<?, T>, Path<EmbeddableTimeRange>> pathFunction
+            InstantRange range,
+            Function<From<?, T>, Path<EmbeddableInstantRange>> pathFunction
     ) {
         return (from, cb) -> {
             var path = pathFunction.apply(from);
@@ -68,7 +68,7 @@ public class TimeRangePredicates {
 
     public static <T> PredicateSpecification<T> contain(
             Instant at,
-            Function<From<?, T>, Path<EmbeddableTimeRange>> pathFunction
+            Function<From<?, T>, Path<EmbeddableInstantRange>> pathFunction
     ) {
         return (from, cb) -> {
             var path = pathFunction.apply(from);
@@ -80,7 +80,7 @@ public class TimeRangePredicates {
         };
     }
 
-    public static <T> Function<From<?, T>, Path<EmbeddableTimeRange>> defaultRangePathFunction() {
+    public static <T> Function<From<?, T>, Path<EmbeddableInstantRange>> defaultRangePathFunction() {
         return from -> from.get("range");
     }
 }

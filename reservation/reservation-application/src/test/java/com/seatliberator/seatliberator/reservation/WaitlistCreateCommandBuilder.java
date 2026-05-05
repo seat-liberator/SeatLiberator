@@ -1,10 +1,10 @@
 package com.seatliberator.seatliberator.reservation;
 
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.command.CreateWaitlistCommand;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistBehavior;
 
 import java.time.Instant;
@@ -16,7 +16,7 @@ import static com.seatliberator.seatliberator.reservation.domain.waitlist.Waitli
 public class WaitlistCreateCommandBuilder {
     private String userId = INITIAL_USER_ID;
     private SeatLocator locator = createLocator();
-    private TimeRange range = createRange();
+    private InstantRange range = createRange();
     private WaitlistBehavior behavior = WaitlistBehavior.AUTO_CLAIM;
 
     public WaitlistCreateCommandBuilder() {}
@@ -24,7 +24,7 @@ public class WaitlistCreateCommandBuilder {
     public WaitlistCreateCommandBuilder(
             String userId,
             SeatLocator locator,
-            TimeRange range,
+            InstantRange range,
             WaitlistBehavior behavior
     ) {
         this.userId = userId;
@@ -66,13 +66,13 @@ public class WaitlistCreateCommandBuilder {
         return this;
     }
 
-    public WaitlistCreateCommandBuilder range(TimeRange range) {
+    public WaitlistCreateCommandBuilder range(InstantRange range) {
         this.range = range;
         return this;
     }
 
     public WaitlistCreateCommandBuilder range(Instant startAt, Instant endAt) {
-        this.range = SimpleTimeRange.of(startAt, endAt);
+        this.range = SimpleInstantRange.of(startAt, endAt);
         return this;
     }
 

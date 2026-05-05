@@ -4,8 +4,8 @@ import com.seatliberator.seatliberator.reservation.application.booking.contract.
 import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreator;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.command.ReservationCreatePolicyCommand;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.command.ReservationCreatorCommand;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ public class WaitlistPromotion {
     private final ReservationCreatePolicy createPolicy;
     private final ReservationCreator creator;
 
-    public WaitlistPromotionResult promote(String userId, SeatLocator locator, TimeRange range) {
+    public WaitlistPromotionResult promote(String userId, SeatLocator locator, InstantRange range) {
         var createPolicyResult = createPolicy.evaluate(ReservationCreatePolicyCommand.of(userId, locator, range));
         if (createPolicyResult.rejected())
             return WaitlistPromotionResult.fail(createPolicyResult.reason().message());

@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.domain.seat;
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
-import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableTimeRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.TimeRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableInstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -39,7 +39,7 @@ public class SeatTimeSlot {
             @AttributeOverride(name = "startAt", column = @Column(name = "slot_start_at", nullable = false)),
             @AttributeOverride(name = "endAt", column = @Column(name = "slot_end_at", nullable = false))
     })
-    private EmbeddableTimeRange slotRange;
+    private EmbeddableInstantRange slotRange;
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -51,7 +51,7 @@ public class SeatTimeSlot {
 
     private SeatTimeSlot(
             Seat seat,
-            EmbeddableTimeRange slotRange,
+            EmbeddableInstantRange slotRange,
             SeatTimeSlotStatus slotStatus,
             Instant createdAt
     ) {
@@ -68,22 +68,22 @@ public class SeatTimeSlot {
 
     public static SeatTimeSlot of(
             Seat seat,
-            TimeRange slotRange,
+            InstantRange slotRange,
             SeatTimeSlotStatus slotStatus,
             Instant createdAt
     ) {
         Preconditions.requireNonNull(slotRange, "slotRange");
         return new SeatTimeSlot(
                 seat,
-                EmbeddableTimeRange.of(slotRange),
+                EmbeddableInstantRange.from(slotRange),
                 slotStatus,
                 createdAt
         );
     }
 
-    public void updateSlotRange(TimeRange slotRange) {
+    public void updateSlotRange(InstantRange slotRange) {
         Preconditions.requireNonNull(slotRange, "slotRange");
-        this.slotRange = EmbeddableTimeRange.of(slotRange);
+        this.slotRange = EmbeddableInstantRange.from(slotRange);
     }
 
 

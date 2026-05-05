@@ -5,7 +5,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.in.F
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.query.FindMyReservationQuery;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -50,7 +50,7 @@ public class ReservationQueryController {
             @RequestParam(name = "status") ReservationStatus status
     ) {
         var userId = actorContextHolder.getActor().subject();
-        var range = SimpleTimeRange.of(startAt, endAt);
+        var range = SimpleInstantRange.of(startAt, endAt);
         var query = new FindMyReservationQuery(userId, range, status);
         log.info("내 예약 조회 API 호출됨. 쿼리={}", query);
         var result = findMyReservationUseCase.find(query);

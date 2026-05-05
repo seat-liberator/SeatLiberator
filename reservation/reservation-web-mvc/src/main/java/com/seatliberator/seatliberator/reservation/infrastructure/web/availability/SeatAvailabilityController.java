@@ -8,8 +8,8 @@ import com.seatliberator.seatliberator.reservation.application.availability.port
 import com.seatliberator.seatliberator.reservation.application.availability.port.in.query.FindSeatStatusesQuery;
 import com.seatliberator.seatliberator.reservation.application.availability.port.in.result.AvailableSeatResult;
 import com.seatliberator.seatliberator.reservation.application.availability.port.in.result.SeatStatusesResult;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleTimeRange;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -46,7 +46,7 @@ public class SeatAvailabilityController {
             @Parameter(description = "조회 종료 시각", example = "2026-04-20T14:30:00Z")
             @RequestParam(name = "end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endAt
     ) {
-        var range = SimpleTimeRange.of(startAt, endAt);
+        var range = SimpleInstantRange.of(startAt, endAt);
         var query = new FindAvailableSeatQuery(roomId, range);
         var result = findAvailableSeatsUseCase.find(query);
         return ResponseEntity.ok(result);
@@ -66,7 +66,7 @@ public class SeatAvailabilityController {
             @Parameter(description = "조회 종료 시각", example = "2026-04-20T14:30:00Z")
             @RequestParam(name = "end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endAt
     ) {
-        var range = SimpleTimeRange.of(startAt, endAt);
+        var range = SimpleInstantRange.of(startAt, endAt);
         var query = new FindSeatStatusesQuery(roomId, range);
         var result = findSeatStatusesUseCase.find(query);
         return ResponseEntity.ok(result);
@@ -90,7 +90,7 @@ public class SeatAvailabilityController {
             @RequestParam(name = "end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endAt
     ) {
         var locator = SimpleSeatLocator.of(roomId, seatId);
-        var range = SimpleTimeRange.of(startAt, endAt);
+        var range = SimpleInstantRange.of(startAt, endAt);
         var query = new FindOccupancyRangesQuery(locator, range);
         var result = findSeatOccupancyRangesUseCase.find(query);
         return ResponseEntity.ok(result);
