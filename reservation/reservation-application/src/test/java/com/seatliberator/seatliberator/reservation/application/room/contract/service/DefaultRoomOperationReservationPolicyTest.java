@@ -3,10 +3,10 @@ package com.seatliberator.seatliberator.reservation.application.room.contract.se
 import com.seatliberator.seatliberator.reservation.application.room.contract.RoomOperationReservationPolicy;
 import com.seatliberator.seatliberator.reservation.application.room.contract.result.RoomPolicyReason;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomReader;
-import com.seatliberator.seatliberator.reservation.domain.room.OperationHourFixture;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicyFixture;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
+import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeWindowFixture;
 import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
@@ -51,7 +51,7 @@ public class DefaultRoomOperationReservationPolicyTest {
                 .operationPolicy(new RoomOperationPolicyFixture.Builder()
                         .maxReservationDuration(Duration.ofHours(2))
                         .operationStatus(RoomOperationStatus.OPEN)
-                        .operationHours(new OperationHourFixture.Builder()
+                        .operationHours(new DailyTimeWindowFixture.Builder()
                                 .openAt(LocalTime.of(6, 0))
                                 .closeAt(LocalTime.of(22, 0))
                                 .build())
@@ -124,7 +124,7 @@ public class DefaultRoomOperationReservationPolicyTest {
                 .operationPolicy(new RoomOperationPolicyFixture.Builder()
                         .maxReservationDuration(Duration.ofHours(2))
                         .operationStatus(RoomOperationStatus.OPEN)
-                        .operationHours(new OperationHourFixture.Builder()
+                        .operationHours(new DailyTimeWindowFixture.Builder()
                                 .openAt(LocalTime.of(9, 0))
                                 .closeAt(LocalTime.of(18, 0))
                                 .build())
@@ -147,7 +147,7 @@ public class DefaultRoomOperationReservationPolicyTest {
                 .operationPolicy(new RoomOperationPolicyFixture.Builder()
                         .maxReservationDuration(Duration.ofHours(2))
                         .operationStatus(RoomOperationStatus.OPEN)
-                        .operationHours(new OperationHourFixture.Builder()
+                        .operationHours(new DailyTimeWindowFixture.Builder()
                                 .openAt(LocalTime.of(22, 0))
                                 .closeAt(LocalTime.of(2, 0))
                                 .build())

@@ -4,9 +4,9 @@ import com.seatliberator.seatliberator.reservation.application.room.contract.Roo
 import com.seatliberator.seatliberator.reservation.application.room.contract.result.RoomPolicyReason;
 import com.seatliberator.seatliberator.reservation.application.room.contract.result.RoomPolicyResult;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomReader;
-import com.seatliberator.seatliberator.reservation.domain.room.OperationHours;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicy;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
+import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableDailyTimeWindow;
 import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 import lombok.RequiredArgsConstructor;
@@ -46,11 +46,11 @@ public class DefaultRoomOperationReservationPolicy implements RoomOperationReser
         return RoomPolicyResult.accept(RoomPolicyReason.ROOM_OPERATION_AVAILABLE);
     }
 
-    private boolean contains(OperationHours operationHours, InstantRange range) {
+    private boolean contains(EmbeddableDailyTimeWindow operationHours, InstantRange range) {
         var startAt = LocalDateTime.ofInstant(range.startAt(), clock.getZone());
         var endAt = LocalDateTime.ofInstant(range.endAt(), clock.getZone());
-        var openAt = operationHours.getOpenAt();
-        var closeAt = operationHours.getCloseAt();
+        var openAt = operationHours.startAt();
+        var closeAt = operationHours.endAt();
 
         if (openAt.equals(closeAt)) {
             return true;

@@ -36,7 +36,7 @@ public class DefaultRoomOperationPolicyFactoryTest {
         assertThat(operationPolicy.getMaxReservationPerUser()).isEqualTo(command.maxReservationPerUser());
         assertThat(operationPolicy.getMaxReservationDuration()).isEqualTo(command.maxReservationDuration());
         assertThat(operationPolicy.getOperationStatus()).isEqualTo(command.operationStatus());
-        assertThat(operationPolicy.getOperationHours().getOpenAt()).isEqualTo(command.openAt());
-        assertThat(operationPolicy.getOperationHours().getCloseAt()).isEqualTo(command.closeAt());
+        assertThat(operationPolicy.getOperationHours().startAt()).isEqualTo(command.openAt());
+        assertThat(operationPolicy.getOperationHours().endAt()).isEqualTo(command.closeAt());
     }
 }
