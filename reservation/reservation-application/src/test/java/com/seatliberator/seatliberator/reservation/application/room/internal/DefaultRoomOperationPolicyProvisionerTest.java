@@ -28,7 +28,7 @@ public class DefaultRoomOperationPolicyProvisionerTest {
         assertThat(operationPolicy.getMaxReservationPerUser()).isEqualTo(5);
         assertThat(operationPolicy.getMaxReservationDuration()).isEqualTo(Duration.ofHours(4));
         assertThat(operationPolicy.getOperationStatus()).isEqualTo(RoomOperationStatus.OPEN);
-        assertThat(operationPolicy.getOperationHours().getOpenAt()).isEqualTo(LocalTime.of(6, 0));
-        assertThat(operationPolicy.getOperationHours().getCloseAt()).isEqualTo(LocalTime.of(0, 0));
+        assertThat(operationPolicy.getOperationHours().startAt()).isEqualTo(LocalTime.of(6, 0));
+        assertThat(operationPolicy.getOperationHours().endAt()).isEqualTo(LocalTime.of(0, 0));
     }
 }

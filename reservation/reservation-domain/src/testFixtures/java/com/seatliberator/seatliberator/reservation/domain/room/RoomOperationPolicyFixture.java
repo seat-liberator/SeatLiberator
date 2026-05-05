@@ -1,11 +1,14 @@
 package com.seatliberator.seatliberator.reservation.domain.room;
 
+import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeWindow;
+import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeWindowFixture;
+
 import java.time.Duration;
 
 public class RoomOperationPolicyFixture {
     public static final Integer MAX_RESERVATION_PER_USER = 5;
     public static final Duration MAX_RESERVATION_DURATION = Duration.ofMinutes(30);
-    public static final OperationHours OPERATION_HOURS = OperationHourFixture.get();
+    public static final DailyTimeWindow OPERATION_HOURS = DailyTimeWindowFixture.get();
     public static final RoomOperationStatus OPERATION_STATUS = RoomOperationStatus.OPEN;
 
     public static RoomOperationPolicy get() {
@@ -16,7 +19,7 @@ public class RoomOperationPolicyFixture {
         private Integer maxReservationPerUser = MAX_RESERVATION_PER_USER;
         private Duration maxReservationDuration = MAX_RESERVATION_DURATION;
         private RoomOperationStatus operationStatus = OPERATION_STATUS;
-        private OperationHours operationHours = OPERATION_HOURS;
+        private DailyTimeWindow operationHours = OPERATION_HOURS;
 
         public Builder maxReservationPerUser(Integer maxReservationPerUser) {
             this.maxReservationPerUser = maxReservationPerUser;
@@ -28,7 +31,7 @@ public class RoomOperationPolicyFixture {
             return this;
         }
 
-        public Builder operationHours(OperationHours operationHours) {
+        public Builder operationHours(DailyTimeWindow operationHours) {
             this.operationHours = operationHours;
             return this;
         }

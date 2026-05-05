@@ -1,6 +1,8 @@
 package com.seatliberator.seatliberator.reservation.domain.room;
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
+import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeWindow;
+import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableDailyTimeWindow;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,13 +26,13 @@ public class RoomOperationPolicy {
     private RoomOperationStatus operationStatus;
 
     @Embedded
-    private OperationHours operationHours;
+    private EmbeddableDailyTimeWindow operationHours;
 
     private RoomOperationPolicy(
             Integer maxReservationPerUser,
             Duration maxReservationDuration,
             RoomOperationStatus operationStatus,
-            OperationHours operationHours
+            EmbeddableDailyTimeWindow operationHours
     ) {
         this.maxReservationDuration = Preconditions.requirePositive(maxReservationDuration, "maxReservationDuration");
         this.maxReservationPerUser = Preconditions.requirePositive(maxReservationPerUser, "maxReservationPerUser");
@@ -38,12 +40,18 @@ public class RoomOperationPolicy {
         this.operationHours = Preconditions.requireNonNull(operationHours, "operationHours");
     }
 
-    public static RoomOperationPolicy of(Integer maxReservationPerUser, Duration maxReservationDuration, RoomOperationStatus operationStatus, OperationHours operationHours) {
+    public static RoomOperationPolicy of(
+            Integer maxReservationPerUser,
+            Duration maxReservationDuration,
+            RoomOperationStatus operationStatus,
+            DailyTimeWindow operationHours
+    ) {
+        Preconditions.requireNonNull(operationHours, "operationHours");
         return new RoomOperationPolicy(
                 maxReservationPerUser,
                 maxReservationDuration,
                 operationStatus,
-                operationHours
+                EmbeddableDailyTimeWindow.from(operationHours)
         );
     }
 
@@ -59,7 +67,8 @@ public class RoomOperationPolicy {
         this.operationStatus = Preconditions.requireNonNull(operationStatus, "operationStatus");
     }
 
-    public void updateOperationHours(OperationHours operationHours) {
-        this.operationHours = Preconditions.requireNonNull(operationHours, "operationHours");
+    public void updateOperationHours(DailyTimeWindow operationHours) {
+        Preconditions.requireNonNull(operationHours, "operationHours");
+        this.operationHours.apply(operationHours);
     }
 }

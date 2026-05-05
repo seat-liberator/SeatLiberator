@@ -18,8 +18,8 @@ public record RoomOperationPolicyResult(
                 operationPolicy.getMaxReservationPerUser(),
                 operationPolicy.getMaxReservationDuration(),
                 operationPolicy.getOperationStatus(),
-                operationPolicy.getOperationHours().getOpenAt(),
-                operationPolicy.getOperationHours().getCloseAt()
+                operationPolicy.getOperationHours().startAt(),
+                operationPolicy.getOperationHours().endAt()
         );
     }
 }
