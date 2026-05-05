@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.domain.seat;
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
-import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableInstantRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeWindow;
+import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableDailyTimeWindow;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,21 +25,25 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SeatTimeSlot {
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "slot_status", nullable = false)
-    SeatTimeSlotStatus slotStatus;
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "seat_id", nullable = false)
     private Seat seat;
+
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "startAt", column = @Column(name = "slot_start_at", nullable = false)),
             @AttributeOverride(name = "endAt", column = @Column(name = "slot_end_at", nullable = false))
     })
-    private EmbeddableInstantRange slotRange;
+    private EmbeddableDailyTimeWindow slotRange;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "slot_status", nullable = false)
+    private SeatTimeSlotStatus slotStatus;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -51,7 +55,7 @@ public class SeatTimeSlot {
 
     private SeatTimeSlot(
             Seat seat,
-            EmbeddableInstantRange slotRange,
+            EmbeddableDailyTimeWindow slotRange,
             SeatTimeSlotStatus slotStatus,
             Instant createdAt
     ) {
@@ -68,24 +72,23 @@ public class SeatTimeSlot {
 
     public static SeatTimeSlot of(
             Seat seat,
-            InstantRange slotRange,
+            DailyTimeWindow slotRange,
             SeatTimeSlotStatus slotStatus,
             Instant createdAt
     ) {
         Preconditions.requireNonNull(slotRange, "slotRange");
         return new SeatTimeSlot(
                 seat,
-                EmbeddableInstantRange.from(slotRange),
+                EmbeddableDailyTimeWindow.from(slotRange),
                 slotStatus,
                 createdAt
         );
     }
 
-    public void updateSlotRange(InstantRange slotRange) {
+    public void updateSlotRange(DailyTimeWindow slotRange) {
         Preconditions.requireNonNull(slotRange, "slotRange");
-        this.slotRange = EmbeddableInstantRange.from(slotRange);
+        this.slotRange.apply(slotRange);
     }
-
 
     public void active(Instant activatedAt) {
         Preconditions.requireNonNull(activatedAt, "activatedAt");
