@@ -2,85 +2,131 @@ package com.seatliberator.seatliberator.reservation.persistence.room.jpa;
 
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomReader;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomStore;
-import com.seatliberator.seatliberator.reservation.domain.room.Room;
+import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
+import com.seatliberator.seatliberator.reservation.persistence.AbstractPersistenceAdapterTest;
 import com.seatliberator.seatliberator.reservation.persistence.room.jpa.repository.RoomRepository;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
-import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.TestPropertySource;
 
-import java.time.Clock;
-import java.time.Instant;
-
-import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
+import static com.seatliberator.seatliberator.reservation.persistence.TestSupport.OTHER_ROOM_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @Import({JpaRoomPersistenceAdapter.class})
-@TestPropertySource(locations = "classpath:application-test.yml")
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@EntityScan(basePackages = "com.seatliberator.seatliberator.reservation")
 @DisplayName("Room Persistence")
-public class JpaRoomPersistenceAdapterTest {
-    @Autowired
-    RoomRepository repository;
-
+public class JpaRoomPersistenceAdapterTest extends AbstractPersistenceAdapterTest {
     @Autowired
     RoomReader reader;
 
     @Autowired
     RoomStore store;
 
-    Clock clock = fixedClock;
+    @Autowired
+    RoomRepository repository;
 
-    Instant now = clock.instant();
+    @Nested
+    @DisplayName("Reader 테스트")
+    class ReaderTest {
+        @Test
+        @DisplayName("existsByRoomId는 방 Id에 해당하는 방 있으면 True")
+        void should_return_true_when_exists_room() {
+            var room = RoomFixture.get();
+            repository.save(room);
+            flushAndClear();
 
-    @Test
-    @DisplayName("save는 Room을 저장하고 저장된 Room을 반환한다")
-    void save() {
-        var roomId = "study-room-1";
-        var room = Room.of(roomId, now);
+            var roomId = room.getRoomId();
 
-        var saved = store.save(room);
+            assertThat(reader.existsByRoomId(roomId)).isTrue();
+        }
 
-        assertThat(saved.getRoomId()).isEqualTo(roomId);
-        assertThat(reader.findByRoomId(roomId)).isPresent();
+        @Test
+        @DisplayName("existsByRoomId는 방 Id 에 해당하는 방 없으면 False")
+        void should_return_false_when_non_exists_room() {
+            var room = RoomFixture.get();
+            var roomId = room.getRoomId();
+
+            assertThat(reader.existsByRoomId(roomId)).isFalse();
+        }
+
+        @Test
+        @DisplayName("findByRoomId는 방 Id에 해당하는 방을 반환한다")
+        void should_find_room_by_room_id() {
+            var room = RoomFixture.get();
+            repository.save(room);
+            flushAndClear();
+
+            var actual = reader.findByRoomId(room.getRoomId());
+
+            assertThat(actual)
+                    .isPresent()
+                    .get()
+                    .usingRecursiveComparison()
+                    .isEqualTo(room);
+        }
+
+        @Test
+        @DisplayName("findByRoomId는 방 Id에 해당하는 방이 없으면 Optional.empty를 반환한다")
+        void should_return_empty_when_room_not_found_by_room_id() {
+            var room = RoomFixture.get();
+
+            var actual = reader.findByRoomId(room.getRoomId());
+
+            assertThat(actual).isEmpty();
+        }
+
+        @Test
+        @DisplayName("findAll은 저장된 모든 방을 반환한다")
+        void should_find_all_rooms() {
+            var room = RoomFixture.get();
+            var otherRoom = new RoomFixture.Builder()
+                    .roomId(OTHER_ROOM_ID)
+                    .build();
+            repository.save(room);
+            repository.save(otherRoom);
+            flushAndClear();
+
+            var actual = reader.findAll();
+
+            assertThat(actual)
+                    .usingRecursiveFieldByFieldElementComparator()
+                    .containsExactlyInAnyOrder(room, otherRoom);
+        }
     }
 
-    @Test
-    @DisplayName("store.deleteByRoomId는 roomId에 해당하는 Room을 삭제한다")
-    void delete_by_roomId() {
-        var roomId = "study-room-1";
-        repository.saveAndFlush(Room.of(roomId, now));
+    @Nested
+    @DisplayName("Store 테스트")
+    class StoreTest {
+        @Test
+        @DisplayName("save는 방을 저장한다")
+        void should_save_room() {
+            var room = RoomFixture.get();
 
-        store.deleteByRoomId(roomId);
-        assertThat(repository.existsByRoomId(roomId)).isFalse();
-    }
+            var savedRoom = store.save(room);
+            flushAndClear();
 
-    @Test
-    @DisplayName("reader.findByRoomId는 roomId에 해당하는 Room을 반환한다")
-    void find_by_roomId() {
-        var roomId = "study-room-1";
-        repository.saveAndFlush(Room.of(roomId, now));
+            var actual = repository.findByRoomId(savedRoom.getRoomId());
+            assertThat(actual)
+                    .isPresent()
+                    .get()
+                    .usingRecursiveComparison()
+                    .isEqualTo(savedRoom);
+        }
 
-        var found = reader.findByRoomId(roomId);
+        @Test
+        @DisplayName("deleteByRoomId는 방 Id에 해당하는 방을 삭제한다")
+        void should_delete_room_by_room_id() {
+            var room = RoomFixture.get();
+            repository.save(room);
+            flushAndClear();
 
-        assertThat(found).isPresent();
-        assertThat(found.get().getRoomId()).isEqualTo(roomId);
-    }
+            store.deleteByRoomId(room.getRoomId());
+            flushAndClear();
 
-    @Test
-    @DisplayName("reader.existsByRoomId는 roomId에 해당하는 Room 존재 여부를 반환한다")
-    void exists_by_roomId() {
-        var roomId = "study-room-1";
-        repository.saveAndFlush(Room.of(roomId, now));
-
-        var exists = reader.existsByRoomId(roomId);
-
-        assertThat(exists).isTrue();
+            assertThat(repository.existsByRoomId(room.getRoomId())).isFalse();
+        }
     }
 }
