@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":reservation:reservation-application"))
     implementation(project(":reservation:reservation-domain"))
 
+    testImplementation(project(":kernel:kernel-test"))
     testImplementation(testFixtures(project(":reservation:reservation-domain")))
 }
 
