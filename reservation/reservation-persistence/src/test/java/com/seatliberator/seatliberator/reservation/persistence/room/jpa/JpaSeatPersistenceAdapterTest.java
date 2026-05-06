@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.persistence.room.jpa;
 
-import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatReader;
-import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatStore;
-import com.seatliberator.seatliberator.reservation.application.room.port.out.criteria.SeatExclusion;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatReader;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatStore;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.criteria.SeatExclusion;
 import com.seatliberator.seatliberator.reservation.domain.room.Room;
 import com.seatliberator.seatliberator.reservation.domain.seat.Seat;
 import com.seatliberator.seatliberator.reservation.persistence.AbstractPersistenceAdapterTest;

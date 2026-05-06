@@ -2,7 +2,7 @@ package com.seatliberator.seatliberator.reservation.application.shared.seed;
 
 import com.seatliberator.seatliberator.reservation.application.room.internal.RoomOperationPolicyProvisioner;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomStore;
-import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatStore;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.domain.room.Room;
 import com.seatliberator.seatliberator.reservation.domain.seat.Seat;
 import lombok.RequiredArgsConstructor;

@@ -13,7 +13,7 @@ import com.seatliberator.seatliberator.reservation.application.availability.port
 import com.seatliberator.seatliberator.reservation.application.availability.port.in.result.SeatStatusesResult;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.OccupancySeatLocatorFinder;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.OccupancySeatRangeFinder;
-import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatReader;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.domain.seat.Seat;

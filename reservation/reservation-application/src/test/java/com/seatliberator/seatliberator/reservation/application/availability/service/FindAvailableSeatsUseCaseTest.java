@@ -5,7 +5,7 @@ import com.seatliberator.seatliberator.reservation.application.availability.port
 import com.seatliberator.seatliberator.reservation.application.availability.port.in.result.AvailableSeatResult;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.OccupancySeatLocatorFinder;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.OccupancySeatRangeFinder;
-import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatReader;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
 import com.seatliberator.seatliberator.reservation.domain.seat.SeatFixture;
 import org.junit.jupiter.api.BeforeEach;
