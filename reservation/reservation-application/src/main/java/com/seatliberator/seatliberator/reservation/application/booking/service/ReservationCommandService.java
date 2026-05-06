@@ -16,7 +16,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.out.
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationSeatOverlapCriteria;
-import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatStore;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationPolicyException;

@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.application.room.port.out.criteria;
+package com.seatliberator.seatliberator.reservation.application.seat.port.out.criteria;
 
 import java.util.*;
 

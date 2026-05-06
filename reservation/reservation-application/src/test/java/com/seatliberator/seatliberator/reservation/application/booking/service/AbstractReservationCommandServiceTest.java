@@ -5,7 +5,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.contract.
 import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreator;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationStore;
-import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatStore;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

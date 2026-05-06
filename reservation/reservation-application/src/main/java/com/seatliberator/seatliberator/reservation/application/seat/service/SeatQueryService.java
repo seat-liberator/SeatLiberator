@@ -1,12 +1,12 @@
-package com.seatliberator.seatliberator.reservation.application.room.service;
+package com.seatliberator.seatliberator.reservation.application.seat.service;
 
-import com.seatliberator.seatliberator.reservation.application.room.port.in.FindSeatUseCase;
-import com.seatliberator.seatliberator.reservation.application.room.port.in.ListSeatUseCase;
-import com.seatliberator.seatliberator.reservation.application.room.port.in.query.FindSeatQuery;
-import com.seatliberator.seatliberator.reservation.application.room.port.in.query.ListSeatQuery;
-import com.seatliberator.seatliberator.reservation.application.room.port.in.result.SeatResult;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomReader;
-import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatReader;
+import com.seatliberator.seatliberator.reservation.application.seat.port.in.FindSeatUseCase;
+import com.seatliberator.seatliberator.reservation.application.seat.port.in.ListSeatUseCase;
+import com.seatliberator.seatliberator.reservation.application.seat.port.in.query.FindSeatQuery;
+import com.seatliberator.seatliberator.reservation.application.seat.port.in.query.ListSeatQuery;
+import com.seatliberator.seatliberator.reservation.application.seat.port.in.result.SeatResult;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;

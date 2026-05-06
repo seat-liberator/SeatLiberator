@@ -1,8 +1,8 @@
-package com.seatliberator.seatliberator.reservation.application.room.internal;
+package com.seatliberator.seatliberator.reservation.application.seat.internal;
 
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomReader;
-import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatReader;
-import com.seatliberator.seatliberator.reservation.application.room.port.out.SeatStore;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatReader;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatStore;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.domain.room.Room;

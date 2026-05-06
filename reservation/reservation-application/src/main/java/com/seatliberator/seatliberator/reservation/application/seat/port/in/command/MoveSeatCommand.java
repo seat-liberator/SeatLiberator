@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.application.room.port.in.command;
+package com.seatliberator.seatliberator.reservation.application.seat.port.in.command;
 
 public record MoveSeatCommand(
         String oldRoomId,
