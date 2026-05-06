@@ -84,7 +84,7 @@ public class EmbeddableDailyTimeWindowTest {
 
             window.updateStartAt(startAt);
 
-            assertThat(window.getStartAt()).isEqualTo(startAt);
+            assertThat(window.startAt()).isEqualTo(startAt);
         }
 
         @Test
@@ -95,7 +95,7 @@ public class EmbeddableDailyTimeWindowTest {
 
             window.updateEndAt(endAt);
 
-            assertThat(window.getEndAt()).isEqualTo(endAt);
+            assertThat(window.endAt()).isEqualTo(endAt);
         }
     }
 }

@@ -4,13 +4,11 @@ import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
 
 @Embeddable
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EmbeddableDailyTimeWindow implements DailyTimeWindow {
     @Column(name = "start_at", nullable = false)
