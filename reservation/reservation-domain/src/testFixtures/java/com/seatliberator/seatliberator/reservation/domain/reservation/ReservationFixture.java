@@ -6,7 +6,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 
-import static com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
 import static org.assertj.core.api.Fail.fail;
 
@@ -44,7 +43,7 @@ public class ReservationFixture {
 
     public static class Builder {
         private String userId = INITIAL_USER_ID;
-        private SeatLocator locator = createLocator();
+        private SeatLocator locator = SeatLocatorFixture.get();
         private InstantRange range = InstantRangeFixture.get();
         private ReservationStatus status = ReservationStatus.RESERVED;
 

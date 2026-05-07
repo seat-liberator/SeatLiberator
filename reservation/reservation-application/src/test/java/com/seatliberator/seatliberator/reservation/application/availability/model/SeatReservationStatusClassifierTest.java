@@ -1,12 +1,12 @@
 package com.seatliberator.seatliberator.reservation.application.availability.model;
 
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture.createLocator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -31,9 +31,9 @@ public class SeatReservationStatusClassifierTest {
     @Test
     @DisplayName("이미 점유된 locator는 RESERVED, 나머지는 AVAILABLE이다")
     void classified_locator() {
-        var locatorA = createLocator("room-1", "A");
-        var locatorB = createLocator("room-1", "B");
-        var locatorC = createLocator("room-1", "C");
+        var locatorA = SeatLocatorFixture.get("room-1", "A");
+        var locatorB = SeatLocatorFixture.get("room-1", "B");
+        var locatorC = SeatLocatorFixture.get("room-1", "C");
 
         var seatLocators = List.of(locatorA, locatorB, locatorC);
 
@@ -53,9 +53,9 @@ public class SeatReservationStatusClassifierTest {
     @Test
     @DisplayName("점유된 locator가 비어있으면 모든 좌석이 AVAILABLE이다")
     void all_available_when_empty_reserved_locator() {
-        var locatorA = createLocator("room-1", "A");
-        var locatorB = createLocator("room-1", "B");
-        var locatorC = createLocator("room-1", "C");
+        var locatorA = SeatLocatorFixture.get("room-1", "A");
+        var locatorB = SeatLocatorFixture.get("room-1", "B");
+        var locatorC = SeatLocatorFixture.get("room-1", "C");
 
         var seatLocators = List.of(locatorA, locatorB, locatorC);
 
@@ -81,9 +81,9 @@ public class SeatReservationStatusClassifierTest {
     @Test
     @DisplayName("좌석 locator에 없는 예약 locator가 있으면 무시")
     void throw_exception_when_reserved_locator_is_not_subset_of_seat_locator() {
-        var locatorA = createLocator("room-1", "A");
-        var locatorB = createLocator("room-1", "B");
-        var locatorC = createLocator("room-1", "C");
+        var locatorA = SeatLocatorFixture.get("room-1", "A");
+        var locatorB = SeatLocatorFixture.get("room-1", "B");
+        var locatorC = SeatLocatorFixture.get("room-1", "C");
 
         var seatLocators = List.of(locatorA, locatorB);
 

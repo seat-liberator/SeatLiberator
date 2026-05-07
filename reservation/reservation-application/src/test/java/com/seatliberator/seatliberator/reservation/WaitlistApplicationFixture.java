@@ -5,12 +5,12 @@ import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.
 import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistBehavior;
 
 import java.util.UUID;
 
 import static com.seatliberator.seatliberator.reservation.domain.reservation.ReservationFixture.INITIAL_USER_ID;
-import static com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture.createLocator;
 
 public class WaitlistApplicationFixture {
     public static CreateWaitlistCommand createWaitlistCreateCommand(
@@ -37,7 +37,7 @@ public class WaitlistApplicationFixture {
     public static CreateWaitlistCommand createWaitlistCreateCommand() {
         return createWaitlistCreateCommand(
                 INITIAL_USER_ID,
-                createLocator(),
+                SeatLocatorFixture.get(),
                 InstantRangeFixture.get(),
                 WaitlistBehavior.AUTO_CLAIM
         );
