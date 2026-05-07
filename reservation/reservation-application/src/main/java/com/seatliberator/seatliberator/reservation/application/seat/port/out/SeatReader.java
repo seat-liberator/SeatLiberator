@@ -6,8 +6,11 @@ import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface SeatReader {
+    Optional<Seat> findById(UUID id);
+
     Optional<Seat> findByLocator(SeatLocator locator);
 
     List<Seat> findByRoomId(String roomId);
