@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.infrastructure.web.room.controller;
+package com.seatliberator.seatliberator.reservation.infrastructure.web.seat.controller;
 
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.FindSeatUseCase;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.ListSeatUseCase;
