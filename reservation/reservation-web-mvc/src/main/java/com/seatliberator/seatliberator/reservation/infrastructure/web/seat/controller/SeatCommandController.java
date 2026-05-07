@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.infrastructure.web.room.controller;
+package com.seatliberator.seatliberator.reservation.infrastructure.web.seat.controller;
 
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.CreateSeatUseCase;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.DeleteSeatUseCase;
@@ -7,8 +7,8 @@ import com.seatliberator.seatliberator.reservation.application.seat.port.in.comm
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.command.DeleteSeatCommand;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.command.UpdateSeatCommand;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.result.SeatResult;
-import com.seatliberator.seatliberator.reservation.infrastructure.web.room.request.SeatCreateRequest;
-import com.seatliberator.seatliberator.reservation.infrastructure.web.room.request.SeatUpdateRequest;
+import com.seatliberator.seatliberator.reservation.infrastructure.web.seat.request.SeatCreateRequest;
+import com.seatliberator.seatliberator.reservation.infrastructure.web.seat.request.SeatUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

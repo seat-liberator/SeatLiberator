@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.infrastructure.web.room;
+package com.seatliberator.seatliberator.reservation.infrastructure.web.seat;
 
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.FindSeatUseCase;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.ListSeatUseCase;
@@ -6,7 +6,7 @@ import com.seatliberator.seatliberator.reservation.application.seat.port.in.quer
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.query.ListSeatQuery;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.result.SeatResult;
 import com.seatliberator.seatliberator.reservation.domain.seat.SeatStatus;
-import com.seatliberator.seatliberator.reservation.infrastructure.web.room.controller.SeatQueryController;
+import com.seatliberator.seatliberator.reservation.infrastructure.web.seat.controller.SeatQueryController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
