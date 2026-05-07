@@ -5,10 +5,10 @@ import com.seatliberator.seatliberator.board.infrastructure.web.controller.Categ
 import com.seatliberator.seatliberator.board.infrastructure.web.controller.PostController;
 import com.seatliberator.seatliberator.jwks.infrastructure.web.controller.JwksController;
 import com.seatliberator.seatliberator.notification.infrastructure.web.controller.NotificationController;
-import com.seatliberator.seatliberator.reservation.infrastructure.web.availability.SeatAvailabilityController;
-import com.seatliberator.seatliberator.reservation.infrastructure.web.book.controller.ReservationController;
-import com.seatliberator.seatliberator.reservation.infrastructure.web.seat.controller.SeatCommandController;
-import com.seatliberator.seatliberator.reservation.infrastructure.web.waitlist.controller.WaitlistController;
+import com.seatliberator.seatliberator.reservation.web.availability.SeatAvailabilityController;
+import com.seatliberator.seatliberator.reservation.web.book.controller.ReservationController;
+import com.seatliberator.seatliberator.reservation.web.seat.controller.SeatCommandController;
+import com.seatliberator.seatliberator.reservation.web.waitlist.controller.WaitlistController;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.server.PathContainer;
