@@ -37,7 +37,7 @@ public class SeatTimeSlotCommandService implements
 
     @Override
     public SeatTimeSlotResult create(CreateSeatTimeSlotCommand command) {
-        var seat = seatReader.findById(command.seatId())
+        var seat = seatReader.findByLocator(command.locator())
                 .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND));
 
         var slotRange = SimpleDailyTimeSegment.of(command.startAt(), command.duration());
