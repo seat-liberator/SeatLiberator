@@ -33,8 +33,8 @@ public class EmbeddableDailyTimeSegmentTest implements DailyTimeSegmentContractT
             return Stream.of(
                     arguments("startNanoOfDay = null", (Supplier<EmbeddableDailyTimeSegment>) () -> EmbeddableDailyTimeSegment.of(null, START_AT.toNanoOfDay() + DURATION.toNanos()), "startNanoOfDay"),
                     arguments("endNanoOfDay = null", (Supplier<EmbeddableDailyTimeSegment>) () -> EmbeddableDailyTimeSegment.of(START_AT.toNanoOfDay(), null), "endNanoOfDay"),
-                    arguments("startAt = null", (Supplier<EmbeddableDailyTimeSegment>) () -> EmbeddableDailyTimeSegment.of((LocalTime) null, DURATION), "startAt"),
-                    arguments("duration = null", (Supplier<EmbeddableDailyTimeSegment>) () -> EmbeddableDailyTimeSegment.of(START_AT, null), "duration")
+                    arguments("startAt = null", (Supplier<EmbeddableDailyTimeSegment>) () -> EmbeddableDailyTimeSegment.of(null, DURATION), "startAt"),
+                    arguments("duration = null", (Supplier<EmbeddableDailyTimeSegment>) () -> EmbeddableDailyTimeSegment.of(START_AT, (Duration) null), "duration")
             );
         }
 
