@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.domain.seat;
 
-import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeWindow;
-import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeWindowFixture;
+import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeSegment;
+import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeSegmentFixtures;
 import com.seatliberator.seatliberator.reservation.domain.shared.TestSupport;
 
 import java.time.Instant;
@@ -10,7 +10,7 @@ import static com.seatliberator.seatliberator.reservation.domain.seat.SeatFixtur
 
 public class SeatTimeSlotFixture {
     public static final Seat SEAT = createSeat();
-    public static final DailyTimeWindow SLOT_RANGE = DailyTimeWindowFixture.get();
+    public static final DailyTimeSegment SLOT_RANGE = DailyTimeSegmentFixtures.get();
     public static final SeatTimeSlotStatus SLOT_STATUS = SeatTimeSlotStatus.ACTIVE;
     public static final Instant CREATED_AT = TestSupport.fixedClock.instant();
 
@@ -20,7 +20,7 @@ public class SeatTimeSlotFixture {
 
     public static class Builder {
         private Seat seat = SEAT;
-        private DailyTimeWindow slotRange = SLOT_RANGE;
+        private DailyTimeSegment slotRange = SLOT_RANGE;
         private SeatTimeSlotStatus slotStatus = SLOT_STATUS;
         private Instant createdAt = CREATED_AT;
 
@@ -29,7 +29,7 @@ public class SeatTimeSlotFixture {
             return this;
         }
 
-        public Builder slotRange(DailyTimeWindow slotRange) {
+        public Builder slotRange(DailyTimeSegment slotRange) {
             this.slotRange = slotRange;
             return this;
         }

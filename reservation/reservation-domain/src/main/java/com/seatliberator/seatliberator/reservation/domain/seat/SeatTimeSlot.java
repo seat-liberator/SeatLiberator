@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.domain.seat;
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
-import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeWindow;
-import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableDailyTimeWindow;
+import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeSegment;
+import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableDailyTimeSegment;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -35,10 +35,10 @@ public class SeatTimeSlot {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "startAt", column = @Column(name = "slot_start_at", nullable = false)),
-            @AttributeOverride(name = "endAt", column = @Column(name = "slot_end_at", nullable = false))
+            @AttributeOverride(name = "startNanoOfDay", column = @Column(name = "slot_start_at", nullable = false)),
+            @AttributeOverride(name = "endNanoOfDay", column = @Column(name = "slot_end_at", nullable = false))
     })
-    private EmbeddableDailyTimeWindow slotRange;
+    private EmbeddableDailyTimeSegment slotRange;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "slot_status", nullable = false)
@@ -55,7 +55,7 @@ public class SeatTimeSlot {
 
     private SeatTimeSlot(
             Seat seat,
-            EmbeddableDailyTimeWindow slotRange,
+            EmbeddableDailyTimeSegment slotRange,
             SeatTimeSlotStatus slotStatus,
             Instant createdAt
     ) {
@@ -72,20 +72,20 @@ public class SeatTimeSlot {
 
     public static SeatTimeSlot of(
             Seat seat,
-            DailyTimeWindow slotRange,
+            DailyTimeSegment slotRange,
             SeatTimeSlotStatus slotStatus,
             Instant createdAt
     ) {
         Preconditions.requireNonNull(slotRange, "slotRange");
         return new SeatTimeSlot(
                 seat,
-                EmbeddableDailyTimeWindow.from(slotRange),
+                EmbeddableDailyTimeSegment.from(slotRange),
                 slotStatus,
                 createdAt
         );
     }
 
-    public void updateSlotRange(DailyTimeWindow slotRange) {
+    public void updateSlotRange(DailyTimeSegment slotRange) {
         Preconditions.requireNonNull(slotRange, "slotRange");
         this.slotRange.apply(slotRange);
     }

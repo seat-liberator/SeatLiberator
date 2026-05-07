@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.domain.room;
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
-import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeWindow;
-import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableDailyTimeWindow;
+import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeSegment;
+import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableDailyTimeSegment;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,13 +26,13 @@ public class RoomOperationPolicy {
     private RoomOperationStatus operationStatus;
 
     @Embedded
-    private EmbeddableDailyTimeWindow operationHours;
+    private EmbeddableDailyTimeSegment operationHours;
 
     private RoomOperationPolicy(
             Integer maxReservationPerUser,
             Duration maxReservationDuration,
             RoomOperationStatus operationStatus,
-            EmbeddableDailyTimeWindow operationHours
+            EmbeddableDailyTimeSegment operationHours
     ) {
         this.maxReservationDuration = Preconditions.requirePositive(maxReservationDuration, "maxReservationDuration");
         this.maxReservationPerUser = Preconditions.requirePositive(maxReservationPerUser, "maxReservationPerUser");
@@ -44,14 +44,14 @@ public class RoomOperationPolicy {
             Integer maxReservationPerUser,
             Duration maxReservationDuration,
             RoomOperationStatus operationStatus,
-            DailyTimeWindow operationHours
+            DailyTimeSegment operationHours
     ) {
         Preconditions.requireNonNull(operationHours, "operationHours");
         return new RoomOperationPolicy(
                 maxReservationPerUser,
                 maxReservationDuration,
                 operationStatus,
-                EmbeddableDailyTimeWindow.from(operationHours)
+                EmbeddableDailyTimeSegment.from(operationHours)
         );
     }
 
@@ -67,7 +67,7 @@ public class RoomOperationPolicy {
         this.operationStatus = Preconditions.requireNonNull(operationStatus, "operationStatus");
     }
 
-    public void updateOperationHours(DailyTimeWindow operationHours) {
+    public void updateOperationHours(DailyTimeSegment operationHours) {
         Preconditions.requireNonNull(operationHours, "operationHours");
         this.operationHours.apply(operationHours);
     }
