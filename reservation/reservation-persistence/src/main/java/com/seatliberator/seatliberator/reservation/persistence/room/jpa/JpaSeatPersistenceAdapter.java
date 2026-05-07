@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -24,6 +25,11 @@ public class JpaSeatPersistenceAdapter implements SeatStore, SeatReader {
     @Override
     public void save(Seat seat) {
         repository.save(seat);
+    }
+
+    @Override
+    public Optional<Seat> findById(UUID id) {
+        return repository.findById(id);
     }
 
     @Override
