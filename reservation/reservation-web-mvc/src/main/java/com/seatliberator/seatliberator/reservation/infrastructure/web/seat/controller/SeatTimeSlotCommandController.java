@@ -62,7 +62,7 @@ public class SeatTimeSlotCommandController {
             @Parameter(description = "좌석 ID", example = "A1")
             @PathVariable("seatId") String seatId,
             @Parameter(description = "좌석 시간 슬롯 ID", example = "00000000-0000-0000-000000000001")
-            @PathVariable("seatId") UUID seatTimeSlotId,
+            @PathVariable("slotId") UUID seatTimeSlotId,
             @RequestBody SeatTimeSlotUpdateRequest request
     ) {
         var command = request.toCommand(seatTimeSlotId);
