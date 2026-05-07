@@ -11,7 +11,7 @@ public record RoomOperationPolicyResult(
         Duration maxReservationDuration,
         RoomOperationStatus operationStatus,
         LocalTime openAt,
-        LocalTime closeAt
+        Duration duration
 ) {
     public static RoomOperationPolicyResult from(RoomOperationPolicy operationPolicy) {
         return new RoomOperationPolicyResult(
@@ -19,7 +19,7 @@ public record RoomOperationPolicyResult(
                 operationPolicy.getMaxReservationDuration(),
                 operationPolicy.getOperationStatus(),
                 operationPolicy.getOperationHours().startAt(),
-                operationPolicy.getOperationHours().endAt()
+                operationPolicy.getOperationHours().duration()
         );
     }
 }

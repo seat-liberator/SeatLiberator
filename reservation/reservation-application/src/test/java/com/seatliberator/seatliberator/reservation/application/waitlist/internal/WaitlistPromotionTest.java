@@ -6,6 +6,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.contract.
 import com.seatliberator.seatliberator.reservation.application.booking.contract.command.ReservationCreatorCommand;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.result.ReservationPolicyReason;
 import com.seatliberator.seatliberator.reservation.application.shared.policy.SimplePolicyResult;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture.createLocator;
-import static com.seatliberator.seatliberator.reservation.domain.shared.TimeRangeFixture.createRange;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -41,7 +41,7 @@ class WaitlistPromotionTest {
     void return_reject_reason_when_policy_check_fails() {
         var userId = "user-1";
         var locator = createLocator();
-        var range = createRange();
+        var range = InstantRangeFixture.get();
         when(createPolicy.evaluate(ReservationCreatePolicyCommand.of(userId, locator, range)))
                 .thenReturn(SimplePolicyResult.reject(ReservationPolicyReason.SEAT_ALREADY_TAKEN));
 
@@ -57,7 +57,7 @@ class WaitlistPromotionTest {
     void create_reservation_with_same_locator_and_range_when_policy_check_passes() {
         var userId = "user-1";
         var locator = createLocator();
-        var range = createRange();
+        var range = InstantRangeFixture.get();
         when(createPolicy.evaluate(ReservationCreatePolicyCommand.of(userId, locator, range)))
                 .thenReturn(SimplePolicyResult.accept(ReservationPolicyReason.RESERVATION_CREATABLE));
 
@@ -75,7 +75,7 @@ class WaitlistPromotionTest {
     void return_generic_failure_when_create_reservation_throws_exception() {
         var userId = "user-1";
         var locator = createLocator();
-        var range = createRange();
+        var range = InstantRangeFixture.get();
         when(createPolicy.evaluate(ReservationCreatePolicyCommand.of(userId, locator, range)))
                 .thenReturn(SimplePolicyResult.accept(ReservationPolicyReason.RESERVATION_CREATABLE));
         doThrow(new IllegalStateException("boom"))

@@ -2,6 +2,7 @@ package com.seatliberator.seatliberator.reservation.application.waitlist.model;
 
 import com.seatliberator.seatliberator.reservation.application.waitlist.internal.WaitlistPromotionResult;
 import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.*;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +13,6 @@ import java.util.List;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
-import static com.seatliberator.seatliberator.reservation.domain.shared.TimeRangeFixture.createRange;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Application.model: WaitlistRequests")
@@ -22,7 +22,7 @@ class WaitlistRequestsTest {
     @DisplayName("NOTIFY_ONLY 요청은 전부 완료 처리하고 알림 명령을 만든다")
     void complete_all_notify_only_requests() {
         var locator = createLocator();
-        var range = createRange();
+        var range = InstantRangeFixture.get();
         var requestedAt = fixedClock.instant();
         var now = requestedAt.plusSeconds(60);
         var requests = createRequests(locator, range, WaitlistBehavior.NOTIFY_ONLY, List.of(
@@ -52,7 +52,7 @@ class WaitlistRequestsTest {
     @DisplayName("AUTO_CLAIM 요청은 requestedAt 오름차순으로 첫 성공 후보까지만 처리한다")
     void stop_after_first_success_in_requested_at_order() {
         var locator = createLocator();
-        var range = createRange();
+        var range = InstantRangeFixture.get();
         var baseAt = fixedClock.instant();
         var now = baseAt.plusSeconds(60);
         var lateRequest = autoClaimRequest("user-late", locator, range, baseAt.plusSeconds(3));
@@ -81,7 +81,7 @@ class WaitlistRequestsTest {
     @DisplayName("AUTO_CLAIM 첫 후보가 실패하면 다음 후보를 계속 시도한다")
     void continue_to_next_candidate_when_first_auto_claim_fails() {
         var locator = createLocator();
-        var range = createRange();
+        var range = InstantRangeFixture.get();
         var baseAt = fixedClock.instant();
         var now = baseAt.plusSeconds(60);
         var firstRequest = autoClaimRequest("user-first", locator, range, baseAt);
@@ -112,7 +112,7 @@ class WaitlistRequestsTest {
     @DisplayName("혼합 요청은 AUTO_CLAIM 처리 후 NOTIFY_ONLY 알림도 함께 만든다")
     void process_auto_claim_and_notify_only_together() {
         var locator = createLocator();
-        var range = createRange();
+        var range = InstantRangeFixture.get();
         var baseAt = fixedClock.instant();
         var now = baseAt.plusSeconds(60);
         var autoClaimRequest = autoClaimRequest("auto-user", locator, range, baseAt);

@@ -1,13 +1,13 @@
 package com.seatliberator.seatliberator.reservation.domain.waitlist;
 
 import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 
 import java.time.Instant;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
-import static com.seatliberator.seatliberator.reservation.domain.shared.TimeRangeFixture.createRange;
 import static com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistFixture.INITIAL_USER_ID;
 
 public class WaitlistFixtureBuilder {
@@ -15,7 +15,7 @@ public class WaitlistFixtureBuilder {
 
     private SeatLocator locator = createLocator();
 
-    private InstantRange range = createRange();
+    private InstantRange range = InstantRangeFixture.get();
 
     private Instant requestedAt = fixedClock.instant();
 

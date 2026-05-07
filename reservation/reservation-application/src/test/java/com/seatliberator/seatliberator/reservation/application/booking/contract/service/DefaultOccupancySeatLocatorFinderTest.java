@@ -6,6 +6,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.out.
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationRoomOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationFixture;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture.createLocator;
-import static com.seatliberator.seatliberator.reservation.domain.shared.TimeRangeFixture.createRange;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -36,7 +36,7 @@ class DefaultOccupancySeatLocatorFinderTest {
     @DisplayName("roomId와 시간 범위로 겹치는 예약을 조회한다")
     void find_overlapping_reservations_by_room_and_range() {
         var roomId = "room-1";
-        var range = createRange();
+        var range = InstantRangeFixture.get();
         var criteria = ReservationRoomOverlapCriteria.of(roomId, range)
                 .withFilter(ReservationFilter.empty().withStatuses(policy.occupyingStatuses()));
 
@@ -53,7 +53,7 @@ class DefaultOccupancySeatLocatorFinderTest {
     @DisplayName("점유 예약의 locator만 반환한다")
     void return_only_occupied_reservation_locators() {
         var roomId = "room-1";
-        var range = createRange();
+        var range = InstantRangeFixture.get();
         var builder = new ReservationFixture.Builder()
                 .range(range);
 

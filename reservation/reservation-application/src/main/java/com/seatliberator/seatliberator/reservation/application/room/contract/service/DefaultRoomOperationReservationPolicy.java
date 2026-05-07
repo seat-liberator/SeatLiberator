@@ -6,7 +6,6 @@ import com.seatliberator.seatliberator.reservation.application.room.contract.res
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomReader;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicy;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableDailyTimeWindow;
 import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Service
 @RequiredArgsConstructor
@@ -39,53 +36,6 @@ public class DefaultRoomOperationReservationPolicy implements RoomOperationReser
             return RoomPolicyResult.reject(RoomPolicyReason.MAX_RESERVATION_DURATION_EXCEEDED);
         }
 
-        if (!contains(policy.getOperationHours(), range)) {
-            return RoomPolicyResult.reject(RoomPolicyReason.OUT_OF_OPERATION_HOURS);
-        }
-
         return RoomPolicyResult.accept(RoomPolicyReason.ROOM_OPERATION_AVAILABLE);
-    }
-
-    private boolean contains(EmbeddableDailyTimeWindow operationHours, InstantRange range) {
-        var startAt = LocalDateTime.ofInstant(range.startAt(), clock.getZone());
-        var endAt = LocalDateTime.ofInstant(range.endAt(), clock.getZone());
-        var openAt = operationHours.startAt();
-        var closeAt = operationHours.endAt();
-
-        if (openAt.equals(closeAt)) {
-            return true;
-        }
-
-        var windowStart = windowStartFor(startAt, openAt, closeAt);
-        if (windowStart == null) {
-            return false;
-        }
-
-        var windowEnd = closeAt.isAfter(openAt)
-                ? LocalDateTime.of(windowStart.toLocalDate(), closeAt)
-                : LocalDateTime.of(windowStart.toLocalDate().plusDays(1), closeAt);
-
-        return !endAt.isAfter(windowEnd);
-    }
-
-    private LocalDateTime windowStartFor(LocalDateTime startAt, LocalTime openAt, LocalTime closeAt) {
-        var requestedTime = startAt.toLocalTime();
-
-        if (closeAt.isAfter(openAt)) {
-            if (requestedTime.isBefore(openAt) || !requestedTime.isBefore(closeAt)) {
-                return null;
-            }
-            return LocalDateTime.of(startAt.toLocalDate(), openAt);
-        }
-
-        if (!requestedTime.isBefore(openAt)) {
-            return LocalDateTime.of(startAt.toLocalDate(), openAt);
-        }
-
-        if (requestedTime.isBefore(closeAt)) {
-            return LocalDateTime.of(startAt.toLocalDate().minusDays(1), openAt);
-        }
-
-        return null;
     }
 }

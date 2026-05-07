@@ -1,22 +1,18 @@
 package com.seatliberator.seatliberator.reservation;
 
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.command.CreateWaitlistCommand;
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.*;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistBehavior;
 
 import java.time.Instant;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture.createLocator;
-import static com.seatliberator.seatliberator.reservation.domain.shared.TimeRangeFixture.createRange;
 import static com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistFixture.INITIAL_USER_ID;
 
 public class WaitlistCreateCommandBuilder {
     private String userId = INITIAL_USER_ID;
     private SeatLocator locator = createLocator();
-    private InstantRange range = createRange();
+    private InstantRange range = InstantRangeFixture.get();
     private WaitlistBehavior behavior = WaitlistBehavior.AUTO_CLAIM;
 
     public WaitlistCreateCommandBuilder() {}
