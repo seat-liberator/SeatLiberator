@@ -8,6 +8,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.out.
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationFixture;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture.get;
-import static com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -41,7 +41,7 @@ public class OccupancySeatRangeFinderTest {
     @Test
     @DisplayName("targetLocator에 해당하는 좌석이 targetRange 구간 내 점유된 구간을 조회한다")
     void find_occupied_range_by_target_locator_and_range() {
-        var locator = createLocator();
+        var locator = SeatLocatorFixture.get();
         var range = InstantRangeFixture.get();
 
         var criteria = ReservationSeatOverlapCriteria.of(locator, range)
@@ -58,7 +58,7 @@ public class OccupancySeatRangeFinderTest {
     @Test
     @DisplayName("점유 구간의 range만 반환한다")
     void return_only_occupied_range() {
-        var locator = createLocator();
+        var locator = SeatLocatorFixture.get();
         var builder = new ReservationFixture.Builder()
                 .locator(locator);
 

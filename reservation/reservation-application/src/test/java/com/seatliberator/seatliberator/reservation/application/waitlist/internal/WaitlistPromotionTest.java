@@ -7,6 +7,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.contract.
 import com.seatliberator.seatliberator.reservation.application.booking.contract.result.ReservationPolicyReason;
 import com.seatliberator.seatliberator.reservation.application.shared.policy.SimplePolicyResult;
 import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture.createLocator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -40,7 +40,7 @@ class WaitlistPromotionTest {
     @DisplayName("예약 정책을 통과하지 못하면 실패 사유를 그대로 반환한다")
     void return_reject_reason_when_policy_check_fails() {
         var userId = "user-1";
-        var locator = createLocator();
+        var locator = SeatLocatorFixture.get();
         var range = InstantRangeFixture.get();
         when(createPolicy.evaluate(ReservationCreatePolicyCommand.of(userId, locator, range)))
                 .thenReturn(SimplePolicyResult.reject(ReservationPolicyReason.SEAT_ALREADY_TAKEN));
@@ -56,7 +56,7 @@ class WaitlistPromotionTest {
     @DisplayName("예약 정책을 통과하면 같은 좌석과 시간으로 예약 생성을 시도한다")
     void create_reservation_with_same_locator_and_range_when_policy_check_passes() {
         var userId = "user-1";
-        var locator = createLocator();
+        var locator = SeatLocatorFixture.get();
         var range = InstantRangeFixture.get();
         when(createPolicy.evaluate(ReservationCreatePolicyCommand.of(userId, locator, range)))
                 .thenReturn(SimplePolicyResult.accept(ReservationPolicyReason.RESERVATION_CREATABLE));
@@ -74,7 +74,7 @@ class WaitlistPromotionTest {
     @DisplayName("예약 생성 중 예외가 발생하면 일반 실패로 변환한다")
     void return_generic_failure_when_create_reservation_throws_exception() {
         var userId = "user-1";
-        var locator = createLocator();
+        var locator = SeatLocatorFixture.get();
         var range = InstantRangeFixture.get();
         when(createPolicy.evaluate(ReservationCreatePolicyCommand.of(userId, locator, range)))
                 .thenReturn(SimplePolicyResult.accept(ReservationPolicyReason.RESERVATION_CREATABLE));

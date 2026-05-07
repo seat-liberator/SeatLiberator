@@ -6,12 +6,11 @@ import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistBehav
 
 import java.time.Instant;
 
-import static com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistFixture.INITIAL_USER_ID;
 
 public class WaitlistCreateCommandBuilder {
     private String userId = INITIAL_USER_ID;
-    private SeatLocator locator = createLocator();
+    private SeatLocator locator = SeatLocatorFixture.get();
     private InstantRange range = InstantRangeFixture.get();
     private WaitlistBehavior behavior = WaitlistBehavior.AUTO_CLAIM;
 

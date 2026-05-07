@@ -8,6 +8,7 @@ import com.seatliberator.seatliberator.reservation.domain.reservation.Reservatio
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture.createLocator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -57,9 +57,9 @@ class DefaultOccupancySeatLocatorFinderTest {
         var builder = new ReservationFixture.Builder()
                 .range(range);
 
-        var usedLocator = createLocator(roomId, "A");
-        var reservedLocator = createLocator(roomId, "B");
-        var canceledLocator = createLocator(roomId, "C");
+        var usedLocator = SeatLocatorFixture.get(roomId, "A");
+        var reservedLocator = SeatLocatorFixture.get(roomId, "B");
+        var canceledLocator = SeatLocatorFixture.get(roomId, "C");
 
         var used = builder.copy()
                 .locator(usedLocator)
