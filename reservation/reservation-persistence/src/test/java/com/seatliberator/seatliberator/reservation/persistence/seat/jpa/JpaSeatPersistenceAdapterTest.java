@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.persistence.room.jpa;
+package com.seatliberator.seatliberator.reservation.persistence.seat.jpa;
 
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatStore;
@@ -7,7 +7,7 @@ import com.seatliberator.seatliberator.reservation.domain.room.Room;
 import com.seatliberator.seatliberator.reservation.domain.seat.Seat;
 import com.seatliberator.seatliberator.reservation.persistence.AbstractPersistenceAdapterTest;
 import com.seatliberator.seatliberator.reservation.persistence.room.jpa.repository.RoomRepository;
-import com.seatliberator.seatliberator.reservation.persistence.room.jpa.repository.SeatRepository;
+import com.seatliberator.seatliberator.reservation.persistence.seat.jpa.repository.SeatRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
