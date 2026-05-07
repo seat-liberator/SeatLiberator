@@ -5,6 +5,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.out.
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationSeatLookupCriteria;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.seatliberator.seatliberator.reservation.domain.reservation.ReservationFixture.INITIAL_USER_ID;
 import static com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture.createLocator;
-import static com.seatliberator.seatliberator.reservation.domain.shared.TimeRangeFixture.createRange;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -32,7 +32,7 @@ public class DefaultReservationPolicyCheckerTest {
     @DisplayName("같은 좌석과 시간대에 예약이 이미 있으면 예약 불가와 SEAT_ALREADY_TAKEN 사유를 반환한다")
     void reject_when_seat_is_already_taken() {
         var locator = createLocator();
-        var range = createRange();
+        var range = InstantRangeFixture.get();
 
         var criteria = ReservationSeatLookupCriteria.of(locator, range)
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));
@@ -49,7 +49,7 @@ public class DefaultReservationPolicyCheckerTest {
     @DisplayName("같은 좌석과 시간대에 예약이 없으면 예약 가능 결과를 반환한다")
     void accept_when_seat_is_not_taken() {
         var locator = createLocator();
-        var range = createRange();
+        var range = InstantRangeFixture.get();
 
         var criteria = ReservationSeatLookupCriteria.of(locator, range)
                 .withFilter(ReservationFilter.empty().withStatuses(ReservationStatus.RESERVED));

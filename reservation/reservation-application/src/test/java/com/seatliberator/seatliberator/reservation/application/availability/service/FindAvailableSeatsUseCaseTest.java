@@ -8,6 +8,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.contract.
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
 import com.seatliberator.seatliberator.reservation.domain.seat.SeatFixture;
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,6 @@ import java.time.Instant;
 import java.util.List;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
-import static com.seatliberator.seatliberator.reservation.domain.shared.TimeRangeFixture.createRange;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -57,7 +57,7 @@ public class FindAvailableSeatsUseCaseTest {
         var seatC = seatBuilder.copy().seatId("C").build();
         var seats = List.of(seatA, seatB, seatC);
 
-        var range = createRange();
+        var range = InstantRangeFixture.get();
 
         // when
         when(seatReader.findByRoomId(roomId))
@@ -83,7 +83,7 @@ public class FindAvailableSeatsUseCaseTest {
         // given
         var roomId = "room-1";
         var room = new RoomFixture.Builder().roomId(roomId).build();
-        var range = createRange();
+        var range = InstantRangeFixture.get();
 
         // when
         when(seatReader.findByRoomId(roomId))

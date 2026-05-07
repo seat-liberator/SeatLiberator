@@ -1,9 +1,6 @@
 package com.seatliberator.seatliberator.reservation.domain.reservation;
 
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.*;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -11,7 +8,6 @@ import java.util.UUID;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
-import static com.seatliberator.seatliberator.reservation.domain.shared.TimeRangeFixture.createRange;
 import static org.assertj.core.api.Fail.fail;
 
 public class ReservationFixture {
@@ -49,7 +45,7 @@ public class ReservationFixture {
     public static class Builder {
         private String userId = INITIAL_USER_ID;
         private SeatLocator locator = createLocator();
-        private InstantRange range = createRange();
+        private InstantRange range = InstantRangeFixture.get();
         private ReservationStatus status = ReservationStatus.RESERVED;
 
         public Builder() {

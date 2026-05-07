@@ -2,7 +2,7 @@ package com.seatliberator.seatliberator.reservation.application.room.internal;
 
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicy;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableDailyTimeWindow;
+import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableDailyTimeSegment;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -16,7 +16,7 @@ public class DefaultRoomOperationPolicyProvisioner implements RoomOperationPolic
                 5,
                 Duration.ofHours(4),
                 RoomOperationStatus.OPEN,
-                EmbeddableDailyTimeWindow.of(LocalTime.of(6, 0), LocalTime.of(0, 0))
+                EmbeddableDailyTimeSegment.of(LocalTime.of(6, 0), LocalTime.of(0, 0))
         );
     }
 }

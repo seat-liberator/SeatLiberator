@@ -1,12 +1,12 @@
 package com.seatliberator.seatliberator.reservation.domain.waitlist;
 
+import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture.createLocator;
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
-import static com.seatliberator.seatliberator.reservation.domain.shared.TimeRangeFixture.createRange;
 import static com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistFixture.INITIAL_USER_ID;
 import static com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistFixture.createWaitlist;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +23,7 @@ public class WaitlistTest {
 
             // given
             var locator = createLocator();
-            var range = createRange();
+            var range = InstantRangeFixture.get();
             var requestedAt = fixedClock.instant();
 
             // when
@@ -46,7 +46,7 @@ public class WaitlistTest {
         void throw_exception_when_requested_at_is_not_past_than_startAt() {
             // given
             var locator = createLocator();
-            var range = createRange();
+            var range = InstantRangeFixture.get();
 
             // when requestedAt == range.startAt is not the past.
             var requestedAtExactSameAsStartAt = range.startAt();
@@ -217,7 +217,7 @@ public class WaitlistTest {
             @DisplayName("Action type이 Notify only인 request는 complete 시 Resolution이 NOTIFIED로 전이")
             void transition_resolution_to_notified_when_action_type_is_notify_only() {
                 var locator = createLocator();
-                var range = createRange();
+                var range = InstantRangeFixture.get();
                 var requestedAt = range.startAt().minusSeconds(1);
                 var now = requestedAt.minusSeconds(1);
                 var r = Waitlist.notifyOnly(
@@ -238,7 +238,7 @@ public class WaitlistTest {
             @DisplayName("Action type이 Auto claim인 request는 complete 시 Resolution이 CLAIMED로 전이")
             void transition_resolution_to_claimed_when_action_type_is_auto_claim() {
                 var locator = createLocator();
-                var range = createRange();
+                var range = InstantRangeFixture.get();
                 var requestedAt = range.startAt().minusSeconds(1);
                 var now = requestedAt.minusSeconds(1);
                 var r = Waitlist.autoClaim(
