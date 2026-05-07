@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -35,14 +34,11 @@ public class SeatTimeSlotQueryService implements
 
     @Override
     public List<SeatTimeSlotResult> list(ListSeatTimeSlotQuery query) {
-        ensureSeatExists(query.seatId());
-        return seatTimeSlotReader.findBySeatId(query.seatId()).stream()
+        var seat = seatReader.findByLocator(query.locator())
+                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND));
+
+        return seatTimeSlotReader.findBySeatId(seat.getId()).stream()
                 .map(SeatTimeSlotResult::from)
                 .toList();
-    }
-
-    private void ensureSeatExists(UUID seatId) {
-        var exists = seatReader.findById(seatId).isPresent();
-        if (!exists) throw new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND);
     }
 }

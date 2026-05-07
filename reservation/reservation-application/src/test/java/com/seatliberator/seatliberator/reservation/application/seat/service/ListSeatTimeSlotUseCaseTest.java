@@ -7,6 +7,7 @@ import com.seatliberator.seatliberator.reservation.application.seat.port.out.Sea
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatTimeSlotStore;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,12 +35,13 @@ public class ListSeatTimeSlotUseCaseTest extends AbstractSeatTimeSlotUseCaseTest
     @Test
     @DisplayName("seatId에 해당하는 시간 슬롯 목록을 조회한다")
     void list_seat_time_slots() {
-        var seatId = UUID.randomUUID();
+        var locator = SeatLocatorFixture.get();
         var seat = createSeat();
+        var seatId = seat.getId();
         var slot = get();
-        var query = new ListSeatTimeSlotQuery(seatId);
+        var query = new ListSeatTimeSlotQuery(locator);
 
-        when(seatReader.findById(seatId)).thenReturn(Optional.of(seat));
+        when(seatReader.findByLocator(locator)).thenReturn(Optional.of(seat));
         when(seatTimeSlotReader.findBySeatId(seatId)).thenReturn(List.of(slot));
 
         var result = useCase.list(query);
@@ -50,24 +52,25 @@ public class ListSeatTimeSlotUseCaseTest extends AbstractSeatTimeSlotUseCaseTest
                 .extracting("startAt")
                 .isEqualTo(slot.getSlotRange().startAt());
 
-        verify(seatReader).findById(seatId);
+        verify(seatReader).findByLocator(locator);
         verify(seatTimeSlotReader).findBySeatId(seatId);
     }
 
     @Test
     @DisplayName("seatId에 해당하는 좌석이 없으면 SEAT_NOT_FOUND 예외")
     void throw_exception_when_seat_not_found() {
+        var locator = SeatLocatorFixture.get();
         var seatId = UUID.randomUUID();
-        var query = new ListSeatTimeSlotQuery(seatId);
+        var query = new ListSeatTimeSlotQuery(locator);
 
-        when(seatReader.findById(seatId)).thenReturn(Optional.empty());
+        when(seatReader.findByLocator(locator)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> useCase.list(query))
                 .isInstanceOf(ReservationApplicationException.class)
                 .extracting("errorCode")
                 .isEqualTo(ReservationApplicationErrorCode.SEAT_NOT_FOUND);
 
-        verify(seatReader).findById(seatId);
+        verify(seatReader).findByLocator(locator);
         verify(seatTimeSlotReader, never()).findBySeatId(seatId);
     }
 }

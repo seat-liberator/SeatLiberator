@@ -1,13 +1,12 @@
 package com.seatliberator.seatliberator.reservation.application.seat.port.in.query;
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
-
-import java.util.UUID;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 
 public record ListSeatTimeSlotQuery(
-        UUID seatId
+        SeatLocator locator
 ) {
     public ListSeatTimeSlotQuery {
-        Preconditions.requireNonNull(seatId, "seatId");
+        Preconditions.requireNonNull(locator, "locator");
     }
 }
