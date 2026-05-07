@@ -8,6 +8,7 @@ import com.seatliberator.seatliberator.reservation.application.seat.port.out.Sea
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.domain.seat.SeatTimeSlot;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +19,6 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Optional;
-import java.util.UUID;
 
 import static com.seatliberator.seatliberator.reservation.domain.seat.SeatFixture.createSeat;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,16 +37,16 @@ public class CreateSeatTimeSlotUseCaseTest extends AbstractSeatTimeSlotUseCaseTe
     @Test
     @DisplayName("seatId에 해당하는 좌석에 시간 슬롯을 만든다")
     void create_seat_time_slot() {
-        var seatId = UUID.randomUUID();
+        var locator = SeatLocatorFixture.get();
         var seat = createSeat();
-        var command = new CreateSeatTimeSlotCommand(seatId, LocalTime.of(9, 0), Duration.ofHours(2));
+        var command = new CreateSeatTimeSlotCommand(locator, LocalTime.of(9, 0), Duration.ofHours(2));
 
-        when(seatReader.findById(seatId)).thenReturn(Optional.of(seat));
+        when(seatReader.findByLocator(locator)).thenReturn(Optional.of(seat));
 
         var result = useCase.create(command);
 
         var slotCaptor = ArgumentCaptor.forClass(SeatTimeSlot.class);
-        verify(seatReader).findById(seatId);
+        verify(seatReader).findByLocator(locator);
         verify(seatTimeSlotStore).save(slotCaptor.capture());
 
         var saved = slotCaptor.getValue();
@@ -60,17 +60,17 @@ public class CreateSeatTimeSlotUseCaseTest extends AbstractSeatTimeSlotUseCaseTe
     @Test
     @DisplayName("seatId에 해당하는 좌석이 없으면 SEAT_NOT_FOUND 예외")
     void throw_exception_when_seat_not_found() {
-        var seatId = UUID.randomUUID();
-        var command = new CreateSeatTimeSlotCommand(seatId, LocalTime.of(9, 0), Duration.ofHours(2));
+        var locator = SeatLocatorFixture.get();
+        var command = new CreateSeatTimeSlotCommand(locator, LocalTime.of(9, 0), Duration.ofHours(2));
 
-        when(seatReader.findById(seatId)).thenReturn(Optional.empty());
+        when(seatReader.findByLocator(locator)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> useCase.create(command))
                 .isInstanceOf(ReservationApplicationException.class)
                 .extracting("errorCode")
                 .isEqualTo(ReservationApplicationErrorCode.SEAT_NOT_FOUND);
 
-        verify(seatReader).findById(seatId);
+        verify(seatReader).findByLocator(locator);
         verify(seatTimeSlotStore, never()).save(any());
     }
 }
