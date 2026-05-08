@@ -4,7 +4,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalTime;
+import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -70,6 +72,30 @@ public interface DailyTimeSegmentContractTest<T extends DailyTimeSegment> {
         assertThat(segment.contains(LocalTime.of(9, 0))).isTrue();
         assertThat(segment.contains(LocalTime.of(11, 59, 59, 999_999_999))).isTrue();
         assertThat(segment.contains(LocalTime.of(12, 0))).isFalse();
+    }
+
+    @Test
+    @DisplayName("Instant는 ZoneId 기준 로컬 시각으로 변환해 포함 여부를 판단한다")
+    default void contains_instant_by_zone_local_time() {
+        var segment = create(LocalTime.of(9, 0), Duration.ofHours(3));
+        var zoneId = ZoneId.of("Asia/Seoul");
+
+        assertThat(segment.contains(Instant.parse("2026-05-09T00:00:00Z"), zoneId)).isTrue();
+        assertThat(segment.contains(Instant.parse("2026-05-09T02:59:59.999999999Z"), zoneId)).isTrue();
+        assertThat(segment.contains(Instant.parse("2026-05-09T03:00:00Z"), zoneId)).isFalse();
+    }
+
+    @Test
+    @DisplayName("Instant 포함 여부 조회 인자가 null이면 예외")
+    default void throw_exception_when_contains_instant_argument_is_null() {
+        var segment = create(LocalTime.of(9, 0), Duration.ofHours(3));
+        var at = Instant.parse("2026-05-09T00:00:00Z");
+        var zoneId = ZoneId.of("Asia/Seoul");
+
+        assertThatThrownBy(() -> segment.contains(null, zoneId))
+                .isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> segment.contains(at, null))
+                .isInstanceOf(NullPointerException.class);
     }
 
     @Test

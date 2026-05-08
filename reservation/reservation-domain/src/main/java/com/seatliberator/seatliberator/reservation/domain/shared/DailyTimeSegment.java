@@ -3,7 +3,9 @@ package com.seatliberator.seatliberator.reservation.domain.shared;
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalTime;
+import java.time.ZoneId;
 
 public interface DailyTimeSegment {
     long DAY_NANOS = 24L * 60 * 60 * 1_000_000_000L;
@@ -33,6 +35,15 @@ public interface DailyTimeSegment {
 
     default Duration duration() {
         return Duration.ofNanos(endNanoOfDay() - startNanoOfDay());
+    }
+
+    default boolean contains(Instant at, ZoneId zoneId) {
+        Preconditions.requireNonNull(at, "at");
+        Preconditions.requireNonNull(zoneId, "zoneId");
+
+        var targetNanoOfDay = at.atZone(zoneId).toLocalTime().toNanoOfDay();
+
+        return startNanoOfDay() <= targetNanoOfDay && targetNanoOfDay < endNanoOfDay();
     }
 
     default boolean contains(LocalTime at) {
