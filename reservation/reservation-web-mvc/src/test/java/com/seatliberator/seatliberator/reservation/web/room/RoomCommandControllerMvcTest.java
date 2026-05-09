@@ -3,13 +3,19 @@ package com.seatliberator.seatliberator.reservation.web.room;
 
 import com.seatliberator.seatliberator.reservation.application.room.port.in.CreateRoomUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.DeleteRoomUseCase;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.UpdateRoomOperationPolicyUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.UpdateRoomUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.CreateRoomCommand;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.DeleteRoomCommand;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.command.UpdateRoomOperationPolicyCommand;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.UpdateRoomCommand;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.result.RoomOperationPolicyResult;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.result.RoomResult;
+import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyTimeSegment;
 import com.seatliberator.seatliberator.reservation.web.room.controller.RoomCommandController;
 import com.seatliberator.seatliberator.reservation.web.room.request.CreateRoomRequest;
+import com.seatliberator.seatliberator.reservation.web.room.request.UpdateRoomOperationPolicyRequest;
 import com.seatliberator.seatliberator.reservation.web.room.request.UpdateRoomRequest;
 import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
@@ -34,10 +40,13 @@ import org.springframework.web.context.WebApplicationContext;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalTime;
+import java.util.List;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -66,6 +75,9 @@ public class RoomCommandControllerMvcTest {
 
     @MockitoBean
     DeleteRoomUseCase deleteRoomUseCase;
+
+    @MockitoBean
+    UpdateRoomOperationPolicyUseCase updateRoomOperationPolicyUseCase;
 
     Clock clock = fixedClock;
 
@@ -190,6 +202,93 @@ public class RoomCommandControllerMvcTest {
             var command = captor.getValue();
             assertThat(command.oldRoomId()).isEqualTo("old-room-1");
             assertThat(command.newRoomId()).isEqualTo("new-room-1");
+        }
+    }
+
+    @Nested
+    @DisplayName("방 운영 정책 수정")
+    class UpdateRoomOperationPolicy {
+
+        @Test
+        @DisplayName("인증되지 않으면 401")
+        void unauthorized() throws Exception {
+            var request = updateRoomOperationPolicyRequest();
+
+            mockMvc.perform(put("/rooms/{roomId}/policy", "study-room-1")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        @WithMockUser(authorities = "other.permission")
+        @DisplayName("room.manage 권한이 없으면 403")
+        void forbidden() throws Exception {
+            var request = updateRoomOperationPolicyRequest();
+
+            mockMvc.perform(put("/rooms/{roomId}/policy", "study-room-1")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isForbidden());
+
+            verify(updateRoomOperationPolicyUseCase, never()).update(any());
+        }
+
+        @Test
+        @WithMockUser(authorities = "room.manage")
+        @DisplayName("권한이 있으면 운영 시간 구간 목록으로 정책 변경 command를 만들어 유스케이스를 호출한다")
+        void update_room_operation_policy() throws Exception {
+            var request = updateRoomOperationPolicyRequest();
+            var result = new RoomOperationPolicyResult(
+                    5,
+                    Duration.ofHours(3),
+                    RoomOperationStatus.OPEN,
+                    operationTimeSegments()
+            );
+
+            when(updateRoomOperationPolicyUseCase.update(any(UpdateRoomOperationPolicyCommand.class)))
+                    .thenReturn(result);
+
+            mockMvc.perform(put("/rooms/{roomId}/policy", "study-room-1")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.maxReservationPerUser").value(5))
+                    .andExpect(jsonPath("$.operationStatus").value("OPEN"))
+                    .andExpect(jsonPath("$.operationTimeSegments[0].startNanoOfDay").value(operationTimeSegments().getFirst().startNanoOfDay()));
+
+            var captor = ArgumentCaptor.forClass(UpdateRoomOperationPolicyCommand.class);
+            verify(updateRoomOperationPolicyUseCase).update(captor.capture());
+
+            var command = captor.getValue();
+            assertThat(command.roomId()).isEqualTo("study-room-1");
+            assertThat(command.maxReservationPerUser()).isEqualTo(5);
+            assertThat(command.maxReservationDuration()).isEqualTo(Duration.ofHours(3));
+            assertThat(command.operationStatus()).isEqualTo(RoomOperationStatus.OPEN);
+            assertThat(command.operationTimeSegments().segments())
+                    .extracting(SimpleDailyTimeSegment::from)
+                    .containsExactlyElementsOf(operationTimeSegments());
+        }
+
+        private UpdateRoomOperationPolicyRequest updateRoomOperationPolicyRequest() {
+            return new UpdateRoomOperationPolicyRequest(
+                    5,
+                    Duration.ofHours(3),
+                    RoomOperationStatus.OPEN,
+                    operationTimeSegments().stream()
+                            .map(segment -> new UpdateRoomOperationPolicyRequest.OperationTimeSegmentRequest(
+                                    segment.startAt(),
+                                    segment.duration()
+                            ))
+                            .toList()
+            );
+        }
+
+        private List<SimpleDailyTimeSegment> operationTimeSegments() {
+            return List.of(
+                    SimpleDailyTimeSegment.of(LocalTime.of(9, 0), Duration.ofHours(3)),
+                    SimpleDailyTimeSegment.of(LocalTime.of(13, 0), Duration.ofHours(4))
+            );
         }
     }
 
