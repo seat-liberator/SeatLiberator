@@ -6,6 +6,7 @@ import com.seatliberator.seatliberator.reservation.application.room.contract.res
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomReader;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicy;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
+import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeSegment;
 import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.Duration;
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +38,39 @@ public class DefaultRoomOperationReservationPolicy implements RoomOperationReser
             return RoomPolicyResult.reject(RoomPolicyReason.MAX_RESERVATION_DURATION_EXCEEDED);
         }
 
+        if (!isWithinOperationTime(policy, range)) {
+            return RoomPolicyResult.reject(RoomPolicyReason.OUT_OF_OPERATION_HOURS);
+        }
+
         return RoomPolicyResult.accept(RoomPolicyReason.ROOM_OPERATION_AVAILABLE);
+    }
+
+    private boolean isWithinOperationTime(RoomOperationPolicy policy, InstantRange range) {
+        var zoneId = clock.getZone();
+        var start = range.startAt().atZone(zoneId);
+        var end = range.endAt().atZone(zoneId);
+
+        var startDate = LocalDate.from(start);
+        var endDate = LocalDate.from(end);
+        var rawEndNanoOfDay = end.toLocalTime().toNanoOfDay();
+        long reservationEndNanoOfDay;
+
+        if (startDate.plusDays(1).equals(endDate) && rawEndNanoOfDay == 0) {
+            reservationEndNanoOfDay = DailyTimeSegment.DAY_NANOS;
+        } else if (!startDate.equals(endDate)) {
+            return false;
+        } else {
+            reservationEndNanoOfDay = rawEndNanoOfDay;
+        }
+
+        var reservationStartNanoOfDay = start.toLocalTime().toNanoOfDay();
+
+        return policy.getOperationTimeSegments().stream()
+                .anyMatch(segment -> contains(segment, reservationStartNanoOfDay, reservationEndNanoOfDay));
+    }
+
+    private boolean contains(DailyTimeSegment segment, long startNanoOfDay, long endNanoOfDay) {
+        return segment.startNanoOfDay() <= startNanoOfDay
+                && endNanoOfDay <= segment.endNanoOfDay();
     }
 }
