@@ -26,7 +26,7 @@ public class RoomOperationPolicyTest {
                     arguments("maxReservationPerUser = null", (Supplier<RoomOperationPolicy>) () -> new RoomOperationPolicyFixture.Builder().maxReservationPerUser(null).build(), "maxReservationPerUser"),
                     arguments("maxReservationDuration = null", (Supplier<RoomOperationPolicy>) () -> new RoomOperationPolicyFixture.Builder().maxReservationDuration(null).build(), "maxReservationDuration"),
                     arguments("operationStatus = null", (Supplier<RoomOperationPolicy>) () -> new RoomOperationPolicyFixture.Builder().operationStatus(null).build(), "operationStatus"),
-                    arguments("operationHours = null", (Supplier<RoomOperationPolicy>) () -> new RoomOperationPolicyFixture.Builder().operationHours(null).build(), "operationHours")
+                    arguments("operationTimeSegments = null", (Supplier<RoomOperationPolicy>) () -> new RoomOperationPolicyFixture.Builder().operationTimeSegments(null).build(), "operationTimeSegments")
             );
         }
 
@@ -77,7 +77,7 @@ public class RoomOperationPolicyTest {
                     arguments("maxReservationPerUser = null", (Consumer<RoomOperationPolicy>) (policy) -> policy.updateMaxReservationPerUser(null), "maxReservationPerUser"),
                     arguments("maxReservationDuration = null", (Consumer<RoomOperationPolicy>) (policy) -> policy.updateMaxReservationDuration(null), "maxReservationDuration"),
                     arguments("operationStatus = null", (Consumer<RoomOperationPolicy>) (policy) -> policy.updateOperationStatus(null), "operationStatus"),
-                    arguments("operationHours = null", (Consumer<RoomOperationPolicy>) (policy) -> policy.updateOperationHours(null), "operationHours")
+                    arguments("operationTimeSegments = null", (Consumer<RoomOperationPolicy>) (policy) -> policy.updateOperationTimeSegments(null), "operationTimeSegments")
             );
         }
 
