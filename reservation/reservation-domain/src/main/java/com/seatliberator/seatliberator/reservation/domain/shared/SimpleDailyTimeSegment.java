@@ -10,25 +10,30 @@ public record SimpleDailyTimeSegment(
         long endNanoOfDay
 ) implements DailyTimeSegment {
     public SimpleDailyTimeSegment {
-        validate(startNanoOfDay, endNanoOfDay);
+        DailyTimeSegment.validate(startNanoOfDay, endNanoOfDay);
     }
 
-    public static SimpleDailyTimeSegment of(Long startNanoOfDay, Long endNanoOfDay) {
-        Preconditions.requireNonNull(startNanoOfDay, "startNanoOfDay");
-        Preconditions.requireNonNull(endNanoOfDay, "endNanoOfDay");
+    public static SimpleDailyTimeSegment of(long startNanoOfDay, long endNanoOfDay) {
         return new SimpleDailyTimeSegment(startNanoOfDay, endNanoOfDay);
+    }
+
+    public static SimpleDailyTimeSegment of(long startNanoOfDay, Duration duration) {
+        Preconditions.requirePositive(duration, "duration");
+
+        var endNanoOfDay = startNanoOfDay + duration.toNanos();
+        return of(startNanoOfDay, endNanoOfDay);
     }
 
     public static SimpleDailyTimeSegment of(LocalTime startAt, Duration duration) {
         Preconditions.requireNonNull(startAt, "startAt");
         Preconditions.requireNonNull(duration, "duration");
-        var segment = new SimpleDailyTimeSegment(startAt.toNanoOfDay(), startAt.toNanoOfDay() + duration.toNanos());
-        segment.validateDuration(duration);
-        return segment;
+
+        return of(startAt.toNanoOfDay(), duration);
     }
 
-    public static SimpleDailyTimeSegment from(DailyTimeSegment dailyTimeSegment) {
-        Preconditions.requireNonNull(dailyTimeSegment, "dailyTimeSegment");
-        return of(dailyTimeSegment.startNanoOfDay(), dailyTimeSegment.endNanoOfDay());
+    public static SimpleDailyTimeSegment from(DailyTimeSegment segment) {
+        Preconditions.requireNonNull(segment, "segment");
+
+        return of(segment.startNanoOfDay(), segment.endNanoOfDay());
     }
 }
