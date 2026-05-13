@@ -5,24 +5,104 @@ import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 public interface DailyTimeSegments {
-    List<? extends DailyTimeSegment> segments();
+    static List<DailyTimeSegment> validateAndSort(Collection<? extends DailyTimeSegment> segments) {
+        Preconditions.requireNonNull(segments, "segments");
 
-    default boolean contains(Instant at, ZoneId zoneId) {
-        Preconditions.requireNonNull(at, "at");
-        Preconditions.requireNonNull(zoneId, "zoneId");
+        if (segments.isEmpty())
+            throw new IllegalArgumentException("segments must not be empty.");
 
-        return segments().stream()
-                .anyMatch(segment -> segment.contains(at, zoneId));
+        var sorted = segments.stream()
+                .<DailyTimeSegment>map(segment -> Preconditions.requireNonNull(segment, "segment"))
+                .<DailyTimeSegment>map(SimpleDailyTimeSegment::from)
+                .sorted(Comparator
+                        .comparing(DailyTimeSegment::startNanoOfDay)
+                        .thenComparing(DailyTimeSegment::endNanoOfDay)
+                )
+                .toList();
+
+        for (int i = 1; i < sorted.size(); i++) {
+            var previous = sorted.get(i - 1);
+            var current = sorted.get(i);
+
+            if (current.overlaps(previous)) {
+                throw new IllegalArgumentException("segments must not overlap. previous=" + previous + ", current=" + current);
+            }
+        }
+
+        return sorted;
     }
 
-    default boolean contains(LocalTime at) {
-        Preconditions.requireNonNull(at, "at");
+    List<DailyTimeSegment> segments();
 
-        return segments().stream()
-                .anyMatch(segment -> segment.contains(at));
+    default boolean contains(long other) {
+        return segments().stream().anyMatch(range -> range.contains(other));
+    }
+
+    default boolean contains(LocalTime other) {
+        Preconditions.requireNonNull(other, "other");
+
+        return contains(other.toNanoOfDay());
+    }
+
+    default boolean contains(Instant other, ZoneId zoneId) {
+        Preconditions.requireNonNull(other, "other");
+        Preconditions.requireNonNull(zoneId, "zoneId");
+
+        return segments().stream().anyMatch(range -> range.contains(other, zoneId));
+    }
+
+    default boolean contains(DailyTimeSegment other) {
+        Preconditions.requireNonNull(other, "other");
+
+        var cursor = other.startNanoOfDay();
+
+        for (var segment : segments()) {
+            if (segment.endNanoOfDay() <= cursor) continue;
+            if (segment.startNanoOfDay() > cursor) return false;
+
+            cursor = Math.max(cursor, segment.endNanoOfDay());
+
+            if (cursor >= other.endNanoOfDay()) return true;
+        }
+
+        return false;
+    }
+
+    default boolean isAlways() {
+        return contains(SimpleDailyTimeSegment.of(0, DailyTimeSegment.DAY_NANOS));
+    }
+
+    default boolean contains(InstantRange other, ZoneId zoneId) {
+        Preconditions.requireNonNull(other, "other");
+        Preconditions.requireNonNull(zoneId, "zoneId");
+
+        var cursor = other.startAt().atZone(zoneId);
+        var endZdt = other.endAt().atZone(zoneId);
+
+        while (cursor.isBefore(endZdt)) {
+            var nextMidnight = cursor.toLocalDate().plusDays(1).atStartOfDay(zoneId);
+            var chunkEnd = nextMidnight.isBefore(endZdt)
+                    ? nextMidnight
+                    : endZdt;
+
+            var startNano = cursor.toLocalTime().toNanoOfDay();
+            var endNano = chunkEnd.toLocalTime().equals(LocalTime.MIDNIGHT)
+                    ? DailyTimeSegment.DAY_NANOS
+                    : chunkEnd.toLocalTime().toNanoOfDay();
+
+            if (!contains(SimpleDailyTimeSegment.of(startNano, endNano))) {
+                return false;
+            }
+
+            cursor = chunkEnd;
+        }
+
+        return true;
     }
 
     default boolean overlaps(DailyTimeSegment other) {
@@ -38,24 +118,5 @@ public interface DailyTimeSegments {
         return segments().stream()
                 .anyMatch(left -> other.segments().stream()
                         .anyMatch(left::overlaps));
-    }
-
-    default void validate(List<? extends DailyTimeSegment> segments) {
-        Preconditions.requireNonNull(segments, "segments");
-
-        if (segments.isEmpty())
-            throw new IllegalArgumentException("segments must not be empty.");
-
-        for (var segment : segments) {
-            Preconditions.requireNonNull(segment, "segment");
-        }
-
-        for (int i = 0; i < segments.size(); i++) {
-            for (int j = i + 1; j < segments.size(); j++) {
-                if (segments.get(i).overlaps(segments.get(j))) {
-                    throw new IllegalArgumentException("segments must not overlap.");
-                }
-            }
-        }
     }
 }
