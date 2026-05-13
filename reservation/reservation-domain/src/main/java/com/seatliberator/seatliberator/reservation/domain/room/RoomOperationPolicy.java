@@ -78,7 +78,6 @@ public class RoomOperationPolicy {
 
     public void updateOperationTimeSegments(DailyTimeSegments operationTimeSegments) {
         Preconditions.requireNonNull(operationTimeSegments, "operationTimeSegments");
-        operationTimeSegments.validate(operationTimeSegments.segments());
 
         this.operationTimeSegments.clear();
         this.operationTimeSegments.addAll(

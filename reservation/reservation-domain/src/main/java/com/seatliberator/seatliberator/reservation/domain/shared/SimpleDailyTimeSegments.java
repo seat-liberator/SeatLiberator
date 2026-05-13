@@ -1,24 +1,23 @@
 package com.seatliberator.seatliberator.reservation.domain.shared;
 
-import java.util.Comparator;
+import com.seatliberator.seatliberator.kernel.condition.Preconditions;
+
 import java.util.List;
 
 public record SimpleDailyTimeSegments(
-        List<SimpleDailyTimeSegment> segments
+        List<DailyTimeSegment> segments
 ) implements DailyTimeSegments {
     public SimpleDailyTimeSegments {
-        validate(segments);
-
-        segments = segments.stream()
-                .sorted(Comparator.comparingLong(DailyTimeSegment::startNanoOfDay))
-                .toList();
+        segments = DailyTimeSegments.validateAndSort(segments);
     }
 
-    public static SimpleDailyTimeSegments of(List<? extends DailyTimeSegment> segments) {
-        return new SimpleDailyTimeSegments(
-                segments.stream()
-                        .map(SimpleDailyTimeSegment::from)
-                        .toList()
-        );
+    public static SimpleDailyTimeSegments of(List<DailyTimeSegment> segments) {
+        return new SimpleDailyTimeSegments(segments);
+    }
+
+    public static SimpleDailyTimeSegments from(DailyTimeSegments segments) {
+        Preconditions.requireNonNull(segments, "segments");
+
+        return of(segments.segments());
     }
 }

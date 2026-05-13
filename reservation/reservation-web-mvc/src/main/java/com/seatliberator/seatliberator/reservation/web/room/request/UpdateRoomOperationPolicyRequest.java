@@ -2,6 +2,7 @@ package com.seatliberator.seatliberator.reservation.web.room.request;
 
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.UpdateRoomOperationPolicyCommand;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
+import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeSegment;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyTimeSegment;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyTimeSegments;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,9 +36,11 @@ public record UpdateRoomOperationPolicyRequest(
                 maxReservationPerUser,
                 maxReservationDuration,
                 operationStatus,
-                new SimpleDailyTimeSegments(operationTimeSegments.stream()
+                SimpleDailyTimeSegments.of(
+                        operationTimeSegments.stream()
                         .map(OperationTimeSegmentRequest::toSegment)
-                        .toList())
+                                .toList()
+                )
         );
     }
 
@@ -50,7 +53,7 @@ public record UpdateRoomOperationPolicyRequest(
             @NotNull
             Duration duration
     ) {
-        SimpleDailyTimeSegment toSegment() {
+        DailyTimeSegment toSegment() {
             return SimpleDailyTimeSegment.of(startAt, duration);
         }
     }
