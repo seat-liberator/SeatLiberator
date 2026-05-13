@@ -9,9 +9,7 @@ public record SimpleInstantRange(
         Instant endAt
 ) implements InstantRange {
     public SimpleInstantRange {
-        Preconditions.requireNonNull(startAt, "startAt");
-        Preconditions.requireNonNull(endAt, "endAt");
-        validate(startAt, endAt);
+        InstantRange.validate(startAt, endAt);
     }
 
     public static SimpleInstantRange of(Instant startAt, Instant endAt) {
@@ -19,7 +17,8 @@ public record SimpleInstantRange(
     }
 
     public static SimpleInstantRange from(InstantRange range) {
+        Preconditions.requireNonNull(range, "range");
+
         return new SimpleInstantRange(range.startAt(), range.endAt());
     }
 }
-
