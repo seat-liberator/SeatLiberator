@@ -7,27 +7,20 @@ import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
 
-public interface DailyTimeSegment {
+public interface DailyTimeSegment extends RangeComparable<DailyTimeSegment> {
     long DAY_NANOS = 24L * 60 * 60 * 1_000_000_000L;
 
-    long startNanoOfDay();
+    static void validate(long startNanoOfDay, long endNanoOfDay) {
+        Preconditions.requireBetween(startNanoOfDay, 0L, DAY_NANOS - 1, "startNanoOfDay");
+        Preconditions.requireBetween(endNanoOfDay, 1L, DAY_NANOS, "endNanoOfDay");
 
-    long endNanoOfDay();
-
-    default void validate(long startNanoOfDay, long endNanoOfDay) {
-        if (startNanoOfDay < 0) throw new IllegalArgumentException("startNanoOfDay must not be negative.");
-        if (endNanoOfDay > DAY_NANOS) throw new IllegalArgumentException("endNanoOfDay must not be exceed end of day.");
         if (startNanoOfDay >= endNanoOfDay)
             throw new IllegalArgumentException("startNanoOfDay must be before endNanoOfDay.");
     }
 
-    default void validateDuration(Duration duration) {
-        if (duration.isZero() || duration.isNegative())
-            throw new IllegalArgumentException("duration must be positive.");
-        var nanos = duration.toNanos();
-        if (nanos > DAY_NANOS)
-            throw new IllegalArgumentException("duration must not exceed end of day.");
-    }
+    long startNanoOfDay();
+
+    long endNanoOfDay();
 
     default LocalTime startAt() {
         return LocalTime.ofNanoOfDay(startNanoOfDay());
@@ -37,39 +30,66 @@ public interface DailyTimeSegment {
         return Duration.ofNanos(endNanoOfDay() - startNanoOfDay());
     }
 
-    default boolean contains(Instant at, ZoneId zoneId) {
-        Preconditions.requireNonNull(at, "at");
+    default boolean contains(long other) {
+        if (other < 0 || other >= DAY_NANOS)
+            throw new IllegalArgumentException("nanoOfDay must be between 0 and " + (DAY_NANOS - 1) + ".");
+
+        return startNanoOfDay() <= other && other < endNanoOfDay();
+    }
+
+    default boolean contains(LocalTime other) {
+        Preconditions.requireNonNull(other, "other");
+        return contains(other.toNanoOfDay());
+    }
+
+    default boolean contains(Instant other, ZoneId zoneId) {
+        Preconditions.requireNonNull(other, "other");
         Preconditions.requireNonNull(zoneId, "zoneId");
 
-        var targetNanoOfDay = at.atZone(zoneId).toLocalTime().toNanoOfDay();
+        var targetNanoOfDay = other.atZone(zoneId).toLocalTime().toNanoOfDay();
 
-        return startNanoOfDay() <= targetNanoOfDay && targetNanoOfDay < endNanoOfDay();
+        return contains(targetNanoOfDay);
     }
 
-    default boolean contains(LocalTime at) {
-        Preconditions.requireNonNull(at, "at");
-        return contains(at.toNanoOfDay());
+    @Override
+    default boolean isSame(DailyTimeSegment other) {
+        Preconditions.requireNonNull(other, "other");
+
+        return startNanoOfDay() == other.startNanoOfDay() && endNanoOfDay() == other.endNanoOfDay();
     }
 
-    default boolean contains(long nanoOfDay) {
-        if (nanoOfDay < 0 || nanoOfDay >= DAY_NANOS)
-            throw new IllegalArgumentException("nanoOfDay must be in range [0, DAY_NANOS).");
+    @Override
+    default boolean startsBefore(DailyTimeSegment other) {
+        Preconditions.requireNonNull(other, "other");
 
-        return startNanoOfDay() <= nanoOfDay && nanoOfDay < endNanoOfDay();
+        return startNanoOfDay() < other.startNanoOfDay();
     }
 
+    @Override
+    default boolean endsAfter(DailyTimeSegment other) {
+        Preconditions.requireNonNull(other, "other");
+
+        return endNanoOfDay() > other.endNanoOfDay();
+    }
+
+    @Override
     default boolean contains(DailyTimeSegment other) {
         Preconditions.requireNonNull(other, "other");
+
         return startNanoOfDay() <= other.startNanoOfDay() && other.endNanoOfDay() <= endNanoOfDay();
     }
 
-    default boolean overlaps(DailyTimeSegment other) {
+    @Override
+    default boolean containsBy(DailyTimeSegment other) {
         Preconditions.requireNonNull(other, "other");
-        return startNanoOfDay() < other.endNanoOfDay() && other.startNanoOfDay() < endNanoOfDay();
+
+        return startNanoOfDay() >= other.startNanoOfDay() && other.endNanoOfDay() >= endNanoOfDay();
     }
 
-    default boolean isSame(DailyTimeSegment other) {
+    @Override
+    default boolean overlaps(DailyTimeSegment other) {
         Preconditions.requireNonNull(other, "other");
-        return startNanoOfDay() == other.startNanoOfDay() && endNanoOfDay() == other.endNanoOfDay();
+
+        return startNanoOfDay() < other.endNanoOfDay() && other.startNanoOfDay() < endNanoOfDay();
     }
 }

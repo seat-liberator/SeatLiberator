@@ -7,7 +7,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.time.Duration;
-import java.time.LocalTime;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,44 +17,28 @@ public class EmbeddableDailyTimeSegment implements DailyTimeSegment {
     @Column(name = "end_nano_of_day", nullable = false)
     private Long endNanoOfDay;
 
-    private EmbeddableDailyTimeSegment(Long startNanoOfDay, Long endNanoOfDay) {
-        Preconditions.requireNonNull(startNanoOfDay, "startNanoOfDay");
-        Preconditions.requireNonNull(endNanoOfDay, "endNanoOfDay");
-        validate(startNanoOfDay, endNanoOfDay);
+    private EmbeddableDailyTimeSegment(long startNanoOfDay, long endNanoOfDay) {
+        DailyTimeSegment.validate(startNanoOfDay, endNanoOfDay);
+
         this.startNanoOfDay = startNanoOfDay;
         this.endNanoOfDay = endNanoOfDay;
     }
 
-    public static EmbeddableDailyTimeSegment of(Long startNanoOfDay, Long endNanoOfDay) {
+    public static EmbeddableDailyTimeSegment of(long startNanoOfDay, long endNanoOfDay) {
         return new EmbeddableDailyTimeSegment(startNanoOfDay, endNanoOfDay);
     }
 
-    public static EmbeddableDailyTimeSegment of(LocalTime startAt, Duration duration) {
-        Preconditions.requireNonNull(startAt, "startAt");
-        Preconditions.requireNonNull(duration, "duration");
-        var segment = of(startAt.toNanoOfDay(), startAt.toNanoOfDay() + duration.toNanos());
-        segment.validateDuration(duration);
-        return segment;
-    }
+    public static EmbeddableDailyTimeSegment of(long startNanoOfDay, Duration duration) {
+        Preconditions.requirePositive(duration, "duration");
 
-    public static EmbeddableDailyTimeSegment of(LocalTime startAt, LocalTime endAt) {
-        Preconditions.requireNonNull(startAt, "startAt");
-        Preconditions.requireNonNull(endAt, "endAt");
-        return of(startAt, durationBetween(startAt, endAt));
+        var endNanoOfDay = startNanoOfDay + duration.toNanos();
+        return of(startNanoOfDay, endNanoOfDay);
     }
 
     public static EmbeddableDailyTimeSegment from(DailyTimeSegment segment) {
         Preconditions.requireNonNull(segment, "segment");
+
         return of(segment.startNanoOfDay(), segment.endNanoOfDay());
-    }
-
-    private static Duration durationBetween(LocalTime startAt, LocalTime endAt) {
-        var startNanoOfDay = startAt.toNanoOfDay();
-        var endNanoOfDay = endAt.toNanoOfDay();
-
-        if (startNanoOfDay >= endNanoOfDay) throw new IllegalArgumentException("startAt must be before endAt.");
-
-        return Duration.ofNanos(endNanoOfDay - startNanoOfDay);
     }
 
     @Override
@@ -68,35 +51,44 @@ public class EmbeddableDailyTimeSegment implements DailyTimeSegment {
         return endNanoOfDay;
     }
 
-    public void updateStartNanoOfDay(Long startNanoOfDay) {
-        Preconditions.requireNonNull(startNanoOfDay, "startNanoOfDay");
-        validate(startNanoOfDay, endNanoOfDay);
-        this.startNanoOfDay = startNanoOfDay;
+    public void updateStartNanoOfDay(long startNanoOfDay) {
+        apply(startNanoOfDay, endNanoOfDay);
     }
 
-    public void updateEndNanoOfDay(Long endNanoOfDay) {
-        Preconditions.requireNonNull(endNanoOfDay, "endNanoOfDay");
-        validate(startNanoOfDay, endNanoOfDay);
-        this.endNanoOfDay = endNanoOfDay;
+    public void updateEndNanoOfDay(long endNanoOfDay) {
+        apply(startNanoOfDay, endNanoOfDay);
+    }
+
+    public void extendStartNanoOfDay(Duration extension) {
+        Preconditions.requireNonNull(extension, "extension");
+
+        var newStartNanoOfDay = startNanoOfDay + extension.toNanos();
+        apply(newStartNanoOfDay, endNanoOfDay);
+    }
+
+    public void extendEndNanoOfDay(Duration extension) {
+        Preconditions.requireNonNull(extension, "extension");
+
+        var newEndNanoOfDay = endNanoOfDay + extension.toNanos();
+        apply(startNanoOfDay, newEndNanoOfDay);
+    }
+
+    public void adjustOffset(Duration offset) {
+        Preconditions.requireNonNull(offset, "offset");
+
+        var offsetNanos = offset.toNanos();
+        apply(startNanoOfDay + offsetNanos, endNanoOfDay + offsetNanos);
     }
 
     public void apply(DailyTimeSegment segment) {
         Preconditions.requireNonNull(segment, "segment");
-        validate(segment.startNanoOfDay(), segment.endNanoOfDay());
-        this.startNanoOfDay = segment.startNanoOfDay();
-        this.endNanoOfDay = segment.endNanoOfDay();
+        apply(segment.startNanoOfDay(), segment.endNanoOfDay());
     }
 
-    public void updateStartAt(LocalTime startAt) {
-        Preconditions.requireNonNull(startAt, "startAt");
-        updateStartNanoOfDay(startAt.toNanoOfDay());
-    }
+    private void apply(long startNanoOfDay, long endNanoOfDay) {
+        DailyTimeSegment.validate(startNanoOfDay, endNanoOfDay);
 
-    public void updateDuration(Duration duration) {
-        Preconditions.requireNonNull(duration, "duration");
-        validateDuration(duration);
-        var newEndNanoOfDay = startNanoOfDay + duration.toNanos();
-        validate(startNanoOfDay, newEndNanoOfDay);
-        this.endNanoOfDay = newEndNanoOfDay;
+        this.startNanoOfDay = startNanoOfDay;
+        this.endNanoOfDay = endNanoOfDay;
     }
 }
