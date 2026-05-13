@@ -6,6 +6,7 @@ import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
 import java.time.Instant;
 
 @Embeddable
@@ -18,9 +19,10 @@ public class EmbeddableInstantRange implements InstantRange {
     private Instant endAt;
 
     public EmbeddableInstantRange(Instant startAt, Instant endAt) {
-        this.startAt = Preconditions.requireNonNull(startAt, "startAt");
-        this.endAt = Preconditions.requireNonNull(endAt, "endAt");
-        validate(startAt, endAt);
+        InstantRange.validate(startAt, endAt);
+
+        this.startAt = startAt;
+        this.endAt = endAt;
     }
 
     public static EmbeddableInstantRange of(Instant startAt, Instant endAt) {
@@ -42,25 +44,43 @@ public class EmbeddableInstantRange implements InstantRange {
         return endAt;
     }
 
+    public void setRange(Instant startAt, Instant endAt) {
+        apply(startAt, endAt);
+    }
+
     public void updateStartAt(Instant startAt) {
-        validate(startAt, endAt);
-        this.startAt = startAt;
+        apply(startAt, endAt);
     }
 
     public void updateEndAt(Instant endAt) {
-        validate(startAt, endAt);
+        apply(startAt, endAt);
+    }
+
+
+    public void extendStartAt(Duration extension) {
+        Preconditions.requireNonNull(extension, "extension");
+
+        apply(startAt.plus(extension), endAt);
+    }
+
+    public void extendEndAt(Duration extension) {
+        Preconditions.requireNonNull(extension, "extension");
+
+        apply(startAt, endAt.plus(extension));
+    }
+
+    public void adjustOffset(Duration offset) {
+        Preconditions.requireNonNull(offset, "offset");
+
+        apply(startAt.plus(offset), endAt.plus(offset));
+    }
+
+    private void apply(Instant startAt, Instant endAt) {
+        Preconditions.requireNonNull(startAt, "startAt");
+        Preconditions.requireNonNull(endAt, "endAt");
+        InstantRange.validate(startAt, endAt);
+
+        this.startAt = startAt;
         this.endAt = endAt;
-    }
-
-    public void setRange(Instant startAt, Instant endAt) {
-        validate(startAt, endAt);
-        var range = SimpleInstantRange.of(startAt, endAt);
-        apply(range);
-    }
-
-    private void apply(InstantRange range) {
-        Preconditions.requireNonNull(range, "range");
-        this.startAt = range.startAt();
-        this.endAt = range.endAt();
     }
 }

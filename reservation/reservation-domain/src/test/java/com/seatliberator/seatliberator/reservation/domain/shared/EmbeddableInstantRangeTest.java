@@ -1,117 +1,102 @@
 package com.seatliberator.seatliberator.reservation.domain.shared;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
+import java.time.Duration;
 import java.time.Instant;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import static com.seatliberator.seatliberator.kernel.test.assertion.DomainAssertions.assertThatDomainThrownBy;
-import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
+import static com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeTestSupport.END_AT;
+import static com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeTestSupport.START_AT;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-@DisplayName("Domain: Embeddable Time Range")
-public class EmbeddableInstantRangeTest implements InstantRangeContractTest<EmbeddableInstantRange> {
-
-    Instant startAt = fixedClock.instant();
-    Instant endAt = startAt.plusSeconds(60 * 30);
-
+@DisplayName("EmbeddableInstantRange 도메인 테스트")
+public class EmbeddableInstantRangeTest extends AbstractInstantRangeTest<EmbeddableInstantRange> {
     @Override
     public EmbeddableInstantRange create(Instant startAt, Instant endAt) {
         return EmbeddableInstantRange.of(startAt, endAt);
     }
 
-    @Override
-    public Instant getStartAt() {
-        return startAt;
+    @Test
+    @DisplayName("InstantRange로부터 복사할 수 있다")
+    void copy_from_instant_range() {
+        var range = EmbeddableInstantRange.from(create(START_AT, END_AT));
+
+        assertThat(range.startAt()).isEqualTo(START_AT);
+        assertThat(range.endAt()).isEqualTo(END_AT);
+
+        assertThatDomainThrownBy(() -> EmbeddableInstantRange.from(null))
+                .hasNonNullMessageFor("range");
     }
 
-    @Override
-    public Instant getEndAt() {
-        return endAt;
+    @Test
+    @DisplayName("시작 시간을 변경할 수 있다")
+    void update_start_at() {
+        var range = create(START_AT, END_AT);
+        var newStartAt = START_AT.plusSeconds(1);
+
+        range.updateStartAt(newStartAt);
+
+        assertThat(range.startAt()).isEqualTo(newStartAt);
+        assertThat(range.endAt()).isEqualTo(END_AT);
     }
 
-    @Nested
-    @DisplayName("Creation")
-    class Creation {
-        static Stream<Arguments> nullArgumentCases() {
-            return Stream.of(
-                    arguments("startAt = null", (Supplier<EmbeddableInstantRange>) () -> new EmbeddableInstantRange(null, fixedClock.instant()), "startAt"),
-                    arguments("endAt = null", (Supplier<EmbeddableInstantRange>) () -> new EmbeddableInstantRange(fixedClock.instant(), null), "endAt")
-            );
-        }
+    @Test
+    @DisplayName("종료 시간을 변경할 수 있다")
+    void update_end_at() {
+        var range = create(START_AT, END_AT);
+        var newEndAt = END_AT.minusSeconds(1);
 
-        @ParameterizedTest(name = "{0}")
-        @MethodSource("nullArgumentCases")
-        @DisplayName("인자가 null이면 예외")
-        void throw_exception_when_required_argument_is_null(
-                String displayName,
-                Supplier<EmbeddableInstantRange> supplier,
-                String fieldName
-        ) {
-            assertThatDomainThrownBy(supplier::get)
-                    .hasNonNullMessageFor(fieldName);
-        }
+        range.updateEndAt(newEndAt);
 
-        @Test
-        @DisplayName("정상적인 시간 범위로 생성할 수 있다")
-        void create_range_when_arguments_are_valid() {
-            var range = new EmbeddableInstantRange(startAt, endAt);
-
-            assertThat(range.startAt()).isEqualTo(startAt);
-            assertThat(range.endAt()).isEqualTo(endAt);
-        }
-
-        @Test
-        @DisplayName("시작 시간이 종료 시간보다 늦으면 예외를 던진다")
-        void throw_exception_when_start_at_is_after_end_at() {
-            assertThatThrownBy(() -> new EmbeddableInstantRange(endAt, startAt))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("startAt must be before endAt.");
-        }
-
-        @Test
-        @DisplayName("시작 시간과 종료 시간이 같으면 예외를 던진다")
-        void throw_exception_when_start_at_equals_end_at() {
-            assertThatThrownBy(() -> new EmbeddableInstantRange(startAt, startAt))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("startAt must be before endAt.");
-        }
-
-        @Test
-        @DisplayName("of 팩토리로 다른 TimeRange를 복사할 수 있다")
-        void copy_range_with_of_factory() {
-            var source = SimpleInstantRange.of(startAt, endAt);
-
-            var copied = EmbeddableInstantRange.from(source);
-
-            Assertions.assertThat(copied.startAt()).isEqualTo(startAt);
-            Assertions.assertThat(copied.endAt()).isEqualTo(endAt);
-        }
+        assertThat(range.startAt()).isEqualTo(START_AT);
+        assertThat(range.endAt()).isEqualTo(newEndAt);
     }
 
-    @Nested
-    @DisplayName("Update")
-    class Update {
-        @Test
-        @DisplayName("setRange로 시간 범위를 변경할 수 있다")
-        void update_range_with_set_range() {
-            var range = new EmbeddableInstantRange(startAt, endAt);
-            var newStartAt = startAt.plusSeconds(60);
-            var newEndAt = endAt.plusSeconds(60);
+    @Test
+    @DisplayName("시간 구간 전체를 변경할 수 있다")
+    void set_range() {
+        var range = create(START_AT, END_AT);
+        var newStartAt = START_AT.plusSeconds(1);
+        var newEndAt = END_AT.plusSeconds(1);
 
-            range.setRange(newStartAt, newEndAt);
+        range.setRange(newStartAt, newEndAt);
 
-            assertThat(range.startAt()).isEqualTo(newStartAt);
-            assertThat(range.endAt()).isEqualTo(newEndAt);
-        }
+        assertThat(range.startAt()).isEqualTo(newStartAt);
+        assertThat(range.endAt()).isEqualTo(newEndAt);
+    }
+
+    @Test
+    @DisplayName("시작 시간을 확장할 수 있다")
+    void extend_start_at() {
+        var range = create(START_AT, END_AT);
+
+        range.extendStartAt(Duration.ofSeconds(-1));
+
+        assertThat(range.startAt()).isEqualTo(START_AT.minusSeconds(1));
+        assertThat(range.endAt()).isEqualTo(END_AT);
+    }
+
+    @Test
+    @DisplayName("종료 시간을 확장할 수 있다")
+    void extend_end_at() {
+        var range = create(START_AT, END_AT);
+
+        range.extendEndAt(Duration.ofSeconds(1));
+
+        assertThat(range.startAt()).isEqualTo(START_AT);
+        assertThat(range.endAt()).isEqualTo(END_AT.plusSeconds(1));
+    }
+
+    @Test
+    @DisplayName("시간 구간 전체를 이동할 수 있다")
+    void adjust_offset() {
+        var range = create(START_AT, END_AT);
+
+        range.adjustOffset(Duration.ofSeconds(1));
+
+        assertThat(range.startAt()).isEqualTo(START_AT.plusSeconds(1));
+        assertThat(range.endAt()).isEqualTo(END_AT.plusSeconds(1));
     }
 }
