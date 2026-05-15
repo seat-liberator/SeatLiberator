@@ -66,10 +66,24 @@ public interface DailyNanoRange extends RangeComparable<DailyNanoRange> {
     }
 
     @Override
+    default boolean immediatelyBefore(DailyNanoRange other) {
+        Preconditions.requireNonNull(other, "other");
+
+        return endNanoOfDay() == other.startNanoOfDay();
+    }
+
+    @Override
     default boolean endsAfter(DailyNanoRange other) {
         Preconditions.requireNonNull(other, "other");
 
         return endNanoOfDay() > other.endNanoOfDay();
+    }
+
+    @Override
+    default boolean immediatelyAfter(DailyNanoRange other) {
+        Preconditions.requireNonNull(other, "other");
+
+        return startNanoOfDay() == other.endNanoOfDay();
     }
 
     @Override
