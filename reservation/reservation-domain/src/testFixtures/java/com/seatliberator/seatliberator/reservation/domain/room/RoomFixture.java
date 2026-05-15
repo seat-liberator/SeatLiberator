@@ -19,7 +19,7 @@ public class RoomFixture {
 
     public static class Builder {
         private String roomId = INITIAL_ROOM_ID;
-        private RoomOperationPolicy operationPolicy = OPERATION_POLICY;
+        private RoomOperationPolicy operationPolicy = RoomOperationPolicyFixture.get();
         private Instant createdAt = INITIAL_CREATED_AT;
 
         public Builder() {
