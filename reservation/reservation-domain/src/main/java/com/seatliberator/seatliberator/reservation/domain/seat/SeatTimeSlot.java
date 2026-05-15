@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.domain.seat;
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
-import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeSegment;
-import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableDailyTimeSegment;
+import com.seatliberator.seatliberator.reservation.domain.shared.DailyNanoRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableDailyNanoRange;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -38,7 +38,7 @@ public class SeatTimeSlot {
             @AttributeOverride(name = "startNanoOfDay", column = @Column(name = "slot_start_at", nullable = false)),
             @AttributeOverride(name = "endNanoOfDay", column = @Column(name = "slot_end_at", nullable = false))
     })
-    private EmbeddableDailyTimeSegment slotRange;
+    private EmbeddableDailyNanoRange slotRange;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "slot_status", nullable = false)
@@ -55,7 +55,7 @@ public class SeatTimeSlot {
 
     private SeatTimeSlot(
             Seat seat,
-            EmbeddableDailyTimeSegment slotRange,
+            EmbeddableDailyNanoRange slotRange,
             SeatTimeSlotStatus slotStatus,
             Instant createdAt
     ) {
@@ -72,20 +72,20 @@ public class SeatTimeSlot {
 
     public static SeatTimeSlot of(
             Seat seat,
-            DailyTimeSegment slotRange,
+            DailyNanoRange slotRange,
             SeatTimeSlotStatus slotStatus,
             Instant createdAt
     ) {
         Preconditions.requireNonNull(slotRange, "slotRange");
         return new SeatTimeSlot(
                 seat,
-                EmbeddableDailyTimeSegment.from(slotRange),
+                EmbeddableDailyNanoRange.from(slotRange),
                 slotStatus,
                 createdAt
         );
     }
 
-    public void updateSlotRange(DailyTimeSegment slotRange) {
+    public void updateSlotRange(DailyNanoRange slotRange) {
         Preconditions.requireNonNull(slotRange, "slotRange");
         this.slotRange.apply(slotRange);
     }

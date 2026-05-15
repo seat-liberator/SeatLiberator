@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.domain.room;
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
-import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeSegments;
-import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableDailyTimeSegment;
+import com.seatliberator.seatliberator.reservation.domain.shared.DailySchedule;
+import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableDailyNanoRange;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -29,38 +29,38 @@ public class RoomOperationPolicy {
 
     @ElementCollection
     @CollectionTable(
-            name = "room_operation_time_segment",
+            name = "room_operation_schedule",
             joinColumns = @JoinColumn(name = "room_operation_policy_id")
     )
-    private List<EmbeddableDailyTimeSegment> operationTimeSegments = new ArrayList<>();
+    private List<EmbeddableDailyNanoRange> operationSchedule = new ArrayList<>();
 
     private RoomOperationPolicy(
             Integer maxReservationPerUser,
             Duration maxReservationDuration,
             RoomOperationStatus operationStatus,
-            List<EmbeddableDailyTimeSegment> operationTimeSegments
+            List<EmbeddableDailyNanoRange> operationSchedule
     ) {
         this.maxReservationDuration = Preconditions.requirePositive(maxReservationDuration, "maxReservationDuration");
         this.maxReservationPerUser = Preconditions.requirePositive(maxReservationPerUser, "maxReservationPerUser");
         this.operationStatus = Preconditions.requireNonNull(operationStatus, "operationStatus");
-        this.operationTimeSegments = Preconditions.requireNonNull(operationTimeSegments, "operationTimeSegments");
+        this.operationSchedule = Preconditions.requireNonNull(operationSchedule, "operationSchedule");
     }
 
     public static RoomOperationPolicy of(
             Integer maxReservationPerUser,
             Duration maxReservationDuration,
             RoomOperationStatus operationStatus,
-            DailyTimeSegments operationTimeSegments
+            DailySchedule operationSchedule
     ) {
-        Preconditions.requireNonNull(operationTimeSegments, "operationTimeSegments");
-        var segments = operationTimeSegments.segments().stream()
-                .map(EmbeddableDailyTimeSegment::from)
+        Preconditions.requireNonNull(operationSchedule, "operationSchedule");
+        var schedule = operationSchedule.ranges().stream()
+                .map(EmbeddableDailyNanoRange::from)
                 .toList();
         return new RoomOperationPolicy(
                 maxReservationPerUser,
                 maxReservationDuration,
                 operationStatus,
-                segments
+                schedule
         );
     }
 
@@ -76,13 +76,13 @@ public class RoomOperationPolicy {
         this.operationStatus = Preconditions.requireNonNull(operationStatus, "operationStatus");
     }
 
-    public void updateOperationTimeSegments(DailyTimeSegments operationTimeSegments) {
-        Preconditions.requireNonNull(operationTimeSegments, "operationTimeSegments");
+    public void updateOperationSchedule(DailySchedule operationSchedule) {
+        Preconditions.requireNonNull(operationSchedule, "operationSchedule");
 
-        this.operationTimeSegments.clear();
-        this.operationTimeSegments.addAll(
-                operationTimeSegments.segments().stream()
-                        .map(EmbeddableDailyTimeSegment::from)
+        this.operationSchedule.clear();
+        this.operationSchedule.addAll(
+                operationSchedule.ranges().stream()
+                        .map(EmbeddableDailyNanoRange::from)
                         .toList()
         );
     }

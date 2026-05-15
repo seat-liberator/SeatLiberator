@@ -5,13 +5,13 @@ import com.seatliberator.seatliberator.reservation.application.room.port.in.comm
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicy;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicyFixture;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyTimeSegments;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailySchedule;
 
 import java.time.Duration;
 import java.util.List;
 
-import static com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeSegmentFixtures.AFTERNOON_SEGMENT;
-import static com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeSegmentFixtures.DAWN_SEGMENT;
+import static com.seatliberator.seatliberator.reservation.domain.shared.DailyNanoRangeFixture.AFTERNOON_RANGE;
+import static com.seatliberator.seatliberator.reservation.domain.shared.DailyNanoRangeFixture.DAWN_RANGE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RoomTestSupport extends AbstractTestSupport {
@@ -21,9 +21,9 @@ public class RoomTestSupport extends AbstractTestSupport {
                 4,
                 Duration.ofHours(4),
                 RoomOperationStatus.CLOSE,
-                SimpleDailyTimeSegments.of(List.of(
-                        AFTERNOON_SEGMENT,
-                        DAWN_SEGMENT
+                SimpleDailySchedule.of(List.of(
+                        AFTERNOON_RANGE,
+                        DAWN_RANGE
                 ))
         );
     }
@@ -33,10 +33,10 @@ public class RoomTestSupport extends AbstractTestSupport {
                 .maxReservationPerUser(4)
                 .maxReservationDuration(Duration.ofHours(4))
                 .operationStatus(RoomOperationStatus.CLOSE)
-                .operationTimeSegments(
-                        SimpleDailyTimeSegments.of(List.of(
-                                AFTERNOON_SEGMENT,
-                                DAWN_SEGMENT
+                .operationSchedule(
+                        SimpleDailySchedule.of(List.of(
+                                AFTERNOON_RANGE,
+                                DAWN_RANGE
                         ))
                 )
                 .build();
@@ -47,10 +47,8 @@ public class RoomTestSupport extends AbstractTestSupport {
         assertThat(actual.getMaxReservationDuration()).isEqualByComparingTo(expect.getMaxReservationDuration());
         assertThat(actual.getOperationStatus()).isEqualTo(expect.getOperationStatus());
 
-        var actualSegments = SimpleDailyTimeSegments.of(actual.getOperationTimeSegments());
-        var expectSegments = SimpleDailyTimeSegments.of(expect.getOperationTimeSegments());
-        assertThat(actualSegments).isEqualTo(expectSegments);
+        var actualSchedule = SimpleDailySchedule.of(actual.getOperationSchedule());
+        var expectSchedule = SimpleDailySchedule.of(expect.getOperationSchedule());
+        assertThat(actualSchedule).isEqualTo(expectSchedule);
     }
-
-
 }

@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
 
-public interface DailyTimeSegment extends RangeComparable<DailyTimeSegment> {
+public interface DailyNanoRange extends RangeComparable<DailyNanoRange> {
     long DAY_NANOS = 24L * 60 * 60 * 1_000_000_000L;
 
     static void validate(long startNanoOfDay, long endNanoOfDay) {
@@ -52,42 +52,42 @@ public interface DailyTimeSegment extends RangeComparable<DailyTimeSegment> {
     }
 
     @Override
-    default boolean isSame(DailyTimeSegment other) {
+    default boolean isSame(DailyNanoRange other) {
         Preconditions.requireNonNull(other, "other");
 
         return startNanoOfDay() == other.startNanoOfDay() && endNanoOfDay() == other.endNanoOfDay();
     }
 
     @Override
-    default boolean startsBefore(DailyTimeSegment other) {
+    default boolean startsBefore(DailyNanoRange other) {
         Preconditions.requireNonNull(other, "other");
 
         return startNanoOfDay() < other.startNanoOfDay();
     }
 
     @Override
-    default boolean endsAfter(DailyTimeSegment other) {
+    default boolean endsAfter(DailyNanoRange other) {
         Preconditions.requireNonNull(other, "other");
 
         return endNanoOfDay() > other.endNanoOfDay();
     }
 
     @Override
-    default boolean contains(DailyTimeSegment other) {
+    default boolean contains(DailyNanoRange other) {
         Preconditions.requireNonNull(other, "other");
 
         return startNanoOfDay() <= other.startNanoOfDay() && other.endNanoOfDay() <= endNanoOfDay();
     }
 
     @Override
-    default boolean containsBy(DailyTimeSegment other) {
+    default boolean containsBy(DailyNanoRange other) {
         Preconditions.requireNonNull(other, "other");
 
         return startNanoOfDay() >= other.startNanoOfDay() && other.endNanoOfDay() >= endNanoOfDay();
     }
 
     @Override
-    default boolean overlaps(DailyTimeSegment other) {
+    default boolean overlaps(DailyNanoRange other) {
         Preconditions.requireNonNull(other, "other");
 
         return startNanoOfDay() < other.endNanoOfDay() && other.startNanoOfDay() < endNanoOfDay();

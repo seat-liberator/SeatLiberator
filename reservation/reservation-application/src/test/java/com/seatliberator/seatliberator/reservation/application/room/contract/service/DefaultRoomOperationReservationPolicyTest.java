@@ -6,11 +6,7 @@ import com.seatliberator.seatliberator.reservation.application.room.port.out.Roo
 import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicyFixture;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeSegment;
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyTimeSegment;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyTimeSegments;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -92,14 +88,14 @@ public class DefaultRoomOperationReservationPolicyTest {
 
     @Test
     @DisplayName("예약 시간이 운영 시간 구간 안에 있으면 허용한다")
-    void accept_when_reservation_range_is_within_operation_time_segments() {
+    void accept_when_reservation_range_is_within_operation_schedule() {
         var locator = SimpleSeatLocator.of("study-room-1", "seat-1");
         var room = new RoomFixture.Builder()
                 .roomId(locator.roomId())
                 .operationPolicy(new RoomOperationPolicyFixture.Builder()
                         .maxReservationDuration(Duration.ofHours(2))
                         .operationStatus(RoomOperationStatus.OPEN)
-                        .operationTimeSegments(operationTimeSegments())
+                        .operationSchedule(operationTimeRange())
                         .build())
                 .build();
         when(roomReader.findByRoomId(locator.roomId())).thenReturn(Optional.of(room));
@@ -112,14 +108,14 @@ public class DefaultRoomOperationReservationPolicyTest {
 
     @Test
     @DisplayName("예약 시작 시간이 운영 시간 구간 밖이면 거절한다")
-    void reject_when_reservation_start_is_out_of_operation_time_segments() {
+    void reject_when_reservation_start_is_out_of_operation_schedule() {
         var locator = SimpleSeatLocator.of("study-room-1", "seat-1");
         var room = new RoomFixture.Builder()
                 .roomId(locator.roomId())
                 .operationPolicy(new RoomOperationPolicyFixture.Builder()
                         .maxReservationDuration(Duration.ofHours(2))
                         .operationStatus(RoomOperationStatus.OPEN)
-                        .operationTimeSegments(operationTimeSegments())
+                        .operationSchedule(operationTimeRange())
                         .build())
                 .build();
         when(roomReader.findByRoomId(locator.roomId())).thenReturn(Optional.of(room));
@@ -132,14 +128,14 @@ public class DefaultRoomOperationReservationPolicyTest {
 
     @Test
     @DisplayName("예약 시간이 운영 시간 구간 사이의 공백을 걸치면 거절한다")
-    void reject_when_reservation_range_spans_gap_between_operation_time_segments() {
+    void reject_when_reservation_range_spans_gap_between_operation_schedule() {
         var locator = SimpleSeatLocator.of("study-room-1", "seat-1");
         var room = new RoomFixture.Builder()
                 .roomId(locator.roomId())
                 .operationPolicy(new RoomOperationPolicyFixture.Builder()
                         .maxReservationDuration(Duration.ofHours(2))
                         .operationStatus(RoomOperationStatus.OPEN)
-                        .operationTimeSegments(operationTimeSegments())
+                        .operationSchedule(operationTimeRange())
                         .build())
                 .build();
         when(roomReader.findByRoomId(locator.roomId())).thenReturn(Optional.of(room));
@@ -150,14 +146,14 @@ public class DefaultRoomOperationReservationPolicyTest {
         assertThat(result.reason()).isEqualTo(RoomPolicyReason.OUT_OF_OPERATION_HOURS);
     }
 
-    private SimpleDailyTimeSegments operationTimeSegments() {
-        return SimpleDailyTimeSegments.of(List.of(
-                segment(LocalTime.of(8, 0), Duration.ofHours(4)),
-                segment(LocalTime.of(13, 0), Duration.ofHours(5))
+    private SimpleDailySchedule operationTimeRange() {
+        return SimpleDailySchedule.of(List.of(
+                range(LocalTime.of(8, 0), Duration.ofHours(4)),
+                range(LocalTime.of(13, 0), Duration.ofHours(5))
         ));
     }
 
-    private DailyTimeSegment segment(LocalTime startAt, Duration duration) {
-        return SimpleDailyTimeSegment.of(startAt, duration);
+    private DailyNanoRange range(LocalTime startAt, Duration duration) {
+        return SimpleDailyNanoRange.of(startAt, duration);
     }
 }

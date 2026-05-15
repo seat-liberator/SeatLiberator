@@ -3,7 +3,7 @@ package com.seatliberator.seatliberator.reservation.domain.shared;
 import java.time.Duration;
 import java.time.LocalTime;
 
-public class DailyTimeSegmentTestSupport {
+public class DailyNanoRangeTestSupport {
     public static LocalTime START_AT = LocalTime.of(12, 0);
     public static Duration DURATION = Duration.ofHours(10);
 

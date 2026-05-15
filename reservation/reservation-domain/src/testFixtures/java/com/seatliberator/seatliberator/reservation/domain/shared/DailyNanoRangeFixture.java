@@ -3,25 +3,25 @@ package com.seatliberator.seatliberator.reservation.domain.shared;
 import java.time.Duration;
 import java.time.LocalTime;
 
-public class DailyTimeSegmentFixtures {
+public class DailyNanoRangeFixture {
     public static final LocalTime START_AT = LocalTime.of(6, 0);
     public static final Duration DURATION = Duration.ofHours(8);
 
-    public static final DailyTimeSegment MORNING_SEGMENT = new DailyTimeSegmentFixtures.Builder()
+    public static final DailyNanoRange MORNING_RANGE = new DailyNanoRangeFixture.Builder()
             .startAt(LocalTime.of(8, 0))
             .duration(Duration.ofHours(4))
             .build();
-    public static final DailyTimeSegment AFTERNOON_SEGMENT = new DailyTimeSegmentFixtures.Builder()
+    public static final DailyNanoRange AFTERNOON_RANGE = new DailyNanoRangeFixture.Builder()
             .startAt(LocalTime.of(13, 0))
             .duration(Duration.ofHours(11))
             .build();
-    public static final DailyTimeSegment DAWN_SEGMENT = new DailyTimeSegmentFixtures.Builder()
+    public static final DailyNanoRange DAWN_RANGE = new DailyNanoRangeFixture.Builder()
             .startAt(LocalTime.of(1, 0))
             .duration(Duration.ofHours(4))
             .build();
 
-    public static DailyTimeSegment get() {
-        return SimpleDailyTimeSegment.of(START_AT, DURATION);
+    public static DailyNanoRange get() {
+        return SimpleDailyNanoRange.of(START_AT, DURATION);
     }
 
     public static class Builder {
@@ -38,8 +38,8 @@ public class DailyTimeSegmentFixtures {
             return this;
         }
 
-        public DailyTimeSegment build() {
-            return SimpleDailyTimeSegment.of(startAt, duration);
+        public DailyNanoRange build() {
+            return SimpleDailyNanoRange.of(startAt, duration);
         }
     }
 }

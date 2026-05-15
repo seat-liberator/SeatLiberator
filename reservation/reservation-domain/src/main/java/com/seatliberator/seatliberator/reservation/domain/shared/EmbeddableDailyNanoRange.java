@@ -10,35 +10,35 @@ import java.time.Duration;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class EmbeddableDailyTimeSegment implements DailyTimeSegment {
+public class EmbeddableDailyNanoRange implements DailyNanoRange {
     @Column(name = "start_nano_of_day", nullable = false)
     private Long startNanoOfDay;
 
     @Column(name = "end_nano_of_day", nullable = false)
     private Long endNanoOfDay;
 
-    private EmbeddableDailyTimeSegment(long startNanoOfDay, long endNanoOfDay) {
-        DailyTimeSegment.validate(startNanoOfDay, endNanoOfDay);
+    private EmbeddableDailyNanoRange(long startNanoOfDay, long endNanoOfDay) {
+        DailyNanoRange.validate(startNanoOfDay, endNanoOfDay);
 
         this.startNanoOfDay = startNanoOfDay;
         this.endNanoOfDay = endNanoOfDay;
     }
 
-    public static EmbeddableDailyTimeSegment of(long startNanoOfDay, long endNanoOfDay) {
-        return new EmbeddableDailyTimeSegment(startNanoOfDay, endNanoOfDay);
+    public static EmbeddableDailyNanoRange of(long startNanoOfDay, long endNanoOfDay) {
+        return new EmbeddableDailyNanoRange(startNanoOfDay, endNanoOfDay);
     }
 
-    public static EmbeddableDailyTimeSegment of(long startNanoOfDay, Duration duration) {
+    public static EmbeddableDailyNanoRange of(long startNanoOfDay, Duration duration) {
         Preconditions.requirePositive(duration, "duration");
 
         var endNanoOfDay = startNanoOfDay + duration.toNanos();
         return of(startNanoOfDay, endNanoOfDay);
     }
 
-    public static EmbeddableDailyTimeSegment from(DailyTimeSegment segment) {
-        Preconditions.requireNonNull(segment, "segment");
+    public static EmbeddableDailyNanoRange from(DailyNanoRange range) {
+        Preconditions.requireNonNull(range, "range");
 
-        return of(segment.startNanoOfDay(), segment.endNanoOfDay());
+        return of(range.startNanoOfDay(), range.endNanoOfDay());
     }
 
     @Override
@@ -80,13 +80,13 @@ public class EmbeddableDailyTimeSegment implements DailyTimeSegment {
         apply(startNanoOfDay + offsetNanos, endNanoOfDay + offsetNanos);
     }
 
-    public void apply(DailyTimeSegment segment) {
-        Preconditions.requireNonNull(segment, "segment");
-        apply(segment.startNanoOfDay(), segment.endNanoOfDay());
+    public void apply(DailyNanoRange range) {
+        Preconditions.requireNonNull(range, "range");
+        apply(range.startNanoOfDay(), range.endNanoOfDay());
     }
 
     private void apply(long startNanoOfDay, long endNanoOfDay) {
-        DailyTimeSegment.validate(startNanoOfDay, endNanoOfDay);
+        DailyNanoRange.validate(startNanoOfDay, endNanoOfDay);
 
         this.startNanoOfDay = startNanoOfDay;
         this.endNanoOfDay = endNanoOfDay;

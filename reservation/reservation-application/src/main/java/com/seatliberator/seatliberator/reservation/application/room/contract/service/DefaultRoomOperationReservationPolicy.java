@@ -6,7 +6,7 @@ import com.seatliberator.seatliberator.reservation.application.room.contract.res
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomReader;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicy;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeSegment;
+import com.seatliberator.seatliberator.reservation.domain.shared.DailyNanoRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +56,7 @@ public class DefaultRoomOperationReservationPolicy implements RoomOperationReser
         long reservationEndNanoOfDay;
 
         if (startDate.plusDays(1).equals(endDate) && rawEndNanoOfDay == 0) {
-            reservationEndNanoOfDay = DailyTimeSegment.DAY_NANOS;
+            reservationEndNanoOfDay = DailyNanoRange.DAY_NANOS;
         } else if (!startDate.equals(endDate)) {
             return false;
         } else {
@@ -65,12 +65,12 @@ public class DefaultRoomOperationReservationPolicy implements RoomOperationReser
 
         var reservationStartNanoOfDay = start.toLocalTime().toNanoOfDay();
 
-        return policy.getOperationTimeSegments().stream()
-                .anyMatch(segment -> contains(segment, reservationStartNanoOfDay, reservationEndNanoOfDay));
+        return policy.getOperationSchedule().stream()
+                .anyMatch(nanoRange -> contains(nanoRange, reservationStartNanoOfDay, reservationEndNanoOfDay));
     }
 
-    private boolean contains(DailyTimeSegment segment, long startNanoOfDay, long endNanoOfDay) {
-        return segment.startNanoOfDay() <= startNanoOfDay
-                && endNanoOfDay <= segment.endNanoOfDay();
+    private boolean contains(DailyNanoRange range, long startNanoOfDay, long endNanoOfDay) {
+        return range.startNanoOfDay() <= startNanoOfDay
+                && endNanoOfDay <= range.endNanoOfDay();
     }
 }
