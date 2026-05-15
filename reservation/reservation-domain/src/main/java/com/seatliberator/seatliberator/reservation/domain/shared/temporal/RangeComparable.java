@@ -5,7 +5,11 @@ public interface RangeComparable<T> {
 
     boolean startsBefore(T other);
 
+    boolean immediatelyBefore(T other);
+
     boolean endsAfter(T other);
+
+    boolean immediatelyAfter(T other);
 
     boolean contains(T other);
 
@@ -25,7 +29,12 @@ public interface RangeComparable<T> {
             else return RangeRelation.OVERLAPS_AFTER;
         }
 
-        if (startsBefore(other)) return RangeRelation.BEFORE;
-        else return RangeRelation.AFTER;
+        if (startsBefore(other)) {
+            if (immediatelyBefore(other)) return RangeRelation.IMMEDIATELY_BEFORE;
+            else return RangeRelation.BEFORE;
+        } else {
+            if (immediatelyAfter(other)) return RangeRelation.IMMEDIATELY_AFTER;
+            else return RangeRelation.AFTER;
+        }
     }
 }

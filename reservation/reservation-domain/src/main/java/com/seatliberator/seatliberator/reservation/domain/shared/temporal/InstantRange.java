@@ -46,10 +46,24 @@ public interface InstantRange extends RangeComparable<InstantRange> {
     }
 
     @Override
+    default boolean immediatelyBefore(InstantRange other) {
+        Preconditions.requireNonNull(other, "other");
+
+        return endAt().equals(other.startAt());
+    }
+
+    @Override
     default boolean endsAfter(InstantRange other) {
         Preconditions.requireNonNull(other, "other");
 
         return endAt().isAfter(other.endAt());
+    }
+
+    @Override
+    default boolean immediatelyAfter(InstantRange other) {
+        Preconditions.requireNonNull(other, "other");
+
+        return startAt().equals(other.endAt());
     }
 
     @Override

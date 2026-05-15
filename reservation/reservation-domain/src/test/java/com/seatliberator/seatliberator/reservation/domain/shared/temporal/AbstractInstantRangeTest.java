@@ -109,12 +109,22 @@ public abstract class AbstractInstantRangeTest<T extends InstantRange> extends A
 
     @Override
     protected T createBeforeRange() {
-        return create(BEFORE_START_AT, START_AT);
+        return create(BEFORE_START_AT.minusSeconds(3), BEFORE_START_AT);
+    }
+
+    @Override
+    protected T createImmediatelyBeforeRange() {
+        return create(END_AT, AFTER_END_AT);
     }
 
     @Override
     protected T createAfterRange() {
-        return create(END_AT, AFTER_END_AT);
+        return create(AFTER_END_AT, AFTER_END_AT.plusSeconds(3));
+    }
+
+    @Override
+    protected T createImmediatelyAfterRange() {
+        return create(BEFORE_START_AT, START_AT);
     }
 
     @Override

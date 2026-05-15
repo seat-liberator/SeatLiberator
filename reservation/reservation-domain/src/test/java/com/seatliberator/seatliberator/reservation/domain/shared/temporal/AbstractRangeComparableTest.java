@@ -19,7 +19,11 @@ public abstract class AbstractRangeComparableTest<T extends RangeComparable<? su
 
     protected abstract T createBeforeRange();
 
+    protected abstract T createImmediatelyBeforeRange();
+
     protected abstract T createAfterRange();
+
+    protected abstract T createImmediatelyAfterRange();
 
     protected abstract T createOverlapsBeforeRange();
 
@@ -38,20 +42,48 @@ public abstract class AbstractRangeComparableTest<T extends RangeComparable<? su
     @DisplayName("시작 지점이 더 앞서는지 확인할 수 있다")
     void starts_before_range() {
         assertThat(range.startsBefore(createAfterRange())).isTrue();
+        assertThat(range.startsBefore(createImmediatelyBeforeRange())).isTrue();
         assertThat(range.startsBefore(createOverlapsAfterRange())).isTrue();
 
         assertThat(range.startsBefore(createBeforeRange())).isFalse();
+        assertThat(range.startsBefore(createImmediatelyAfterRange())).isFalse();
         assertThat(range.startsBefore(createOverlapsBeforeRange())).isFalse();
+    }
+
+    @Test
+    @DisplayName("다른 구간 바로 앞에 이어지는지 확인할 수 있다")
+    void immediately_before_range() {
+        assertThat(range.immediatelyBefore(createImmediatelyBeforeRange())).isTrue();
+
+        assertThat(range.immediatelyBefore(createAfterRange())).isFalse();
+        assertThat(range.immediatelyBefore(createBeforeRange())).isFalse();
+        assertThat(range.immediatelyBefore(createSameRange())).isFalse();
+
+        assertThat(range.relationTo(createImmediatelyBeforeRange())).isEqualTo(RangeRelation.IMMEDIATELY_BEFORE);
     }
 
     @Test
     @DisplayName("종료 지점이 더 뒤서는지 확인할 수 있다")
     void ends_after_range() {
         assertThat(range.endsAfter(createBeforeRange())).isTrue();
+        assertThat(range.endsAfter(createImmediatelyAfterRange())).isTrue();
         assertThat(range.endsAfter(createOverlapsBeforeRange())).isTrue();
 
         assertThat(range.endsAfter(createAfterRange())).isFalse();
+        assertThat(range.endsAfter(createImmediatelyBeforeRange())).isFalse();
         assertThat(range.endsAfter(createOverlapsAfterRange())).isFalse();
+    }
+
+    @Test
+    @DisplayName("다른 구간 바로 뒤에 이어지는지 확인할 수 있다")
+    void immediately_after_range() {
+        assertThat(range.immediatelyAfter(createImmediatelyAfterRange())).isTrue();
+
+        assertThat(range.immediatelyAfter(createAfterRange())).isFalse();
+        assertThat(range.immediatelyAfter(createBeforeRange())).isFalse();
+        assertThat(range.immediatelyAfter(createSameRange())).isFalse();
+
+        assertThat(range.relationTo(createImmediatelyAfterRange())).isEqualTo(RangeRelation.IMMEDIATELY_AFTER);
     }
 
     @Test
