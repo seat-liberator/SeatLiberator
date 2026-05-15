@@ -2,9 +2,9 @@ package com.seatliberator.seatliberator.reservation.web.room.request;
 
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.UpdateRoomOperationPolicyCommand;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeSegment;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyTimeSegment;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyTimeSegments;
+import com.seatliberator.seatliberator.reservation.domain.shared.DailyNanoRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyNanoRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailySchedule;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -28,7 +28,7 @@ public record UpdateRoomOperationPolicyRequest(
         @Schema(description = "하루 내 방 운영 시간 구간 목록")
         @Valid
         @NotEmpty
-        List<OperationTimeSegmentRequest> operationTimeSegments
+        List<OperationScheduleRequest> operationSchedule
 ) {
     public UpdateRoomOperationPolicyCommand toCommand(String roomId) {
         return new UpdateRoomOperationPolicyCommand(
@@ -36,16 +36,16 @@ public record UpdateRoomOperationPolicyRequest(
                 maxReservationPerUser,
                 maxReservationDuration,
                 operationStatus,
-                SimpleDailyTimeSegments.of(
-                        operationTimeSegments.stream()
-                        .map(OperationTimeSegmentRequest::toSegment)
+                SimpleDailySchedule.of(
+                        operationSchedule.stream()
+                                .map(OperationScheduleRequest::toRange)
                                 .toList()
                 )
         );
     }
 
     @Schema(description = "하루 내 방 운영 시간 구간")
-    public record OperationTimeSegmentRequest(
+    public record OperationScheduleRequest(
             @Schema(description = "구간 시작 시간. HH:mm:ss 형식", type = "string", format = "time", example = "09:00:00")
             @NotNull
             LocalTime startAt,
@@ -53,8 +53,8 @@ public record UpdateRoomOperationPolicyRequest(
             @NotNull
             Duration duration
     ) {
-        DailyTimeSegment toSegment() {
-            return SimpleDailyTimeSegment.of(startAt, duration);
+        DailyNanoRange toRange() {
+            return SimpleDailyNanoRange.of(startAt, duration);
         }
     }
 }

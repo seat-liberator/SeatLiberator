@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
 
-public class DailyTimeSegmentsTestSupport {
+public class DailyScheduleTestSupport {
     public static ZoneId SEOUL = ZoneId.of("Asia/Seoul");
     public static ZoneId UTC = ZoneId.of("UTC");
     public static ZoneId NEW_YORK = ZoneId.of("America/New_York");
@@ -13,12 +13,12 @@ public class DailyTimeSegmentsTestSupport {
         return LocalTime.parse(value).toNanoOfDay();
     }
 
-    public static SimpleDailyTimeSegment segment(String startAt, String endAt) {
-        return SimpleDailyTimeSegment.of(nanoOf(startAt), nanoOf(endAt));
+    public static SimpleDailyNanoRange range(String startAt, String endAt) {
+        return SimpleDailyNanoRange.of(nanoOf(startAt), nanoOf(endAt));
     }
 
-    public static SimpleDailyTimeSegment segment(String startAt, long endNanoOfDay) {
-        return SimpleDailyTimeSegment.of(nanoOf(startAt), endNanoOfDay);
+    public static SimpleDailyNanoRange range(String startAt, long endNanoOfDay) {
+        return SimpleDailyNanoRange.of(nanoOf(startAt), endNanoOfDay);
     }
 
     public static InstantRange withinDayInstantRange() {

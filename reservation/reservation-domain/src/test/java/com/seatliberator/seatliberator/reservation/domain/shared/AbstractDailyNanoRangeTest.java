@@ -10,12 +10,12 @@ import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
 
-import static com.seatliberator.seatliberator.reservation.domain.shared.DailyTimeSegmentTestSupport.*;
+import static com.seatliberator.seatliberator.reservation.domain.shared.DailyNanoRangeTestSupport.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public abstract class AbstractDailyTimeSegmentTest<T extends DailyTimeSegment> extends AbstractRangeComparableTest<DailyTimeSegment> {
+public abstract class AbstractDailyNanoRangeTest<T extends DailyNanoRange> extends AbstractRangeComparableTest<DailyNanoRange> {
 
     public abstract T create(long startNanoOfDay, long endNanoOfDay);
 
@@ -36,10 +36,10 @@ public abstract class AbstractDailyTimeSegmentTest<T extends DailyTimeSegment> e
     @Test
     @DisplayName("하루 전체 시간 구간을 생성할 수 있다")
     void create_whole_day_range() {
-        var wholeDay = create(0L, DailyTimeSegment.DAY_NANOS);
+        var wholeDay = create(0L, DailyNanoRange.DAY_NANOS);
 
         assertThat(wholeDay.startNanoOfDay()).isZero();
-        assertThat(wholeDay.endNanoOfDay()).isEqualTo(DailyTimeSegment.DAY_NANOS);
+        assertThat(wholeDay.endNanoOfDay()).isEqualTo(DailyNanoRange.DAY_NANOS);
         assertThat(wholeDay.duration()).isEqualTo(Duration.ofDays(1));
     }
 
@@ -62,7 +62,7 @@ public abstract class AbstractDailyTimeSegmentTest<T extends DailyTimeSegment> e
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("startNanoOfDay must be between 0 and 86399999999999.");
 
-        assertThatThrownBy(() -> create(DailyTimeSegment.DAY_NANOS, DailyTimeSegment.DAY_NANOS))
+        assertThatThrownBy(() -> create(DailyNanoRange.DAY_NANOS, DailyNanoRange.DAY_NANOS))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("startNanoOfDay must be between 0 and 86399999999999.");
     }
@@ -74,7 +74,7 @@ public abstract class AbstractDailyTimeSegmentTest<T extends DailyTimeSegment> e
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("endNanoOfDay must be between 1 and 86400000000000.");
 
-        assertThatThrownBy(() -> create(START_NANO_OF_DAY, DailyTimeSegment.DAY_NANOS + 1))
+        assertThatThrownBy(() -> create(START_NANO_OF_DAY, DailyNanoRange.DAY_NANOS + 1))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("endNanoOfDay must be between 1 and 86400000000000.");
     }
@@ -96,7 +96,7 @@ public abstract class AbstractDailyTimeSegmentTest<T extends DailyTimeSegment> e
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("nanoOfDay must be between 0 and 86399999999999.");
 
-        assertThatThrownBy(() -> range.contains(DailyTimeSegment.DAY_NANOS))
+        assertThatThrownBy(() -> range.contains(DailyNanoRange.DAY_NANOS))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("nanoOfDay must be between 0 and 86399999999999.");
     }

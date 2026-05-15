@@ -6,7 +6,7 @@ import com.seatliberator.seatliberator.reservation.domain.room.Room;
 import com.seatliberator.seatliberator.reservation.domain.seat.Seat;
 import com.seatliberator.seatliberator.reservation.domain.seat.SeatTimeSlot;
 import com.seatliberator.seatliberator.reservation.domain.seat.SeatTimeSlotStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyTimeSegment;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyNanoRange;
 import com.seatliberator.seatliberator.reservation.persistence.AbstractPersistenceAdapterTest;
 import com.seatliberator.seatliberator.reservation.persistence.room.jpa.repository.RoomRepository;
 import com.seatliberator.seatliberator.reservation.persistence.seat.jpa.repository.SeatRepository;
@@ -67,7 +67,7 @@ public class JpaSeatTimeSlotPersistenceAdapterTest extends AbstractPersistenceAd
     }
 
     private SeatTimeSlot seatTimeSlot(Seat seat, LocalTime startAt, Duration duration) {
-        var slotRange = SimpleDailyTimeSegment.of(startAt, duration);
+        var slotRange = SimpleDailyNanoRange.of(startAt, duration);
         return SeatTimeSlot.of(seat, slotRange, SeatTimeSlotStatus.ACTIVE, now());
     }
 

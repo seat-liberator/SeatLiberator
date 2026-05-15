@@ -7,12 +7,12 @@ import com.seatliberator.seatliberator.reservation.application.room.port.in.Upda
 import com.seatliberator.seatliberator.reservation.application.room.port.in.UpdateRoomUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.CreateRoomCommand;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.DeleteRoomCommand;
-import com.seatliberator.seatliberator.reservation.application.room.port.in.command.UpdateRoomOperationPolicyCommand;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.UpdateRoomCommand;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.command.UpdateRoomOperationPolicyCommand;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.result.RoomOperationPolicyResult;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.result.RoomResult;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyTimeSegment;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyNanoRange;
 import com.seatliberator.seatliberator.reservation.web.room.controller.RoomCommandController;
 import com.seatliberator.seatliberator.reservation.web.room.request.CreateRoomRequest;
 import com.seatliberator.seatliberator.reservation.web.room.request.UpdateRoomOperationPolicyRequest;
@@ -243,7 +243,7 @@ public class RoomCommandControllerMvcTest {
                     5,
                     Duration.ofHours(3),
                     RoomOperationStatus.OPEN,
-                    operationTimeSegments()
+                    operationSchedule()
             );
 
             when(updateRoomOperationPolicyUseCase.update(any(UpdateRoomOperationPolicyCommand.class)))
@@ -255,7 +255,7 @@ public class RoomCommandControllerMvcTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.maxReservationPerUser").value(5))
                     .andExpect(jsonPath("$.operationStatus").value("OPEN"))
-                    .andExpect(jsonPath("$.operationTimeSegments[0].startNanoOfDay").value(operationTimeSegments().getFirst().startNanoOfDay()));
+                    .andExpect(jsonPath("$.operationSchedule[0].startNanoOfDay").value(operationSchedule().getFirst().startNanoOfDay()));
 
             var captor = ArgumentCaptor.forClass(UpdateRoomOperationPolicyCommand.class);
             verify(updateRoomOperationPolicyUseCase).update(captor.capture());
@@ -265,9 +265,9 @@ public class RoomCommandControllerMvcTest {
             assertThat(command.maxReservationPerUser()).isEqualTo(5);
             assertThat(command.maxReservationDuration()).isEqualTo(Duration.ofHours(3));
             assertThat(command.operationStatus()).isEqualTo(RoomOperationStatus.OPEN);
-            assertThat(command.operationTimeSegments().segments())
-                    .extracting(SimpleDailyTimeSegment::from)
-                    .containsExactlyElementsOf(operationTimeSegments());
+            assertThat(command.operationSchedule().ranges())
+                    .extracting(SimpleDailyNanoRange::from)
+                    .containsExactlyElementsOf(operationSchedule());
         }
 
         private UpdateRoomOperationPolicyRequest updateRoomOperationPolicyRequest() {
@@ -275,19 +275,19 @@ public class RoomCommandControllerMvcTest {
                     5,
                     Duration.ofHours(3),
                     RoomOperationStatus.OPEN,
-                    operationTimeSegments().stream()
-                            .map(segment -> new UpdateRoomOperationPolicyRequest.OperationTimeSegmentRequest(
-                                    segment.startAt(),
-                                    segment.duration()
+                    operationSchedule().stream()
+                            .map(range -> new UpdateRoomOperationPolicyRequest.OperationScheduleRequest(
+                                    range.startAt(),
+                                    range.duration()
                             ))
                             .toList()
             );
         }
 
-        private List<SimpleDailyTimeSegment> operationTimeSegments() {
+        private List<SimpleDailyNanoRange> operationSchedule() {
             return List.of(
-                    SimpleDailyTimeSegment.of(LocalTime.of(9, 0), Duration.ofHours(3)),
-                    SimpleDailyTimeSegment.of(LocalTime.of(13, 0), Duration.ofHours(4))
+                    SimpleDailyNanoRange.of(LocalTime.of(9, 0), Duration.ofHours(3)),
+                    SimpleDailyNanoRange.of(LocalTime.of(13, 0), Duration.ofHours(4))
             );
         }
     }

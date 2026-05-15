@@ -9,19 +9,19 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
-public interface DailyTimeSegments {
-    static List<DailyTimeSegment> validateAndSort(Collection<? extends DailyTimeSegment> segments) {
-        Preconditions.requireNonNull(segments, "segments");
+public interface DailySchedule {
+    static List<DailyNanoRange> validateAndSort(Collection<? extends DailyNanoRange> ranges) {
+        Preconditions.requireNonNull(ranges, "ranges");
 
-        if (segments.isEmpty())
-            throw new IllegalArgumentException("segments must not be empty.");
+        if (ranges.isEmpty())
+            throw new IllegalArgumentException("ranges must not be empty.");
 
-        var sorted = segments.stream()
-                .<DailyTimeSegment>map(segment -> Preconditions.requireNonNull(segment, "segment"))
-                .<DailyTimeSegment>map(SimpleDailyTimeSegment::from)
+        var sorted = ranges.stream()
+                .<DailyNanoRange>map(range -> Preconditions.requireNonNull(range, "range"))
+                .<DailyNanoRange>map(SimpleDailyNanoRange::from)
                 .sorted(Comparator
-                        .comparing(DailyTimeSegment::startNanoOfDay)
-                        .thenComparing(DailyTimeSegment::endNanoOfDay)
+                        .comparing(DailyNanoRange::startNanoOfDay)
+                        .thenComparing(DailyNanoRange::endNanoOfDay)
                 )
                 .toList();
 
@@ -30,17 +30,17 @@ public interface DailyTimeSegments {
             var current = sorted.get(i);
 
             if (current.overlaps(previous)) {
-                throw new IllegalArgumentException("segments must not overlap. previous=" + previous + ", current=" + current);
+                throw new IllegalArgumentException("ranges must not overlap. previous=" + previous + ", current=" + current);
             }
         }
 
         return sorted;
     }
 
-    List<DailyTimeSegment> segments();
+    List<DailyNanoRange> ranges();
 
     default boolean contains(long other) {
-        return segments().stream().anyMatch(range -> range.contains(other));
+        return ranges().stream().anyMatch(range -> range.contains(other));
     }
 
     default boolean contains(LocalTime other) {
@@ -53,19 +53,19 @@ public interface DailyTimeSegments {
         Preconditions.requireNonNull(other, "other");
         Preconditions.requireNonNull(zoneId, "zoneId");
 
-        return segments().stream().anyMatch(range -> range.contains(other, zoneId));
+        return ranges().stream().anyMatch(range -> range.contains(other, zoneId));
     }
 
-    default boolean contains(DailyTimeSegment other) {
+    default boolean contains(DailyNanoRange other) {
         Preconditions.requireNonNull(other, "other");
 
         var cursor = other.startNanoOfDay();
 
-        for (var segment : segments()) {
-            if (segment.endNanoOfDay() <= cursor) continue;
-            if (segment.startNanoOfDay() > cursor) return false;
+        for (var range : ranges()) {
+            if (range.endNanoOfDay() <= cursor) continue;
+            if (range.startNanoOfDay() > cursor) return false;
 
-            cursor = Math.max(cursor, segment.endNanoOfDay());
+            cursor = Math.max(cursor, range.endNanoOfDay());
 
             if (cursor >= other.endNanoOfDay()) return true;
         }
@@ -74,7 +74,7 @@ public interface DailyTimeSegments {
     }
 
     default boolean isAlways() {
-        return contains(SimpleDailyTimeSegment.of(0, DailyTimeSegment.DAY_NANOS));
+        return contains(SimpleDailyNanoRange.of(0, DailyNanoRange.DAY_NANOS));
     }
 
     default boolean contains(InstantRange other, ZoneId zoneId) {
@@ -92,10 +92,10 @@ public interface DailyTimeSegments {
 
             var startNano = cursor.toLocalTime().toNanoOfDay();
             var endNano = chunkEnd.toLocalTime().equals(LocalTime.MIDNIGHT)
-                    ? DailyTimeSegment.DAY_NANOS
+                    ? DailyNanoRange.DAY_NANOS
                     : chunkEnd.toLocalTime().toNanoOfDay();
 
-            if (!contains(SimpleDailyTimeSegment.of(startNano, endNano))) {
+            if (!contains(SimpleDailyNanoRange.of(startNano, endNano))) {
                 return false;
             }
 
@@ -105,18 +105,18 @@ public interface DailyTimeSegments {
         return true;
     }
 
-    default boolean overlaps(DailyTimeSegment other) {
+    default boolean overlaps(DailyNanoRange other) {
         Preconditions.requireNonNull(other, "other");
 
-        return segments().stream()
-                .anyMatch(segment -> segment.overlaps(other));
+        return ranges().stream()
+                .anyMatch(range -> range.overlaps(other));
     }
 
-    default boolean overlaps(DailyTimeSegments other) {
+    default boolean overlaps(DailySchedule other) {
         Preconditions.requireNonNull(other, "other");
 
-        return segments().stream()
-                .anyMatch(left -> other.segments().stream()
+        return ranges().stream()
+                .anyMatch(left -> other.ranges().stream()
                         .anyMatch(left::overlaps));
     }
 }

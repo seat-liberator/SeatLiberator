@@ -28,7 +28,7 @@ public class RoomOperationPolicyCommandService implements UpdateRoomOperationPol
                 command.maxReservationPerUser(),
                 command.maxReservationDuration(),
                 command.operationStatus(),
-                command.operationTimeSegments()
+                command.operationSchedule()
         );
 
         room.updateOperationPolicy(operationPolicy);

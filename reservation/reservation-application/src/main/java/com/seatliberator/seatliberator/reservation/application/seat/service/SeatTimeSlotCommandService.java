@@ -14,7 +14,7 @@ import com.seatliberator.seatliberator.reservation.application.shared.exception.
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.domain.seat.SeatTimeSlot;
 import com.seatliberator.seatliberator.reservation.domain.seat.SeatTimeSlotStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyTimeSegment;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyNanoRange;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +40,7 @@ public class SeatTimeSlotCommandService implements
         var seat = seatReader.findByLocator(command.locator())
                 .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND));
 
-        var slotRange = SimpleDailyTimeSegment.of(command.startAt(), command.duration());
+        var slotRange = SimpleDailyNanoRange.of(command.startAt(), command.duration());
         var seatTimeSlot = SeatTimeSlot.of(seat, slotRange, SeatTimeSlotStatus.ACTIVE, clock.instant());
 
         seatTimeSlotStore.save(seatTimeSlot);
@@ -52,7 +52,7 @@ public class SeatTimeSlotCommandService implements
     public SeatTimeSlotResult update(UpdateSeatTimeSlotCommand command) {
         var seatTimeSlot = findSeatTimeSlot(command.seatTimeSlotId());
 
-        var slotRange = SimpleDailyTimeSegment.of(command.startAt(), command.duration());
+        var slotRange = SimpleDailyNanoRange.of(command.startAt(), command.duration());
         seatTimeSlot.updateSlotRange(slotRange);
         seatTimeSlotStore.save(seatTimeSlot);
 
