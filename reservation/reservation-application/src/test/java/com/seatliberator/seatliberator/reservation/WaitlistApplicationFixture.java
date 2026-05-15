@@ -2,10 +2,10 @@ package com.seatliberator.seatliberator.reservation;
 
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.command.CancelWaitlistCommand;
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.command.CreateWaitlistCommand;
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRangeFixture;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistBehavior;
 
 import java.util.UUID;

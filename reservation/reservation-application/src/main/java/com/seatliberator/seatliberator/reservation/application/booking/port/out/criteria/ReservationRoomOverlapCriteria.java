@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria;
 
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleInstantRange;
 
 import java.util.Objects;
 

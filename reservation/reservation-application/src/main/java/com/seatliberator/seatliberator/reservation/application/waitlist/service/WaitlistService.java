@@ -11,8 +11,8 @@ import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.command.CreateWaitlistCommand;
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.WaitlistStore;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistStatus;
 import lombok.RequiredArgsConstructor;

@@ -5,13 +5,13 @@ import com.seatliberator.seatliberator.reservation.application.room.port.in.comm
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicy;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicyFixture;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailySchedule;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleDailySchedule;
 
 import java.time.Duration;
 import java.util.List;
 
-import static com.seatliberator.seatliberator.reservation.domain.shared.DailyNanoRangeFixture.AFTERNOON_RANGE;
-import static com.seatliberator.seatliberator.reservation.domain.shared.DailyNanoRangeFixture.DAWN_RANGE;
+import static com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailyNanoRangeFixture.AFTERNOON_RANGE;
+import static com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailyNanoRangeFixture.DAWN_RANGE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RoomTestSupport extends AbstractTestSupport {

@@ -22,8 +22,8 @@ import com.seatliberator.seatliberator.reservation.application.shared.exception.
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationPolicyException;
 import com.seatliberator.seatliberator.reservation.domain.reservation.Reservation;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleInstantRange;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

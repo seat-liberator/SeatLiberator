@@ -6,8 +6,8 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.in.r
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationRangeOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRangeFixture;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleInstantRange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

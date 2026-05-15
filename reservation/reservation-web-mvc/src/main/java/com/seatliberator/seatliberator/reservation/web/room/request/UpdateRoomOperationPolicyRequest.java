@@ -2,9 +2,9 @@ package com.seatliberator.seatliberator.reservation.web.room.request;
 
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.UpdateRoomOperationPolicyCommand;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.DailyNanoRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyNanoRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailySchedule;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailyNanoRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleDailyNanoRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleDailySchedule;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;

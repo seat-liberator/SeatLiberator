@@ -2,8 +2,8 @@ package com.seatliberator.seatliberator.reservation.application.booking.contract
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CreateReservationCommand;
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRange;
 
 public record ReservationCreatePolicyCommand(
         String userId,

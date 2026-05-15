@@ -2,9 +2,9 @@ package com.seatliberator.seatliberator.reservation.application.room.internal;
 
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicy;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.DailySchedule;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyNanoRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailySchedule;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailySchedule;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleDailyNanoRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleDailySchedule;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;

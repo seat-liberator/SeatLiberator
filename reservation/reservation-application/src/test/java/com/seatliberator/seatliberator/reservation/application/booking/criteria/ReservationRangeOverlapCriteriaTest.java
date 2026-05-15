@@ -2,8 +2,8 @@ package com.seatliberator.seatliberator.reservation.application.booking.criteria
 
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
 import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationRangeOverlapCriteria;
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRangeFixture;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleInstantRange;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

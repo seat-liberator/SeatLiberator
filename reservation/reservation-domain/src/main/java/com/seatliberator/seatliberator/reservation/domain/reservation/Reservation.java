@@ -5,10 +5,10 @@ import com.seatliberator.seatliberator.reservation.domain.reservation.event.Doma
 import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationCanceled;
 import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationCreated;
 import com.seatliberator.seatliberator.reservation.domain.reservation.event.ReservationExpired;
-import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.EmbeddableInstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRange;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

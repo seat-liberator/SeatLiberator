@@ -2,7 +2,7 @@ package com.seatliberator.seatliberator.reservation.application.room.port.in.res
 
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicy;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyNanoRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleDailyNanoRange;
 
 import java.time.Duration;
 import java.util.List;

@@ -6,9 +6,9 @@ import com.seatliberator.seatliberator.reservation.application.room.contract.res
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomReader;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicy;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.DailyNanoRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailyNanoRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRange;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

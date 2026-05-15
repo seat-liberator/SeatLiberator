@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.domain.shared;
+package com.seatliberator.seatliberator.reservation.domain.shared.temporal;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,7 +10,7 @@ import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
 
-import static com.seatliberator.seatliberator.reservation.domain.shared.DailyNanoRangeTestSupport.*;
+import static com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailyNanoRangeTestSupport.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

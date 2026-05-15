@@ -1,10 +1,10 @@
 package com.seatliberator.seatliberator.reservation.application.waitlist.model;
 
 import com.seatliberator.seatliberator.reservation.application.waitlist.internal.WaitlistPromotionResult;
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRangeFixture;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

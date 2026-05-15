@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.domain.room;
 
-import com.seatliberator.seatliberator.reservation.domain.shared.DailySchedule;
-import com.seatliberator.seatliberator.reservation.domain.shared.DailyScheduleFixture;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailySchedule;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailyScheduleFixture;
 
 import java.time.Duration;
 
