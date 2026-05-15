@@ -7,10 +7,10 @@ import com.seatliberator.seatliberator.reservation.domain.room.Room;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
 import com.seatliberator.seatliberator.reservation.domain.seat.Seat;
 import com.seatliberator.seatliberator.reservation.domain.seat.SeatFixture;
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistBehavior;
 

@@ -3,7 +3,7 @@ package com.seatliberator.seatliberator.reservation.web.book.request;
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CreateReservationCommand;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleInstantRange;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;

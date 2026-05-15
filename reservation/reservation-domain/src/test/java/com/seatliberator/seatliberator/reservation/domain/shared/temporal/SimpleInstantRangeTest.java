@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.domain.shared;
+package com.seatliberator.seatliberator.reservation.domain.shared.temporal;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.time.Instant;
 
 import static com.seatliberator.seatliberator.kernel.test.assertion.DomainAssertions.assertThatDomainThrownBy;
-import static com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeTestSupport.END_AT;
-import static com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeTestSupport.START_AT;
+import static com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRangeTestSupport.END_AT;
+import static com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRangeTestSupport.START_AT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("SimpleInstantRange 도메인 테스트")

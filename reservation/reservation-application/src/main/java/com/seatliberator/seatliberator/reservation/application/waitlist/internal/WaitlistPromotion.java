@@ -4,8 +4,8 @@ import com.seatliberator.seatliberator.reservation.application.booking.contract.
 import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreator;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.command.ReservationCreatePolicyCommand;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.command.ReservationCreatorCommand;
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRange;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

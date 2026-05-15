@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.domain.seat;
 
-import com.seatliberator.seatliberator.reservation.domain.shared.DailyNanoRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.DailyNanoRangeFixture;
 import com.seatliberator.seatliberator.reservation.domain.shared.TestSupport;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailyNanoRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailyNanoRangeFixture;
 
 import java.time.Instant;
 

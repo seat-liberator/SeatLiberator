@@ -14,7 +14,7 @@ import com.seatliberator.seatliberator.reservation.application.shared.exception.
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.domain.seat.SeatTimeSlot;
 import com.seatliberator.seatliberator.reservation.domain.seat.SeatTimeSlotStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyNanoRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleDailyNanoRange;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

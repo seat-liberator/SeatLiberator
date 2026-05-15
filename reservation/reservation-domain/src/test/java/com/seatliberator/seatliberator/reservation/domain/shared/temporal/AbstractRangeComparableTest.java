@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.domain.shared;
+package com.seatliberator.seatliberator.reservation.domain.shared.temporal;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

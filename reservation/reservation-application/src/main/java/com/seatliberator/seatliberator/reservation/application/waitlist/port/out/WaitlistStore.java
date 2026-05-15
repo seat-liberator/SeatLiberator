@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.application.waitlist.port.out;
 
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRange;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistStatus;
 

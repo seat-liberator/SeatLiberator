@@ -1,6 +1,11 @@
 package com.seatliberator.seatliberator.reservation.domain.reservation;
 
-import com.seatliberator.seatliberator.reservation.domain.shared.*;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRangeFixture;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleInstantRange;
 
 import java.time.Duration;
 import java.time.Instant;

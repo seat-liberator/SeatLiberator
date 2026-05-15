@@ -6,8 +6,8 @@ import com.seatliberator.seatliberator.reservation.application.booking.contract.
 import com.seatliberator.seatliberator.reservation.application.booking.contract.command.ReservationCreatorCommand;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.result.ReservationPolicyReason;
 import com.seatliberator.seatliberator.reservation.application.shared.policy.SimplePolicyResult;
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRangeFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

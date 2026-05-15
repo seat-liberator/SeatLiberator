@@ -7,7 +7,11 @@ import com.seatliberator.seatliberator.reservation.application.booking.contract.
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CreateReservationCommand;
 import com.seatliberator.seatliberator.reservation.domain.reservation.Reservation;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationFixture;
-import com.seatliberator.seatliberator.reservation.domain.shared.*;
+import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.TestSupport;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleInstantRange;
 
 import java.time.Clock;
 import java.time.Instant;

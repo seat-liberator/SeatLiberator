@@ -5,7 +5,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.in.F
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.query.FindMyReservationQuery;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleInstantRange;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

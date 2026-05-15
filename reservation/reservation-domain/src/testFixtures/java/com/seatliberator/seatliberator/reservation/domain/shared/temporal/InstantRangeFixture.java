@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.domain.shared;
+package com.seatliberator.seatliberator.reservation.domain.shared.temporal;
 
 import java.time.Duration;
 import java.time.Instant;

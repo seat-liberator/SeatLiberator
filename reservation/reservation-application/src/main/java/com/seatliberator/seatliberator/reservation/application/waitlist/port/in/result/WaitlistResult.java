@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.application.waitlist.port.in.result;
 
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
 
 public record WaitlistResult(

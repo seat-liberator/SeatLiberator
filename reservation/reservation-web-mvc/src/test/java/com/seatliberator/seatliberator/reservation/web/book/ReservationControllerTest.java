@@ -6,7 +6,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.in.F
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.query.FindMyReservationQuery;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleInstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.web.book.controller.ReservationQueryController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

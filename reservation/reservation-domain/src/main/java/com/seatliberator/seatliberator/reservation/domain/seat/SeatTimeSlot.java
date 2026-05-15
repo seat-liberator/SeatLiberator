@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.domain.seat;
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
-import com.seatliberator.seatliberator.reservation.domain.shared.DailyNanoRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableDailyNanoRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailyNanoRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.EmbeddableDailyNanoRange;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

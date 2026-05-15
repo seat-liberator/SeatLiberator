@@ -12,7 +12,7 @@ import com.seatliberator.seatliberator.reservation.application.room.port.in.comm
 import com.seatliberator.seatliberator.reservation.application.room.port.in.result.RoomOperationPolicyResult;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.result.RoomResult;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleDailyNanoRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleDailyNanoRange;
 import com.seatliberator.seatliberator.reservation.web.room.controller.RoomCommandController;
 import com.seatliberator.seatliberator.reservation.web.room.request.CreateRoomRequest;
 import com.seatliberator.seatliberator.reservation.web.room.request.UpdateRoomOperationPolicyRequest;

@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.domain.waitlist;
 
-import com.seatliberator.seatliberator.reservation.domain.shared.InstantRangeFixture;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRangeFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

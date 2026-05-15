@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.domain.shared;
+package com.seatliberator.seatliberator.reservation.domain.shared.temporal;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static com.seatliberator.seatliberator.kernel.test.assertion.DomainAssertions.assertThatDomainThrownBy;
-import static com.seatliberator.seatliberator.reservation.domain.shared.DailyScheduleTestSupport.range;
+import static com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailyScheduleTestSupport.range;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("SimpleDailySchedule 도메인 테스트")
