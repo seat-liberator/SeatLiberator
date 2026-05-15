@@ -48,10 +48,6 @@ public class Reservation {
     @Column(nullable = false)
     private ReservationStatus status;
 
-    @Getter(AccessLevel.NONE)
-    @OneToMany(mappedBy = "reservation")
-    private List<SeatTimeSlotOccupancy> seatTimeSlotOccupancies = new ArrayList<>();
-
     private Reservation(String userId, EmbeddableSeatLocator locator, EmbeddableInstantRange range, ReservationStatus status) {
         this.userId = userId;
         this.locator = locator;
@@ -102,17 +98,6 @@ public class Reservation {
         this.userId = userId;
         this.locator.setLocate(roomId, seatId);
         this.range.setRange(startAt, endAt);
-    }
-
-    public List<SeatTimeSlotOccupancy> getSeatTimeSlotOccupancies() {
-        return Collections.unmodifiableList(seatTimeSlotOccupancies);
-    }
-
-    void addSeatTimeSlotOccupancy(SeatTimeSlotOccupancy occupancy) {
-        Preconditions.requireNonNull(occupancy, "occupancy");
-        if (!seatTimeSlotOccupancies.contains(occupancy)) {
-            seatTimeSlotOccupancies.add(occupancy);
-        }
     }
 
     public boolean isReserved() {

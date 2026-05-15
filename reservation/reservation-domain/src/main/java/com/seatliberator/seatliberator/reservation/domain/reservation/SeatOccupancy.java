@@ -23,7 +23,7 @@ import java.util.UUID;
 )
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SeatTimeSlotOccupancy {
+public class SeatOccupancy {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -42,15 +42,14 @@ public class SeatTimeSlotOccupancy {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    private SeatTimeSlotOccupancy(SeatTimeSlot seatTimeSlot, Reservation reservation, LocalDate occupancyDate, Instant createdAt) {
+    private SeatOccupancy(SeatTimeSlot seatTimeSlot, Reservation reservation, LocalDate occupancyDate, Instant createdAt) {
         this.seatTimeSlot = Preconditions.requireNonNull(seatTimeSlot, "seatTimeSlot");
         this.reservation = Preconditions.requireNonNull(reservation, "reservation");
         this.occupancyDate = Preconditions.requireNonNull(occupancyDate, "occupancyDate");
         this.createdAt = Preconditions.requireNonNull(createdAt, "createdAt");
-        this.reservation.addSeatTimeSlotOccupancy(this);
     }
 
-    public static SeatTimeSlotOccupancy of(SeatTimeSlot seatTimeSlot, Reservation reservation, LocalDate occupancyDate, Instant createdAt) {
-        return new SeatTimeSlotOccupancy(seatTimeSlot, reservation, occupancyDate, createdAt);
+    public static SeatOccupancy of(SeatTimeSlot seatTimeSlot, Reservation reservation, LocalDate occupancyDate, Instant createdAt) {
+        return new SeatOccupancy(seatTimeSlot, reservation, occupancyDate, createdAt);
     }
 }
