@@ -8,14 +8,14 @@ import java.time.LocalDate;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
 
-public class SeatTimeSlotOccupancyFixture {
+public class SeatOccupancyFixture {
     public static final SeatTimeSlot SEAT_TIME_SLOT = SeatTimeSlotFixture.get();
     public static final Reservation RESERVATION = ReservationFixture.createReservation();
     public static final LocalDate OCCUPANCY_DATE = LocalDate.now(fixedClock);
     public static final Instant CREATED_AT = fixedClock.instant();
 
-    public static SeatTimeSlotOccupancy get() {
-        return SeatTimeSlotOccupancy.of(SEAT_TIME_SLOT, RESERVATION, OCCUPANCY_DATE, CREATED_AT);
+    public static SeatOccupancy get() {
+        return SeatOccupancy.of(SEAT_TIME_SLOT, RESERVATION, OCCUPANCY_DATE, CREATED_AT);
     }
 
     public static class Builder {
@@ -44,8 +44,8 @@ public class SeatTimeSlotOccupancyFixture {
             return this;
         }
 
-        public SeatTimeSlotOccupancy build() {
-            return SeatTimeSlotOccupancy.of(seatTimeSlot, reservation, occupancyDate, createdAt);
+        public SeatOccupancy build() {
+            return SeatOccupancy.of(seatTimeSlot, reservation, occupancyDate, createdAt);
         }
     }
 }
