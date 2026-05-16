@@ -37,6 +37,23 @@ public interface DailySchedule {
         return sorted;
     }
 
+    static boolean isContinuous(Collection<? extends DailyNanoRange> ranges) {
+        Preconditions.requireNonNull(ranges, "ranges");
+
+        var sorted = ranges.stream()
+                .sorted(Comparator
+                        .comparing(DailyNanoRange::startNanoOfDay)
+                        .thenComparing(DailyNanoRange::endNanoOfDay)
+                )
+                .toList();
+
+        for (int i = 1; i < sorted.size(); i++) {
+            if (!sorted.get(i).immediatelyAfter(sorted.get(i - 1))) return false;
+        }
+
+        return true;
+    }
+
     List<DailyNanoRange> ranges();
 
     default boolean contains(long other) {
