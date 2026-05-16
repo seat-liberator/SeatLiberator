@@ -4,6 +4,7 @@ import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.stream.Stream;
 
 public interface DateRange extends RangeComparable<DateRange> {
     static void validate(LocalDate startAt, LocalDate endAt) {
@@ -19,6 +20,10 @@ public interface DateRange extends RangeComparable<DateRange> {
 
     default Duration duration() {
         return Duration.between(startAt(), endAt());
+    }
+
+    default Stream<LocalDate> stream() {
+        return startAt().datesUntil(endAt().plusDays(1));
     }
 
     @Override
