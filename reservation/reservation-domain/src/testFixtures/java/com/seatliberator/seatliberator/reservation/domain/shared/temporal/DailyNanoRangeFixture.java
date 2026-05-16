@@ -19,6 +19,18 @@ public class DailyNanoRangeFixture {
             .startAt(LocalTime.of(1, 0))
             .duration(Duration.ofHours(4))
             .build();
+    public static final DailyNanoRange MORNING_SLOT_RANGE = new DailyNanoRangeFixture.Builder()
+            .startAt(LocalTime.of(8, 0))
+            .duration(Duration.ofHours(2))
+            .build();
+    public static final DailyNanoRange AFTERNOON_SLOT_RANGE = new DailyNanoRangeFixture.Builder()
+            .startAt(LocalTime.of(13, 0))
+            .duration(Duration.ofHours(2))
+            .build();
+    public static final DailyNanoRange NIGHT_SLOT_RANGE = new DailyNanoRangeFixture.Builder()
+            .startAt(LocalTime.of(19, 0))
+            .duration(Duration.ofHours(2))
+            .build();
 
     public static DailyNanoRange get() {
         return SimpleDailyNanoRange.of(START_AT, DURATION);
