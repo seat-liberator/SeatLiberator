@@ -7,6 +7,7 @@ import com.seatliberator.seatliberator.reservation.persistence.seat.jpa.reposito
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,6 +25,11 @@ public class JpaSeatTimeSlotPersistenceAdapter implements SeatTimeSlotReader, Se
     @Override
     public Optional<SeatTimeSlot> findById(UUID id) {
         return repository.findById(id);
+    }
+
+    @Override
+    public List<SeatTimeSlot> findByIds(Collection<UUID> ids) {
+        return repository.findAllById(ids);
     }
 
     @Override
