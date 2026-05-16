@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.application.booking.contract.result;
+package com.seatliberator.seatliberator.reservation.application.reservation.contract;
 
 import com.seatliberator.seatliberator.reservation.application.shared.policy.PolicyDecision;
 import com.seatliberator.seatliberator.reservation.application.shared.policy.PolicyReason;

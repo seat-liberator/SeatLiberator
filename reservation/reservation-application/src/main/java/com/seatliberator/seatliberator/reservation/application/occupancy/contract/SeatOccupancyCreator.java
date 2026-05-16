@@ -17,7 +17,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class SeatOccupancyAssignmentService {
+public class SeatOccupancyCreator {
     private final SeatOccupancyStore store;
 
     private final SeatTimeSlotBundlePolicy slotBundlePolicy;
