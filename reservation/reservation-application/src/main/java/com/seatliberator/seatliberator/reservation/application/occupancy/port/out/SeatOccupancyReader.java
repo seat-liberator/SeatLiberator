@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.application.occupancy.port.out;
 
+import com.seatliberator.seatliberator.reservation.application.occupancy.port.out.criteria.SeatOccupancyFilter;
 import com.seatliberator.seatliberator.reservation.domain.reservation.SeatOccupancy;
 
 import java.util.Collection;
@@ -13,4 +14,6 @@ public interface SeatOccupancyReader {
     Optional<SeatOccupancy> findById(UUID id);
 
     List<SeatOccupancy> findByIds(Collection<UUID> id);
+
+    List<SeatOccupancy> findByCriteria(SeatOccupancyFilter filter);
 }
