@@ -29,8 +29,16 @@ public class SeatTimeSlot {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "seat_id", nullable = false, updatable = false)
+    private UUID seatId;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "seat_id", nullable = false)
+    @JoinColumn(
+            name = "seat_id",
+            nullable = false,
+            insertable = false,
+            updatable = false
+    )
     private Seat seat;
 
     @Embedded
