@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.application.usage.port.in.command;
+package com.seatliberator.seatliberator.reservation.application.reservation.port.in.command;
 
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 

@@ -18,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static com.seatliberator.seatliberator.reservation.domain.reservation.ReservationFixture.createReservation;
+import static com.seatliberator.seatliberator.reservation.application.reservation.service.ReservationTestSupport.reservation;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -67,10 +67,8 @@ public class FindMyReservationUseCaseTest {
 
         var query = new FindMyReservationQuery("user-1", range, ReservationStatus.RESERVED);
 
-        var reservation = createReservation();
-
         when(reader.findAllOverlapping(any(ReservationRangeOverlapCriteria.class)))
-                .thenReturn(List.of(reservation));
+                .thenReturn(List.of(reservation()));
 
         var result = useCase.find(query);
 
@@ -78,7 +76,7 @@ public class FindMyReservationUseCaseTest {
         assertThat(result)
                 .usingRecursiveFieldByFieldElementComparator()
                 .containsExactly(
-                        ReservationResult.from(reservation)
+                        ReservationResult.from(reservation())
                 );
     }
 

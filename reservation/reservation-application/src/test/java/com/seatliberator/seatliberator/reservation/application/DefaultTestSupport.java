@@ -11,7 +11,7 @@ import com.seatliberator.seatliberator.reservation.domain.shared.temporal.Simple
 import java.time.Clock;
 import java.time.Instant;
 
-public abstract class AbstractTestSupport {
+public class DefaultTestSupport {
     public static final Clock CLOCK = TestSupport.fixedClock;
     public static final Instant NOW = CLOCK.instant();
 

@@ -13,11 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static com.seatliberator.seatliberator.reservation.domain.reservation.ReservationFixture.createReservation;
+import static com.seatliberator.seatliberator.reservation.application.reservation.service.ReservationTestSupport.reservation;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ListMyReservationUseCase 테스트")
@@ -49,16 +47,15 @@ public class ListMyReservationUseCaseTest {
     @DisplayName("reader가 반환한 예약들을 ReservationResult로 변환해 반환한다")
     void list_maps_reader_result_to_reservation_result() {
         var query = ListMyReservationQuery.of("user-1");
-        var reservation = createReservation();
 
         when(reader.findByUserId(query.userId()))
-                .thenReturn(List.of(reservation));
+                .thenReturn(List.of(reservation()));
 
         var result = useCase.list(query);
 
         assertThat(result)
                 .usingRecursiveFieldByFieldElementComparator()
-                .containsExactly(ReservationResult.from(reservation));
+                .containsExactly(ReservationResult.from(reservation()));
     }
 
     @Test
