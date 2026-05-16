@@ -28,12 +28,28 @@ public class SeatOccupancy {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "seat_time_slot_id", nullable = false)
-    private SeatTimeSlot seatTimeSlot;
+    @Column(name = "seat_time_slot_id", nullable = false, updatable = false)
+    private UUID seatTimeSlotId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "reservation_id", nullable = false)
+    @JoinColumn(
+            name = "seat_time_slot_id",
+            nullable = false,
+            insertable = false,
+            updatable = false
+    )
+    private SeatTimeSlot seatTimeSlot;
+
+    @Column(name = "reservation_id", nullable = false, updatable = false)
+    private UUID reservationId;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "reservation_id",
+            nullable = false,
+            insertable = false,
+            updatable = false
+    )
     private Reservation reservation;
 
     @Column(name = "occupancy_date", nullable = false)
