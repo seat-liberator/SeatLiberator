@@ -78,11 +78,11 @@ public class ReservationFilterTest {
                 Set.of(ReservationStatus.RESERVED)
         );
 
-        var updated = filter.withStatuses(ReservationStatus.CANCELED);
+        var updated = filter.withStatuses(ReservationStatus.CANCELLED);
 
         assertThat(updated.userIds()).containsExactly("user-1");
         assertThat(updated.excludedIds()).containsExactly(reservationId);
-        assertThat(updated.statuses()).containsExactly(ReservationStatus.CANCELED);
+        assertThat(updated.statuses()).containsExactly(ReservationStatus.CANCELLED);
     }
 
     @Test

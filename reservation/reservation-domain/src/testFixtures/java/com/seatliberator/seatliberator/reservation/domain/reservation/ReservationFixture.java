@@ -21,9 +21,7 @@ public class ReservationFixture {
     public static final Duration INITIAL_DURATION = Duration.ofMinutes(30);
 
     public static Reservation createReservation() {
-        var startTime = fixedClock.instant();
-        var endTime = startTime.plus(INITIAL_DURATION);
-        return createReservation(startTime, endTime, ReservationStatus.RESERVED);
+        return Reservation.of(INITIAL_USER_ID, fixedClock.instant());
     }
 
     public static Reservation createReservation(ReservationStatus status) {
@@ -33,7 +31,19 @@ public class ReservationFixture {
     }
 
     public static Reservation createReservation(Instant startTime, Instant endTime, ReservationStatus status) {
-        return Reservation.create(INITIAL_USER_ID, INITIAL_ROOM_ID, INITIAL_SEAT_ID, startTime, endTime, status);
+        var reservation = Reservation.of(INITIAL_USER_ID, startTime);
+        transitionTo(reservation, status, endTime);
+        return reservation;
+    }
+
+    private static void transitionTo(Reservation reservation, ReservationStatus status, Instant at) {
+        switch (status) {
+            case RESERVED -> {
+            }
+            case USED -> reservation.use(at);
+            case CANCELLED -> reservation.cancel(at);
+            case EXPIRED -> reservation.expire(at);
+        }
     }
 
     public static void stubReservationId(Reservation reservation, UUID id) {
@@ -116,7 +126,9 @@ public class ReservationFixture {
         }
 
         public Reservation build() {
-            return Reservation.create(userId, locator.roomId(), locator.seatId(), range.startAt(), range.endAt(), status);
+            var reservation = Reservation.of(userId, range.startAt());
+            transitionTo(reservation, status, range.endAt());
+            return reservation;
         }
     }
 }
