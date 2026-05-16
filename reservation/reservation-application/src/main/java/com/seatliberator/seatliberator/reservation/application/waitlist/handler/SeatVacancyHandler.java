@@ -38,7 +38,6 @@ public class SeatVacancyHandler {
     public void handle(ReservationExpired event) {
         var locator = event.locator();
         var range = event.range();
-
         processVacancy(locator, range);
     }
 
