@@ -73,6 +73,63 @@ public abstract class AbstractDailyScheduleTest<T extends DailySchedule> {
     }
 
     @Test
+    @DisplayName("비어있는 DailyNanoRange 목록은 연속적이다")
+    void empty_ranges_are_continuous() {
+        assertThat(DailySchedule.isContinuous(List.of())).isTrue();
+    }
+
+    @Test
+    @DisplayName("단일 DailyNanoRange 목록은 연속적이다")
+    void single_range_is_continuous() {
+        assertThat(DailySchedule.isContinuous(List.of(range("09:00", "12:00")))).isTrue();
+    }
+
+    @Test
+    @DisplayName("DailyNanoRange 목록의 모든 구간이 맞닿아 있으면 연속적이다")
+    void adjacent_ranges_are_continuous() {
+        assertThat(DailySchedule.isContinuous(List.of(
+                range("09:00", "12:00"),
+                range("12:00", "15:00"),
+                range("15:00", "18:00")
+        ))).isTrue();
+    }
+
+    @Test
+    @DisplayName("DailyNanoRange 목록은 정렬되지 않아도 연속 여부를 확인할 수 있다")
+    void unsorted_adjacent_ranges_are_continuous() {
+        assertThat(DailySchedule.isContinuous(List.of(
+                range("15:00", "18:00"),
+                range("09:00", "12:00"),
+                range("12:00", "15:00")
+        ))).isTrue();
+    }
+
+    @Test
+    @DisplayName("DailyNanoRange 목록 사이에 빈 구간이 있으면 연속적이지 않다")
+    void ranges_with_gap_are_not_continuous() {
+        assertThat(DailySchedule.isContinuous(List.of(
+                range("09:00", "12:00"),
+                range("13:00", "18:00")
+        ))).isFalse();
+    }
+
+    @Test
+    @DisplayName("DailyNanoRange 목록에 겹치는 구간이 있으면 연속적이지 않다")
+    void overlapping_ranges_are_not_continuous() {
+        assertThat(DailySchedule.isContinuous(List.of(
+                range("09:00", "13:00"),
+                range("12:00", "18:00")
+        ))).isFalse();
+    }
+
+    @Test
+    @DisplayName("DailyNanoRange 목록 연속 여부 조회 인자가 null이면 예외")
+    void throw_exception_when_is_continuous_argument_is_null() {
+        assertThatDomainThrownBy(() -> DailySchedule.isContinuous(null))
+                .hasNonNullMessageFor("ranges");
+    }
+
+    @Test
     @DisplayName("DailyNanoRange 목록은 값으로 복사한다")
     void copy_ranges_by_value() {
         var mutable = EmbeddableDailyNanoRange.of(nanoOf("09:00"), nanoOf("12:00"));
