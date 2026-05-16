@@ -13,7 +13,7 @@ import java.util.UUID;
 public interface ReservationReader {
     Optional<Reservation> findById(UUID id);
 
-    Optional<Reservation> findByUserId(String userId);
+    List<Reservation> findByUserId(String userId);
 
     boolean existsOne(ReservationSeatLookupCriteria criteria);
 

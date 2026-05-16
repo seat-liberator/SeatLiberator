@@ -2,9 +2,9 @@ package com.seatliberator.seatliberator.reservation.web.book;
 
 import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
-import com.seatliberator.seatliberator.reservation.application.booking.port.in.FindMyReservationUseCase;
-import com.seatliberator.seatliberator.reservation.application.booking.port.in.query.FindMyReservationQuery;
-import com.seatliberator.seatliberator.reservation.application.booking.port.in.result.ReservationResult;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.in.FindMyReservationUseCase;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.in.query.FindMyReservationQuery;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.web.book.controller.ReservationQueryController;
@@ -80,7 +80,7 @@ public class ReservationControllerTest {
         var startAt = Instant.parse("2026-04-14T10:00:00Z");
         var endAt = Instant.parse("2026-04-14T12:00:00Z");
 
-        var result = List.of(ReservationResult.of(createReservation(startAt, endAt, ReservationStatus.RESERVED)));
+        var result = List.of(ReservationResult.from(createReservation(startAt, endAt, ReservationStatus.RESERVED)));
 
         given(actorContextHolder.getActor()).willReturn(actor);
         given(findMyReservationUseCase.find(any(FindMyReservationQuery.class)))
