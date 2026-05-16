@@ -2,10 +2,10 @@ package com.seatliberator.seatliberator.reservation.application.booking.contract
 
 import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationCreator;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.command.ReservationCreatorCommand;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationStore;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationSeatOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationReader;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationStore;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationSeatOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.domain.reservation.Reservation;

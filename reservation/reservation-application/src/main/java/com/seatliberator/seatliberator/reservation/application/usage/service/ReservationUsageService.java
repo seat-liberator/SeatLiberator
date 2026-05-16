@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.reservation.application.usage.service;
 
 import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationOwnershipPolicy;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.application.usage.port.in.UseReservationUseCase;

@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.reservation.application.waitlist.service;
 
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationSeatOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationReader;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationSeatOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.CancelWaitlistUseCase;

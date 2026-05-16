@@ -3,9 +3,9 @@ package com.seatliberator.seatliberator.reservation.application.booking.service;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.FindMyReservationUseCase;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.query.FindMyReservationQuery;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.result.ReservationResult;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationRangeOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationReader;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationRangeOverlapCriteria;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

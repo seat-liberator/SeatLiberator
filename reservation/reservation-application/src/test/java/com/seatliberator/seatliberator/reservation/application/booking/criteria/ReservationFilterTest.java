@@ -2,7 +2,7 @@ package com.seatliberator.seatliberator.reservation.application.booking.criteria
 
 import com.seatliberator.seatliberator.kernel.test.SequenceCounter;
 import com.seatliberator.seatliberator.kernel.test.UuidGenerator;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationFilter;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria;
+package com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria;
 
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
@@ -7,27 +7,29 @@ import com.seatliberator.seatliberator.reservation.domain.shared.temporal.Simple
 
 import java.util.Objects;
 
-public record ReservationSeatOverlapCriteria(
+public record ReservationSeatLookupCriteria(
         SimpleSeatLocator locator,
         SimpleInstantRange range,
         ReservationFilter filter
 ) {
-    public ReservationSeatOverlapCriteria {
+    public ReservationSeatLookupCriteria {
         Objects.requireNonNull(locator);
         Objects.requireNonNull(range);
         Objects.requireNonNull(filter);
     }
 
-    public static ReservationSeatOverlapCriteria of(SeatLocator locator, InstantRange range) {
-        return new ReservationSeatOverlapCriteria(
+    public static ReservationSeatLookupCriteria of(
+            SeatLocator locator,
+            InstantRange range
+    ) {
+        return new ReservationSeatLookupCriteria(
                 SimpleSeatLocator.from(locator),
                 SimpleInstantRange.from(range),
                 ReservationFilter.empty()
         );
     }
 
-    public ReservationSeatOverlapCriteria withFilter(ReservationFilter filter) {
-        return new ReservationSeatOverlapCriteria(locator, range, filter);
+    public ReservationSeatLookupCriteria withFilter(ReservationFilter filter) {
+        return new ReservationSeatLookupCriteria(locator, range, filter);
     }
 }
-
