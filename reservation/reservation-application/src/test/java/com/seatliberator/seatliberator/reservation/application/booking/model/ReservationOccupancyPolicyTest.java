@@ -20,7 +20,7 @@ public class ReservationOccupancyPolicyTest {
     @Test
     @DisplayName("CANCELED, EXPIRED 상태는 비점유 상태로 판단한다")
     void unoccupied_when_canceled_and_expired() {
-        assertThat(policy.isOccupied(ReservationStatus.CANCELED)).isFalse();
+        assertThat(policy.isOccupied(ReservationStatus.CANCELLED)).isFalse();
         assertThat(policy.isOccupied(ReservationStatus.EXPIRED)).isFalse();
     }
 }
