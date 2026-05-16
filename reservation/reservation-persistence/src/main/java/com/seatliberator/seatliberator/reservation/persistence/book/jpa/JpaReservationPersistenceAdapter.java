@@ -33,7 +33,7 @@ public class JpaReservationPersistenceAdapter implements ReservationStore, Reser
     }
 
     @Override
-    public Optional<Reservation> findByUserId(String userId) {
+    public List<Reservation> findByUserId(String userId) {
         return repository.findByUserId(userId);
     }
 

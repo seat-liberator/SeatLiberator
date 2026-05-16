@@ -11,7 +11,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.in.U
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CancelReservationCommand;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CreateReservationCommand;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.UpdateReservationCommand;
-import com.seatliberator.seatliberator.reservation.application.booking.port.in.result.ReservationResult;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationFilter;
@@ -66,7 +66,7 @@ public class ReservationCommandService implements
 
         var created = creator.create(ReservationCreatorCommand.from(command));
 
-        return ReservationResult.of(created);
+        return ReservationResult.from(created);
     }
 
     @Transactional
@@ -94,7 +94,7 @@ public class ReservationCommandService implements
 
         reservation.update(command.userId(), command.roomId(), command.seatId(), command.startTime(), command.endTime());
 
-        return ReservationResult.of(reservation);
+        return ReservationResult.from(reservation);
     }
 
     @Transactional
@@ -115,7 +115,7 @@ public class ReservationCommandService implements
 
         var saved = reservationStore.save(reservation);
 
-        return ReservationResult.of(saved);
+        return ReservationResult.from(saved);
     }
 
     private void lockSeats(String roomId1, String seatId1, String roomId2, String seatId2) {

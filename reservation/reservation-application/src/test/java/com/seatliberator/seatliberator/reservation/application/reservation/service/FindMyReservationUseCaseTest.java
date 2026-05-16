@@ -1,8 +1,8 @@
-package com.seatliberator.seatliberator.reservation.application.booking.service;
+package com.seatliberator.seatliberator.reservation.application.reservation.service;
 
-import com.seatliberator.seatliberator.reservation.application.booking.port.in.FindMyReservationUseCase;
-import com.seatliberator.seatliberator.reservation.application.booking.port.in.query.FindMyReservationQuery;
-import com.seatliberator.seatliberator.reservation.application.booking.port.in.result.ReservationResult;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.in.FindMyReservationUseCase;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.in.query.FindMyReservationQuery;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationRangeOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("Find My Reservation Use Case")
+@DisplayName("FindMyReservationUseCase 테스트")
 public class FindMyReservationUseCaseTest {
     @Mock
     ReservationReader reader;
@@ -33,7 +33,7 @@ public class FindMyReservationUseCaseTest {
 
     @BeforeEach
     void run() {
-        useCase = new ReservationQueryService(reader);
+        useCase = new FindMyReservationService(reader);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class FindMyReservationUseCaseTest {
         assertThat(result)
                 .usingRecursiveFieldByFieldElementComparator()
                 .containsExactly(
-                        ReservationResult.of(reservation)
+                        ReservationResult.from(reservation)
                 );
     }
 

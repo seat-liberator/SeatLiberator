@@ -5,7 +5,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.in.C
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.UpdateReservationUseCase;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.CancelReservationCommand;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.command.UpdateReservationCommand;
-import com.seatliberator.seatliberator.reservation.application.booking.port.in.result.ReservationResult;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.web.book.request.ReservationUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

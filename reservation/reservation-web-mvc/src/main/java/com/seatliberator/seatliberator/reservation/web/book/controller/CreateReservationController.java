@@ -2,7 +2,7 @@ package com.seatliberator.seatliberator.reservation.web.book.controller;
 
 import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.CreateReservationUseCase;
-import com.seatliberator.seatliberator.reservation.application.booking.port.in.result.ReservationResult;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
 import com.seatliberator.seatliberator.reservation.web.book.request.ReservationCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
