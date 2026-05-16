@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.application.room;
 
-import com.seatliberator.seatliberator.reservation.application.AbstractTestSupport;
+import com.seatliberator.seatliberator.reservation.application.DefaultTestSupport;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.UpdateRoomOperationPolicyCommand;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicy;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicyFixture;
@@ -14,7 +14,7 @@ import static com.seatliberator.seatliberator.reservation.domain.shared.temporal
 import static com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailyNanoRangeFixture.DAWN_RANGE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RoomTestSupport extends AbstractTestSupport {
+public class RoomTestSupport extends DefaultTestSupport {
     public static UpdateRoomOperationPolicyCommand updateRoomOperationPolicyCommand() {
         return new UpdateRoomOperationPolicyCommand(
                 ROOM_ID,

@@ -1,7 +1,5 @@
-package com.seatliberator.seatliberator.reservation.application.room.contract.service;
+package com.seatliberator.seatliberator.reservation.application.room.contract;
 
-import com.seatliberator.seatliberator.reservation.application.room.contract.RoomOperationReservationPolicy;
-import com.seatliberator.seatliberator.reservation.application.room.contract.result.RoomPolicyReason;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomReader;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomOperationPolicyFixture;
@@ -28,8 +26,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("Application: Room Operation Reservation Policy")
-public class DefaultRoomOperationReservationPolicyTest {
+@DisplayName("RoomOperationReservationPolicy 테스트")
+public class RoomOperationReservationPolicyTest {
 
     @Mock
     RoomReader roomReader;
@@ -38,7 +36,7 @@ public class DefaultRoomOperationReservationPolicyTest {
 
     @BeforeEach
     void setUp() {
-        policy = new DefaultRoomOperationReservationPolicy(roomReader, fixedClock);
+        policy = new RoomOperationReservationPolicy(roomReader, fixedClock);
     }
 
     @Test
