@@ -1,9 +1,9 @@
-package com.seatliberator.seatliberator.reservation.application.booking.port.out;
+package com.seatliberator.seatliberator.reservation.application.reservation.port.out;
 
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationRangeOverlapCriteria;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationRoomOverlapCriteria;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationSeatLookupCriteria;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationSeatOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationRangeOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationRoomOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationSeatLookupCriteria;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationSeatOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.domain.reservation.Reservation;
 
 import java.util.List;

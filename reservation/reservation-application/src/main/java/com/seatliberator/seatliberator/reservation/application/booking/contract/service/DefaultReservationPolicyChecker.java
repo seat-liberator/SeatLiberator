@@ -3,9 +3,9 @@ package com.seatliberator.seatliberator.reservation.application.booking.contract
 import com.seatliberator.seatliberator.reservation.application.booking.contract.ReservationPolicyChecker;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.result.ReservationPolicyCheckResult;
 import com.seatliberator.seatliberator.reservation.application.booking.contract.result.ReservationRejectReason;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationSeatLookupCriteria;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationReader;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationSeatLookupCriteria;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRange;

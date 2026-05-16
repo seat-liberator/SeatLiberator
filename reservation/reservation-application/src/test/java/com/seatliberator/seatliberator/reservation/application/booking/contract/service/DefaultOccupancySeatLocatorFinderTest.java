@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.reservation.application.booking.contract.service;
 
 import com.seatliberator.seatliberator.reservation.application.booking.model.ReservationOccupancyPolicy;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationFilter;
-import com.seatliberator.seatliberator.reservation.application.booking.port.out.criteria.ReservationRoomOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationReader;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationRoomOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationFixture;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
