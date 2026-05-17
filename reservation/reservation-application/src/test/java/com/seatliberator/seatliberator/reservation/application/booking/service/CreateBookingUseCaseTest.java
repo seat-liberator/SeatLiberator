@@ -6,8 +6,6 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.in.r
 import com.seatliberator.seatliberator.reservation.application.occupancy.contract.SeatOccupancyCreator;
 import com.seatliberator.seatliberator.reservation.application.reservation.contract.ReservationCreator;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationResult;
-import com.seatliberator.seatliberator.reservation.application.seat.port.in.result.SeatTimeSlotResult;
-import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatTimeSlotReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,9 +21,6 @@ import static org.mockito.Mockito.*;
 @DisplayName("CreateBookingUseCase 테스트")
 public class CreateBookingUseCaseTest {
     @Mock
-    SeatTimeSlotReader slotReader;
-
-    @Mock
     ReservationCreator reservationCreator;
 
     @Mock
@@ -38,7 +33,7 @@ public class CreateBookingUseCaseTest {
 
     @BeforeEach
     void run() {
-        useCase = new CreateBookingService(slotReader, reservationCreator, occupancyCreator, actorContextHolder);
+        useCase = new CreateBookingService(reservationCreator, occupancyCreator, actorContextHolder);
     }
 
     @Test
@@ -46,19 +41,16 @@ public class CreateBookingUseCaseTest {
     void create_booking_delegates_to_creators() {
         var command = createBookingCommand();
         var reservation = reservation();
-        var slots = slots();
 
         when(actorContextHolder.getActor()).thenReturn(ACTOR);
         when(reservationCreator.createAuthorized(command.userId(), ACTOR)).thenReturn(reservation);
-        when(slotReader.findByIds(command.seatTimeSlotIds())).thenReturn(slots);
 
         useCase.create(command);
 
         verify(actorContextHolder).getActor();
         verify(reservationCreator).createAuthorized(command.userId(), ACTOR);
-        verify(slotReader).findByIds(command.seatTimeSlotIds());
-        verify(occupancyCreator).create(reservation, slots, command.occupancyDate());
-        verifyNoMoreInteractions(actorContextHolder, reservationCreator, slotReader, occupancyCreator);
+        verify(occupancyCreator).create(reservation.getId(), command.seatTimeSlotIds(), command.occupancyDate());
+        verifyNoMoreInteractions(actorContextHolder, reservationCreator, occupancyCreator);
     }
 
     @Test
@@ -66,22 +58,17 @@ public class CreateBookingUseCaseTest {
     void create_maps_created_reservation_and_slots_to_booking_result() {
         var command = createBookingCommand();
         var reservation = reservation();
-        var slots = slots();
 
         when(actorContextHolder.getActor()).thenReturn(ACTOR);
         when(reservationCreator.createAuthorized(command.userId(), ACTOR)).thenReturn(reservation);
-        when(slotReader.findByIds(command.seatTimeSlotIds())).thenReturn(slots);
 
         var result = useCase.create(command);
 
         assertThat(result)
                 .usingRecursiveComparison()
-                .isEqualTo(BookingResult.from(reservation, slots));
+                .isEqualTo(BookingResult.from(reservation));
         assertThat(result.reservation())
                 .usingRecursiveComparison()
                 .isEqualTo(ReservationResult.from(reservation));
-        assertThat(result.slots())
-                .usingRecursiveFieldByFieldElementComparator()
-                .containsExactlyElementsOf(slots.stream().map(SeatTimeSlotResult::from).toList());
     }
 }
