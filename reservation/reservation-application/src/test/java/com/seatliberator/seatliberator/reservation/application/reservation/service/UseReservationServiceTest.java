@@ -90,11 +90,8 @@ public class UseReservationServiceTest {
 
         assertThatThrownBy(() -> useCase.use(command))
                 .isInstanceOf(ReservationApplicationPolicyException.class)
-                .extracting("reasonCode", "reasonMessage")
-                .containsExactly(
-                        ReservationPolicyReason.UNAUTHORIZED_RESERVATION_ACCESS.code(),
-                        ReservationPolicyReason.UNAUTHORIZED_RESERVATION_ACCESS.message()
-                );
+                .extracting("reason")
+                .isEqualTo(ReservationPolicyReason.UNAUTHORIZED_RESERVATION_ACCESS);
 
         assertThat(reservation.getState().getStatus()).isEqualTo(ReservationStatus.RESERVED);
         verify(reader, only()).findById(command.reservationId());
