@@ -16,7 +16,11 @@ public enum ReservationCapability implements Capability {
     BOOKING_CREATE("booking.create", "예약 생성"),
     OWNED_BOOKING_CANCEL("owned.booking.cancel", "예약 취소"),
     OWNED_BOOKING_UPDATE("owned.booking.update", "예약 수정"),
-    BOOKING_MANAGE("booking.manage", "예약 관리");
+    BOOKING_MANAGE("booking.manage", "예약 관리"),
+
+    WAITLIST_CREATE("waitlist.create", "대기열 생성"),
+    WAITLIST_CANCEL("waitlist.cancel", "대기열 취소"),
+    WAITLIST_MANAGE("waitlist.manage", "대기열 관리");
 
     private final String scope;
     private final String description;
