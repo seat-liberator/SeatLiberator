@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.domain.waitlist;
 
+import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
@@ -7,12 +8,8 @@ import jakarta.persistence.Enumerated;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 import java.time.Instant;
-
-import static com.seatliberator.seatliberator.reservation.domain.waitlist.validator.WaitlistStateValidator.ensureStateIn;
-import static com.seatliberator.seatliberator.reservation.domain.waitlist.validator.WaitlistStateValidator.validate;
 
 @Embeddable
 @Getter
@@ -50,19 +47,15 @@ public class WaitlistState {
             Instant expiredAt,
             Instant completedAt
     ) {
-        this.status = status;
-        this.resolution = resolution;
-        this.requestedAt = requestedAt;
+        this.status = Preconditions.requireNonNull(status, "status");
+        this.resolution = Preconditions.requireNonNull(resolution, "resolution");
+        this.requestedAt = Preconditions.requireNonNull(requestedAt, "requestedAt");
         this.cancelledAt = cancelledAt;
         this.expiredAt = expiredAt;
         this.completedAt = completedAt;
-
-        validate(this);
     }
 
-    public static WaitlistState requestedAt(
-            @NonNull Instant requestedAt
-    ) {
+    public static WaitlistState requestedAt(Instant requestedAt) {
         return new WaitlistState(
                 WaitlistStatus.ACTIVE,
                 WaitlistResolution.PENDING,
@@ -74,49 +67,73 @@ public class WaitlistState {
     }
 
     protected void cancel(Instant at) {
-        ensureStateIn(this, WaitlistStatus.ACTIVE);
+        ensureStateIn(WaitlistStatus.ACTIVE);
+        ensureNotBeforeRequestedAt(at);
 
         this.status = WaitlistStatus.CANCELLED;
         this.cancelledAt = at;
-
-        validate(this);
     }
 
     protected void expire(Instant at) {
-        ensureStateIn(this, WaitlistStatus.ACTIVE);
+        ensureStateIn(WaitlistStatus.ACTIVE);
+        ensureNotBeforeRequestedAt(at);
 
         this.status = WaitlistStatus.EXPIRED;
         this.expiredAt = at;
-
-        validate(this);
     }
 
     protected void fail(Instant at) {
-        ensureStateIn(this, WaitlistStatus.ACTIVE);
+        ensureStateIn(WaitlistStatus.ACTIVE);
+        ensureNotBeforeRequestedAt(at);
 
         this.status = WaitlistStatus.FAILED;
         this.failedAt = at;
-
-        validate(this);
     }
 
     protected void completeAsNotified(Instant at) {
-        ensureStateIn(this, WaitlistStatus.ACTIVE);
+        ensureStateIn(WaitlistStatus.ACTIVE);
+        ensureNotBeforeRequestedAt(at);
 
         this.status = WaitlistStatus.COMPLETED;
         this.resolution = WaitlistResolution.NOTIFIED;
         this.completedAt = at;
-
-        validate(this);
     }
 
     protected void completeAtClaimed(Instant at) {
-        ensureStateIn(this, WaitlistStatus.ACTIVE);
+        ensureStateIn(WaitlistStatus.ACTIVE);
+        ensureNotBeforeRequestedAt(at);
 
         this.status = WaitlistStatus.COMPLETED;
         this.resolution = WaitlistResolution.CLAIMED;
         this.completedAt = at;
+    }
 
-        validate(this);
+    private void ensureStateIn(WaitlistStatus... statuses) {
+        for (var status : statuses) if (this.status == status) return;
+
+        switch (this.status) {
+            case ACTIVE -> throw new IllegalStateException("이미 활성화된 대기열입니다.");
+            case CANCELLED -> throw new IllegalStateException("이미 취소된 대기열입니다.");
+            case EXPIRED -> throw new IllegalStateException("이미 만료된 대기열입니다.");
+            case COMPLETED -> throw new IllegalStateException("이미 완료된 대기열입니다.");
+            case FAILED -> throw new IllegalStateException("이미 실패한 대기열입니다.");
+        }
+    }
+
+    private void ensureResolutionIn(WaitlistResolution... resolutions) {
+        for (var resolution : resolutions) if (this.resolution == resolution) return;
+
+        switch (this.resolution) {
+            case PENDING -> throw new IllegalStateException("아직 처리 대기 중인 대기열입니다.");
+            case CLAIMED -> throw new IllegalStateException("이미 점유 처리된 대기열입니다.");
+            case NOTIFIED -> throw new IllegalStateException("이미 알림 처리된 대기열입니다.");
+        }
+    }
+
+    private void ensureNotBeforeRequestedAt(Instant at) {
+        Preconditions.requireNonNull(at, "at");
+        if (at.isBefore(requestedAt)) {
+            throw new IllegalStateException("must not be before requestedAt.");
+        }
     }
 }

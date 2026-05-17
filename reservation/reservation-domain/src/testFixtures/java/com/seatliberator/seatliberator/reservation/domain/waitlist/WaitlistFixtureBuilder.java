@@ -1,21 +1,19 @@
 package com.seatliberator.seatliberator.reservation.domain.waitlist;
 
-import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture;
-import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRangeFixture;
-
 import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
-import static com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistFixture.INITIAL_USER_ID;
+import static com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistFixture.*;
 
 public class WaitlistFixtureBuilder {
     private String userId = INITIAL_USER_ID;
 
-    private SeatLocator locator = SeatLocatorFixture.get();
+    private List<UUID> slotIds = INITIAL_SLOT_IDS;
 
-    private InstantRange range = InstantRangeFixture.get();
+    private LocalDate occupancyDate = INITIAL_OCCUPANCY_DATE;
 
     private Instant requestedAt = fixedClock.instant();
 
@@ -26,20 +24,26 @@ public class WaitlistFixtureBuilder {
 
     public WaitlistFixtureBuilder(
             String userId,
-            SeatLocator locator,
-            InstantRange range,
+            List<UUID> slotIds,
+            LocalDate occupancyDate,
             Instant requestedAt,
             WaitlistBehavior behavior
     ) {
         this.userId = userId;
-        this.locator = locator;
-        this.range = range;
+        this.slotIds = slotIds;
+        this.occupancyDate = occupancyDate;
         this.requestedAt = requestedAt;
         this.behavior = behavior;
     }
 
     public WaitlistFixtureBuilder copy() {
-        return new WaitlistFixtureBuilder(userId, locator, range, requestedAt, behavior);
+        return new WaitlistFixtureBuilder(
+                userId,
+                List.copyOf(slotIds),
+                occupancyDate,
+                requestedAt,
+                behavior
+        );
     }
 
     public WaitlistFixtureBuilder userId(String userId) {
@@ -47,13 +51,13 @@ public class WaitlistFixtureBuilder {
         return this;
     }
 
-    public WaitlistFixtureBuilder locator(SeatLocator locator) {
-        this.locator = locator;
+    public WaitlistFixtureBuilder slotIds(List<UUID> slotIds) {
+        this.slotIds = slotIds;
         return this;
     }
 
-    public WaitlistFixtureBuilder range(InstantRange range) {
-        this.range = range;
+    public WaitlistFixtureBuilder occupancyDate(LocalDate occupancyDate) {
+        this.occupancyDate = occupancyDate;
         return this;
     }
 
@@ -68,6 +72,6 @@ public class WaitlistFixtureBuilder {
     }
 
     public Waitlist build() {
-        return Waitlist.create(userId, locator, range, behavior, requestedAt);
+        return Waitlist.of(userId, slotIds, occupancyDate, behavior, requestedAt);
     }
 }

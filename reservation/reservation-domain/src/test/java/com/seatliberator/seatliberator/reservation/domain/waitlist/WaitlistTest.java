@@ -1,270 +1,378 @@
 package com.seatliberator.seatliberator.reservation.domain.waitlist;
 
-import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocatorFixture;
-import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRangeFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
-import static com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistFixture.INITIAL_USER_ID;
-import static com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistFixture.createWaitlist;
+import static com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("Domain: Waitlist")
 public class WaitlistTest {
+
+    @Test
+    @DisplayName("알림 전용 대기열은 생성되면 ACTIVE 상태와 요청 시각을 가진다")
+    void create_notify_only_waitlist() {
+        var requestedAt = fixedClock.instant();
+
+        var waitlist = Waitlist.notifyOnly(
+                INITIAL_USER_ID,
+                INITIAL_SLOT_IDS,
+                INITIAL_OCCUPANCY_DATE,
+                requestedAt
+        );
+
+        assertThat(waitlist.getUserId()).isEqualTo(INITIAL_USER_ID);
+        assertThat(waitlist.getSlotIds()).isEqualTo(INITIAL_SLOT_IDS);
+        assertThat(waitlist.getOccupancyDate()).isEqualTo(INITIAL_OCCUPANCY_DATE);
+        assertThat(waitlist.getBehavior()).isEqualTo(WaitlistBehavior.NOTIFY_ONLY);
+        assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.ACTIVE);
+        assertThat(waitlist.getState().getResolution()).isEqualTo(WaitlistResolution.PENDING);
+        assertThat(waitlist.getState().getRequestedAt()).isEqualTo(requestedAt);
+        assertThat(waitlist.getState().getCancelledAt()).isNull();
+        assertThat(waitlist.getState().getExpiredAt()).isNull();
+        assertThat(waitlist.getState().getFailedAt()).isNull();
+        assertThat(waitlist.getState().getCompletedAt()).isNull();
+    }
+
+    @Test
+    @DisplayName("자동 점유 대기열은 생성되면 AUTO_CLAIM 처리 방식을 가진다")
+    void create_auto_claim_waitlist() {
+        var requestedAt = fixedClock.instant();
+
+        var waitlist = Waitlist.autoClaim(
+                INITIAL_USER_ID,
+                INITIAL_SLOT_IDS,
+                INITIAL_OCCUPANCY_DATE,
+                requestedAt
+        );
+
+        assertThat(waitlist.getUserId()).isEqualTo(INITIAL_USER_ID);
+        assertThat(waitlist.getSlotIds()).isEqualTo(INITIAL_SLOT_IDS);
+        assertThat(waitlist.getOccupancyDate()).isEqualTo(INITIAL_OCCUPANCY_DATE);
+        assertThat(waitlist.getBehavior()).isEqualTo(WaitlistBehavior.AUTO_CLAIM);
+        assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.ACTIVE);
+        assertThat(waitlist.getState().getResolution()).isEqualTo(WaitlistResolution.PENDING);
+        assertThat(waitlist.getState().getRequestedAt()).isEqualTo(requestedAt);
+        assertThat(waitlist.getState().getCancelledAt()).isNull();
+        assertThat(waitlist.getState().getExpiredAt()).isNull();
+        assertThat(waitlist.getState().getFailedAt()).isNull();
+        assertThat(waitlist.getState().getCompletedAt()).isNull();
+    }
+
     @Nested
-    @DisplayName("Constructor")
-    class Constructor {
+    @DisplayName("Transition from ACTIVE")
+    class TransitionFromActive {
         @Test
-        @DisplayName("Notify only request 생성")
-        void create_notify_only_request() {
+        @DisplayName("활성 대기열은 취소 처리할 수 있다")
+        void cancel_active_waitlist() {
+            var waitlist = createWaitlist();
+            var cancelledAt = fixedClock.instant().plusSeconds(1);
 
-            // given
-            var locator = SeatLocatorFixture.get();
-            var range = InstantRangeFixture.get();
-            var requestedAt = fixedClock.instant();
+            waitlist.cancel(cancelledAt);
 
-            // when
-            Waitlist request = Waitlist.notifyOnly(
-                    INITIAL_USER_ID,
-                    locator,
-                    range,
-                    requestedAt
-            );
-
-            // then
-            assertThat(request.getState().getStatus()).isEqualTo(WaitlistStatus.ACTIVE);
-            assertThat(request.getBehavior()).isEqualTo(WaitlistBehavior.NOTIFY_ONLY);
-            assertThat(request.getRange().startAt()).isEqualTo(range.startAt());
-            assertThat(request.getRange().endAt()).isEqualTo(range.endAt());
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.CANCELLED);
+            assertThat(waitlist.getState().getResolution()).isEqualTo(WaitlistResolution.PENDING);
+            assertThat(waitlist.getState().getCancelledAt()).isEqualTo(cancelledAt);
+            assertThat(waitlist.getState().getExpiredAt()).isNull();
+            assertThat(waitlist.getState().getFailedAt()).isNull();
+            assertThat(waitlist.getState().getCompletedAt()).isNull();
         }
 
         @Test
-        @DisplayName("requestedAt이 TimeRange.startAt보다 과거가 아니면 예외")
-        void throw_exception_when_requested_at_is_not_past_than_startAt() {
-            // given
-            var locator = SeatLocatorFixture.get();
-            var range = InstantRangeFixture.get();
+        @DisplayName("활성 대기열은 만료 처리할 수 있다")
+        void expire_active_waitlist() {
+            var waitlist = createWaitlist();
+            var expiredAt = fixedClock.instant().plusSeconds(1);
 
-            // when requestedAt == range.startAt is not the past.
-            var requestedAtExactSameAsStartAt = range.startAt();
-            var requestedAtFutureThanStartAt = range.startAt().plusSeconds(1);
+            waitlist.expire(expiredAt);
 
-            assertThatThrownBy(() -> Waitlist.notifyOnly(
-                    INITIAL_USER_ID,
-                    locator,
-                    range,
-                    requestedAtExactSameAsStartAt
-            ))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("requestedAt is must be before startAt");
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.EXPIRED);
+            assertThat(waitlist.getState().getResolution()).isEqualTo(WaitlistResolution.PENDING);
+            assertThat(waitlist.getState().getExpiredAt()).isEqualTo(expiredAt);
+            assertThat(waitlist.getState().getCancelledAt()).isNull();
+            assertThat(waitlist.getState().getFailedAt()).isNull();
+            assertThat(waitlist.getState().getCompletedAt()).isNull();
+        }
 
-            assertThatThrownBy(() -> Waitlist.autoClaim(
-                    INITIAL_USER_ID,
-                    locator,
-                    range,
-                    requestedAtFutureThanStartAt
-            ))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("requestedAt is must be before startAt");
+        @Test
+        @DisplayName("활성 대기열은 실패 처리할 수 있다")
+        void fail_active_waitlist() {
+            var waitlist = createWaitlist();
+            var failedAt = fixedClock.instant().plusSeconds(1);
+
+            waitlist.fail(failedAt);
+
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.FAILED);
+            assertThat(waitlist.getState().getResolution()).isEqualTo(WaitlistResolution.PENDING);
+            assertThat(waitlist.getState().getFailedAt()).isEqualTo(failedAt);
+            assertThat(waitlist.getState().getCancelledAt()).isNull();
+            assertThat(waitlist.getState().getExpiredAt()).isNull();
+            assertThat(waitlist.getState().getCompletedAt()).isNull();
+        }
+
+        @Test
+        @DisplayName("활성 알림 전용 대기열은 알림 완료 처리할 수 있다")
+        void complete_notify_only_waitlist() {
+            var waitlist = createWaitlist(WaitlistBehavior.NOTIFY_ONLY);
+            var completedAt = fixedClock.instant().plusSeconds(1);
+
+            waitlist.complete(completedAt);
+
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.COMPLETED);
+            assertThat(waitlist.getState().getResolution()).isEqualTo(WaitlistResolution.NOTIFIED);
+            assertThat(waitlist.getState().getCompletedAt()).isEqualTo(completedAt);
+            assertThat(waitlist.getState().getCancelledAt()).isNull();
+            assertThat(waitlist.getState().getExpiredAt()).isNull();
+            assertThat(waitlist.getState().getFailedAt()).isNull();
+        }
+
+        @Test
+        @DisplayName("활성 자동 점유 대기열은 점유 완료 처리할 수 있다")
+        void complete_auto_claim_waitlist() {
+            var waitlist = createWaitlist(WaitlistBehavior.AUTO_CLAIM);
+            var completedAt = fixedClock.instant().plusSeconds(1);
+
+            waitlist.complete(completedAt);
+
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.COMPLETED);
+            assertThat(waitlist.getState().getResolution()).isEqualTo(WaitlistResolution.CLAIMED);
+            assertThat(waitlist.getState().getCompletedAt()).isEqualTo(completedAt);
+            assertThat(waitlist.getState().getCancelledAt()).isNull();
+            assertThat(waitlist.getState().getExpiredAt()).isNull();
+            assertThat(waitlist.getState().getFailedAt()).isNull();
+        }
+
+        @Test
+        @DisplayName("활성 대기열은 요청 시각 이전으로 처리할 수 없다")
+        void can_not_transition_before_requested_at() {
+            var waitlist = createWaitlist();
+            var beforeRequestedAt = waitlist.getState().getRequestedAt().minusSeconds(1);
+
+            assertThatThrownBy(() -> waitlist.cancel(beforeRequestedAt))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("must not be before requestedAt.");
+            assertThatThrownBy(() -> waitlist.expire(beforeRequestedAt))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("must not be before requestedAt.");
+            assertThatThrownBy(() -> waitlist.fail(beforeRequestedAt))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("must not be before requestedAt.");
+            assertThatThrownBy(() -> waitlist.complete(beforeRequestedAt))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("must not be before requestedAt.");
+
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.ACTIVE);
         }
     }
 
     @Nested
-    @DisplayName("Transition")
-    class Transition {
+    @DisplayName("Transition from CANCELLED")
+    class TransitionFromCancelled {
+        @Test
+        @DisplayName("취소된 대기열은 다시 취소 처리할 수 없다")
+        void can_not_cancel_already_cancelled_waitlist() {
+            var waitlist = createWaitlist(WaitlistStatus.CANCELLED);
+
+            assertThatThrownBy(() -> waitlist.cancel(fixedClock.instant().plusSeconds(2)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("이미 취소된 대기열입니다.");
+
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.CANCELLED);
+        }
 
         @Test
-        @DisplayName("ACTIVE 상태 아니면 상태 변경 실패")
-        void throw_exception_when_transitioning_non_active_request() {
+        @DisplayName("취소된 대기열은 만료 처리할 수 없다")
+        void can_not_expire_cancelled_waitlist() {
+            var waitlist = createWaitlist(WaitlistStatus.CANCELLED);
 
-            // given
-            Waitlist request = createWaitlist();
-            var now = fixedClock.instant();
-            request.cancel(now);
+            assertThatThrownBy(() -> waitlist.expire(fixedClock.instant().plusSeconds(2)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("이미 취소된 대기열입니다.");
 
-            // when & then
-            assertThatThrownBy(() -> request.expire(now)).isInstanceOf(IllegalStateException.class);
-            assertThatThrownBy(() -> request.complete(now)).isInstanceOf(IllegalStateException.class);
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.CANCELLED);
         }
 
-        @Nested
-        @DisplayName("Cancel")
-        class Cancel {
-            @Test
-            @DisplayName("requestedAt 이후 취소 처리 가능")
-            void can_cancel_after_requested_at() {
-                var r = createWaitlist();
-                var now = r.getState().getRequestedAt();
+        @Test
+        @DisplayName("취소된 대기열은 실패 처리할 수 없다")
+        void can_not_fail_cancelled_waitlist() {
+            var waitlist = createWaitlist(WaitlistStatus.CANCELLED);
 
-                r.cancel(now);
+            assertThatThrownBy(() -> waitlist.fail(fixedClock.instant().plusSeconds(2)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("이미 취소된 대기열입니다.");
 
-                var state = r.getState();
-                assertThat(state.getStatus()).isEqualTo(WaitlistStatus.CANCELLED);
-                assertThat(state.getCancelledAt()).isEqualTo(now);
-                assertThat(state.getExpiredAt()).isNull();
-                assertThat(state.getFailedAt()).isNull();
-                assertThat(state.getCompletedAt()).isNull();
-            }
-
-            @Test
-            @DisplayName("requestedAt 보다 이른 시각에 취소 처리하면 예외 발생")
-            void throw_exception_when_cancelled_at_is_before_than_requested_at() {
-                var r = createWaitlist();
-                var now = r.getState().getRequestedAt().minusSeconds(1);
-
-                assertThatThrownBy(() -> r.cancel(now))
-                        .isInstanceOf(IllegalStateException.class)
-                        .hasMessage("cancelledAt must not be before requestedAt");
-            }
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.CANCELLED);
         }
 
-        @Nested
-        @DisplayName("Expire")
-        class Expire {
-            @Test
-            @DisplayName("requestedAt 이후 만료 처리 가능")
-            void can_expire_after_requested_at() {
-                var r = createWaitlist();
-                var now = r.getState().getRequestedAt();
+        @Test
+        @DisplayName("취소된 대기열은 완료 처리할 수 없다")
+        void can_not_complete_cancelled_waitlist() {
+            var waitlist = createWaitlist(WaitlistStatus.CANCELLED);
 
-                r.expire(now);
+            assertThatThrownBy(() -> waitlist.complete(fixedClock.instant().plusSeconds(2)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("이미 취소된 대기열입니다.");
 
-                var state = r.getState();
-                assertThat(state.getStatus()).isEqualTo(WaitlistStatus.EXPIRED);
-                assertThat(state.getCancelledAt()).isNull();
-                assertThat(state.getExpiredAt()).isEqualTo(now);
-                assertThat(state.getFailedAt()).isNull();
-                assertThat(state.getCompletedAt()).isNull();
-            }
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.CANCELLED);
+        }
+    }
 
-            @Test
-            @DisplayName("requestedAt 보다 이른 시각에 만료 처리하면 예외 발생")
-            void throw_exception_when_cancelled_at_is_before_than_requested_at() {
-                var r = createWaitlist();
-                var now = r.getState().getRequestedAt().minusSeconds(1);
+    @Nested
+    @DisplayName("Transition from EXPIRED")
+    class TransitionFromExpired {
+        @Test
+        @DisplayName("만료된 대기열은 취소 처리할 수 없다")
+        void can_not_cancel_expired_waitlist() {
+            var waitlist = createWaitlist(WaitlistStatus.EXPIRED);
 
-                assertThatThrownBy(() -> r.expire(now))
-                        .isInstanceOf(IllegalStateException.class)
-                        .hasMessage("expiredAt must not be before requestedAt");
-            }
+            assertThatThrownBy(() -> waitlist.cancel(fixedClock.instant().plusSeconds(2)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("이미 만료된 대기열입니다.");
+
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.EXPIRED);
         }
 
-        @Nested
-        @DisplayName("Fail")
-        class Fail {
-            @Test
-            @DisplayName("requestAt 이후 실패 처리 가능")
-            void can_fail_after_requested_at() {
-                var r = createWaitlist();
-                var now = r.getState().getRequestedAt();
+        @Test
+        @DisplayName("만료된 대기열은 다시 만료 처리할 수 없다")
+        void can_not_expire_already_expired_waitlist() {
+            var waitlist = createWaitlist(WaitlistStatus.EXPIRED);
 
-                r.fail(now);
+            assertThatThrownBy(() -> waitlist.expire(fixedClock.instant().plusSeconds(2)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("이미 만료된 대기열입니다.");
 
-                var state = r.getState();
-                assertThat(state.getStatus()).isEqualTo(WaitlistStatus.FAILED);
-                assertThat(state.getCancelledAt()).isNull();
-                assertThat(state.getExpiredAt()).isNull();
-                assertThat(state.getFailedAt()).isEqualTo(now);
-                assertThat(state.getCompletedAt()).isNull();
-            }
-
-            @Test
-            @DisplayName("requestedAt 보다 이른 시각에 실패 처리하면 예외 발생")
-            void throw_exception_when_failed_at_is_before_than_requested_at() {
-                var r = createWaitlist();
-                var now = r.getState().getRequestedAt().minusSeconds(1);
-
-                assertThatThrownBy(() -> r.fail(now))
-                        .isInstanceOf(IllegalStateException.class)
-                        .hasMessage("failedAt must not be before requestedAt");
-            }
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.EXPIRED);
         }
 
-        @Nested
-        @DisplayName("Complete")
-        class Complete {
-            @Test
-            @DisplayName("requestedAt 이후 완료 처리 가능")
-            void can_complete_after_requested_at() {
-                var r = createWaitlist();
-                var now = r.getState().getRequestedAt();
+        @Test
+        @DisplayName("만료된 대기열은 실패 처리할 수 없다")
+        void can_not_fail_expired_waitlist() {
+            var waitlist = createWaitlist(WaitlistStatus.EXPIRED);
 
-                r.complete(now);
+            assertThatThrownBy(() -> waitlist.fail(fixedClock.instant().plusSeconds(2)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("이미 만료된 대기열입니다.");
 
-                var state = r.getState();
-                assertThat(state.getStatus()).isEqualTo(WaitlistStatus.COMPLETED);
-                assertThat(state.getCancelledAt()).isNull();
-                assertThat(state.getExpiredAt()).isNull();
-                assertThat(state.getFailedAt()).isNull();
-                assertThat(state.getCompletedAt()).isEqualTo(now);
-            }
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.EXPIRED);
+        }
 
-            @Test
-            @DisplayName("requestedAt 보다 이른 시각에 완료 처리하면 예외 발생")
-            void throw_exception_when_completed_at_is_before_than_requested_at() {
-                var r = createWaitlist();
-                var now = r.getState().getRequestedAt().minusSeconds(1);
+        @Test
+        @DisplayName("만료된 대기열은 완료 처리할 수 없다")
+        void can_not_complete_expired_waitlist() {
+            var waitlist = createWaitlist(WaitlistStatus.EXPIRED);
 
-                assertThatThrownBy(() -> r.complete(now))
-                        .isInstanceOf(IllegalStateException.class)
-                        .hasMessage("completedAt must not be before requestedAt");
-            }
+            assertThatThrownBy(() -> waitlist.complete(fixedClock.instant().plusSeconds(2)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("이미 만료된 대기열입니다.");
 
-            @Test
-            @DisplayName("Action type이 Notify only인 request는 complete 시 Resolution이 NOTIFIED로 전이")
-            void transition_resolution_to_notified_when_action_type_is_notify_only() {
-                var locator = SeatLocatorFixture.get();
-                var range = InstantRangeFixture.get();
-                var requestedAt = range.startAt().minusSeconds(1);
-                var now = requestedAt.minusSeconds(1);
-                var r = Waitlist.notifyOnly(
-                        INITIAL_USER_ID,
-                        locator,
-                        range,
-                        now
-                );
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.EXPIRED);
+        }
+    }
 
-                r.complete(now);
+    @Nested
+    @DisplayName("Transition from FAILED")
+    class TransitionFromFailed {
+        @Test
+        @DisplayName("실패한 대기열은 취소 처리할 수 없다")
+        void can_not_cancel_failed_waitlist() {
+            var waitlist = createWaitlist(WaitlistStatus.FAILED);
 
-                var state = r.getState();
-                assertThat(state.getStatus()).isEqualTo(WaitlistStatus.COMPLETED);
-                assertThat(state.getResolution()).isEqualTo(WaitlistResolution.NOTIFIED);
-            }
+            assertThatThrownBy(() -> waitlist.cancel(fixedClock.instant().plusSeconds(2)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("이미 실패한 대기열입니다.");
 
-            @Test
-            @DisplayName("Action type이 Auto claim인 request는 complete 시 Resolution이 CLAIMED로 전이")
-            void transition_resolution_to_claimed_when_action_type_is_auto_claim() {
-                var locator = SeatLocatorFixture.get();
-                var range = InstantRangeFixture.get();
-                var requestedAt = range.startAt().minusSeconds(1);
-                var now = requestedAt.minusSeconds(1);
-                var r = Waitlist.autoClaim(
-                        INITIAL_USER_ID,
-                        locator,
-                        range,
-                        now
-                );
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.FAILED);
+        }
 
-                r.complete(now);
+        @Test
+        @DisplayName("실패한 대기열은 만료 처리할 수 없다")
+        void can_not_expire_failed_waitlist() {
+            var waitlist = createWaitlist(WaitlistStatus.FAILED);
 
-                var state = r.getState();
-                assertThat(state.getStatus()).isEqualTo(WaitlistStatus.COMPLETED);
-                assertThat(state.getResolution()).isEqualTo(WaitlistResolution.CLAIMED);
-            }
+            assertThatThrownBy(() -> waitlist.expire(fixedClock.instant().plusSeconds(2)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("이미 실패한 대기열입니다.");
 
-            @Test
-            @DisplayName("requestedAt 보다 이른 시각에 만료 처리하면 예외 발생")
-            void throw_exception_when_cancelled_at_is_before_than_requested_at() {
-                var r = createWaitlist();
-                var now = r.getState().getRequestedAt().minusSeconds(1);
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.FAILED);
+        }
 
-                assertThatThrownBy(() -> r.expire(now))
-                        .isInstanceOf(IllegalStateException.class)
-                        .hasMessage("expiredAt must not be before requestedAt");
-            }
+        @Test
+        @DisplayName("실패한 대기열은 다시 실패 처리할 수 없다")
+        void can_not_fail_already_failed_waitlist() {
+            var waitlist = createWaitlist(WaitlistStatus.FAILED);
+
+            assertThatThrownBy(() -> waitlist.fail(fixedClock.instant().plusSeconds(2)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("이미 실패한 대기열입니다.");
+
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.FAILED);
+        }
+
+        @Test
+        @DisplayName("실패한 대기열은 완료 처리할 수 없다")
+        void can_not_complete_failed_waitlist() {
+            var waitlist = createWaitlist(WaitlistStatus.FAILED);
+
+            assertThatThrownBy(() -> waitlist.complete(fixedClock.instant().plusSeconds(2)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("이미 실패한 대기열입니다.");
+
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.FAILED);
+        }
+    }
+
+    @Nested
+    @DisplayName("Transition from COMPLETED")
+    class TransitionFromCompleted {
+        @Test
+        @DisplayName("완료된 대기열은 취소 처리할 수 없다")
+        void can_not_cancel_completed_waitlist() {
+            var waitlist = createWaitlist(WaitlistStatus.COMPLETED);
+
+            assertThatThrownBy(() -> waitlist.cancel(fixedClock.instant().plusSeconds(2)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("이미 완료된 대기열입니다.");
+
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.COMPLETED);
+        }
+
+        @Test
+        @DisplayName("완료된 대기열은 만료 처리할 수 없다")
+        void can_not_expire_completed_waitlist() {
+            var waitlist = createWaitlist(WaitlistStatus.COMPLETED);
+
+            assertThatThrownBy(() -> waitlist.expire(fixedClock.instant().plusSeconds(2)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("이미 완료된 대기열입니다.");
+
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.COMPLETED);
+        }
+
+        @Test
+        @DisplayName("완료된 대기열은 실패 처리할 수 없다")
+        void can_not_fail_completed_waitlist() {
+            var waitlist = createWaitlist(WaitlistStatus.COMPLETED);
+
+            assertThatThrownBy(() -> waitlist.fail(fixedClock.instant().plusSeconds(2)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("이미 완료된 대기열입니다.");
+
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.COMPLETED);
+        }
+
+        @Test
+        @DisplayName("완료된 대기열은 다시 완료 처리할 수 없다")
+        void can_not_complete_already_completed_waitlist() {
+            var waitlist = createWaitlist(WaitlistStatus.COMPLETED);
+
+            assertThatThrownBy(() -> waitlist.complete(fixedClock.instant().plusSeconds(2)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("이미 완료된 대기열입니다.");
+
+            assertThat(waitlist.getState().getStatus()).isEqualTo(WaitlistStatus.COMPLETED);
         }
     }
 }
