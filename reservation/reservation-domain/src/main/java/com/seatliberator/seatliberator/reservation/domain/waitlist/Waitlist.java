@@ -1,16 +1,15 @@
 package com.seatliberator.seatliberator.reservation.domain.waitlist;
 
-import com.seatliberator.seatliberator.reservation.domain.shared.EmbeddableSeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.temporal.EmbeddableInstantRange;
-import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRange;
+import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
-import java.util.Objects;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -25,19 +24,16 @@ public class Waitlist {
     @Column(name = "user_id", nullable = false, updatable = false)
     private String userId;
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "roomId", column = @Column(name = "target_room_id")),
-            @AttributeOverride(name = "seatId", column = @Column(name = "target_seat_id"))
-    })
-    private EmbeddableSeatLocator locator;
+    @ElementCollection
+    @CollectionTable(
+            name = "waitlist_slot",
+            joinColumns = @JoinColumn(name = "waitlist_slot_id")
+    )
+    @Column(name = "slot_id", nullable = false)
+    private List<UUID> slotIds = new ArrayList<>();
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "startAt", column = @Column(name = "target_start_at")),
-            @AttributeOverride(name = "endAt", column = @Column(name = "target_end_at"))
-    })
-    private EmbeddableInstantRange range;
+    @Column(name = "occupancy_date", nullable = false)
+    private LocalDate occupancyDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "behavior", nullable = false)
@@ -48,64 +44,45 @@ public class Waitlist {
 
     private Waitlist(
             String userId,
-            EmbeddableSeatLocator locator,
-            EmbeddableInstantRange range,
+            List<UUID> slotIds,
+            LocalDate occupancyDate,
             WaitlistBehavior behavior,
             WaitlistState state
     ) {
-        if (!state.getRequestedAt().isBefore(range.startAt())) {
-            throw new IllegalArgumentException("requestedAt is must be before startAt");
-        }
-
-        this.userId = Objects.requireNonNull(userId);
-        this.locator = Objects.requireNonNull(locator);
-        this.range = Objects.requireNonNull(range);
-        this.behavior = Objects.requireNonNull(behavior);
-        this.state = Objects.requireNonNull(state);
+        this.userId = Preconditions.requireNonBlank(userId, "userId");
+        this.slotIds = List.copyOf(Preconditions.requireNonNull(slotIds, "slotIds"));
+        this.occupancyDate = Preconditions.requireNonNull(occupancyDate, "occupancyDate");
+        this.behavior = Preconditions.requireNonNull(behavior, "behavior");
+        this.state = Preconditions.requireNonNull(state, "state");
     }
 
-    public static Waitlist create(
-            String userId,
-            SeatLocator locator,
-            InstantRange range,
-            WaitlistBehavior actionType,
-            Instant requestedAt
-    ) {
-        return new Waitlist(
-                userId,
-                EmbeddableSeatLocator.of(locator),
-                EmbeddableInstantRange.from(range),
-                actionType,
-                WaitlistState.requestedAt(requestedAt)
-        );
+    public static Waitlist of(String userId, List<UUID> slotIds, LocalDate occupancyDate, WaitlistBehavior behavior, WaitlistState state) {
+        return new Waitlist(userId, slotIds, occupancyDate, behavior, state);
+    }
+
+    public static Waitlist of(String userId, List<UUID> slotIds, LocalDate occupancyDate, WaitlistBehavior behavior, Instant requestedAt) {
+        return new Waitlist(userId, slotIds, occupancyDate, behavior, WaitlistState.requestedAt(requestedAt));
     }
 
     public static Waitlist notifyOnly(
             String userId,
-            SeatLocator locator,
-            InstantRange range,
+            List<UUID> slotIds,
+            LocalDate occupancyDate,
             Instant requestedAt
     ) {
-        return create(userId, locator, range, WaitlistBehavior.NOTIFY_ONLY, requestedAt);
+        return of(userId, slotIds, occupancyDate, WaitlistBehavior.NOTIFY_ONLY, WaitlistState.requestedAt(requestedAt));
     }
 
     public static Waitlist autoClaim(
             String userId,
-            SeatLocator locator,
-            InstantRange range,
+            List<UUID> slotIds,
+            LocalDate occupancyDate,
             Instant requestedAt
     ) {
-        return create(userId, locator, range, WaitlistBehavior.AUTO_CLAIM, requestedAt);
+        return of(userId, slotIds, occupancyDate, WaitlistBehavior.AUTO_CLAIM, WaitlistState.requestedAt(requestedAt));
     }
 
     public void cancel(Instant cancelledAt) {
-//        // 본인만 신청 취소하도록 함
-//        // TODO: 이거는 나중에 애플리케이션 레벨 정책으로 빼는 방향이 좋을 것 같음.
-//        // 만약 관리자가 대기열을 건드려야한다면?
-//        if (!this.userId.equals(requestUserId)) {
-//            throw new IllegalArgumentException("본인만 취소 가능");
-//        }
-
         this.state.cancel(cancelledAt);
     }
 
