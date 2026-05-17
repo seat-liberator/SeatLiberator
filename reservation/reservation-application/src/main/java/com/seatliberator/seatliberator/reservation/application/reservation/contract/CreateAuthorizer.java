@@ -18,9 +18,9 @@ public class CreateAuthorizer {
             return SimplePolicyResult.accept(ReservationPolicyReason.RESERVATION_MANAGER);
 
         if (capabilities.contains(ReservationCapability.BOOKING_CREATE))
-            return SimplePolicyResult.reject(ReservationPolicyReason.UNAUTHORIZED_RESERVATION_CREATE);
+            return SimplePolicyResult.accept(ReservationPolicyReason.AUTHORIZED_RESERVATION_CREATE);
 
-        return SimplePolicyResult.accept(ReservationPolicyReason.AUTHORIZED_RESERVATION_CREATE);
+        return SimplePolicyResult.reject(ReservationPolicyReason.UNAUTHORIZED_RESERVATION_CREATE);
     }
 
     public void ensureAuthorized(Actor actor) {
