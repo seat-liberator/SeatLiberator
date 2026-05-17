@@ -1,20 +1,26 @@
 package com.seatliberator.seatliberator.reservation.application.waitlist.port.in.command;
 
-import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRange;
+import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistBehavior;
 
-import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
 
 public record CreateWaitlistCommand(
         String userId,
-        String roomId,
-        String seatId,
-        Instant startTime,
-        Instant endTime,
+        List<UUID> seatTimeSlotIds,
+        LocalDate occupancyDate,
         WaitlistBehavior behavior
 ) {
-    public static CreateWaitlistCommand from(String userId, SeatLocator locator, InstantRange range, WaitlistBehavior behavior) {
-        return new CreateWaitlistCommand(userId, locator.roomId(), locator.seatId(), range.startAt(), range.endAt(), behavior);
+    public CreateWaitlistCommand {
+        Preconditions.requireNonBlank(userId, "userId");
+        Preconditions.requireNonNull(seatTimeSlotIds, "seatTimeSlotIds");
+        Preconditions.requireNonNull(occupancyDate, "occupancyDate");
+        Preconditions.requireNonNull(behavior, "behavior");
+    }
+
+    public static CreateWaitlistCommand of(String userId, List<UUID> seatTimeSlotIds, LocalDate occupancyDate, WaitlistBehavior behavior) {
+        return new CreateWaitlistCommand(userId, seatTimeSlotIds, occupancyDate, behavior);
     }
 }
