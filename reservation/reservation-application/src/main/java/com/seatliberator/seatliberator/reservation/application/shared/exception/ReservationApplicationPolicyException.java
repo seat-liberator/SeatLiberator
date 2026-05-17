@@ -5,12 +5,10 @@ import lombok.Getter;
 
 @Getter
 public class ReservationApplicationPolicyException extends ReservationApplicationException {
-    private final String reasonCode;
-    private final String reasonMessage;
+    private final PolicyReason reason;
 
     public ReservationApplicationPolicyException(PolicyReason reason) {
         super(ReservationApplicationErrorCode.RESERVATION_POLICY_REJECTED);
-        this.reasonCode = reason.code();
-        this.reasonMessage = reason.message();
+        this.reason = reason;
     }
 }
