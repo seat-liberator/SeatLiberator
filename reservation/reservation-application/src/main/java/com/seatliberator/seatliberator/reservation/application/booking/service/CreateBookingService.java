@@ -6,7 +6,6 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.in.c
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.result.BookingResult;
 import com.seatliberator.seatliberator.reservation.application.occupancy.contract.SeatOccupancyCreator;
 import com.seatliberator.seatliberator.reservation.application.reservation.contract.ReservationCreator;
-import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatTimeSlotReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CreateBookingService implements
         CreateBookingUseCase {
-    private final SeatTimeSlotReader slotReader;
 
     private final ReservationCreator reservationCreator;
     private final SeatOccupancyCreator occupancyCreator;
@@ -25,11 +23,11 @@ public class CreateBookingService implements
     @Override
     public BookingResult create(CreateBookingCommand command) {
         var actor = actorContextHolder.getActor();
+        var slotIds = command.seatTimeSlotIds();
 
         var reservation = reservationCreator.createAuthorized(command.userId(), actor);
-        var slots = slotReader.findByIds(command.seatTimeSlotIds());
-        occupancyCreator.create(reservation, slots, command.occupancyDate());
+        occupancyCreator.create(reservation.getId(), slotIds, command.occupancyDate());
 
-        return BookingResult.from(reservation, slots);
+        return BookingResult.from(reservation);
     }
 }
