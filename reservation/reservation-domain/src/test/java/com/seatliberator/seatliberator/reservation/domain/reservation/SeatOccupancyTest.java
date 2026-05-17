@@ -21,10 +21,10 @@ public class SeatOccupancyTest {
     class CreationTest {
         static Stream<Arguments> nullArgumentCases() {
             return Stream.of(
-                    arguments("seatTimeSlot = null", (Supplier<SeatOccupancy>) () -> SeatOccupancy.of(null, RESERVATION, OCCUPANCY_DATE, CREATED_AT), "seatTimeSlot"),
-                    arguments("reservation", (Supplier<SeatOccupancy>) () -> SeatOccupancy.of(SEAT_TIME_SLOT, null, OCCUPANCY_DATE, CREATED_AT), "reservation"),
-                    arguments("occupancyDate = null", (Supplier<SeatOccupancy>) () -> SeatOccupancy.of(SEAT_TIME_SLOT, RESERVATION, null, CREATED_AT), "occupancyDate"),
-                    arguments("createdAt = null", (Supplier<SeatOccupancy>) () -> SeatOccupancy.of(SEAT_TIME_SLOT, RESERVATION, OCCUPANCY_DATE, null), "createdAt")
+                    arguments("seatTimeSlotId = null", (Supplier<SeatOccupancy>) () -> SeatOccupancy.of(null, RESERVATION_ID, OCCUPANCY_DATE, CREATED_AT), "seatTimeSlotId"),
+                    arguments("reservationId = null", (Supplier<SeatOccupancy>) () -> SeatOccupancy.of(SEAT_TIME_SLOT_ID, null, OCCUPANCY_DATE, CREATED_AT), "reservationId"),
+                    arguments("occupancyDate = null", (Supplier<SeatOccupancy>) () -> SeatOccupancy.of(SEAT_TIME_SLOT_ID, RESERVATION_ID, null, CREATED_AT), "occupancyDate"),
+                    arguments("createdAt = null", (Supplier<SeatOccupancy>) () -> SeatOccupancy.of(SEAT_TIME_SLOT_ID, RESERVATION_ID, OCCUPANCY_DATE, null), "createdAt")
             );
         }
 

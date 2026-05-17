@@ -58,14 +58,14 @@ public class SeatOccupancy {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    private SeatOccupancy(SeatTimeSlot seatTimeSlot, Reservation reservation, LocalDate occupancyDate, Instant createdAt) {
-        this.seatTimeSlot = Preconditions.requireNonNull(seatTimeSlot, "seatTimeSlot");
-        this.reservation = Preconditions.requireNonNull(reservation, "reservation");
+    private SeatOccupancy(UUID seatTimeSlotId, UUID reservationId, LocalDate occupancyDate, Instant createdAt) {
+        this.seatTimeSlotId = Preconditions.requireNonNull(seatTimeSlotId, "seatTimeSlotId");
+        this.reservationId = Preconditions.requireNonNull(reservationId, "reservationId");
         this.occupancyDate = Preconditions.requireNonNull(occupancyDate, "occupancyDate");
         this.createdAt = Preconditions.requireNonNull(createdAt, "createdAt");
     }
 
-    public static SeatOccupancy of(SeatTimeSlot seatTimeSlot, Reservation reservation, LocalDate occupancyDate, Instant createdAt) {
-        return new SeatOccupancy(seatTimeSlot, reservation, occupancyDate, createdAt);
+    public static SeatOccupancy of(UUID seatTimeSlotId, UUID reservationId, LocalDate occupancyDate, Instant createdAt) {
+        return new SeatOccupancy(seatTimeSlotId, reservationId, occupancyDate, createdAt);
     }
 }
