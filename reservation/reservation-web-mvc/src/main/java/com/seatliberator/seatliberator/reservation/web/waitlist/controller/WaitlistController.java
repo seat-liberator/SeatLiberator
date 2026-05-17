@@ -42,10 +42,8 @@ public class WaitlistController {
 
         var command = new CreateWaitlistCommand(
                 userId,
-                request.roomId(),
-                request.seatId(),
-                request.startAt(),
-                request.endAt(),
+                request.seatTimeSlotIds(),
+                request.occupancyDate(),
                 request.behavior()
         );
 
@@ -66,9 +64,7 @@ public class WaitlistController {
             @Parameter(description = "대기열 요청 ID", example = "018f2d5d-6a8d-7b42-9c1a-0c7a08b1d2e3")
             @PathVariable UUID waitlistId
     ) {
-        var userId = actorContextHolder.getActor().subject();
-
-        var command = new CancelWaitlistCommand(userId, waitlistId);
+        var command = new CancelWaitlistCommand(waitlistId);
 
         cancelWaitlistUseCase.cancel(command);
 
