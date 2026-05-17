@@ -1,43 +1,38 @@
 package com.seatliberator.seatliberator.reservation.persistence.waitlist.jpa;
 
+import com.seatliberator.seatliberator.kernel.condition.Preconditions;
+import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.WaitlistReader;
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.WaitlistStore;
-import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
-import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRange;
+import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.filter.WaitlistFilter;
+import com.seatliberator.seatliberator.reservation.application.waitlist.port.out.filter.WaitlistOrder;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
-import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistStatus;
 import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.CommonPredicates;
-import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.SeatLocatorPredicates;
-import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.TimeRangePredicates;
 import com.seatliberator.seatliberator.reservation.persistence.waitlist.jpa.repository.WaitlistRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
-public class JpaWaitlistStore implements
-        WaitlistStore {
+public class JpaWaitlistStore implements WaitlistStore, WaitlistReader {
     private final WaitlistRepository repository;
 
     @Override
-    public List<Waitlist> findByLocatorAndRangeAndStatus(SeatLocator locator, InstantRange range, WaitlistStatus status) {
-        var spec = createLocatorAndRangeSpecification(locator, range)
-                .and(CommonPredicates.eq(status, from -> from.get("state").get("status")));
-        return repository.findAll(spec);
+    public boolean existsById(UUID id) {
+        return repository.existsById(id);
     }
 
     @Override
-    public boolean existsByUserIdAndLocatorAndRangeAndStatus(String userId, SeatLocator locator, InstantRange range, WaitlistStatus status) {
-        var spec = Specification.<Waitlist>unrestricted()
-                .and(SeatLocatorPredicates.eq(locator, from -> from.get("locator")))
-                .and(TimeRangePredicates.eq(range, from -> from.get("range")))
-                .and(CommonPredicates.eq(userId, from -> from.get("userId")))
-                .and(CommonPredicates.eq(status, from -> from.get("state").get("status")));
-        return repository.exists(spec);
+    public boolean existsByFilter(WaitlistFilter filter) {
+        Preconditions.requireNonNull(filter, "filter");
+        return repository.findAll(createSpecification(filter)).stream()
+                .anyMatch(waitlist -> matchesSlotIds(waitlist, filter.slotIds()));
     }
 
     @Override
@@ -46,9 +41,12 @@ public class JpaWaitlistStore implements
     }
 
     @Override
-    public List<Waitlist> findByLocatorAndRange(SeatLocator locator, InstantRange range) {
-        var spec = createLocatorAndRangeSpecification(locator, range);
-        return repository.findAll(spec);
+    public List<Waitlist> findByFilter(WaitlistFilter filter, WaitlistOrder order) {
+        Preconditions.requireNonNull(filter, "filter");
+        Preconditions.requireNonNull(order, "order");
+        return repository.findAll(createSpecification(filter), createSort(order)).stream()
+                .filter(waitlist -> matchesSlotIds(waitlist, filter.slotIds()))
+                .toList();
     }
 
     @Override
@@ -61,9 +59,34 @@ public class JpaWaitlistStore implements
         return repository.saveAll(waitlists);
     }
 
-    private Specification<Waitlist> createLocatorAndRangeSpecification(SeatLocator locator, InstantRange range) {
-        return Specification.<Waitlist>unrestricted()
-                .and(SeatLocatorPredicates.eq(locator, from -> from.get("locator")))
-                .and(TimeRangePredicates.overlap(range, from -> from.get("range")));
+    private Specification<Waitlist> createSpecification(WaitlistFilter filter) {
+        var spec = Specification.<Waitlist>unrestricted();
+
+        if (filter.userId() != null) {
+            spec = spec.and(CommonPredicates.eq(filter.userId(), from -> from.get("userId")));
+        }
+        if (filter.behavior() != null) {
+            spec = spec.and(CommonPredicates.eq(filter.behavior(), from -> from.get("behavior")));
+        }
+        if (filter.status() != null) {
+            spec = spec.and(CommonPredicates.eq(filter.status(), from -> from.get("state").get("status")));
+        }
+        if (filter.occupancyDate() != null) {
+            spec = spec.and(CommonPredicates.eq(filter.occupancyDate(), from -> from.get("occupancyDate")));
+        }
+
+        return spec;
+    }
+
+    private Sort createSort(WaitlistOrder order) {
+        return switch (order.order()) {
+            case FIFO -> Sort.by(Sort.Direction.ASC, "state.requestedAt");
+            case LIFO, RECENTLY_CREATED -> Sort.by(Sort.Direction.DESC, "state.requestedAt");
+        };
+    }
+
+    private boolean matchesSlotIds(Waitlist waitlist, Set<UUID> slotIds) {
+        if (slotIds.isEmpty()) return true;
+        return Set.copyOf(waitlist.getSlotIds()).equals(slotIds);
     }
 }
