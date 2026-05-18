@@ -1,9 +1,8 @@
-package com.seatliberator.seatliberator.reservation.web.usage.controller;
+package com.seatliberator.seatliberator.reservation.web.reservation.controller;
 
-import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
-import com.seatliberator.seatliberator.reservation.application.usage.port.in.UseReservationUseCase;
-import com.seatliberator.seatliberator.reservation.application.usage.port.in.command.UseReservationCommand;
-import com.seatliberator.seatliberator.reservation.application.usage.port.in.result.UseReservationResult;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.in.UseReservationUseCase;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.in.command.UseReservationCommand;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,9 +23,8 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/reservations")
-public class ReservationUsageController {
+public class UseReservationController {
     private final UseReservationUseCase useReservationUseCase;
-    private final ActorContextHolder actorContextHolder;
 
     @Operation(summary = "예약 사용", description = "특정 예약을 사용 처리 합니다.")
     @ApiResponses({
@@ -35,12 +33,11 @@ public class ReservationUsageController {
             @ApiResponse(responseCode = "401", description = "권한 없음")
     })
     @PostMapping("/{reservationId}")
-    public ResponseEntity<UseReservationResult> use(
+    public ResponseEntity<ReservationResult> use(
             @Parameter(description = "예약 ID", example = "00000000-0000-0000-0000-000000000001")
             @PathVariable("reservationId") UUID reservationId
     ) {
-        var actor = actorContextHolder.getActor();
-        var command = new UseReservationCommand(reservationId, actor);
+        var command = UseReservationCommand.of(reservationId);
         var result = useReservationUseCase.use(command);
         return ResponseEntity.ok(result);
     }
