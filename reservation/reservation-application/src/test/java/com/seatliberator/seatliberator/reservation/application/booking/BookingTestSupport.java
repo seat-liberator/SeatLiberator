@@ -25,6 +25,7 @@ public class BookingTestSupport extends DefaultTestSupport {
     public static final UUID MORNING_SLOT_ID = UuidGenerator.generate(2);
     public static final UUID AFTERNOON_SLOT_ID = UuidGenerator.generate(3);
     public static final UUID NIGHT_SLOT_ID = UuidGenerator.generate(4);
+    public static final UUID RESERVATION_ID = UuidGenerator.generate(5);
 
     public static final LocalDate OCCUPANCY_DATE = LocalDate.now(CLOCK);
     public static final LocalDate RANGE_START_DATE = OCCUPANCY_DATE;
@@ -43,6 +44,12 @@ public class BookingTestSupport extends DefaultTestSupport {
 
     public static Reservation reservation() {
         return ReservationFixture.createReservation();
+    }
+
+    public static Reservation reservationWithId() {
+        var reservation = reservation();
+        ReservationFixture.stubReservationId(reservation, RESERVATION_ID);
+        return reservation;
     }
 
     public static SeatTimeSlot morningSlot() {

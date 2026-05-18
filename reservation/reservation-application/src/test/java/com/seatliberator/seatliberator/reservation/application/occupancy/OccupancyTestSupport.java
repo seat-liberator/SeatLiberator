@@ -17,7 +17,11 @@ public class OccupancyTestSupport extends DefaultTestSupport {
     public static final LocalDate OCCUPANCY_DATE = LocalDate.now(CLOCK);
 
     public static SeatOccupancy occupancy(UUID slotId) {
-        return SeatOccupancy.of(slotId, RESERVATION_ID, OCCUPANCY_DATE, NOW);
+        return occupancy(slotId, OCCUPANCY_DATE);
+    }
+
+    public static SeatOccupancy occupancy(UUID slotId, LocalDate occupancyDate) {
+        return SeatOccupancy.of(slotId, RESERVATION_ID, occupancyDate, NOW);
     }
 
     public static List<SeatOccupancy> occupancies() {
