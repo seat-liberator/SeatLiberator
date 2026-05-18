@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.web.book;
+package com.seatliberator.seatliberator.reservation.web.reservation;
 
 import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
@@ -7,7 +7,7 @@ import com.seatliberator.seatliberator.reservation.application.reservation.port.
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleInstantRange;
-import com.seatliberator.seatliberator.reservation.web.book.controller.ReservationQueryController;
+import com.seatliberator.seatliberator.reservation.web.reservation.controller.ReservationQueryController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

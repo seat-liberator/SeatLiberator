@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.web.book.controller;
+package com.seatliberator.seatliberator.reservation.web.reservation.controller;
 
 import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.FindMyReservationUseCase;

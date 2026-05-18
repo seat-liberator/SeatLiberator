@@ -1,13 +1,12 @@
-package com.seatliberator.seatliberator.reservation.web.usage;
+package com.seatliberator.seatliberator.reservation.web.reservation;
 
-import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
-import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
 import com.seatliberator.seatliberator.kernel.test.SequenceCounter;
 import com.seatliberator.seatliberator.kernel.test.UuidGenerator;
-import com.seatliberator.seatliberator.reservation.application.usage.port.in.UseReservationUseCase;
-import com.seatliberator.seatliberator.reservation.application.usage.port.in.command.UseReservationCommand;
-import com.seatliberator.seatliberator.reservation.application.usage.port.in.result.UseReservationResult;
-import com.seatliberator.seatliberator.reservation.web.usage.controller.ReservationUsageController;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.in.UseReservationUseCase;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.in.command.UseReservationCommand;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationResult;
+import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.web.reservation.controller.UseReservationController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -19,7 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.Instant;
-import java.util.Set;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,29 +29,24 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ReservationUsageController.class)
-public class ReservationUsageControllerTest {
+@WebMvcTest(UseReservationController.class)
+public class UseReservationControllerTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
-    @MockitoBean
-    ActorContextHolder actorContextHolder;
     @MockitoBean
     UseReservationUseCase useReservationUseCase;
 
     UuidGenerator uuid = new UuidGenerator(new SequenceCounter());
 
     @Test
-    @DisplayName("예약 사용 요청 시 path variable과 actor 정보를 기반으로 command를 만들어서 유스케이스에 전달한다")
+    @DisplayName("예약 사용 요청 시 path variable을 기반으로 command를 만들어서 유스케이스에 전달한다")
     void use_build_command_and_calls_use_case() throws Exception {
         // given
         var reservationId = uuid.generate();
-        var actor = new SimpleActor("user-1", Set.of());
-        var processedAt = Instant.parse("2026-04-14T10:00:00Z");
-        var result = UseReservationResult.accept(processedAt);
+        var result = usedReservationResult(reservationId);
 
-        given(actorContextHolder.getActor()).willReturn(actor);
         given(useReservationUseCase.use(any(UseReservationCommand.class)))
                 .willReturn(result);
 
@@ -66,7 +60,6 @@ public class ReservationUsageControllerTest {
 
         var actual = captor.getValue();
         assertThat(actual.reservationId()).isEqualTo(reservationId);
-        assertThat(actual.requestedUser()).isEqualTo(actor);
     }
 
     @Test
@@ -74,11 +67,8 @@ public class ReservationUsageControllerTest {
     void use_returns_ok_with_result() throws Exception {
         // given
         var reservationId = uuid.generate();
-        var actor = new SimpleActor("user-1", Set.of());
-        var processedAt = Instant.parse("2026-04-14T10:00:00Z");
-        var result = UseReservationResult.reject("해당 예약에 접근할 권한이 없습니다.", processedAt);
+        var result = usedReservationResult(reservationId);
 
-        given(actorContextHolder.getActor()).willReturn(actor);
         given(useReservationUseCase.use(any(UseReservationCommand.class)))
                 .willReturn(result);
 
@@ -96,7 +86,23 @@ public class ReservationUsageControllerTest {
         mockMvc.perform(post("/reservations/{reservationId}", "not-a-uuid"))
                 .andExpect(status().isBadRequest());
 
-        verifyNoInteractions(actorContextHolder);
         verifyNoInteractions(useReservationUseCase);
+    }
+
+    private ReservationResult usedReservationResult(UUID reservationId) {
+        var reservedAt = Instant.parse("2026-04-14T09:00:00Z");
+        var usedAt = Instant.parse("2026-04-14T10:00:00Z");
+
+        return new ReservationResult(
+                reservationId,
+                "user-1",
+                new ReservationResult.ReservationStateResult(
+                        ReservationStatus.USED,
+                        reservedAt,
+                        usedAt,
+                        null,
+                        null
+                )
+        );
     }
 }
