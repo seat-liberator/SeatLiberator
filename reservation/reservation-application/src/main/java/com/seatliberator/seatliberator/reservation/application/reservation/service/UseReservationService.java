@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.application.reservation.service;
 
+import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.reservation.application.reservation.contract.ReservationOwnershipPolicy;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.UseReservationUseCase;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.command.UseReservationCommand;
@@ -8,7 +9,6 @@ import com.seatliberator.seatliberator.reservation.application.reservation.port.
 import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
-import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationPolicyException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,20 +24,20 @@ public class UseReservationService implements
     private final ReservationStore store;
     private final ReservationOwnershipPolicy ownershipPolicy;
 
+    private final ActorContextHolder actorContextHolder;
     private final Clock clock;
 
     @Override
     public ReservationResult use(UseReservationCommand command) {
+        var actor = actorContextHolder.getActor();
+
         var now = clock.instant();
-        var requester = command.requestedUser();
         var reservationId = command.reservationId();
 
         var reservation = reader.findById(reservationId)
                 .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.RESERVATION_NOT_FOUND));
 
-        var ownershipPolicy = this.ownershipPolicy.evaluate(reservation, requester);
-        if (ownershipPolicy.rejected())
-            throw new ReservationApplicationPolicyException(ownershipPolicy.reason());
+        ownershipPolicy.validate(reservation, actor);
 
         reservation.use(now);
         var saved = store.save(reservation);
