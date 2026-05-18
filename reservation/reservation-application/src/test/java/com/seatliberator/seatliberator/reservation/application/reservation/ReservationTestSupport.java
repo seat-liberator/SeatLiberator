@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.application.reservation.service;
+package com.seatliberator.seatliberator.reservation.application.reservation;
 
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import com.seatliberator.seatliberator.identity.core.actor.ActorFixture;
@@ -26,10 +26,6 @@ public class ReservationTestSupport extends DefaultTestSupport {
     }
 
     public static UseReservationCommand useReservationCommand() {
-        return new UseReservationCommand(RESERVATION_ID, ACTOR);
-    }
-
-    public static UseReservationCommand useReservationCommand(Actor actor) {
-        return new UseReservationCommand(RESERVATION_ID, actor);
+        return new UseReservationCommand(RESERVATION_ID);
     }
 }
