@@ -39,6 +39,14 @@ public record SeatOccupancySlotCriteria(
 
     public enum MatchMode {
         ANY_OF,
-        NONE_OF
+        NONE_OF;
+
+        public boolean isMatchAnyOf() {
+            return this == ANY_OF;
+        }
+
+        public boolean isMatchNoneOf() {
+            return this == NONE_OF;
+        }
     }
 }

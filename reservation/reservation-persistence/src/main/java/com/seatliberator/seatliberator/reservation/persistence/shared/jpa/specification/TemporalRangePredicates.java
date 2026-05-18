@@ -9,7 +9,7 @@ import org.springframework.data.jpa.domain.PredicateSpecification;
 import java.time.Instant;
 import java.util.function.Function;
 
-public class TimeRangePredicates {
+public class TemporalRangePredicates {
     public static <T> PredicateSpecification<T> eq(
             InstantRange range,
             Function<From<?, T>, Path<EmbeddableInstantRange>> pathFunction
