@@ -5,8 +5,10 @@ import com.seatliberator.seatliberator.board.infrastructure.web.controller.Categ
 import com.seatliberator.seatliberator.board.infrastructure.web.controller.PostController;
 import com.seatliberator.seatliberator.jwks.infrastructure.web.controller.JwksController;
 import com.seatliberator.seatliberator.notification.infrastructure.web.controller.NotificationController;
-import com.seatliberator.seatliberator.reservation.web.availability.SeatAvailabilityController;
-import com.seatliberator.seatliberator.reservation.web.book.controller.ReservationController;
+import com.seatliberator.seatliberator.reservation.web.booking.controller.AvailabilityQueryController;
+import com.seatliberator.seatliberator.reservation.web.booking.controller.BookingController;
+import com.seatliberator.seatliberator.reservation.web.reservation.controller.ReservationQueryController;
+import com.seatliberator.seatliberator.reservation.web.reservation.controller.UseReservationController;
 import com.seatliberator.seatliberator.reservation.web.seat.controller.SeatCommandController;
 import com.seatliberator.seatliberator.reservation.web.waitlist.controller.WaitlistController;
 import org.junit.jupiter.api.Test;
@@ -38,9 +40,11 @@ class GatewayRouteAlignmentTest {
         assertCovered(
                 patterns,
                 controllerPaths(
-                        ReservationController.class,
+                        BookingController.class,
+                        AvailabilityQueryController.class,
+                        ReservationQueryController.class,
+                        UseReservationController.class,
                         SeatCommandController.class,
-                        SeatAvailabilityController.class,
                         WaitlistController.class
                 ),
                 true
