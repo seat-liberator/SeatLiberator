@@ -7,7 +7,7 @@ import com.seatliberator.seatliberator.reservation.domain.reservation.Reservatio
 import com.seatliberator.seatliberator.reservation.persistence.book.jpa.repository.ReservationRepository;
 import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.CommonPredicates;
 import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.SeatLocatorPredicates;
-import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.TimeRangePredicates;
+import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.TemporalRangePredicates;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -87,24 +87,24 @@ public class JpaReservationPersistenceAdapter implements ReservationStore, Reser
     private Specification<Reservation> createSpecificationFromOverlapCriteria(ReservationSeatOverlapCriteria criteria) {
         return createSpecificationFromFilter(criteria.filter())
                 .and(SeatLocatorPredicates.eq(criteria.locator(), SeatLocatorPredicates.defaultLocatorPathFunction()))
-                .and(TimeRangePredicates.overlap(criteria.range(), TimeRangePredicates.defaultRangePathFunction()));
+                .and(TemporalRangePredicates.overlap(criteria.range(), TemporalRangePredicates.defaultRangePathFunction()));
     }
 
     private Specification<Reservation> createSpecificationFromRoomOverlapCriteria(ReservationRoomOverlapCriteria criteria) {
         return createSpecificationFromFilter(criteria.filter())
-                .and(TimeRangePredicates.overlap(criteria.range(), TimeRangePredicates.defaultRangePathFunction()))
+                .and(TemporalRangePredicates.overlap(criteria.range(), TemporalRangePredicates.defaultRangePathFunction()))
                 .and(CommonPredicates.eq(criteria.roomId(), from -> from.get("locator").get("roomId")));
     }
 
     private Specification<Reservation> createSpecificationFromRangeOverlapCriteria(ReservationRangeOverlapCriteria criteria) {
         return createSpecificationFromFilter(criteria.filter())
-                .and(TimeRangePredicates.overlap(criteria.range(), TimeRangePredicates.defaultRangePathFunction()));
+                .and(TemporalRangePredicates.overlap(criteria.range(), TemporalRangePredicates.defaultRangePathFunction()));
     }
 
     private Specification<Reservation> createSpecificationFromFindOneCriteria(ReservationSeatLookupCriteria criteria) {
         return createSpecificationFromFilter(criteria.filter())
                 .and(SeatLocatorPredicates.eq(criteria.locator(), SeatLocatorPredicates.defaultLocatorPathFunction()))
-                .and(TimeRangePredicates.eq(criteria.range(), TimeRangePredicates.defaultRangePathFunction()));
+                .and(TemporalRangePredicates.eq(criteria.range(), TemporalRangePredicates.defaultRangePathFunction()));
     }
 
     private Specification<Reservation> createSpecificationFromFilter(ReservationFilter filter) {
