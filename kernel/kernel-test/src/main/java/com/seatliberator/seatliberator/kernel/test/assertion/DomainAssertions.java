@@ -36,6 +36,28 @@ public final class DomainAssertions {
             return this;
         }
 
+        public DomainThrowableAssert hasNonEmptyMessage() {
+            hasMessageContaining("must not be empty");
+            return this;
+        }
+
+        public DomainThrowableAssert hasNonEmptyMessageFor(String fieldName) {
+            hasMessageContaining(fieldName);
+            hasMessageContaining("must not be empty");
+            return this;
+        }
+
+        public DomainThrowableAssert hasNonNullElementMessage() {
+            hasMessageContaining("must not contain null");
+            return this;
+        }
+
+        public DomainThrowableAssert hasNonNullElementMessageFor(String fieldName) {
+            hasMessageContaining(fieldName);
+            hasMessageContaining("must not contain null");
+            return this;
+        }
+
         public DomainThrowableAssert hasNegativeMessage() {
             hasMessageContaining("must be negative");
             return this;

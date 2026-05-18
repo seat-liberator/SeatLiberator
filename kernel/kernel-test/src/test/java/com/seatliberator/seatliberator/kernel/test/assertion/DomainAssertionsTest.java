@@ -41,6 +41,38 @@ class DomainAssertionsTest {
     }
 
     @Test
+    @DisplayName("빈 Collection 불가 메시지를 검증할 수 있다")
+    void assert_non_empty_message() {
+        assertThatDomainThrownBy(() -> {
+            throw new IllegalArgumentException("value must not be empty.");
+        }).hasNonEmptyMessage();
+    }
+
+    @Test
+    @DisplayName("필드 이름을 포함한 빈 Collection 불가 메시지를 검증할 수 있다")
+    void assert_non_empty_message_for_field() {
+        assertThatDomainThrownBy(() -> {
+            throw new IllegalArgumentException("value must not be empty.");
+        }).hasNonEmptyMessageFor("value");
+    }
+
+    @Test
+    @DisplayName("null 원소 포함 불가 메시지를 검증할 수 있다")
+    void assert_non_null_element_message() {
+        assertThatDomainThrownBy(() -> {
+            throw new IllegalArgumentException("value must not contain null.");
+        }).hasNonNullElementMessage();
+    }
+
+    @Test
+    @DisplayName("필드 이름을 포함한 null 원소 포함 불가 메시지를 검증할 수 있다")
+    void assert_non_null_element_message_for_field() {
+        assertThatDomainThrownBy(() -> {
+            throw new IllegalArgumentException("value must not contain null.");
+        }).hasNonNullElementMessageFor("value");
+    }
+
+    @Test
     @DisplayName("음수 메시지를 검증할 수 있다")
     void assert_negative_message() {
         assertThatDomainThrownBy(() -> {
