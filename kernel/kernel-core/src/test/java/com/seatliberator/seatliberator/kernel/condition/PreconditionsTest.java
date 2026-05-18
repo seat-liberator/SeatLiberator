@@ -4,6 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -34,6 +36,39 @@ class PreconditionsTest {
         assertThatThrownBy(() -> Preconditions.requireNonBlank(" ", "value"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("value must not be blank.");
+    }
+
+    @Test
+    @DisplayName("비어있지 않은 Collection을 요구할 수 있다")
+    void require_non_empty_collection() {
+        var value = List.of("value");
+
+        assertThat(Preconditions.requireNonEmpty(value, "value")).isSameAs(value);
+
+        assertThatThrownBy(() -> Preconditions.requireNonEmpty(null, "value"))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("value must not be null.");
+        assertThatThrownBy(() -> Preconditions.requireNonEmpty(List.of(), "value"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("value must not be empty.");
+    }
+
+    @Test
+    @DisplayName("비어있지 않고 null 원소가 없는 Collection을 요구할 수 있다")
+    void require_non_empty_collection_with_non_null_elements() {
+        var value = List.of("value");
+
+        assertThat(Preconditions.requireNonEmptyElementsNonNull(value, "value")).isSameAs(value);
+
+        assertThatThrownBy(() -> Preconditions.requireNonEmptyElementsNonNull(null, "value"))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("value must not be null.");
+        assertThatThrownBy(() -> Preconditions.requireNonEmptyElementsNonNull(List.of(), "value"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("value must not be empty.");
+        assertThatThrownBy(() -> Preconditions.requireNonEmptyElementsNonNull(Arrays.asList("value", null), "value"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("value must not contain null.");
     }
 
     @Test
