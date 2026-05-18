@@ -1,6 +1,7 @@
 package com.seatliberator.seatliberator.kernel.condition;
 
 import java.time.Duration;
+import java.util.Collection;
 import java.util.Objects;
 
 public class Preconditions {
@@ -12,6 +13,19 @@ public class Preconditions {
     public static String requireNonBlank(String value, String name) {
         Objects.requireNonNull(value, name + " must not be null.");
         if (value.isBlank()) throw new IllegalArgumentException(name + " must not be blank.");
+        return value;
+    }
+
+    public static <T extends Collection<?>> T requireNonEmpty(T value, String name) {
+        Objects.requireNonNull(value, name + " must not be null.");
+        if (value.isEmpty()) throw new IllegalArgumentException(name + " must not be empty.");
+        return value;
+    }
+
+    public static <T extends Collection<?>> T requireNonEmptyElementsNonNull(T value, String name) {
+        requireNonEmpty(value, name);
+        if (value.stream().anyMatch(Objects::isNull))
+            throw new IllegalArgumentException(name + " must not contain null.");
         return value;
     }
 
