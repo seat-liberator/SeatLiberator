@@ -37,6 +37,11 @@ public enum ReservationPolicyReason implements PolicyReason {
             "reservation.accepted.authorized-reservation-create",
             "예약을 생성할 권한이 있습니다."
     ),
+    AUTHORIZED_RESERVATION_CANCEL(
+            PolicyDecision.ACCEPTED,
+            "reservation.accepted.authorized-reservation-cancel",
+            "예약을 취소할 권한이 있습니다."
+    ),
 
     USER_BLOCKED(
             PolicyDecision.REJECTED,
