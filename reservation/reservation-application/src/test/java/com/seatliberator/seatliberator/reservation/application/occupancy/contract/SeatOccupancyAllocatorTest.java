@@ -13,39 +13,35 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import static com.seatliberator.seatliberator.reservation.application.occupancy.OccupancyTestSupport.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("SeatOccupancyCreator 테스트")
-public class SeatOccupancyCreatorTest {
+@DisplayName("SeatOccupancyAllocator 테스트")
+public class SeatOccupancyAllocatorTest {
     @Mock
     SeatOccupancyStore store;
 
     @Mock
     SeatTimeSlotBundlePolicy slotBundlePolicy;
 
-    SeatOccupancyCreator creator;
+    SeatOccupancyAllocator allocator;
 
     @BeforeEach
     void run() {
-        creator = new SeatOccupancyCreator(store, slotBundlePolicy, CLOCK);
+        allocator = new SeatOccupancyAllocator(store, slotBundlePolicy, CLOCK);
     }
 
     @Test
     @DisplayName("점유 생성 시 슬롯 묶음 정책을 검증하고 점유들을 저장한다")
-    void create_validates_slot_bundle_and_saves_occupancies() {
-        when(store.saveAll(anyCollection())).thenAnswer(invocation ->
-                List.copyOf(invocation.<Collection<SeatOccupancy>>getArgument(0))
-        );
-
-        var result = creator.create(RESERVATION_ID, SLOT_IDS, OCCUPANCY_DATE);
+    void allocate_validates_slot_bundle_and_saves_occupancies() {
+        var result = allocator.allocate(RESERVATION_ID, SLOT_IDS, OCCUPANCY_DATE);
 
         var captor = occupancyCaptor();
 
@@ -64,19 +60,10 @@ public class SeatOccupancyCreatorTest {
             assertThat(occupancy.getOccupancyDate()).isEqualTo(OCCUPANCY_DATE);
             assertThat(occupancy.getCreatedAt()).isEqualTo(NOW);
         });
-        assertThat(result).containsExactlyElementsOf(saved);
-    }
 
-    @Test
-    @DisplayName("store가 반환한 점유 목록을 반환한다")
-    void create_returns_saved_occupancies() {
-        var savedOccupancies = occupancies();
-
-        when(store.saveAll(anyCollection())).thenReturn(savedOccupancies);
-
-        var result = creator.create(RESERVATION_ID, SLOT_IDS, OCCUPANCY_DATE);
-
-        assertThat(result).isSameAs(savedOccupancies);
+        assertThat(result.reservationId()).isEqualTo(RESERVATION_ID);
+        assertThat(result.slotIds()).containsExactlyInAnyOrderElementsOf(SLOT_IDS);
+        assertThat(result.occupancyDate()).isEqualTo(OCCUPANCY_DATE);
     }
 
     @Test
@@ -86,13 +73,33 @@ public class SeatOccupancyCreatorTest {
                 .when(slotBundlePolicy)
                 .validate(SLOT_IDS);
 
-        assertThatThrownBy(() -> creator.create(RESERVATION_ID, SLOT_IDS, OCCUPANCY_DATE))
+        assertThatThrownBy(() -> allocator.allocate(RESERVATION_ID, SLOT_IDS, OCCUPANCY_DATE))
                 .isInstanceOf(ReservationApplicationPolicyException.class)
                 .extracting("reason")
                 .isEqualTo(SeatTimeSlotPolicyReason.EMPTY_SLOT);
 
         verify(slotBundlePolicy, only()).validate(SLOT_IDS);
         verifyNoInteractions(store);
+    }
+
+    @Test
+    @DisplayName("slotIds가 비어있으면 슬롯 묶음 정책을 검증하지 않고 예외")
+    void throw_exception_when_slot_ids_empty() {
+        assertThatThrownBy(() -> allocator.allocate(RESERVATION_ID, List.of(), OCCUPANCY_DATE))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("slotIds must not be empty.");
+
+        verifyNoInteractions(slotBundlePolicy, store);
+    }
+
+    @Test
+    @DisplayName("slotIds에 null 원소가 있으면 슬롯 묶음 정책을 검증하지 않고 예외")
+    void throw_exception_when_slot_ids_contains_null() {
+        assertThatThrownBy(() -> allocator.allocate(RESERVATION_ID, Arrays.asList(MORNING_SLOT_ID, null), OCCUPANCY_DATE))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("slotIds must not contain null.");
+
+        verifyNoInteractions(slotBundlePolicy, store);
     }
 
     @SuppressWarnings("unchecked")
