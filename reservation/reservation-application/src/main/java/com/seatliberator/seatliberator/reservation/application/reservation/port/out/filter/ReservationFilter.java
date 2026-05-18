@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria;
+package com.seatliberator.seatliberator.reservation.application.reservation.port.out.filter;
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;

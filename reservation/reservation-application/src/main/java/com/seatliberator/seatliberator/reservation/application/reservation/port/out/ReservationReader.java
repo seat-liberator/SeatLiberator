@@ -1,9 +1,6 @@
 package com.seatliberator.seatliberator.reservation.application.reservation.port.out;
 
-import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationRangeOverlapCriteria;
-import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationRoomOverlapCriteria;
-import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationSeatLookupCriteria;
-import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationSeatOverlapCriteria;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.*;
 import com.seatliberator.seatliberator.reservation.domain.reservation.Reservation;
 
 import java.util.List;
@@ -28,4 +25,6 @@ public interface ReservationReader {
     List<Reservation> findAllOverlapping(ReservationRangeOverlapCriteria criteria);
 
     List<Reservation> findAllOverlapping(ReservationRoomOverlapCriteria criteria);
+
+    List<Reservation> findByFilter(ReservationFilter filter);
 }

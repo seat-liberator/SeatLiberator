@@ -80,6 +80,12 @@ public class JpaReservationPersistenceAdapter implements ReservationStore, Reser
     }
 
     @Override
+    public List<Reservation> findByFilter(ReservationFilter filter) {
+        var spec = createSpecificationFromFilter(filter);
+        return repository.findAll(spec);
+    }
+
+    @Override
     public void delete(Reservation reservation) {
         repository.delete(reservation);
     }
@@ -108,9 +114,16 @@ public class JpaReservationPersistenceAdapter implements ReservationStore, Reser
     }
 
     private Specification<Reservation> createSpecificationFromFilter(ReservationFilter filter) {
-        return Specification.<Reservation>unrestricted()
-                .and(CommonPredicates.excludeIn(filter.excludedIds(), from -> from.get("id")))
-                .and(CommonPredicates.in(filter.userIds(), from -> from.get("userId")))
-                .and(CommonPredicates.in(filter.statuses(), from -> from.get("status")));
+        var spec = Specification.<Reservation>unrestricted();
+
+        if (filter.userId() != null) {
+            spec = spec.and(CommonPredicates.eq(filter.userId(), from -> from.get("userId")));
+        }
+
+        if (filter.status() != null) {
+            spec = spec.and(CommonPredicates.eq(filter.status(), from -> from.get("state").get("status")));
+        }
+
+        return spec;
     }
 }
