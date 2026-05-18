@@ -8,16 +8,16 @@ import java.util.UUID;
 
 public record SeatOccupancyReleased(
         UUID reservationId,
-        LocalDate occupancyDate,
-        Set<UUID> slotIds
+        Set<UUID> slotIds,
+        LocalDate occupancyDate
 ) {
     public SeatOccupancyReleased {
         Preconditions.requireNonNull(reservationId, "reservationId");
-        Preconditions.requireNonNull(occupancyDate, "occupancyDate");
         Preconditions.requireNonNull(slotIds, "slotIds");
+        Preconditions.requireNonNull(occupancyDate, "occupancyDate");
     }
 
-    public static SeatOccupancyReleased of(UUID reservationId, LocalDate occupancyDate, Set<UUID> slotIds) {
-        return new SeatOccupancyReleased(reservationId, occupancyDate, slotIds);
+    public static SeatOccupancyReleased of(UUID reservationId, Set<UUID> slotIds, LocalDate occupancyDate) {
+        return new SeatOccupancyReleased(reservationId, slotIds, occupancyDate);
     }
 }

@@ -11,4 +11,6 @@ public interface SeatOccupancyStore {
     List<SeatOccupancy> saveAll(Collection<SeatOccupancy> seatOccupancies);
 
     void delete(SeatOccupancy seatOccupancy);
+
+    void deleteAll(Collection<SeatOccupancy> seatOccupancies);
 }

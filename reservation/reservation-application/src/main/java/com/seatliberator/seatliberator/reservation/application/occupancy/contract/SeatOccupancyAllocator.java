@@ -10,20 +10,20 @@ import org.springframework.stereotype.Component;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class SeatOccupancyCreator {
+public class SeatOccupancyAllocator {
     private final SeatOccupancyStore store;
 
     private final SeatTimeSlotBundlePolicy slotBundlePolicy;
     private final Clock clock;
 
-    public List<SeatOccupancy> create(UUID reservationId, Collection<UUID> slotIds, LocalDate occupancyDate) {
+    public SeatOccupancyAllocatedResult allocate(UUID reservationId, Collection<UUID> slotIds, LocalDate occupancyDate) {
         Preconditions.requireNonNull(reservationId, "reservationId");
-        Preconditions.requireNonNull(slotIds, "slotIds");
+        Preconditions.requireNonEmptyElementsNonNull(slotIds, "slotIds");
 
         slotBundlePolicy.validate(slotIds);
 
@@ -33,6 +33,8 @@ public class SeatOccupancyCreator {
                 .map(slotId -> SeatOccupancy.of(slotId, reservationId, occupancyDate, now))
                 .toList();
 
-        return store.saveAll(occupancies);
+        store.saveAll(occupancies);
+
+        return SeatOccupancyAllocatedResult.of(reservationId, Set.copyOf(slotIds), occupancyDate);
     }
 }

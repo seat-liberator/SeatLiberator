@@ -4,6 +4,7 @@ import com.seatliberator.seatliberator.reservation.application.booking.port.in.F
 import com.seatliberator.seatliberator.reservation.application.booking.port.in.query.FindAvailableSlotsBySeatQuery;
 import com.seatliberator.seatliberator.reservation.application.occupancy.port.out.SeatOccupancyReader;
 import com.seatliberator.seatliberator.reservation.application.occupancy.port.out.criteria.SeatOccupancyFilter;
+import com.seatliberator.seatliberator.reservation.application.occupancy.port.out.criteria.SeatOccupancySlotCriteria;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.result.SeatTimeSlotResult;
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatTimeSlotReader;
@@ -34,11 +35,10 @@ public class FindAvailableSlotsBySeatService implements FindAvailableSlotsBySeat
         var slots = slotReader.findBySeatId(seatId);
         var slotIds = slots.stream().map(SeatTimeSlot::getId).toList();
 
-        var occupancyFilter = SeatOccupancyFilter.builder()
-                .slotIds(slotIds)
-                .range(range)
-                .build();
-        var occupancies = occupancyReader.findByCriteria(occupancyFilter).stream()
+        var criteria = SeatOccupancySlotCriteria
+                .matchAnyOf(slotIds)
+                .filter(SeatOccupancyFilter.empty().range(range));
+        var occupancies = occupancyReader.findByCriteria(criteria).stream()
                 .collect(Collectors.groupingBy(
                         SeatOccupancy::getOccupancyDate,
                         Collectors.mapping(SeatOccupancy::getSeatTimeSlotId, Collectors.toSet())

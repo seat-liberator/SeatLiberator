@@ -6,18 +6,18 @@ import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
 
-public record SeatOccupancyHeld(
+public record SeatOccupancyAllocated(
         UUID reservationId,
-        LocalDate occupancyDate,
-        Set<UUID> slotIds
+        Set<UUID> slotIds,
+        LocalDate occupancyDate
 ) {
-    public SeatOccupancyHeld {
+    public SeatOccupancyAllocated {
         Preconditions.requireNonNull(reservationId, "reservationId");
-        Preconditions.requireNonNull(occupancyDate, "occupancyDate");
         Preconditions.requireNonNull(slotIds, "slotIds");
+        Preconditions.requireNonNull(occupancyDate, "occupancyDate");
     }
 
-    public static SeatOccupancyHeld of(UUID reservationId, LocalDate occupancyDate, Set<UUID> slotIds) {
-        return new SeatOccupancyHeld(reservationId, occupancyDate, slotIds);
+    public static SeatOccupancyAllocated of(UUID reservationId, Set<UUID> slotIds, LocalDate occupancyDate) {
+        return new SeatOccupancyAllocated(reservationId, slotIds, occupancyDate);
     }
 }

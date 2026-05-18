@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.application.waitlist.internal;
 
-import com.seatliberator.seatliberator.reservation.application.occupancy.contract.SeatOccupancyCreator;
+import com.seatliberator.seatliberator.reservation.application.occupancy.contract.SeatOccupancyAllocator;
 import com.seatliberator.seatliberator.reservation.application.reservation.contract.ReservationCreator;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
@@ -25,7 +25,7 @@ public class WaitlistClaimProcessor {
     private final WaitlistStore store;
 
     private final ReservationCreator reservationCreator;
-    private final SeatOccupancyCreator occupancyCreator;
+    private final SeatOccupancyAllocator occupancyCreator;
     private final Clock clock;
 
     @Transactional
@@ -41,7 +41,7 @@ public class WaitlistClaimProcessor {
             var now = clock.instant();
 
             var reservation = reservationCreator.create(waitlist.getUserId());
-            occupancyCreator.create(reservation.getId(), waitlist.getSlotIds(), waitlist.getOccupancyDate());
+            occupancyCreator.allocate(reservation.getId(), waitlist.getSlotIds(), waitlist.getOccupancyDate());
 
             waitlist.complete(now);
             store.save(waitlist);
