@@ -2,23 +2,27 @@ package com.seatliberator.seatliberator.reservation.application.occupancy.port.o
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 import com.seatliberator.seatliberator.reservation.domain.shared.temporal.DateRange;
-import lombok.Builder;
-import lombok.Getter;
+import org.jspecify.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Set;
 import java.util.UUID;
 
-@Getter
-public class SeatOccupancyFilter {
-    private final Set<UUID> slotIds;
-    private final DateRange range;
+public record SeatOccupancyFilter(
+        @Nullable UUID reservationId,
+        @Nullable DateRange range
+) {
+    public static SeatOccupancyFilter empty() {
+        return new SeatOccupancyFilter(null, null);
+    }
 
-    @Builder
-    public SeatOccupancyFilter(Collection<UUID> slotIds, DateRange range) {
-        this.slotIds = slotIds == null
-                ? Set.of()
-                : Set.copyOf(slotIds);
-        this.range = Preconditions.requireNonNull(range, "range");
+    public SeatOccupancyFilter reservationId(UUID reservationId) {
+        Preconditions.requireNonNull(reservationId, "reservationId");
+
+        return new SeatOccupancyFilter(reservationId, range);
+    }
+
+    public SeatOccupancyFilter range(DateRange range) {
+        Preconditions.requireNonNull(range, "range");
+
+        return new SeatOccupancyFilter(reservationId, range);
     }
 }
