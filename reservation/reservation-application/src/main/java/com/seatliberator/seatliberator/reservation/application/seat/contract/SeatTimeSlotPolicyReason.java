@@ -17,20 +17,10 @@ public enum SeatTimeSlotPolicyReason implements PolicyReason {
             "seat-time-slot.rejected.empty-slot-ids",
             "좌석 시간 슬롯이 비어 있습니다."
     ),
-    NULL_SLOT_INCLUDED(
-            PolicyDecision.REJECTED,
-            "seat-time-slot.rejected.null-slot-id-included",
-            "좌석 시간 슬롯 식별자에 null이 포함되어 있습니다."
-    ),
     DUPLICATE_SLOT(
             PolicyDecision.REJECTED,
             "seat-time-slot.rejected.duplicate-slot-ids",
             "중복된 좌석 시간 슬롯이 포함되어 있습니다."
-    ),
-    SLOT_NOT_FOUND(
-            PolicyDecision.REJECTED,
-            "seat-time-slot.rejected.slot-not-found",
-            "존재하지 않는 좌석 시간 슬롯이 포함되어 있습니다."
     ),
     INACTIVE_SLOT_INCLUDED(
             PolicyDecision.REJECTED,
