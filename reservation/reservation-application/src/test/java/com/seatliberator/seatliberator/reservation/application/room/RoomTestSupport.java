@@ -15,6 +15,8 @@ import static com.seatliberator.seatliberator.reservation.domain.shared.temporal
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RoomTestSupport extends DefaultTestSupport {
+    public static final String ROOM_ID = "room-1";
+
     public static UpdateRoomOperationPolicyCommand updateRoomOperationPolicyCommand() {
         return new UpdateRoomOperationPolicyCommand(
                 ROOM_ID,

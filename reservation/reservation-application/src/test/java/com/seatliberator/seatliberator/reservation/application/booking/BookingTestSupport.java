@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.application.booking.service;
+package com.seatliberator.seatliberator.reservation.application.booking;
 
 import com.seatliberator.seatliberator.kernel.test.UuidGenerator;
 import com.seatliberator.seatliberator.reservation.application.DefaultTestSupport;
@@ -18,9 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-import static com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailyNanoRangeFixture.AFTERNOON_SLOT_RANGE;
-import static com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailyNanoRangeFixture.MORNING_SLOT_RANGE;
-import static com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailyNanoRangeFixture.NIGHT_SLOT_RANGE;
+import static com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailyNanoRangeFixture.*;
 
 public class BookingTestSupport extends DefaultTestSupport {
     public static final UUID SEAT_UUID = UuidGenerator.generate(1);
