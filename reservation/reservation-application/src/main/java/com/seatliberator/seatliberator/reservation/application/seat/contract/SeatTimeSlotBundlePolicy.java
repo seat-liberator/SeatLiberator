@@ -2,6 +2,8 @@ package com.seatliberator.seatliberator.reservation.application.seat.contract;
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatTimeSlotReader;
+import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
+import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationPolicyException;
 import com.seatliberator.seatliberator.reservation.application.shared.policy.PolicyResult;
 import com.seatliberator.seatliberator.reservation.application.shared.policy.SimplePolicyResult;
@@ -12,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -20,17 +24,31 @@ public class SeatTimeSlotBundlePolicy {
     private final SeatTimeSlotReader reader;
 
     public void validate(Collection<UUID> slotIds) {
-        var policyResult = evaluate(slotIds);
-        if (policyResult.rejected()) throw new ReservationApplicationPolicyException(policyResult.reason());
+        Preconditions.requireNonNull(slotIds, "slotIds");
+        if (slotIds.isEmpty())
+            throw new ReservationApplicationPolicyException(SeatTimeSlotPolicyReason.EMPTY_SLOT);
+
+        var dedupIds = slotIds.stream()
+                .collect(Collectors.toUnmodifiableSet());
+        if (slotIds.size() != dedupIds.size())
+            throw new ReservationApplicationPolicyException(SeatTimeSlotPolicyReason.DUPLICATE_SLOT);
+
+        var slots = reader.findByIds(slotIds).stream()
+                .collect(Collectors.toUnmodifiableSet());
+        if (dedupIds.size() != slots.size())
+            throw new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_TIME_SLOT_NOT_FOUND);
+
+        validate(slots);
     }
 
-    public PolicyResult evaluate(Collection<UUID> slotIds) {
-        Preconditions.requireNonNull(slotIds, "slotIds");
-        var slots = reader.findByIds(slotIds);
+    public void validate(Set<SeatTimeSlot> slots) {
+        var result = evaluate(slots);
+        if (result.rejected())
+            throw new ReservationApplicationPolicyException(result.reason());
+    }
 
-        if (slotIds.size() != slots.size()) return SimplePolicyResult.reject(SeatTimeSlotPolicyReason.SLOT_NOT_FOUND);
-        if (slots.isEmpty()) return SimplePolicyResult.reject(SeatTimeSlotPolicyReason.EMPTY_SLOT);
-        if (slots.contains(null)) return SimplePolicyResult.reject(SeatTimeSlotPolicyReason.NULL_SLOT_INCLUDED);
+    public PolicyResult evaluate(Set<SeatTimeSlot> slots) {
+        Preconditions.requireNonNull(slots, "slots");
 
         if (!areAllActive(slots)) return SimplePolicyResult.reject(SeatTimeSlotPolicyReason.INACTIVE_SLOT_INCLUDED);
         if (!belongsToSameSeat(slots)) return SimplePolicyResult.reject(SeatTimeSlotPolicyReason.DIFFERENT_SEAT_INCLUDED);
