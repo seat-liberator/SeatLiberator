@@ -32,6 +32,11 @@ public enum ReservationPolicyReason implements PolicyReason {
             "reservation.accepted.reservation-manager",
             "예약 관리 권한이 있습니다."
     ),
+    AUTHORIZED_RESERVATION_READ(
+            PolicyDecision.ACCEPTED,
+            "reservation.accepted.authorized-reservation-read",
+            "예약을 조회할 권한이 있습니다."
+    ),
     AUTHORIZED_RESERVATION_CREATE(
             PolicyDecision.ACCEPTED,
             "reservation.accepted.authorized-reservation-create",

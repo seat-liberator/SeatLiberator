@@ -13,6 +13,7 @@ public enum ReservationCapability implements Capability {
     SEAT_READ("seat.read", "좌석 조회"),
     SEAT_MANAGE("seat.manage", "좌석 관리"),
 
+    BOOKING_READ("booking.read", "에약 조회"),
     BOOKING_CREATE("booking.create", "예약 생성"),
     OWNED_BOOKING_CANCEL("owned.booking.cancel", "예약 취소"),
     OWNED_BOOKING_UPDATE("owned.booking.update", "예약 수정"),

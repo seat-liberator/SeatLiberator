@@ -24,6 +24,10 @@ public class ReservationTestSupport extends DefaultTestSupport {
             .subject(USER_ID)
             .capabilities(Set.of(ReservationCapability.BOOKING_CREATE))
             .build();
+    public static final Actor BOOKING_READER = new ActorFixture.Builder()
+            .subject(USER_ID)
+            .capabilities(Set.of(ReservationCapability.BOOKING_READ))
+            .build();
     public static final Actor BOOKING_MANAGER = new ActorFixture.Builder()
             .subject(OTHER_USER_ID)
             .capabilities(Set.of(ReservationCapability.BOOKING_MANAGE))
