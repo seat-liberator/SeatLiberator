@@ -2,8 +2,9 @@ package com.seatliberator.seatliberator.reservation.persistence.book.jpa;
 
 import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationStore;
-import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.*;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.filter.ReservationFilter;
 import com.seatliberator.seatliberator.reservation.domain.reservation.Reservation;
+import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.persistence.AbstractPersistenceAdapterTest;
 import com.seatliberator.seatliberator.reservation.persistence.book.jpa.repository.ReservationRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -39,18 +40,14 @@ public class JpaReservationPersistenceAdapterTest extends AbstractPersistenceAda
         return repository.save(reservation);
     }
 
-    private ReservationSeatLookupCriteria lookupCriteria(Reservation reservation) {
-        return ReservationSeatLookupCriteria.of(reservation.getLocator(), reservation.getRange());
-    }
-
     private void assertSameReservation(Reservation actual, Reservation expected) {
         assertThat(actual.getId()).isEqualTo(expected.getId());
         assertThat(actual.getUserId()).isEqualTo(expected.getUserId());
-        assertThat(actual.getLocator().roomId()).isEqualTo(expected.getLocator().roomId());
-        assertThat(actual.getLocator().seatId()).isEqualTo(expected.getLocator().seatId());
-        assertThat(actual.getRange().startAt()).isEqualTo(expected.getRange().startAt());
-        assertThat(actual.getRange().endAt()).isEqualTo(expected.getRange().endAt());
-        assertThat(actual.getStatus()).isEqualTo(expected.getStatus());
+        assertThat(actual.getState().getStatus()).isEqualTo(expected.getState().getStatus());
+        assertThat(actual.getState().getReservedAt()).isEqualTo(expected.getState().getReservedAt());
+        assertThat(actual.getState().getUsedAt()).isEqualTo(expected.getState().getUsedAt());
+        assertThat(actual.getState().getCancelledAt()).isEqualTo(expected.getState().getCancelledAt());
+        assertThat(actual.getState().getExpiredAt()).isEqualTo(expected.getState().getExpiredAt());
     }
 
     @Nested
@@ -79,140 +76,52 @@ public class JpaReservationPersistenceAdapterTest extends AbstractPersistenceAda
         }
 
         @Test
-        @DisplayName("findByUserId는 사용자 Id에 해당하는 예약을 반환한다")
-        void should_find_reservation_by_user_id() {
+        @DisplayName("findByUserId는 사용자 Id에 해당하는 예약 목록을 반환한다")
+        void should_find_reservations_by_user_id() {
             var reservation = saveReservation();
+            var otherReservation = saveReservation(reservation(USER_ID, ReservationStatus.USED));
+            saveReservation(reservation(OTHER_USER_ID));
             flushAndClear();
 
             var actual = reader.findByUserId(USER_ID);
 
             assertThat(actual)
-                    .isPresent()
-                    .get()
-                    .satisfies(found -> assertSameReservation(found, reservation));
+                    .hasSize(2)
+                    .anySatisfy(found -> assertSameReservation(found, reservation))
+                    .anySatisfy(found -> assertSameReservation(found, otherReservation));
         }
 
         @Test
-        @DisplayName("existsOne은 Locator와 Range가 같은 예약이 있으면 True")
-        void should_return_true_when_exists_one_reservation() {
+        @DisplayName("findByFilter는 빈 필터이면 저장된 모든 예약을 반환한다")
+        void should_find_all_reservations_when_filter_empty() {
             var reservation = saveReservation();
+            var otherReservation = saveReservation(reservation(OTHER_USER_ID));
             flushAndClear();
 
-            var actual = reader.existsOne(lookupCriteria(reservation));
-
-            assertThat(actual).isTrue();
-        }
-
-        @Test
-        @DisplayName("existsOne은 제외 대상 예약이면 False")
-        void should_return_false_when_existing_reservation_is_excluded() {
-            var reservation = saveReservation();
-            flushAndClear();
-
-            var criteria = lookupCriteria(reservation)
-                    .withFilter(ReservationFilter.empty().withExcludeIds(reservation.getId()));
-            var actual = reader.existsOne(criteria);
-
-            assertThat(actual).isFalse();
-        }
-
-        @Test
-        @DisplayName("findOne은 Locator와 Range가 같은 예약을 반환한다")
-        void should_find_one_reservation() {
-            var reservation = saveReservation();
-            flushAndClear();
-
-            var actual = reader.findOne(lookupCriteria(reservation));
+            var actual = reader.findByFilter(ReservationFilter.empty());
 
             assertThat(actual)
-                    .isPresent()
-                    .get()
-                    .satisfies(found -> assertSameReservation(found, reservation));
+                    .hasSize(2)
+                    .anySatisfy(found -> assertSameReservation(found, reservation))
+                    .anySatisfy(found -> assertSameReservation(found, otherReservation));
         }
 
         @Test
-        @DisplayName("existsOverlapping은 같은 좌석에 시간이 겹치는 예약이 있으면 True")
-        void should_return_true_when_seat_reservation_overlaps() {
-            saveReservation();
-            flushAndClear();
-
-            var criteria = ReservationSeatOverlapCriteria.of(locator(), overlappingRange());
-            var actual = reader.existsOverlapping(criteria);
-
-            assertThat(actual).isTrue();
-        }
-
-        @Test
-        @DisplayName("existsOverlapping은 같은 좌석이어도 시간이 겹치지 않으면 False")
-        void should_return_false_when_seat_reservation_does_not_overlap() {
-            saveReservation();
-            flushAndClear();
-
-            var criteria = ReservationSeatOverlapCriteria.of(locator(), nonOverlappingRange());
-            var actual = reader.existsOverlapping(criteria);
-
-            assertThat(actual).isFalse();
-        }
-
-        @Test
-        @DisplayName("existsOverlapping은 같은 방에 시간이 겹치는 예약이 있으면 True")
-        void should_return_true_when_room_reservation_overlaps() {
-            saveReservation();
-            flushAndClear();
-
-            var criteria = ReservationRoomOverlapCriteria.of(ROOM_ID, overlappingRange());
-            var actual = reader.existsOverlapping(criteria);
-
-            assertThat(actual).isTrue();
-        }
-
-        @Test
-        @DisplayName("findAllOverlapping은 같은 좌석에 시간이 겹치는 예약만 반환한다")
-        void should_find_all_overlapping_by_seat() {
+        @DisplayName("findByFilter는 사용자 Id와 상태가 일치하는 예약 목록을 반환한다")
+        void should_find_reservations_by_user_id_and_status_filter() {
             var reservation = saveReservation();
-            saveReservation(reservation(OTHER_USER_ID, locator(ROOM_ID, OTHER_SEAT_ID), reservationRange()));
+            saveReservation(reservation(USER_ID, ReservationStatus.USED));
+            saveReservation(reservation(OTHER_USER_ID, ReservationStatus.RESERVED));
             flushAndClear();
 
-            var criteria = ReservationSeatOverlapCriteria.of(locator(), overlappingRange());
-            var actual = reader.findAllOverlapping(criteria);
+            var filter = ReservationFilter.empty()
+                    .userId(USER_ID)
+                    .status(ReservationStatus.RESERVED);
+            var actual = reader.findByFilter(filter);
 
             assertThat(actual)
                     .hasSize(1)
                     .anySatisfy(found -> assertSameReservation(found, reservation));
-        }
-
-        @Test
-        @DisplayName("findAllOverlapping은 시간이 겹치는 모든 예약을 반환한다")
-        void should_find_all_overlapping_by_range() {
-            var reservation = saveReservation();
-            var otherReservation = saveReservation(reservation(OTHER_USER_ID, locator(OTHER_ROOM_ID, SEAT_ID), reservationRange()));
-            saveReservation(reservation(USER_ID, locator(ROOM_ID, OTHER_SEAT_ID), nonOverlappingRange()));
-            flushAndClear();
-
-            var criteria = ReservationRangeOverlapCriteria.of(overlappingRange());
-            var actual = reader.findAllOverlapping(criteria);
-
-            assertThat(actual)
-                    .hasSize(2)
-                    .anySatisfy(found -> assertSameReservation(found, reservation))
-                    .anySatisfy(found -> assertSameReservation(found, otherReservation));
-        }
-
-        @Test
-        @DisplayName("findAllOverlapping은 같은 방에 시간이 겹치는 예약만 반환한다")
-        void should_find_all_overlapping_by_room() {
-            var reservation = saveReservation();
-            var otherReservation = saveReservation(reservation(OTHER_USER_ID, locator(ROOM_ID, OTHER_SEAT_ID), reservationRange()));
-            saveReservation(reservation(USER_ID, locator(OTHER_ROOM_ID, SEAT_ID), reservationRange()));
-            flushAndClear();
-
-            var criteria = ReservationRoomOverlapCriteria.of(ROOM_ID, overlappingRange());
-            var actual = reader.findAllOverlapping(criteria);
-
-            assertThat(actual)
-                    .hasSize(2)
-                    .anySatisfy(found -> assertSameReservation(found, reservation))
-                    .anySatisfy(found -> assertSameReservation(found, otherReservation));
         }
     }
 
