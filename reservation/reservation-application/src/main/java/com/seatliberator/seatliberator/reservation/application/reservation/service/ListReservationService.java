@@ -6,7 +6,7 @@ import com.seatliberator.seatliberator.reservation.application.reservation.port.
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.query.ListReservationQuery;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.application.reservation.port.out.criteria.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.filter.ReservationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -14,9 +14,9 @@ import com.seatliberator.seatliberator.reservation.domain.shared.temporal.Simple
 import com.seatliberator.seatliberator.reservation.domain.waitlist.Waitlist;
 import com.seatliberator.seatliberator.reservation.domain.waitlist.WaitlistBehavior;
 
-import java.time.Clock;
-import java.time.Duration;
-import java.time.Instant;
+import java.time.*;
+import java.util.List;
+import java.util.UUID;
 
 public class TestSupport {
     public static final Clock fixedClock = TestClock.getFixed();
@@ -27,6 +27,8 @@ public class TestSupport {
     public static final String OTHER_SEAT_ID = "seat-b";
     public static final String USER_ID = "user-1";
     public static final String OTHER_USER_ID = "user-2";
+    public static final UUID SLOT_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    public static final UUID OTHER_SLOT_ID = UUID.fromString("00000000-0000-0000-0000-000000000002");
 
     public static final Duration RESERVATION_DURATION = Duration.ofMinutes(30);
 
@@ -88,30 +90,63 @@ public class TestSupport {
     }
 
     public static Reservation reservation() {
-        return reservation(USER_ID, locator(), reservationRange(), ReservationStatus.RESERVED);
+        return reservation(USER_ID, ReservationStatus.RESERVED);
     }
 
     public static Reservation reservation(ReservationStatus status) {
-        return reservation(USER_ID, locator(), reservationRange(), status);
+        return reservation(USER_ID, status);
     }
 
-    public static Reservation reservation(String userId, SeatLocator locator, InstantRange range) {
-        return reservation(userId, locator, range, ReservationStatus.RESERVED);
+    public static Reservation reservation(String userId) {
+        return reservation(userId, ReservationStatus.RESERVED);
     }
 
-    public static Reservation reservation(String userId, SeatLocator locator, InstantRange range, ReservationStatus status) {
-        return Reservation.of(userId, locator, range, status);
+    public static Reservation reservation(String userId, ReservationStatus status) {
+        var reservation = Reservation.of(userId, reservationStartAt());
+
+        switch (status) {
+            case RESERVED -> {
+            }
+            case USED -> reservation.use(reservationStartAt().plus(Duration.ofMinutes(10)));
+            case CANCELLED -> reservation.cancel(reservationStartAt().minus(Duration.ofMinutes(10)));
+            case EXPIRED -> reservation.expire(reservationStartAt().minus(Duration.ofMinutes(10)));
+        }
+
+        return reservation;
     }
 
     public static Waitlist waitlist() {
-        return waitlist(USER_ID, locator(), reservationRange());
+        return waitlist(USER_ID, List.of(SLOT_ID), occupancyDate(), WaitlistBehavior.AUTO_CLAIM);
     }
 
     public static Waitlist waitlist(String userId, SeatLocator locator, InstantRange range) {
-        return waitlist(userId, locator, range, WaitlistBehavior.AUTO_CLAIM);
+        return waitlist(userId, slotIds(locator), occupancyDate(range), WaitlistBehavior.AUTO_CLAIM);
     }
 
     public static Waitlist waitlist(String userId, SeatLocator locator, InstantRange range, WaitlistBehavior behavior) {
-        return Waitlist.create(userId, locator, range, behavior, range.startAt().minus(Duration.ofMinutes(1)));
+        return waitlist(userId, slotIds(locator), occupancyDate(range), behavior);
+    }
+
+    public static Waitlist waitlist(String userId, List<UUID> slotIds, LocalDate occupancyDate) {
+        return waitlist(userId, slotIds, occupancyDate, WaitlistBehavior.AUTO_CLAIM);
+    }
+
+    public static Waitlist waitlist(String userId, List<UUID> slotIds, LocalDate occupancyDate, WaitlistBehavior behavior) {
+        return Waitlist.of(userId, slotIds, occupancyDate, behavior, reservationStartAt().minus(Duration.ofMinutes(1)));
+    }
+
+    public static LocalDate occupancyDate() {
+        return occupancyDate(reservationRange());
+    }
+
+    private static LocalDate occupancyDate(InstantRange range) {
+        return range.startAt().atZone(ZoneOffset.UTC).toLocalDate();
+    }
+
+    private static List<UUID> slotIds(SeatLocator locator) {
+        if (OTHER_SEAT_ID.equals(locator.seatId())) {
+            return List.of(OTHER_SLOT_ID);
+        }
+        return List.of(SLOT_ID);
     }
 }
