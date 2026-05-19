@@ -7,6 +7,7 @@ import com.seatliberator.seatliberator.reservation.application.reservation.port.
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.query.FindReservationQuery;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.query.ListReservationQuery;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationResult;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationStateResult;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.web.reservation.controller.ReservationQueryController;
 import org.junit.jupiter.api.DisplayName;
@@ -168,7 +169,7 @@ public class ReservationControllerTest {
         return new ReservationResult(
                 reservationId,
                 "user-1",
-                new ReservationResult.ReservationStateResult(
+                new ReservationStateResult(
                         ReservationStatus.RESERVED,
                         reservedAt,
                         null,
