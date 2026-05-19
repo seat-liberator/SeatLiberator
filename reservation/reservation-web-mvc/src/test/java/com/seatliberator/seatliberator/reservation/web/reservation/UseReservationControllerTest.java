@@ -5,6 +5,7 @@ import com.seatliberator.seatliberator.kernel.test.UuidGenerator;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.UseReservationUseCase;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.command.UseReservationCommand;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationResult;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationStateResult;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.web.reservation.controller.UseReservationController;
 import org.junit.jupiter.api.DisplayName;
@@ -96,7 +97,7 @@ public class UseReservationControllerTest {
         return new ReservationResult(
                 reservationId,
                 "user-1",
-                new ReservationResult.ReservationStateResult(
+                new ReservationStateResult(
                         ReservationStatus.USED,
                         reservedAt,
                         usedAt,

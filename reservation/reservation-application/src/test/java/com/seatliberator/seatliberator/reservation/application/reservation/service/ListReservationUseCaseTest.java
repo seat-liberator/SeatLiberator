@@ -44,7 +44,7 @@ public class ListReservationUseCaseTest {
     @Test
     @DisplayName("예약 목록 조회 시 현재 actor의 조회 권한을 검증하고 필터 조회 결과를 ReservationResult로 반환한다")
     void list_reservations_validates_actor_and_returns_results() {
-        var reservation = reservation();
+        var reservation = reservationWithId();
         var query = ListReservationQuery.of(USER_ID, ReservationStatus.RESERVED);
         var filter = ReservationFilter.empty()
                 .userId(query.userId())
