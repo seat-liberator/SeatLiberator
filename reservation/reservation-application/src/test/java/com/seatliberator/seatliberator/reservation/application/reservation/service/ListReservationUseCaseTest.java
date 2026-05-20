@@ -8,8 +8,10 @@ import com.seatliberator.seatliberator.reservation.application.reservation.port.
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.out.filter.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.filter.ReservationStateFilter;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationPolicyException;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleInstantRange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Duration;
 import java.util.List;
 
 import static com.seatliberator.seatliberator.reservation.application.reservation.ReservationTestSupport.*;
@@ -45,10 +48,11 @@ public class ListReservationUseCaseTest {
     @DisplayName("예약 목록 조회 시 현재 actor의 조회 권한을 검증하고 필터 조회 결과를 ReservationResult로 반환한다")
     void list_reservations_validates_actor_and_returns_results() {
         var reservation = reservationWithId();
-        var query = ListReservationQuery.of(USER_ID, ReservationStatus.RESERVED);
+        var statusRange = SimpleInstantRange.of(NOW, NOW.plus(Duration.ofHours(1)));
+        var query = ListReservationQuery.of(USER_ID, ReservationStatus.RESERVED, statusRange);
         var filter = ReservationFilter.empty()
                 .userId(query.userId())
-                .status(query.status());
+                .state(ReservationStateFilter.status(query.status()).range(statusRange));
 
         when(actorContextHolder.getActor()).thenReturn(ACTOR);
         when(reader.findByFilter(filter)).thenReturn(List.of(reservation));
@@ -71,7 +75,7 @@ public class ListReservationUseCaseTest {
         var query = ListReservationQuery.of(USER_ID, ReservationStatus.RESERVED);
         var filter = ReservationFilter.empty()
                 .userId(query.userId())
-                .status(query.status());
+                .state(ReservationStateFilter.status(query.status()));
 
         when(actorContextHolder.getActor()).thenReturn(ACTOR);
         when(reader.findByFilter(filter)).thenReturn(List.of());
@@ -88,7 +92,8 @@ public class ListReservationUseCaseTest {
     @Test
     @DisplayName("현재 actor에게 예약 조회 권한이 없으면 예약을 조회하지 않는다")
     void throw_exception_when_actor_has_no_read_capability() {
-        var query = ListReservationQuery.of(USER_ID, ReservationStatus.RESERVED);
+        var statusRange = SimpleInstantRange.of(NOW, NOW.plus(Duration.ofHours(1)));
+        var query = ListReservationQuery.of(USER_ID, ReservationStatus.RESERVED, statusRange);
         var exception = new ReservationApplicationPolicyException(ReservationPolicyReason.UNAUTHORIZED_RESERVATION_ACCESS);
 
         when(actorContextHolder.getActor()).thenReturn(ACTOR);

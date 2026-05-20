@@ -6,6 +6,8 @@ import com.seatliberator.seatliberator.reservation.application.reservation.port.
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.query.ListReservationQuery;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.InstantRange;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleInstantRange;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,9 +15,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,9 +45,14 @@ public class ReservationQueryController {
             @Parameter(description = "사용자 ID", example = "00000000-0000-0000-0000-000000000001")
             @RequestParam(name = "userId") String userId,
             @Parameter(description = "예약 상태", example = "RESERVED")
-            @RequestParam(name = "status") ReservationStatus status
+            @RequestParam(name = "status") ReservationStatus status,
+            @Parameter(description = "상태 시각 조회 시작", example = "2026-04-14T00:00:00Z")
+            @RequestParam(name = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @Nullable Instant startAt,
+            @Parameter(description = "상태 시각 조회 종료", example = "2026-04-15T00:00:00Z")
+            @RequestParam(name = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @Nullable Instant endAt
     ) {
-        var query = ListReservationQuery.of(userId, status);
+        var statusRange = toStatusRange(startAt, endAt);
+        var query = ListReservationQuery.of(userId, status, statusRange);
         var result = listReservationUseCase.list(query);
         return ResponseEntity.ok(result);
     }
@@ -60,5 +70,17 @@ public class ReservationQueryController {
         var query = FindReservationQuery.of(reservationId);
         var result = findReservationUseCase.find(query);
         return ResponseEntity.ok(result);
+    }
+
+    private @Nullable InstantRange toStatusRange(@Nullable Instant startAt, @Nullable Instant endAt) {
+        if (startAt == null && endAt == null) {
+            return null;
+        }
+
+        if (startAt == null || endAt == null) {
+            throw new IllegalArgumentException("start and end must be provided together.");
+        }
+
+        return SimpleInstantRange.of(startAt, endAt);
     }
 }
