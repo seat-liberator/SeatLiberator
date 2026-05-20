@@ -6,7 +6,6 @@ import com.seatliberator.seatliberator.reservation.application.reservation.port.
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.query.ListReservationQuery;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationReader;
-import com.seatliberator.seatliberator.reservation.application.reservation.port.out.filter.ReservationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +24,7 @@ public class ListReservationService implements ListReservationUseCase {
 
         authorizer.validate(actor);
 
-        var filter = ReservationFilter.empty()
-                .userId(query.userId())
-                .status(query.status());
-
-        return reader.findByFilter(filter).stream()
+        return reader.findByFilter(query.toFilter()).stream()
                 .map(ReservationResult::from)
                 .toList();
     }

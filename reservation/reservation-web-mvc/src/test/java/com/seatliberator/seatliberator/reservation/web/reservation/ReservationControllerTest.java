@@ -9,6 +9,7 @@ import com.seatliberator.seatliberator.reservation.application.reservation.port.
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationResult;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.in.result.ReservationStateResult;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
+import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleInstantRange;
 import com.seatliberator.seatliberator.reservation.web.reservation.controller.ReservationQueryController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,6 +53,36 @@ public class ReservationControllerTest {
         // given
         var userId = "user-1";
         var status = ReservationStatus.RESERVED;
+        var startAt = Instant.parse("2026-04-14T00:00:00Z");
+        var endAt = Instant.parse("2026-04-15T00:00:00Z");
+
+        given(listReservationUseCase.list(any(ListReservationQuery.class)))
+                .willReturn(List.of());
+
+        // when
+        mockMvc.perform(get("/reservations")
+                        .queryParam("userId", userId)
+                        .queryParam("status", status.name())
+                        .queryParam("start", startAt.toString())
+                        .queryParam("end", endAt.toString()))
+                .andExpect(status().isOk());
+
+        // then
+        var captor = ArgumentCaptor.forClass(ListReservationQuery.class);
+        verify(listReservationUseCase).list(captor.capture());
+
+        var actual = captor.getValue();
+        assertThat(actual.userId()).isEqualTo(userId);
+        assertThat(actual.status()).isEqualTo(status);
+        assertThat(actual.statusRange()).isEqualTo(SimpleInstantRange.of(startAt, endAt));
+    }
+
+    @Test
+    @DisplayName("예약 목록 조회 요청 시 상태 시각 범위 파라미터가 없으면 null 상태 범위로 query를 만든다")
+    void list_build_query_without_status_range_when_range_parameters_are_missing() throws Exception {
+        // given
+        var userId = "user-1";
+        var status = ReservationStatus.RESERVED;
 
         given(listReservationUseCase.list(any(ListReservationQuery.class)))
                 .willReturn(List.of());
@@ -69,6 +100,7 @@ public class ReservationControllerTest {
         var actual = captor.getValue();
         assertThat(actual.userId()).isEqualTo(userId);
         assertThat(actual.status()).isEqualTo(status);
+        assertThat(actual.statusRange()).isNull();
     }
 
     @Test
@@ -77,6 +109,8 @@ public class ReservationControllerTest {
         // given
         var userId = "user-1";
         var status = ReservationStatus.RESERVED;
+        var startAt = Instant.parse("2026-04-14T00:00:00Z");
+        var endAt = Instant.parse("2026-04-15T00:00:00Z");
         var result = List.of(reservationResult(uuid.generate()));
 
         given(listReservationUseCase.list(any(ListReservationQuery.class)))
@@ -86,6 +120,8 @@ public class ReservationControllerTest {
         mockMvc.perform(get("/reservations")
                         .queryParam("userId", userId)
                         .queryParam("status", status.name())
+                        .queryParam("start", startAt.toString())
+                        .queryParam("end", endAt.toString())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(result)));
@@ -96,7 +132,22 @@ public class ReservationControllerTest {
     void list_returns_bad_request_when_required_parameter_is_missing() throws Exception {
         // when & then
         mockMvc.perform(get("/reservations")
-                        .queryParam("userId", "user-1"))
+                        .queryParam("userId", "user-1")
+                        .queryParam("start", "2026-04-14T00:00:00Z")
+                        .queryParam("end", "2026-04-15T00:00:00Z"))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(listReservationUseCase);
+    }
+
+    @Test
+    @DisplayName("상태 시각 요청 파라미터가 한쪽만 전달되면 400 Bad Request를 반환한다")
+    void list_returns_bad_request_when_status_range_parameter_is_partial() throws Exception {
+        // when & then
+        mockMvc.perform(get("/reservations")
+                        .queryParam("userId", "user-1")
+                        .queryParam("status", ReservationStatus.RESERVED.name())
+                        .queryParam("start", "2026-04-14T00:00:00Z"))
                 .andExpect(status().isBadRequest());
 
         verifyNoInteractions(listReservationUseCase);
@@ -108,7 +159,23 @@ public class ReservationControllerTest {
         // when & then
         mockMvc.perform(get("/reservations")
                         .queryParam("userId", "user-1")
-                        .queryParam("status", "not-a-status"))
+                        .queryParam("status", "not-a-status")
+                        .queryParam("start", "2026-04-14T00:00:00Z")
+                        .queryParam("end", "2026-04-15T00:00:00Z"))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(listReservationUseCase);
+    }
+
+    @Test
+    @DisplayName("상태 시각 요청 파라미터 형식이 잘못되면 400 Bad Request를 반환한다")
+    void list_returns_bad_request_when_status_range_is_invalid() throws Exception {
+        // when & then
+        mockMvc.perform(get("/reservations")
+                        .queryParam("userId", "user-1")
+                        .queryParam("status", ReservationStatus.RESERVED.name())
+                        .queryParam("start", "not-an-instant")
+                        .queryParam("end", "2026-04-15T00:00:00Z"))
                 .andExpect(status().isBadRequest());
 
         verifyNoInteractions(listReservationUseCase);

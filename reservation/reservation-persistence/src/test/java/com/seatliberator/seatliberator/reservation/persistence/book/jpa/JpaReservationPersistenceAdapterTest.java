@@ -3,6 +3,7 @@ package com.seatliberator.seatliberator.reservation.persistence.book.jpa;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationStore;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.out.filter.ReservationFilter;
+import com.seatliberator.seatliberator.reservation.application.reservation.port.out.filter.ReservationStateFilter;
 import com.seatliberator.seatliberator.reservation.domain.reservation.Reservation;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.persistence.AbstractPersistenceAdapterTest;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import java.time.Duration;
 import java.util.UUID;
 
 import static com.seatliberator.seatliberator.reservation.persistence.TestSupport.*;
@@ -116,7 +118,30 @@ public class JpaReservationPersistenceAdapterTest extends AbstractPersistenceAda
 
             var filter = ReservationFilter.empty()
                     .userId(USER_ID)
-                    .status(ReservationStatus.RESERVED);
+                    .state(ReservationStateFilter.status(ReservationStatus.RESERVED));
+            var actual = reader.findByFilter(filter);
+
+            assertThat(actual)
+                    .hasSize(1)
+                    .anySatisfy(found -> assertSameReservation(found, reservation));
+        }
+
+        @Test
+        @DisplayName("findByFilter는 상태와 상태 시각 범위가 일치하는 예약 목록을 반환한다")
+        void should_find_reservations_by_status_and_state_range_filter() {
+            var reservation = saveReservation();
+            saveReservation(Reservation.of(USER_ID, reservationStartAt().plus(Duration.ofHours(2))));
+            flushAndClear();
+
+            var reservedAt = reservation.getState().getReservedAt();
+            var filter = ReservationFilter.empty()
+                    .userId(USER_ID)
+                    .state(ReservationStateFilter
+                            .status(ReservationStatus.RESERVED)
+                            .range(range(
+                                    reservedAt.minus(Duration.ofMinutes(1)),
+                                    reservedAt.plus(Duration.ofMinutes(1))
+                            )));
             var actual = reader.findByFilter(filter);
 
             assertThat(actual)
