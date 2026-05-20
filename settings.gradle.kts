@@ -50,3 +50,5 @@ include("notification:notification-api")
 include("notification:notification-application")
 
 include("gateway")
+
+include("board:board-domain")
