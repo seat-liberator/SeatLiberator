@@ -3,7 +3,7 @@ package com.seatliberator.seatliberator.board.web.post.controller;
 import com.seatliberator.seatliberator.board.application.post.port.in.*;
 import com.seatliberator.seatliberator.board.application.post.port.in.command.DeletePostCommand;
 import com.seatliberator.seatliberator.board.application.post.port.in.query.FindPostQuery;
-import com.seatliberator.seatliberator.board.application.post.port.in.query.ListPostQuery;
+import com.seatliberator.seatliberator.board.application.post.port.in.query.ListCategoryPostQuery;
 import com.seatliberator.seatliberator.board.application.post.port.in.result.PostResult;
 import com.seatliberator.seatliberator.board.web.post.request.CreatePostRequest;
 import com.seatliberator.seatliberator.board.web.post.request.UpdatePostCategoryRequest;
@@ -35,31 +35,24 @@ public class PostController {
     private final DeletePostUseCase deletePostUseCase;
 
     private final FindPostUseCase findPostUseCase;
-    private final ListPostUseCase listPostUseCase;
+    private final ListCategoryPostUseCase listCategoryPostUseCase;
 
     private final ActorContextHolder actorContextHolder;
 
-    // GET /board/{boardId}/posts
-    // 특정 게시판에 속한 게시글 목록을 조회
-    @Operation(summary = "게시글 목록 조회", description = "특정 게시판에 속한 게시글 목록을 조회합니다.")
+    @Operation(summary = "카테고리 내 게시글 목록 조회", description = "특정 카테고리 내 게시글 목록을 조회합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공"),
-            @ApiResponse(responseCode = "404", description = "게시판 없음")
+            @ApiResponse(responseCode = "404", description = "카테고리 없음")
     })
     @GetMapping
-    public ResponseEntity<List<PostResult>> listPost(
-            @Parameter(description = "게시판 ID", example = "00000000-0000-0000-000000000001")
-            @PathVariable("boardId") UUID boardId,
+    public ResponseEntity<List<PostResult>> listCategoryPost(
             @Parameter(description = "카테고리 ID", example = "00000000-0000-0000-000000000001")
-            @RequestParam(name = "categoryId", required = false) UUID categoryId,
-            @Parameter(description = "사용자 ID", example = "user_subject")
-            @RequestParam(name = "userId", required = false) String userId
+            @RequestParam(name = "categoryId") UUID categoryId
     ) {
-        var query = ListPostQuery.of(boardId, categoryId, userId);
-        var result = listPostUseCase.list(query);
+        var query = ListCategoryPostQuery.of(categoryId);
+        var result = listCategoryPostUseCase.list(query);
         return ResponseEntity.ok(result);
     }
-
     // GET /board/{boardId}/posts/{postId}
     // 특정 게시판 안의 특정 게시글 1건을 조회
     // boardId와 postId를 함께 받는 이유는 어떤 게시판의 게시글인지 명확히 알기 이ㅜ해 <- ??
