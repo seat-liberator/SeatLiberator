@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.board.web.controller;
+package com.seatliberator.seatliberator.board.web.shared.advice;
 
 import com.seatliberator.seatliberator.board.application.shared.exception.BoardNotFoundException;
 import com.seatliberator.seatliberator.board.application.shared.exception.CategoryNotFoundException;

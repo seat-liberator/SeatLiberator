@@ -70,24 +70,6 @@ public class PostCommandService implements
     }
 
     @Override
-    public PostResult update(UpdatePostCategoryCommand command) {
-        var categoryId = command.categoryId();
-        var existsCategory = categoryReader.existsById(categoryId);
-        if (!existsCategory) throw new CategoryNotFoundException(categoryId);
-
-        var postId = command.postId();
-        var post = reader.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException(postId));
-
-        var now = clock.instant();
-        post.updateCategoryId(categoryId, now);
-
-        var saved = store.save(post);
-
-        return PostResult.from(saved);
-    }
-
-    @Override
     public PostResult update(UpdatePostTitleCommand command) {
         var postId = command.postId();
         var post = reader.findById(postId)
@@ -109,6 +91,24 @@ public class PostCommandService implements
 
         var now = clock.instant();
         post.updateContent(command.content(), now);
+
+        var saved = store.save(post);
+
+        return PostResult.from(saved);
+    }
+
+    @Override
+    public PostResult update(UpdatePostCategoryCommand command) {
+        var categoryId = command.categoryId();
+        var existsCategory = categoryReader.existsById(categoryId);
+        if (!existsCategory) throw new CategoryNotFoundException(categoryId);
+
+        var postId = command.postId();
+        var post = reader.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(postId));
+
+        var now = clock.instant();
+        post.updateCategoryId(categoryId, now);
 
         var saved = store.save(post);
 
