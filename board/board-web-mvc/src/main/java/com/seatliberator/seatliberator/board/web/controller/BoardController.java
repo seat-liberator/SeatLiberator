@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.board.web.controller;
 
+import com.seatliberator.seatliberator.board.application.board.port.in.command.CreateBoardCommand;
+import com.seatliberator.seatliberator.board.application.board.port.in.command.DeleteBoardCommand;
+import com.seatliberator.seatliberator.board.application.board.port.in.command.UpdateBoardNameCommand;
 import com.seatliberator.seatliberator.board.application.port.in.BoardManager;
-import com.seatliberator.seatliberator.board.application.port.in.command.BoardCreateCommand;
-import com.seatliberator.seatliberator.board.application.port.in.command.BoardDeleteCommand;
-import com.seatliberator.seatliberator.board.application.port.in.command.BoardUpdateCommand;
 import com.seatliberator.seatliberator.board.web.request.BoardCreateRequest;
 import com.seatliberator.seatliberator.board.web.request.BoardUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,7 +53,7 @@ public class BoardController {
     public ResponseEntity<?> post(
             @RequestBody BoardCreateRequest body
     ) {
-        var command = new BoardCreateCommand(
+        var command = new CreateBoardCommand(
                 body.name(),
                 body.description()
         );
@@ -75,7 +75,7 @@ public class BoardController {
             @PathVariable("boardId") UUID boardId,
             @RequestBody BoardUpdateRequest body
     ) {
-        var command = new BoardUpdateCommand(
+        var command = new UpdateBoardNameCommand(
                 boardId,
                 body.name(),
                 body.description()
@@ -96,7 +96,7 @@ public class BoardController {
             @Parameter(description = "게시판 ID", example = "018f2d5d-6a8d-7b42-9c1a-0c7a08b1d2e3")
             @PathVariable("boardId") UUID boardId
     ) {
-        var command = new BoardDeleteCommand(
+        var command = new DeleteBoardCommand(
                 boardId
         );
 

@@ -7,8 +7,6 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Set;
 
-import static com.seatliberator.seatliberator.board.application.config.BoardCapability.*;
-
 @Configuration
 public class BoardRoleCapabilityConfiguration {
     @Bean
