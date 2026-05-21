@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
-import static com.seatliberator.seatliberator.board.application.config.BoardCapability.CATEGORY_MANAGE;
-import static com.seatliberator.seatliberator.board.application.config.BoardCapability.POST_CREATE;
+import static com.seatliberator.seatliberator.board.application.shared.config.BoardCapability.CATEGORY_MANAGE;
+import static com.seatliberator.seatliberator.board.application.shared.config.BoardCapability.POST_CREATE;
 
 @Configuration
 @EnableWebSecurity

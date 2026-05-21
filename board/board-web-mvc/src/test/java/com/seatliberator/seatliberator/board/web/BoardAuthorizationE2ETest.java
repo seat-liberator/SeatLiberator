@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.board.web;
 
+import com.seatliberator.seatliberator.board.application.board.port.in.command.CreateBoardCommand;
 import com.seatliberator.seatliberator.board.application.port.in.BoardManager;
 import com.seatliberator.seatliberator.board.application.port.in.CategoryEntry;
 import com.seatliberator.seatliberator.board.application.port.in.CategoryManager;
-import com.seatliberator.seatliberator.board.application.port.in.command.BoardCreateCommand;
 import com.seatliberator.seatliberator.board.application.port.in.command.CategoryCreateCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,8 +23,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.UUID;
 
-import static com.seatliberator.seatliberator.board.application.config.BoardCapability.CATEGORY_MANAGE;
-import static com.seatliberator.seatliberator.board.application.config.BoardCapability.POST_CREATE;
+import static com.seatliberator.seatliberator.board.application.shared.config.BoardCapability.CATEGORY_MANAGE;
+import static com.seatliberator.seatliberator.board.application.shared.config.BoardCapability.POST_CREATE;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -51,7 +51,7 @@ class BoardAuthorizationE2ETest {
 
     @BeforeEach
     void setUp() {
-        boardId = boardManager.create(new BoardCreateCommand("board-a", "desc")).boardId();
+        boardId = boardManager.create(new CreateBoardCommand("board-a", "desc")).boardId();
 
         var defaultCategoryName = "general-" + UUID.randomUUID();
         categoryManager.create(new CategoryCreateCommand(boardId, defaultCategoryName, "desc"));
@@ -61,7 +61,7 @@ class BoardAuthorizationE2ETest {
                 .findFirst()
                 .orElseThrow();
 
-        var otherBoardId = boardManager.create(new BoardCreateCommand("board-b", "desc")).boardId();
+        var otherBoardId = boardManager.create(new CreateBoardCommand("board-b", "desc")).boardId();
         var otherCategoryName = "other-" + UUID.randomUUID();
         categoryManager.create(new CategoryCreateCommand(otherBoardId, otherCategoryName, "desc"));
         otherBoardCategoryId = categoryManager.getAll(otherBoardId).stream()

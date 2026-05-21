@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.board.web.controller;
 
-import com.seatliberator.seatliberator.board.application.exception.BoardNotFoundException;
-import com.seatliberator.seatliberator.board.application.exception.CategoryNotFoundException;
-import com.seatliberator.seatliberator.board.application.exception.PostNotFoundException;
+import com.seatliberator.seatliberator.board.application.shared.exception.BoardNotFoundException;
+import com.seatliberator.seatliberator.board.application.shared.exception.CategoryNotFoundException;
+import com.seatliberator.seatliberator.board.application.shared.exception.PostNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
