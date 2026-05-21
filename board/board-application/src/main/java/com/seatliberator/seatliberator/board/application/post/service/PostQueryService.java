@@ -1,13 +1,13 @@
 package com.seatliberator.seatliberator.board.application.post.service;
 
-import com.seatliberator.seatliberator.board.application.board.port.out.BoardReader;
 import com.seatliberator.seatliberator.board.application.post.port.in.FindPostUseCase;
-import com.seatliberator.seatliberator.board.application.post.port.in.ListPostUseCase;
+import com.seatliberator.seatliberator.board.application.post.port.in.ListCategoryPostUseCase;
+import com.seatliberator.seatliberator.board.application.post.port.in.ListUserPostUseCase;
 import com.seatliberator.seatliberator.board.application.post.port.in.query.FindPostQuery;
-import com.seatliberator.seatliberator.board.application.post.port.in.query.ListPostQuery;
+import com.seatliberator.seatliberator.board.application.post.port.in.query.ListCategoryPostQuery;
+import com.seatliberator.seatliberator.board.application.post.port.in.query.ListUserPostQuery;
 import com.seatliberator.seatliberator.board.application.post.port.in.result.PostResult;
 import com.seatliberator.seatliberator.board.application.post.port.out.PostReader;
-import com.seatliberator.seatliberator.board.application.shared.exception.BoardNotFoundException;
 import com.seatliberator.seatliberator.board.application.shared.exception.PostNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,10 +20,10 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class PostQueryService implements
         FindPostUseCase,
-        ListPostUseCase {
+        ListCategoryPostUseCase,
+        ListUserPostUseCase {
 
     private final PostReader reader;
-    private final BoardReader boardReader;
 
     @Override
     public PostResult find(FindPostQuery query) {
@@ -35,11 +35,14 @@ public class PostQueryService implements
     }
 
     @Override
-    public List<PostResult> list(ListPostQuery query) {
-        var boardId = query.boardId();
-        var existsBoard = boardReader.existsById(boardId);
-        if (!existsBoard) throw new BoardNotFoundException(boardId);
+    public List<PostResult> list(ListCategoryPostQuery query) {
+        return reader.findByFilter(query.toFilter()).stream()
+                .map(PostResult::from)
+                .toList();
+    }
 
+    @Override
+    public List<PostResult> list(ListUserPostQuery query) {
         return reader.findByFilter(query.toFilter()).stream()
                 .map(PostResult::from)
                 .toList();
