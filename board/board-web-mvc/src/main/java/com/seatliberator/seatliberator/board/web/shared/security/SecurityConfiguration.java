@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.board.web.security;
+package com.seatliberator.seatliberator.board.web.shared.security;
 
 import com.seatliberator.seatliberator.bootstrap.security.customizer.ResourceServerAuthorizeRequestMatcherCustomizer;
 import org.springframework.context.annotation.Bean;

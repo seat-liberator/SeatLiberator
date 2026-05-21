@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.board.web.security;
+package com.seatliberator.seatliberator.board.web.shared.security;
 
 import com.seatliberator.seatliberator.identity.core.role.Role;
 import com.seatliberator.seatliberator.identity.core.role.RoleCapabilities;
@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Set;
+
+import static com.seatliberator.seatliberator.board.application.shared.config.BoardCapability.*;
 
 @Configuration
 public class BoardRoleCapabilityConfiguration {
