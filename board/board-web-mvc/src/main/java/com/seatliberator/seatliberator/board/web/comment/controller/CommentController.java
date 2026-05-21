@@ -42,7 +42,7 @@ public class CommentController {
     })
     @GetMapping
     public ResponseEntity<List<CommentResult>> listComment(
-            @Parameter(description = "게시글 ID", example = "00000000-0000-0000-000000000001")
+            @Parameter(description = "게시글 ID", example = "00000000-0000-0000-0000-000000000001")
             @PathVariable("postId") UUID postId
     ) {
         var query = ListPostCommentQuery.of(postId);
@@ -57,7 +57,7 @@ public class CommentController {
     })
     @GetMapping("/{commentId}")
     public ResponseEntity<CommentResult> findComment(
-            @Parameter(description = "댓글 ID", example = "00000000-0000-0000-000000000001")
+            @Parameter(description = "댓글 ID", example = "00000000-0000-0000-0000-000000000001")
             @PathVariable("commentId") UUID commentId
     ) {
         var query = FindCommentQuery.of(commentId);
@@ -73,7 +73,7 @@ public class CommentController {
     })
     @PostMapping
     public ResponseEntity<CommentResult> createComment(
-            @Parameter(description = "게시글 ID", example = "00000000-0000-0000-000000000001")
+            @Parameter(description = "게시글 ID", example = "00000000-0000-0000-0000-000000000001")
             @PathVariable("postId") UUID postId,
             @RequestBody @Valid CreateCommentRequest request
     ) {
@@ -91,7 +91,7 @@ public class CommentController {
     })
     @PatchMapping("/{commentId}/content")
     public ResponseEntity<CommentResult> updateCommentContent(
-            @Parameter(description = "댓글 ID", example = "00000000-0000-0000-000000000001")
+            @Parameter(description = "댓글 ID", example = "00000000-0000-0000-0000-000000000001")
             @PathVariable("commentId") UUID commentId,
             @RequestBody @Valid UpdateCommentContentRequest request
     ) {
@@ -107,7 +107,7 @@ public class CommentController {
     })
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(
-            @Parameter(description = "댓글 ID", example = "00000000-0000-0000-000000000001")
+            @Parameter(description = "댓글 ID", example = "00000000-0000-0000-0000-000000000001")
             @PathVariable("commentId") UUID commentId
     ) {
         var command = DeleteCommentCommand.of(commentId);
