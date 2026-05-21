@@ -3,7 +3,8 @@ package com.seatliberator.seatliberator.board.web.post.controller;
 import com.seatliberator.seatliberator.board.application.post.port.in.*;
 import com.seatliberator.seatliberator.board.application.post.port.in.command.DeletePostCommand;
 import com.seatliberator.seatliberator.board.application.post.port.in.query.FindPostQuery;
-import com.seatliberator.seatliberator.board.application.post.port.in.query.ListCategoryPostQuery;
+import com.seatliberator.seatliberator.board.application.post.port.in.query.ListBoardPostQuery;
+import com.seatliberator.seatliberator.board.application.post.port.in.result.BoardPostSummaryResult;
 import com.seatliberator.seatliberator.board.application.post.port.in.result.PostResult;
 import com.seatliberator.seatliberator.board.web.post.request.CreatePostRequest;
 import com.seatliberator.seatliberator.board.web.post.request.UpdatePostCategoryRequest;
@@ -35,24 +36,27 @@ public class PostController {
     private final DeletePostUseCase deletePostUseCase;
 
     private final FindPostUseCase findPostUseCase;
-    private final ListCategoryPostUseCase listCategoryPostUseCase;
+    private final ListBoardPostUseCase listBoardPostUseCase;
 
     private final ActorContextHolder actorContextHolder;
 
-    @Operation(summary = "카테고리 내 게시글 목록 조회", description = "특정 카테고리 내 게시글 목록을 조회합니다.")
+    @Operation(summary = "게시판 내 게시글 목록 조회", description = "특정 게시판 내 게시글 목록을 조회합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "404", description = "카테고리 없음")
     })
     @GetMapping
-    public ResponseEntity<List<PostResult>> listCategoryPost(
-            @Parameter(description = "카테고리 ID", example = "00000000-0000-0000-000000000001")
-            @RequestParam(name = "categoryId") UUID categoryId
+    public ResponseEntity<List<BoardPostSummaryResult>> listPostInBoard(
+            @Parameter(description = "게시판 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("boardId") UUID boardId,
+            @Parameter(description = "카테고리 ID", example = "00000000-0000-0000-0000-000000000001")
+            @RequestParam(name = "categoryId", required = false) UUID categoryId
     ) {
-        var query = ListCategoryPostQuery.of(categoryId);
-        var result = listCategoryPostUseCase.list(query);
+        var query = ListBoardPostQuery.of(boardId, categoryId);
+        var result = listBoardPostUseCase.list(query);
         return ResponseEntity.ok(result);
     }
+
     // GET /board/{boardId}/posts/{postId}
     // 특정 게시판 안의 특정 게시글 1건을 조회
     // boardId와 postId를 함께 받는 이유는 어떤 게시판의 게시글인지 명확히 알기 이ㅜ해 <- ??
@@ -63,7 +67,7 @@ public class PostController {
     })
     @GetMapping("/{postId}")
     public ResponseEntity<PostResult> findPost(
-            @Parameter(description = "게시글 ID", example = "00000000-0000-0000-000000000001")
+            @Parameter(description = "게시글 ID", example = "00000000-0000-0000-0000-000000000001")
             @PathVariable("postId") UUID postId
     ) {
         var query = FindPostQuery.of(postId);
@@ -82,7 +86,7 @@ public class PostController {
     })
     @PostMapping
     public ResponseEntity<PostResult> createPost(
-            @Parameter(description = "게시판 ID", example = "00000000-0000-0000-000000000001")
+            @Parameter(description = "게시판 ID", example = "00000000-0000-0000-0000-000000000001")
             @PathVariable("boardId") UUID boardId,
             @RequestBody @Valid CreatePostRequest request
     ) {
@@ -101,7 +105,7 @@ public class PostController {
     })
     @PatchMapping("/{postId}/title")
     public ResponseEntity<PostResult> updatePostTitle(
-            @Parameter(description = "게시글 ID", example = "00000000-0000-0000-000000000001")
+            @Parameter(description = "게시글 ID", example = "00000000-0000-0000-0000-000000000001")
             @PathVariable("postId") UUID postId,
             @RequestBody @Valid UpdatePostTitleRequest request
     ) {
@@ -119,7 +123,7 @@ public class PostController {
     })
     @PatchMapping("/{postId}/content")
     public ResponseEntity<PostResult> updatePostContent(
-            @Parameter(description = "게시글 ID", example = "00000000-0000-0000-000000000001")
+            @Parameter(description = "게시글 ID", example = "00000000-0000-0000-0000-000000000001")
             @PathVariable("postId") UUID postId,
             @RequestBody @Valid UpdatePostContentRequest request
     ) {
@@ -137,7 +141,7 @@ public class PostController {
     })
     @PatchMapping("/{postId}/category")
     public ResponseEntity<PostResult> patch(
-            @Parameter(description = "게시글 ID", example = "00000000-0000-0000-000000000001")
+            @Parameter(description = "게시글 ID", example = "00000000-0000-0000-0000-000000000001")
             @PathVariable("postId") UUID postId,
             @RequestBody @Valid UpdatePostCategoryRequest request
     ) {
@@ -155,9 +159,9 @@ public class PostController {
     })
     @DeleteMapping("/{postId}")
     public ResponseEntity<?> delete(
-            @Parameter(description = "게시판 ID", example = "00000000-0000-0000-000000000001")
+            @Parameter(description = "게시판 ID", example = "00000000-0000-0000-0000-000000000001")
             @PathVariable("boardId") UUID boardId,
-            @Parameter(description = "게시글 ID", example = "00000000-0000-0000-000000000001")
+            @Parameter(description = "게시글 ID", example = "00000000-0000-0000-0000-000000000001")
             @PathVariable("postId") UUID postId
     ) {
         var command = DeletePostCommand.of(postId);

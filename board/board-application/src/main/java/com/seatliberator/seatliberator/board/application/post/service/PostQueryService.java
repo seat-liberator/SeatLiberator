@@ -1,10 +1,8 @@
 package com.seatliberator.seatliberator.board.application.post.service;
 
 import com.seatliberator.seatliberator.board.application.post.port.in.FindPostUseCase;
-import com.seatliberator.seatliberator.board.application.post.port.in.ListCategoryPostUseCase;
 import com.seatliberator.seatliberator.board.application.post.port.in.ListUserPostUseCase;
 import com.seatliberator.seatliberator.board.application.post.port.in.query.FindPostQuery;
-import com.seatliberator.seatliberator.board.application.post.port.in.query.ListCategoryPostQuery;
 import com.seatliberator.seatliberator.board.application.post.port.in.query.ListUserPostQuery;
 import com.seatliberator.seatliberator.board.application.post.port.in.result.PostResult;
 import com.seatliberator.seatliberator.board.application.post.port.out.PostReader;
@@ -20,7 +18,6 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class PostQueryService implements
         FindPostUseCase,
-        ListCategoryPostUseCase,
         ListUserPostUseCase {
 
     private final PostReader reader;
@@ -32,13 +29,6 @@ public class PostQueryService implements
                 .orElseThrow(() -> new PostNotFoundException(postId));
 
         return PostResult.from(post);
-    }
-
-    @Override
-    public List<PostResult> list(ListCategoryPostQuery query) {
-        return reader.findByFilter(query.toFilter()).stream()
-                .map(PostResult::from)
-                .toList();
     }
 
     @Override
