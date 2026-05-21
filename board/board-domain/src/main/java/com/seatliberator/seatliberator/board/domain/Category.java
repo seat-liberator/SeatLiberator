@@ -1,41 +1,55 @@
 package com.seatliberator.seatliberator.board.domain;
 
+import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
+@Table(name = "category")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category {
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
-    private final List<Post> posts = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Setter
-    @Column(nullable = false)
-    private String name;
-    @Setter
-    @Column
-    private String description;
-    @Setter(AccessLevel.PROTECTED)
+
+    @Column(name = "board_id", nullable = false, updatable = false)
+    private UUID boardId;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "board_id", nullable = false)
+    @JoinColumn(name = "board_id", nullable = false, insertable = false, updatable = false)
     private Board board;
 
-    private Category(String name, String description) {
-        this.name = name;
-        this.description = description;
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "description", nullable = false)
+    private String description;
+
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
+
+    private Category(UUID boardId, String name, String description, Instant createdAt) {
+        this.boardId = Preconditions.requireNonNull(boardId, "boardId");
+        this.name = Preconditions.requireNonBlank(name, "name");
+        this.description = Preconditions.requireNonBlank(description, "description");
+        this.createdAt = Preconditions.requireNonNull(createdAt, "createdAt");
     }
 
-    public static Category create(String name, String description) {
-        return new Category(name, description);
+    public static Category of(UUID boardId, String name, String description, Instant createdAt) {
+        return new Category(boardId, name, description, createdAt);
+    }
+
+    public void updateName(String name) {
+        this.name = Preconditions.requireNonBlank(name, "name");
+    }
+
+    public void updateDescription(String description) {
+        this.description = Preconditions.requireNonNull(description, "description");
     }
 }
