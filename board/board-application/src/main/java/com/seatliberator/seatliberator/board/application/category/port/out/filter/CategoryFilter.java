@@ -12,14 +12,10 @@ public record CategoryFilter(
     }
 
     public CategoryFilter name(String name) {
-        Preconditions.requireNonBlank(name, "name");
-
         return new CategoryFilter(name, description);
     }
 
     public CategoryFilter description(String description) {
-        Preconditions.requireNonBlank(description, "description");
-
         return new CategoryFilter(name, description);
     }
 }
