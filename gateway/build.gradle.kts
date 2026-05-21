@@ -18,7 +18,7 @@ dependencies {
 
     testImplementation(project(":identity:identity-application"))
     testImplementation(project(":reservation:reservation-web-mvc"))
-    testImplementation(project(":board:board-application"))
+    testImplementation(project(":board:board-web-mvc"))
     testImplementation(project(":notification:notification-application"))
 }
 

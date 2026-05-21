@@ -45,10 +45,11 @@ include("reservation:reservation-persistence")
 
 include("board:board-api")
 include("board:board-application")
+include("board:board-domain")
+include("board:board-web-mvc")
+include("board:board-persistence")
 
 include("notification:notification-api")
 include("notification:notification-application")
 
 include("gateway")
-
-include("board:board-domain")

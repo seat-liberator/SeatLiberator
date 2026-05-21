@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator;
 
-import com.seatliberator.seatliberator.board.infrastructure.web.controller.BoardController;
-import com.seatliberator.seatliberator.board.infrastructure.web.controller.CategoryController;
-import com.seatliberator.seatliberator.board.infrastructure.web.controller.PostController;
+import com.seatliberator.seatliberator.board.web.controller.BoardController;
+import com.seatliberator.seatliberator.board.web.controller.CategoryController;
+import com.seatliberator.seatliberator.board.web.controller.PostController;
 import com.seatliberator.seatliberator.jwks.infrastructure.web.controller.JwksController;
 import com.seatliberator.seatliberator.notification.infrastructure.web.controller.NotificationController;
 import com.seatliberator.seatliberator.reservation.web.booking.controller.AvailabilityQueryController;
