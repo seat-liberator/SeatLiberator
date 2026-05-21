@@ -1,17 +1,14 @@
 plugins {
-    id("seatliberator.spring-boot-monolith-base")
+    id("seatliberator.persistence-base")
 }
 
 group = "com.seatliberator.seatliberator"
 version = "0.0.1-SNAPSHOT"
 
 dependencies {
-    implementation(project(":board:board-api"))
+    implementation(project(":board:board-application"))
     implementation(project(":board:board-domain"))
-
-    implementation(project(":bootstrap:application-starter"))
 
     testImplementation(project(":kernel:kernel-test"))
     testImplementation(testFixtures(project(":board:board-domain")))
-    testImplementation(testFixtures(project(":identity:identity-core")))
 }
