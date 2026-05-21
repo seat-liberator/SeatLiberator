@@ -15,20 +15,14 @@ public record PostFilter(
     }
 
     public PostFilter boardId(UUID boardId) {
-        Preconditions.requireNonNull(boardId, "boardId");
-
         return new PostFilter(boardId, categoryId, userId);
     }
 
     public PostFilter categoryId(UUID categoryId) {
-        Preconditions.requireNonNull(categoryId, "categoryId");
-
         return new PostFilter(boardId, categoryId, userId);
     }
 
     public PostFilter userId(String userId) {
-        Preconditions.requireNonBlank(userId, "userId");
-
         return new PostFilter(boardId, categoryId, userId);
     }
 }
