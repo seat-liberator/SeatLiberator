@@ -1,12 +1,12 @@
 package com.seatliberator.seatliberator.identity.server.security.authentication.method.federated.handler;
 
-import com.seatliberator.seatliberator.identity.server.application.account.port.in.AccountAuthenticator;
-import com.seatliberator.seatliberator.identity.server.application.account.port.in.AccountExistenceChecker;
-import com.seatliberator.seatliberator.identity.server.application.account.port.in.UserRegistrar;
-import com.seatliberator.seatliberator.identity.server.application.account.port.in.command.AuthenticationCommand;
-import com.seatliberator.seatliberator.identity.server.application.account.port.in.command.ExistenceCheckingCommand;
-import com.seatliberator.seatliberator.identity.server.application.account.port.in.command.RegistrationCommand;
-import com.seatliberator.seatliberator.identity.server.application.account.port.in.result.AuthEntry;
+import com.seatliberator.seatliberator.identity.server.application.shared.port.in.AccountAuthenticator;
+import com.seatliberator.seatliberator.identity.server.application.shared.port.in.AccountExistenceChecker;
+import com.seatliberator.seatliberator.identity.server.application.shared.port.in.UserRegistrar;
+import com.seatliberator.seatliberator.identity.server.application.shared.port.in.command.AuthenticationCommand;
+import com.seatliberator.seatliberator.identity.server.application.shared.port.in.command.ExistenceCheckingCommand;
+import com.seatliberator.seatliberator.identity.server.application.shared.port.in.command.RegistrationCommand;
+import com.seatliberator.seatliberator.identity.server.application.shared.port.in.result.AuthEntry;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.federated.principal.FederatedPrincipal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

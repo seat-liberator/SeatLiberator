@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.provider;
 
-import com.seatliberator.seatliberator.identity.server.application.account.exception.IdentityApplicationException;
-import com.seatliberator.seatliberator.identity.server.application.account.port.in.AccountAuthenticator;
-import com.seatliberator.seatliberator.identity.server.application.account.port.in.command.AuthenticationCommand;
-import com.seatliberator.seatliberator.identity.server.application.account.port.in.result.AuthEntry;
+import com.seatliberator.seatliberator.identity.server.application.shared.exception.IdentityApplicationException;
+import com.seatliberator.seatliberator.identity.server.application.shared.port.in.AccountAuthenticator;
+import com.seatliberator.seatliberator.identity.server.application.shared.port.in.command.AuthenticationCommand;
+import com.seatliberator.seatliberator.identity.server.application.shared.port.in.result.AuthEntry;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.token.CredentialSignInAuthenticationToken;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.token.TrustedAuthenticationToken;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.token.TrustedUserPrincipal;
