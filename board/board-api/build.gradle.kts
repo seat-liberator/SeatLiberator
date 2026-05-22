@@ -1,5 +1,6 @@
 plugins {
-    id("java")
+    id("seatliberator.base.library")
+    id("seatliberator.spring.module")
 }
 
 group = "com.seatliberator.seatliberator"
@@ -9,8 +10,6 @@ dependencies {
     api(project(":kernel:kernel-core"))
     api(project(":event-relay:event-relay-core"))
     api(project(":identity:identity-api"))
-
-    implementation("org.springframework:spring-context")
 }
 
 tasks.test {

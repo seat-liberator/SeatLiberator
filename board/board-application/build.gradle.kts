@@ -1,5 +1,5 @@
 plugins {
-    id("seatliberator.spring-boot-monolith-base")
+    id("seatliberator.layer.application")
 }
 
 group = "com.seatliberator.seatliberator"

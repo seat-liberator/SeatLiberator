@@ -43,6 +43,7 @@ include("reservation:reservation-domain")
 include("reservation:reservation-web-mvc")
 include("reservation:reservation-persistence")
 
+include("board")
 include("board:board-api")
 include("board:board-application")
 include("board:board-domain")
