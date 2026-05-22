@@ -24,6 +24,7 @@ include("bootstrap:web-application-starter")
 include("bootstrap:resource-application-starter")
 include("bootstrap:application-starter")
 
+include("identity")
 include("identity:identity-core")
 include("identity:identity-client-starter")
 include("identity:identity-api")
