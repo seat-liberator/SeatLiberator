@@ -1,13 +1,13 @@
 package com.seatliberator.seatliberator.identity.server.domain.account;
 
+import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -20,79 +20,35 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "nickname", nullable = false)
     private String nickname;
 
-    @OneToMany(
-            mappedBy = "user",
-            fetch = FetchType.LAZY,
-            orphanRemoval = true,
-            cascade = CascadeType.ALL
-    )
-    private List<FederatedAccount> federatedAccounts = new ArrayList<>();
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
 
-    @OneToOne(
-            mappedBy = "user",
-            fetch = FetchType.LAZY,
-            orphanRemoval = true,
-            cascade = CascadeType.ALL
-    )
-    private CredentialAccount credentialAccount;
+    @Column(name = "updated_at")
+    private Instant updatedAt;
 
-    public User(
-            String nickname,
-            List<FederatedAccount> federatedAccounts,
-            CredentialAccount credentialAccount
-    ) {
-        List<FederatedAccount> alignFederatedAccounts = federatedAccounts.stream()
-                .peek(account -> {
-                    if (account.getUser() != null && account.getUser() != this) {
-                        account.assignUser(this);
-                    }
-                })
-                .toList();
-
-        if (credentialAccount.getUser() != null && credentialAccount.getUser() != this) {
-            credentialAccount.assignUser(this);
-        }
-
-        this.nickname = nickname;
-        this.federatedAccounts = alignFederatedAccounts;
-        this.credentialAccount = credentialAccount;
+    public User(String nickname, Instant createdAt) {
+        this.nickname = Preconditions.requireNonBlank(nickname, "nickname");
+        this.createdAt = Preconditions.requireNonNull(createdAt, "createdAt");
     }
 
-    public static User create(
-            String nickname
-    ) {
-        var u = new User();
-
-        u.nickname = nickname;
-
-        return u;
+    public static User of(String nickname, Instant createdAt) {
+        return new User(nickname, createdAt);
     }
 
-    public void addFederatedAccount(FederatedAccount federatedAccount) {
-        if (federatedAccount == null) {
-            return;
-        }
-
-        if (!this.federatedAccounts.contains(federatedAccount)) {
-            this.federatedAccounts.add(federatedAccount);
-        }
-
-        if (federatedAccount.getUser() != this) {
-            federatedAccount.assignUser(this);
-        }
+    public void updateNickname(String nickname, Instant updatedAt) {
+        this.updatedAt = evaluateUpdatedAt(updatedAt);
+        this.nickname = Preconditions.requireNonBlank(nickname, "nickname");
     }
 
-    public void setCredentialAccount(CredentialAccount credentialAccount) {
-        if (credentialAccount == null) {
-            return;
-        }
+    private Instant evaluateUpdatedAt(Instant updatedAt) {
+        Preconditions.requireNonNull(updatedAt, "updatedAt");
 
-        this.credentialAccount = credentialAccount;
+        if (updatedAt.isBefore(createdAt))
+            throw new IllegalArgumentException("updatedAt must not be before createdAt");
 
-        if (credentialAccount.getUser() != this) {
-            credentialAccount.assignUser(this);
-        }
+        return updatedAt;
     }
 }
