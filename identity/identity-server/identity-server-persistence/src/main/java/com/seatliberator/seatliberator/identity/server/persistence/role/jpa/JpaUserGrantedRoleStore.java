@@ -1,8 +1,8 @@
-package com.seatliberator.seatliberator.role.infrastructure.persistence.jpa;
+package com.seatliberator.seatliberator.identity.server.persistence.role.jpa;
 
 import com.seatliberator.seatliberator.identity.server.domain.role.UserGrantedRole;
+import com.seatliberator.seatliberator.identity.server.persistence.role.jpa.repository.UserGrantedRoleRepository;
 import com.seatliberator.seatliberator.role.application.port.out.UserGrantedRoleStore;
-import com.seatliberator.seatliberator.role.infrastructure.persistence.jpa.repository.UserGrantedRoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

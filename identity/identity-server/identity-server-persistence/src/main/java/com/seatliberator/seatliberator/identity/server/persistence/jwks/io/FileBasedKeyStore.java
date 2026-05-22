@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.jwks.infrastructure.io;
+package com.seatliberator.seatliberator.identity.server.persistence.jwks.io;
 
 import com.seatliberator.seatliberator.identity.server.domain.jwks.KeyStatus;
 import com.seatliberator.seatliberator.identity.server.domain.jwks.RSASignatureKey;
