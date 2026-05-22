@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.role.infrastructure.persistence.jpa.repository;
 
-import com.seatliberator.seatliberator.role.domain.UserGrantedRole;
+import com.seatliberator.seatliberator.identity.server.domain.role.UserGrantedRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

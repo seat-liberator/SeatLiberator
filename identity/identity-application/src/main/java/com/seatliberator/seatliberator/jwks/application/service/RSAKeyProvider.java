@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.jwks.application.service;
 
+import com.seatliberator.seatliberator.identity.server.domain.jwks.RSASignatureKey;
+import com.seatliberator.seatliberator.identity.server.domain.jwks.RSAVerificationKey;
 import com.seatliberator.seatliberator.jwks.application.port.in.KeyProvider;
 import com.seatliberator.seatliberator.jwks.application.port.out.KeyStore;
-import com.seatliberator.seatliberator.jwks.domain.RSASignatureKey;
-import com.seatliberator.seatliberator.jwks.domain.RSAVerificationKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.domain;
+package com.seatliberator.seatliberator.identity.server.domain.account;
 
 import jakarta.persistence.MappedSuperclass;
 import lombok.AccessLevel;

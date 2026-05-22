@@ -1,8 +1,9 @@
 package com.seatliberator.seatliberator.identity.infrastructure.persistence.jpa;
 
+
 import com.seatliberator.seatliberator.identity.application.port.out.UserStore;
-import com.seatliberator.seatliberator.identity.domain.User;
 import com.seatliberator.seatliberator.identity.infrastructure.persistence.jpa.repository.UserRepository;
+import com.seatliberator.seatliberator.identity.server.domain.account.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.application.port.out;
 
-import com.seatliberator.seatliberator.identity.domain.CredentialAccount;
+import com.seatliberator.seatliberator.identity.server.domain.account.CredentialAccount;
 
 import java.util.Optional;
 

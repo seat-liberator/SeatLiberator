@@ -28,7 +28,9 @@ include("identity")
 include("identity:identity-core")
 include("identity:identity-client-starter")
 include("identity:identity-api")
+include("identity:identity-server")
 include("identity:identity-application")
+include("identity:identity-server:identity-server-domain")
 
 include("idempotency:idempotency-core")
 

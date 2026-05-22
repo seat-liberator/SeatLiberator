@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.role.domain;
+package com.seatliberator.seatliberator.identity.server.domain.role;
 
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
 import com.seatliberator.seatliberator.identity.core.role.Role;

@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.jwks.domain;
+package com.seatliberator.seatliberator.identity.server.domain.jwks;
 
 import lombok.Getter;
 
