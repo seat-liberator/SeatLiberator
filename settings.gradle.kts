@@ -37,6 +37,7 @@ include("event-relay:event-relay-support-jpa")
 include("event-relay:event-relay-support-kafka")
 include("event-relay:event-relay-starter")
 
+include("reservation")
 include("reservation:reservation-api")
 include("reservation:reservation-application")
 include("reservation:reservation-domain")

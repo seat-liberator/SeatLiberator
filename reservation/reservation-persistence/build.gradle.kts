@@ -1,5 +1,5 @@
 plugins {
-    id("seatliberator.persistence-base")
+    id("seatliberator.layer.persistence")
 }
 
 group = "com.seatliberator.seatliberator"
@@ -12,8 +12,4 @@ dependencies {
 
     testImplementation(project(":kernel:kernel-test"))
     testImplementation(testFixtures(project(":reservation:reservation-domain")))
-}
-
-tasks.test {
-    useJUnitPlatform()
 }
