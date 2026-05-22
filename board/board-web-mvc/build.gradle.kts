@@ -1,5 +1,5 @@
 plugins {
-    id("seatliberator.web-mvc-base")
+    id("seatliberator.layer.webmvc")
 }
 
 group = "com.seatliberator.seatliberator"
