@@ -1,10 +1,10 @@
 package com.seatliberator.seatliberator.identity.server.persistence.jwks.io;
 
+import com.seatliberator.seatliberator.identity.server.application.jwks.config.JwksProperties;
+import com.seatliberator.seatliberator.identity.server.application.jwks.port.out.KeyStore;
 import com.seatliberator.seatliberator.identity.server.domain.jwks.KeyStatus;
 import com.seatliberator.seatliberator.identity.server.domain.jwks.RSASignatureKey;
 import com.seatliberator.seatliberator.identity.server.domain.jwks.RSAVerificationKey;
-import com.seatliberator.seatliberator.jwks.application.config.JwksProperties;
-import com.seatliberator.seatliberator.jwks.application.port.out.KeyStore;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Repository;
