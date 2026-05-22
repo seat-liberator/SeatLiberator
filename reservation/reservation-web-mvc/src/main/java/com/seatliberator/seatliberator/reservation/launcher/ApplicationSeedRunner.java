@@ -1,5 +1,6 @@
-package com.seatliberator.seatliberator.reservation.application.shared.seed;
+package com.seatliberator.seatliberator.reservation.launcher;
 
+import com.seatliberator.seatliberator.reservation.application.shared.seed.RoomSeeder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;

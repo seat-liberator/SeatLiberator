@@ -1,5 +1,5 @@
 plugins {
-    id("seatliberator.application-base")
+    id("seatliberator.layer.application")
 }
 
 group = "com.seatliberator.seatliberator"
