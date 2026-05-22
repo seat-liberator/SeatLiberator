@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.jwks.infrastructure.web.controller;
+package com.seatliberator.seatliberator.web.jwks.controller;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.KeyUse;
