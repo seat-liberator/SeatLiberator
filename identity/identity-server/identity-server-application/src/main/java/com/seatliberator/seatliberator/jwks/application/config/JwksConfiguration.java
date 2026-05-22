@@ -6,7 +6,6 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.seatliberator.seatliberator.identity.server.domain.jwks.RSASignatureKey;
 import com.seatliberator.seatliberator.jwks.application.port.in.KeyProvider;
-import com.seatliberator.seatliberator.jwks.application.port.in.TokenProvider;
 import com.seatliberator.seatliberator.jwks.application.port.out.ByteEncoder;
 import com.seatliberator.seatliberator.jwks.application.service.JwtProvider;
 import com.seatliberator.seatliberator.jwks.application.service.OpaqueTokenProvider;
@@ -49,7 +48,7 @@ public class JwksConfiguration {
     }
 
     @Bean
-    TokenProvider jwtProvider(
+    JwtProvider jwtProvider(
             JwtEncoder jwtEncoder,
             JwtProperties properties,
             Clock clock
@@ -75,7 +74,7 @@ public class JwksConfiguration {
     }
 
     @Bean
-    TokenProvider opaqueTokenProvider(
+    OpaqueTokenProvider opaqueTokenProvider(
             RandomGenerator randomGenerator,
             ByteEncoder byteEncoder
     ) {
