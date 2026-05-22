@@ -1,6 +1,5 @@
 plugins {
-    id("java")
-    id("seatliberator.module-base")
+    id("seatliberator.base.library")
     id("java-test-fixtures")
 }
 
