@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.identity.server.security.authentication.method.credential;
 
-import com.seatliberator.seatliberator.identity.server.application.account.port.in.AccountAuthenticator;
-import com.seatliberator.seatliberator.identity.server.application.account.port.in.UserRegistrar;
+import com.seatliberator.seatliberator.identity.server.application.shared.port.in.AccountAuthenticator;
+import com.seatliberator.seatliberator.identity.server.application.shared.port.in.UserRegistrar;
 import com.seatliberator.seatliberator.identity.server.security.FilterChainUtils;
 import com.seatliberator.seatliberator.identity.server.security.ResponseWriter;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.filter.JsonCredentialSignInProcessingFilter;

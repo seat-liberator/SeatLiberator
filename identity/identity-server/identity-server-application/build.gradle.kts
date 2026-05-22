@@ -18,4 +18,7 @@ dependencies {
 
     implementation(libs.spring.boot.starter.oauth2.client)
     implementation(libs.spring.boot.starter.kafka)
+
+    testImplementation(project(":kernel:kernel-test"))
+    testImplementation(testFixtures(project(":identity:identity-server:identity-server-domain")))
 }
