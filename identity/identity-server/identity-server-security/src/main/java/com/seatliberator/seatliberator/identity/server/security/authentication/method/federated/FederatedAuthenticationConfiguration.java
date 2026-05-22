@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.identity.server.security.authentication.method.federated;
 
-import com.seatliberator.seatliberator.identity.application.port.in.AccountAuthenticator;
-import com.seatliberator.seatliberator.identity.application.port.in.AccountExistenceChecker;
-import com.seatliberator.seatliberator.identity.application.port.in.UserRegistrar;
+import com.seatliberator.seatliberator.identity.server.application.account.port.in.AccountAuthenticator;
+import com.seatliberator.seatliberator.identity.server.application.account.port.in.AccountExistenceChecker;
+import com.seatliberator.seatliberator.identity.server.application.account.port.in.UserRegistrar;
 import com.seatliberator.seatliberator.identity.server.security.FilterChainUtils;
 import com.seatliberator.seatliberator.identity.server.security.ResponseWriter;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.federated.handler.DefaultFederatedSignInProcessor;

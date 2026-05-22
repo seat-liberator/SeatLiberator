@@ -1,0 +1,15 @@
+package com.seatliberator.seatliberator.identity.server.application.account.port.out;
+
+import com.seatliberator.seatliberator.identity.server.domain.account.CredentialAccount;
+
+import java.util.Optional;
+
+public interface CredentialAccountStore {
+    Optional<CredentialAccount> findByEmail(String email);
+
+    Optional<AuthRecord.Credential> findCredentialAuthByEmail(String email);
+
+    boolean existsByEmail(String email);
+
+    CredentialAccount save(CredentialAccount credentialAccount);
+}

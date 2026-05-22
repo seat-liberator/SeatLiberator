@@ -3,7 +3,7 @@ package com.seatliberator.seatliberator.web.jwks.controller;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.jwk.RSAKey;
-import com.seatliberator.seatliberator.jwks.application.port.in.KeyProvider;
+import com.seatliberator.seatliberator.identity.server.application.jwks.port.in.KeyProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

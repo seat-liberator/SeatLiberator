@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.identity.server.security.authentication.method.token.handler;
 
+import com.seatliberator.seatliberator.identity.server.application.jwks.port.in.TokenProvider;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.token.IssuedTokenEntry;
-import com.seatliberator.seatliberator.jwks.application.port.in.TokenProvider;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;

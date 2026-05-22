@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.identity.server.persistence.account.jpa;
 
-import com.seatliberator.seatliberator.identity.application.port.out.AuthRecord;
-import com.seatliberator.seatliberator.identity.application.port.out.CredentialAccountStore;
+import com.seatliberator.seatliberator.identity.server.application.account.port.out.AuthRecord;
+import com.seatliberator.seatliberator.identity.server.application.account.port.out.CredentialAccountStore;
 import com.seatliberator.seatliberator.identity.server.domain.account.CredentialAccount;
 import com.seatliberator.seatliberator.identity.server.persistence.account.jpa.repository.CredentialAccountRepository;
 import lombok.RequiredArgsConstructor;
