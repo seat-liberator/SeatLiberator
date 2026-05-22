@@ -10,4 +10,7 @@ dependencies {
     implementation(project(":identity:identity-server:identity-server-domain"))
     implementation(project(":identity:identity-core"))
     implementation(project(":kernel:kernel-core"))
+
+    testImplementation(project(":kernel:kernel-test"))
+    testImplementation(testFixtures(project(":identity:identity-server:identity-server-domain")))
 }
