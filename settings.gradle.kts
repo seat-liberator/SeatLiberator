@@ -24,6 +24,8 @@ include("bootstrap:web-application-starter")
 include("bootstrap:resource-application-starter")
 include("bootstrap:application-starter")
 
+include("gateway")
+
 include("identity")
 include("identity:identity-core")
 include("identity:identity-client-starter")
@@ -33,6 +35,7 @@ include("identity:identity-server:identity-server-application")
 include("identity:identity-server:identity-server-domain")
 include("identity:identity-server:identity-server-persistence")
 include("identity:identity-server:identity-server-webmvc")
+include("identity:identity-server:identity-server-security")
 
 include("idempotency:idempotency-core")
 
@@ -59,5 +62,3 @@ include("board:board-persistence")
 include("notification")
 include("notification:notification-api")
 include("notification:notification-application")
-
-include("gateway")
