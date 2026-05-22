@@ -1,6 +1,7 @@
 plugins {
-    id("seatliberator.spring-boot-application-base")
-    id("seatliberator.web-mvc-base")
+    id("seatliberator.layer.launcher")
+    id("seatliberator.layer.webmvc")
+    id("seatliberator.spring.security")
 }
 
 group = "com.seatliberator.seatliberator"
