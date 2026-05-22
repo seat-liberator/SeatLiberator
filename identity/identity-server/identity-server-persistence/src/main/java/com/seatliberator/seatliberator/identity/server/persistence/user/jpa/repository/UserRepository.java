@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.server.persistence.account.jpa.repository;
+package com.seatliberator.seatliberator.identity.server.persistence.user.jpa.repository;
 
 import com.seatliberator.seatliberator.identity.server.domain.account.User;
 import org.springframework.data.jpa.repository.JpaRepository;
