@@ -12,6 +12,8 @@ import com.seatliberator.seatliberator.reservation.domain.reservation.Reservatio
 import java.util.Set;
 import java.util.UUID;
 
+import static org.assertj.core.api.Fail.fail;
+
 public class ReservationTestSupport extends DefaultTestSupport {
     public static final UUID RESERVATION_ID = UuidGenerator.generate(1);
     public static final String OTHER_USER_ID = "user-2";
@@ -39,8 +41,18 @@ public class ReservationTestSupport extends DefaultTestSupport {
 
     public static Reservation reservationWithId() {
         var reservation = reservation();
-        ReservationFixture.stubReservationId(reservation, RESERVATION_ID);
+        stubReservationId(reservation, RESERVATION_ID);
         return reservation;
+    }
+
+    public static void stubReservationId(Reservation reservation, UUID id) {
+        try {
+            var idField = Reservation.class.getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(reservation, id);
+        } catch (ReflectiveOperationException e) {
+            fail("테스트용 ID 설정 실패");
+        }
     }
 
     public static UseReservationCommand useReservationCommand() {
