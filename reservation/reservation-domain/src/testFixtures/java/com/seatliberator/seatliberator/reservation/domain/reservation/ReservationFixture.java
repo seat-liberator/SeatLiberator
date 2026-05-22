@@ -12,7 +12,6 @@ import java.time.Instant;
 import java.util.UUID;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
-import static org.assertj.core.api.Fail.fail;
 
 public class ReservationFixture {
     public static final String INITIAL_USER_ID = "user-1";
@@ -43,16 +42,6 @@ public class ReservationFixture {
             case USED -> reservation.use(at);
             case CANCELLED -> reservation.cancel(at);
             case EXPIRED -> reservation.expire(at);
-        }
-    }
-
-    public static void stubReservationId(Reservation reservation, UUID id) {
-        try {
-            var idField = Reservation.class.getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(reservation, id);
-        } catch (ReflectiveOperationException e) {
-            fail("테스트용 ID 설정 실패");
         }
     }
 

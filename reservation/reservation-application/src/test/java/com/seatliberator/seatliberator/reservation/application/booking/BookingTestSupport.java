@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import static com.seatliberator.seatliberator.reservation.application.reservation.ReservationTestSupport.stubReservationId;
 import static com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailyNanoRangeFixture.*;
 
 public class BookingTestSupport extends DefaultTestSupport {
@@ -48,7 +49,7 @@ public class BookingTestSupport extends DefaultTestSupport {
 
     public static Reservation reservationWithId() {
         var reservation = reservation();
-        ReservationFixture.stubReservationId(reservation, RESERVATION_ID);
+        stubReservationId(reservation, RESERVATION_ID);
         return reservation;
     }
 
