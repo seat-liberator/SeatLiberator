@@ -52,6 +52,7 @@ include("board:board-domain")
 include("board:board-web-mvc")
 include("board:board-persistence")
 
+include("notification")
 include("notification:notification-api")
 include("notification:notification-application")
 

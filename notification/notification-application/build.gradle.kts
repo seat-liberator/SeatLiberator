@@ -1,5 +1,9 @@
 plugins {
-    id("seatliberator.spring-boot-monolith-base")
+    id("seatliberator.layer.launcher")
+    id("seatliberator.layer.persistence")
+    id("seatliberator.layer.webmvc")
+    id("seatliberator.layer.domain")
+    id("seatliberator.layer.security")
 }
 
 group = "com.seatliberator.seatliberator"
