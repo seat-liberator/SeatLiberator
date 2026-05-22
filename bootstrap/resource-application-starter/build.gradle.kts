@@ -1,5 +1,7 @@
 plugins {
-    id("seatliberator.web-mvc-base")
+    id("seatliberator.base.library")
+    id("seatliberator.spring.autoconfigure")
+    id("seatliberator.spring.security")
 }
 
 group = "com.seatliberator.seatliberator"
