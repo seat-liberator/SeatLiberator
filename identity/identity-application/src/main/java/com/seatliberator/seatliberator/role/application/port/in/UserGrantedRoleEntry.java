@@ -2,8 +2,8 @@ package com.seatliberator.seatliberator.role.application.port.in;
 
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
 import com.seatliberator.seatliberator.identity.core.role.Role;
+import com.seatliberator.seatliberator.identity.server.domain.role.UserGrantedRole;
 import com.seatliberator.seatliberator.kernel.ApplicationNamespace;
-import com.seatliberator.seatliberator.role.domain.UserGrantedRole;
 
 public record UserGrantedRoleEntry(
         String userId,

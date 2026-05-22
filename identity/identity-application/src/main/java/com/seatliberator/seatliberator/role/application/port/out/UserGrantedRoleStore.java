@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.role.application.port.out;
 
-import com.seatliberator.seatliberator.role.domain.UserGrantedRole;
+import com.seatliberator.seatliberator.identity.server.domain.role.UserGrantedRole;
 
 import java.util.List;
 

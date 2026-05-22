@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.infrastructure.persistence.jpa.repository;
 
-import com.seatliberator.seatliberator.identity.domain.FederatedAccount;
+import com.seatliberator.seatliberator.identity.server.domain.account.FederatedAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

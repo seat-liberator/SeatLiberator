@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.jwks.application.port.out;
 
-import com.seatliberator.seatliberator.jwks.domain.RSASignatureKey;
-import com.seatliberator.seatliberator.jwks.domain.RSAVerificationKey;
+import com.seatliberator.seatliberator.identity.server.domain.jwks.RSASignatureKey;
+import com.seatliberator.seatliberator.identity.server.domain.jwks.RSAVerificationKey;
 
 import java.util.List;
 

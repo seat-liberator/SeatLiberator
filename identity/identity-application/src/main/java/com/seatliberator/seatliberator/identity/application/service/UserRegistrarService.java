@@ -13,9 +13,9 @@ import com.seatliberator.seatliberator.identity.application.port.in.result.AuthE
 import com.seatliberator.seatliberator.identity.application.port.out.CredentialAccountStore;
 import com.seatliberator.seatliberator.identity.application.port.out.FederatedAccountStore;
 import com.seatliberator.seatliberator.identity.application.port.out.UserStore;
-import com.seatliberator.seatliberator.identity.domain.CredentialAccount;
-import com.seatliberator.seatliberator.identity.domain.FederatedAccount;
-import com.seatliberator.seatliberator.identity.domain.User;
+import com.seatliberator.seatliberator.identity.server.domain.account.CredentialAccount;
+import com.seatliberator.seatliberator.identity.server.domain.account.FederatedAccount;
+import com.seatliberator.seatliberator.identity.server.domain.account.User;
 import com.seatliberator.seatliberator.role.application.port.in.RoleGrantor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

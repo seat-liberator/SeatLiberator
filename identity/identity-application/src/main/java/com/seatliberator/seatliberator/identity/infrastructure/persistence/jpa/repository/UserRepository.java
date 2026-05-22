@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.infrastructure.persistence.jpa.repository;
 
-import com.seatliberator.seatliberator.identity.domain.User;
+import com.seatliberator.seatliberator.identity.server.domain.account.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

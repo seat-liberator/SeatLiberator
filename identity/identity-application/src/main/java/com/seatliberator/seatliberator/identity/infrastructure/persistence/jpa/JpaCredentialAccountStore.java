@@ -2,8 +2,8 @@ package com.seatliberator.seatliberator.identity.infrastructure.persistence.jpa;
 
 import com.seatliberator.seatliberator.identity.application.port.out.AuthRecord;
 import com.seatliberator.seatliberator.identity.application.port.out.CredentialAccountStore;
-import com.seatliberator.seatliberator.identity.domain.CredentialAccount;
 import com.seatliberator.seatliberator.identity.infrastructure.persistence.jpa.repository.CredentialAccountRepository;
+import com.seatliberator.seatliberator.identity.server.domain.account.CredentialAccount;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

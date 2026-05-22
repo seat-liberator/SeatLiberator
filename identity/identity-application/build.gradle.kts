@@ -2,7 +2,6 @@ plugins {
     id("seatliberator.layer.launcher")
     id("seatliberator.layer.persistence")
     id("seatliberator.layer.webmvc")
-    id("seatliberator.layer.domain")
     id("seatliberator.layer.security")
 }
 
@@ -11,6 +10,7 @@ version = "0.0.1-SNAPSHOT"
 
 dependencies {
     implementation(project(":identity:identity-api"))
+    implementation(project(":identity:identity-server:identity-server-domain"))
     implementation(project(":reservation:reservation-api"))
     implementation(project(":board:board-api"))
     implementation(project(":event-relay:event-relay-starter"))
