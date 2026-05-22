@@ -1,9 +1,9 @@
-package com.seatliberator.seatliberator.identity.infrastructure.persistence.jpa;
+package com.seatliberator.seatliberator.identity.server.persistence.account.jpa;
 
 import com.seatliberator.seatliberator.identity.application.port.out.AuthRecord;
 import com.seatliberator.seatliberator.identity.application.port.out.FederatedAccountStore;
-import com.seatliberator.seatliberator.identity.infrastructure.persistence.jpa.repository.FederatedAccountRepository;
 import com.seatliberator.seatliberator.identity.server.domain.account.FederatedAccount;
+import com.seatliberator.seatliberator.identity.server.persistence.account.jpa.repository.FederatedAccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

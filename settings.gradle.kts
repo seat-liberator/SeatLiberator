@@ -31,6 +31,7 @@ include("identity:identity-api")
 include("identity:identity-server")
 include("identity:identity-application")
 include("identity:identity-server:identity-server-domain")
+include("identity:identity-server:identity-server-persistence")
 
 include("idempotency:idempotency-core")
 

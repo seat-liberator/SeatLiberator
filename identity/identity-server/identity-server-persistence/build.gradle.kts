@@ -1,0 +1,13 @@
+plugins {
+    id("seatliberator.layer.persistence")
+}
+
+group = "com.seatliberator.seatliberator"
+version = "0.0.1-SNAPSHOT"
+
+dependencies {
+    implementation(project(":identity:identity-application"))
+    implementation(project(":identity:identity-server:identity-server-domain"))
+    implementation(project(":identity:identity-core"))
+    implementation(project(":kernel:kernel-core"))
+}
