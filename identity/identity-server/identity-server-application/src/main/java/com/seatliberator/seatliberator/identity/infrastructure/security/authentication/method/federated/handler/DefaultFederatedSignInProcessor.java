@@ -7,8 +7,6 @@ import com.seatliberator.seatliberator.identity.application.port.in.command.Auth
 import com.seatliberator.seatliberator.identity.application.port.in.command.ExistenceCheckingCommand;
 import com.seatliberator.seatliberator.identity.application.port.in.command.RegistrationCommand;
 import com.seatliberator.seatliberator.identity.application.port.in.result.AuthEntry;
-import com.seatliberator.seatliberator.identity.core.actor.Actor;
-import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
 import com.seatliberator.seatliberator.identity.infrastructure.security.authentication.method.federated.principal.FederatedPrincipal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
