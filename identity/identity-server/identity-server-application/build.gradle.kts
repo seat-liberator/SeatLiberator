@@ -9,7 +9,7 @@ group = "com.seatliberator.seatliberator"
 version = "0.0.1-SNAPSHOT"
 
 dependencies {
-    implementation(project(":identity:identity-api"))
+    implementation(project(":identity:identity-server:identity-server-api"))
     implementation(project(":identity:identity-server:identity-server-domain"))
     implementation(project(":reservation:reservation-api"))
     implementation(project(":board:board-api"))
