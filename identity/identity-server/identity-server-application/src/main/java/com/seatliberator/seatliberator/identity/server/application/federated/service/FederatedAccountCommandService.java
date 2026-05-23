@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.identity.server.application.federated.service;
 
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleFormatter;
 import com.seatliberator.seatliberator.identity.server.application.authentication.port.in.result.AuthenticatedResult;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.in.LinkFederatedAccountUseCase;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.in.RegisterFederatedAccountUseCase;
@@ -11,7 +12,7 @@ import com.seatliberator.seatliberator.identity.server.application.federated.por
 import com.seatliberator.seatliberator.identity.server.application.federated.port.out.FederatedAccountStore;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.out.criteria.FederatedAccountLookupCriteria;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.out.criteria.FederatedAccountUserRegistrationLookupCriteria;
-import com.seatliberator.seatliberator.identity.server.application.role.port.in.ScopeReader;
+import com.seatliberator.seatliberator.identity.server.application.role.contract.InitialRoleGrantor;
 import com.seatliberator.seatliberator.identity.server.application.shared.exception.IdentityApplicationErrorCode;
 import com.seatliberator.seatliberator.identity.server.application.shared.exception.IdentityApplicationException;
 import com.seatliberator.seatliberator.identity.server.application.user.contract.UserCreator;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,9 +36,10 @@ public class FederatedAccountCommandService implements
     private final FederatedAccountReader reader;
     private final FederatedAccountStore store;
 
-    private final ScopeReader scopeReader;
     private final UserReader userReader;
     private final UserCreator userCreator;
+    private final InitialRoleGrantor roleGrantor;
+    private final NamespaceRoleFormatter formatter;
     private final Clock clock;
 
     @Override
@@ -51,8 +54,10 @@ public class FederatedAccountCommandService implements
         store.save(account);
 
         var userId = user.getId();
-        var scopes = scopeReader.readScopes(userId.toString());
-        return AuthenticatedResult.from(userId, user.getNickname(), scopes);
+        var grants = roleGrantor.grantInitial(userId).stream()
+                .map(grant -> formatter.format(grant.getNamespaceRole()))
+                .collect(Collectors.toUnmodifiableSet());
+        return AuthenticatedResult.from(userId, user.getNickname(), grants);
 
     }
 
