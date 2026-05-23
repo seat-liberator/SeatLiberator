@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.board.application.shared.config;
 
-import com.seatliberator.seatliberator.identity.core.role.Capability;
+import com.seatliberator.seatliberator.identity.core.actor.Capability;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

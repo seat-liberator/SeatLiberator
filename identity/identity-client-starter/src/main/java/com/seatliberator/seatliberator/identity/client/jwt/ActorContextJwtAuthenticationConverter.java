@@ -1,10 +1,10 @@
 package com.seatliberator.seatliberator.identity.client.jwt;
 
-import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleCapabilitiesRegistry;
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
+import com.seatliberator.seatliberator.identity.core.actor.Capability;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
-import com.seatliberator.seatliberator.identity.core.role.Capability;
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleCapabilitiesRegistry;
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleDeserializer;
 import com.seatliberator.seatliberator.identity.core.role.Role;
 import com.seatliberator.seatliberator.kernel.ApplicationNamespace;
@@ -16,7 +16,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimAccessor;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

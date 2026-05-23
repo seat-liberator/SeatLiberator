@@ -1,6 +1,5 @@
 package com.seatliberator.seatliberator.identity.core.actor;
 
-import com.seatliberator.seatliberator.identity.core.role.Capability;
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 
 import java.util.Set;

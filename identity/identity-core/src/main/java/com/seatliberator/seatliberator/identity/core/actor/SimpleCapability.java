@@ -1,13 +1,14 @@
-package com.seatliberator.seatliberator.identity.core.role;
+package com.seatliberator.seatliberator.identity.core.actor;
+
+import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 
 public record SimpleCapability(
         String scope,
         String description
 ) implements Capability {
     public SimpleCapability {
-        if (scope == null || scope.isBlank()) throw new IllegalArgumentException("scope must not be null or blank.");
-        if (description == null || description.isBlank())
-            throw new IllegalArgumentException("description must not be null or blank.");
+        Preconditions.requireNonBlank(scope, "scope");
+        Preconditions.requireNonBlank(description, "description");
     }
 
     public static SimpleCapability of(String scope, String description) {
@@ -15,7 +16,8 @@ public record SimpleCapability(
     }
 
     public static SimpleCapability from(Capability capability) {
-        if (capability == null) throw new IllegalArgumentException("capability must not be null.");
+        Preconditions.requireNonNull(capability, "capability");
+
         return new SimpleCapability(capability.scope(), capability.description());
     }
 }

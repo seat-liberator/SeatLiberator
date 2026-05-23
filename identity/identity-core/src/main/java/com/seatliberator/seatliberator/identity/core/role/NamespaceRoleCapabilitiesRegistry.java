@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.identity.core.role;
 
+import com.seatliberator.seatliberator.identity.core.actor.Capability;
 import com.seatliberator.seatliberator.kernel.ApplicationNamespace;
 
 import java.util.*;import java.util.stream.Collectors;

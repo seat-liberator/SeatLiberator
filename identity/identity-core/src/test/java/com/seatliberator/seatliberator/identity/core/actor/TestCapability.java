@@ -1,6 +1,4 @@
-package com.seatliberator.seatliberator.identity.core;
-
-import com.seatliberator.seatliberator.identity.core.role.Capability;
+package com.seatliberator.seatliberator.identity.core.actor;
 
 public enum TestCapability implements Capability {
     TEST_CAPABILITY("test.capability", "this is test capability.");

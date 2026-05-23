@@ -1,11 +1,10 @@
-package com.seatliberator.seatliberator.identity.core.role;
+package com.seatliberator.seatliberator.identity.core.actor;
 
-import com.seatliberator.seatliberator.identity.core.TestCapability;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.seatliberator.seatliberator.kernel.test.assertion.DomainAssertions.assertThatDomainThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("SimpleCapability 테스트")
 public class SimpleCapabilityTest {
@@ -27,21 +26,17 @@ public class SimpleCapabilityTest {
         var scope = "test.scope";
         var description = "test capability description";
 
-        assertThatThrownBy(() -> SimpleCapability.of(null, description))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("scope must not be null or blank.");
+        assertThatDomainThrownBy(() -> SimpleCapability.of(null, description))
+                .hasNonNullMessageFor("scope");
 
-        assertThatThrownBy(() -> SimpleCapability.of("  ", description))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("scope must not be null or blank.");
+        assertThatDomainThrownBy(() -> SimpleCapability.of("  ", description))
+                .hasNonBlankMessageFor("scope");
 
-        assertThatThrownBy(() -> SimpleCapability.of(scope, null))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("description must not be null or blank.");
+        assertThatDomainThrownBy(() -> SimpleCapability.of(scope, null))
+                .hasNonNullMessageFor("description");
 
-        assertThatThrownBy(() -> SimpleCapability.of(scope, "  "))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("description must not be null or blank.");
+        assertThatDomainThrownBy(() -> SimpleCapability.of(scope, "  "))
+                .hasNonBlankMessageFor("description");
     }
 
     @Test
@@ -56,9 +51,8 @@ public class SimpleCapabilityTest {
     @Test
     @DisplayName("변환 시 다른 구현체가 null이면 예외")
     void throw_exception_when_capability_is_null() {
-        assertThatThrownBy(() -> SimpleCapability.from(null))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("capability must not be null.");
+        assertThatDomainThrownBy(() -> SimpleCapability.from(null))
+                .hasNonNullMessageFor("capability");
     }
 
     @Test
@@ -76,9 +70,8 @@ public class SimpleCapabilityTest {
             }
         };
 
-        assertThatThrownBy(() -> SimpleCapability.from(invalidScope))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("scope must not be null or blank.");
+        assertThatDomainThrownBy(() -> SimpleCapability.from(invalidScope))
+                .hasNonBlankMessageFor("scope");
 
         Capability invalidDescription = new Capability() {
             @Override
@@ -92,9 +85,7 @@ public class SimpleCapabilityTest {
             }
         };
 
-        assertThatThrownBy(() -> SimpleCapability.from(invalidDescription))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("description must not be null or blank.");
+        assertThatDomainThrownBy(() -> SimpleCapability.from(invalidDescription))
+                .hasNonBlankMessageFor("description");
     }
-
 }

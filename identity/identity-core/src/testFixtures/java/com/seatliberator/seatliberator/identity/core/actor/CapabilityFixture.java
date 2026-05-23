@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.core.role;
+package com.seatliberator.seatliberator.identity.core.actor;
 
 public class CapabilityFixture {
     public static final String INITIAL_SCOPE = "test-scope";
