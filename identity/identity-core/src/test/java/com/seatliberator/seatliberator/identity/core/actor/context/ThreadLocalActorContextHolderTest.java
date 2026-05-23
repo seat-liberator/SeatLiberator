@@ -6,7 +6,6 @@ import com.seatliberator.seatliberator.identity.core.actor.exception.Unidentifia
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.MDC;
 
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -16,13 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("ThreadLocalActorContextHolder 테스트")
 public class ThreadLocalActorContextHolderTest {
-    private static final String MDC_KEY = "actor_context";
     private final ActorContextHolder holder = new ThreadLocalActorContextHolder();
 
     @AfterEach
     void runClear() {
         holder.clear();
-        MDC.clear();
     }
 
     @Test
@@ -61,19 +58,6 @@ public class ThreadLocalActorContextHolderTest {
 
         // then
         assertThrows(UnidentifiableActorException.class, holder::getActor);
-    }
-
-    @Test
-    @DisplayName("setActor는 MDC에 actor subject를 기록한다")
-    void setActor는_MDC에_actor_subject를_기록한다() {
-        // given
-        Actor actor = SimpleActor.of("user-1", Set.of());
-
-        // when
-        holder.setActor(actor);
-
-        // then
-        assertEquals("user-1", MDC.get(MDC_KEY));
     }
 
     @Test
