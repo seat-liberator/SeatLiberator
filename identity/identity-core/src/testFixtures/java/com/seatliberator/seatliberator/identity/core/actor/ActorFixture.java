@@ -1,8 +1,5 @@
 package com.seatliberator.seatliberator.identity.core.actor;
 
-import com.seatliberator.seatliberator.identity.core.role.Capability;
-import com.seatliberator.seatliberator.identity.core.role.CapabilityFixture;
-
 import java.util.Set;
 
 public class ActorFixture {

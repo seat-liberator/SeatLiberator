@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.identity.core.introspect;
 
-import com.seatliberator.seatliberator.identity.core.TestCapability;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
+import com.seatliberator.seatliberator.identity.core.actor.TestCapability;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

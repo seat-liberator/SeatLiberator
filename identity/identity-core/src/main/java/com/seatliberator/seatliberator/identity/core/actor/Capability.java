@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.core.role;
+package com.seatliberator.seatliberator.identity.core.actor;
 
 public interface Capability {
     String scope();

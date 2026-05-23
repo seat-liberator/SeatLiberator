@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.identity.client.introspector.web;
 
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
-import com.seatliberator.seatliberator.identity.core.role.Capability;
+import com.seatliberator.seatliberator.identity.core.actor.Capability;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
