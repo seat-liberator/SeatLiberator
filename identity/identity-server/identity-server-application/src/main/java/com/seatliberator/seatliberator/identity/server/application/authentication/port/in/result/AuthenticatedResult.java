@@ -6,9 +6,9 @@ import java.util.UUID;
 public record AuthenticatedResult(
         UUID userId,
         String nickname,
-        Set<String> grantedRole
+        Set<String> scopes
 ) {
-    public static AuthenticatedResult from(UUID userId, String nickname, Set<String> grantedRole) {
-        return new AuthenticatedResult(userId, nickname, Set.copyOf(grantedRole));
+    public static AuthenticatedResult from(UUID userId, String nickname, Set<String> scopes) {
+        return new AuthenticatedResult(userId, nickname, Set.copyOf(scopes));
     }
 }

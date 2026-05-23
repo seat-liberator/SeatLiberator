@@ -1,14 +1,11 @@
 package com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.filter;
 
-import com.seatliberator.seatliberator.identity.server.security.authentication.exception.AuthenticationProcessingException;
-import com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.request.CredentialSignInRequest;
-import com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.token.CredentialSignInAuthenticationToken;
+import com.seatliberator.seatliberator.identity.server.security.shared.exception.AuthenticationProcessingException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
@@ -30,32 +27,18 @@ public class JsonCredentialSignInProcessingFilter extends AbstractAuthentication
     }
 
     @Override
-    public @Nullable Authentication attemptAuthentication(
+    public Authentication attemptAuthentication(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response
     ) throws AuthenticationException, IOException, ServletException {
+        final CredentialSignInAuthentication authentication;
         try {
-            log.debug("Attempting credential sign-in request parsing.");
-
             var body = objectMapper.readValue(request.getInputStream(), CredentialSignInRequest.class);
-
-            var email = body.email();
-            var password = body.password();
-
-            log.debug("Credential sign-in request parsed. email={}", email);
-
-            var authentication = new CredentialSignInAuthenticationToken(email, password);
-
-            log.debug("Credential sign-in authentication token created. email={}", email);
-
-            var authenticated = getAuthenticationManager().authenticate(authentication);
-
-            log.debug("Credential sign-in authentication request delegated successfully. email={}", email);
-
-            return authenticated;
-        } catch (IOException e) {
-            log.debug("Credential sign-in request parsing failed due to invalid request body.", e);
-            throw new AuthenticationProcessingException("Error occurred while parsing sign in request body");
+            authentication = CredentialSignInAuthentication.of(body.email(), body.password());
+        } catch (Exception e) {
+            throw new AuthenticationProcessingException("Invalid credential sign-in request.");
         }
+
+        return getAuthenticationManager().authenticate(authentication);
     }
 }

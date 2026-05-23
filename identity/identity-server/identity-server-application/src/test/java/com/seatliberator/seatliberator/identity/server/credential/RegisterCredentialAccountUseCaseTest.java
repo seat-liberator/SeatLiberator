@@ -21,9 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import static com.seatliberator.seatliberator.identity.server.credential.CredentialUseCaseTestSupport.*;
 import static com.seatliberator.seatliberator.kernel.test.assertion.ApplicationAssertions.assertThatApplicationThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("RegisterCredentialAccountUseCase 테스트")
@@ -81,7 +79,7 @@ public class RegisterCredentialAccountUseCaseTest {
         assertThat(savedAccount.getCreatedAt()).isEqualTo(CLOCK.instant());
         assertThat(result.userId()).isEqualTo(USER_ID);
         assertThat(result.nickname()).isEqualTo(NICKNAME);
-        assertThat(result.grantedRole()).isEqualTo(SCOPES);
+        assertThat(result.scopes()).isEqualTo(SCOPES);
     }
 
     @Test

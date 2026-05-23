@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.server.security.authentication.method.federated.handler;
 
-import com.seatliberator.seatliberator.identity.server.security.ResponseWriter;
+import com.seatliberator.seatliberator.identity.server.security.shared.response.ResponseWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,17 +24,10 @@ public class FederatedAuthenticationFailureHandler implements AuthenticationFail
             @Nullable HttpServletResponse response,
             AuthenticationException exception
     ) throws IOException, ServletException {
-        log.debug(
-                "Federated authentication failed. message={}",
-                exception.getMessage()
-        );
-
         responseWriter.write(
                 response,
                 HttpStatus.UNAUTHORIZED,
                 exception.getMessage()
         );
-
-        log.debug("Federated authentication failure response written.");
     }
 }

@@ -1,16 +1,16 @@
-package com.seatliberator.seatliberator.identity.server.security.authentication.method.credential;
+package com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.config;
 
-import com.seatliberator.seatliberator.identity.server.application.shared.port.in.AccountAuthenticator;
-import com.seatliberator.seatliberator.identity.server.application.shared.port.in.UserRegistrar;
-import com.seatliberator.seatliberator.identity.server.security.FilterChainUtils;
-import com.seatliberator.seatliberator.identity.server.security.ResponseWriter;
+import com.seatliberator.seatliberator.identity.server.application.authentication.port.in.AuthenticationCredentialUseCase;
+import com.seatliberator.seatliberator.identity.server.application.credential.port.in.RegisterCredentialAccountUseCase;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.filter.JsonCredentialSignInProcessingFilter;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.filter.JsonCredentialSignUpProcessingFilter;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.handler.CredentialAuthenticationFailureHandler;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.handler.CredentialAuthenticationSuccessHandler;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.provider.CredentialSignInProvider;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.provider.CredentialSignUpProvider;
-import com.seatliberator.seatliberator.identity.server.security.authentication.method.token.handler.TokenIssueProcessor;
+import com.seatliberator.seatliberator.identity.server.security.shared.config.FilterChainUtils;
+import com.seatliberator.seatliberator.identity.server.security.shared.response.ResponseWriter;
+import com.seatliberator.seatliberator.identity.server.security.shared.response.TokenResponseProcessor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -106,38 +106,24 @@ public class CredentialAuthenticationConfiguration {
     }
 
     @Bean
-    CredentialSignInProvider credentialSignInProvider(
-            AccountAuthenticator accountAuthenticator
-    ) {
-        return new CredentialSignInProvider(accountAuthenticator);
+    CredentialSignInProvider credentialSignInProvider(AuthenticationCredentialUseCase useCase) {
+        return new CredentialSignInProvider(useCase);
     }
 
     @Bean
-    CredentialSignUpProvider credentialSignUpProvider(
-            UserRegistrar userRegistrar
-    ) {
-        return new CredentialSignUpProvider(
-                userRegistrar
-        );
+    CredentialSignUpProvider credentialSignUpProvider(RegisterCredentialAccountUseCase useCase) {
+        return new CredentialSignUpProvider(useCase);
     }
 
     @Bean
     @Qualifier("Credential")
-    AuthenticationSuccessHandler credentialAuthenticationSuccessHandler(
-            TokenIssueProcessor tokenIssueProcessor,
-            ResponseWriter responseWriter
-    ) {
-        return new CredentialAuthenticationSuccessHandler(
-                tokenIssueProcessor,
-                responseWriter
-        );
+    AuthenticationSuccessHandler credentialAuthenticationSuccessHandler(TokenResponseProcessor tokenIssueProcessor) {
+        return new CredentialAuthenticationSuccessHandler(tokenIssueProcessor);
     }
 
     @Bean
     @Qualifier("Credential")
-    AuthenticationFailureHandler credentialAuthenticationFailureHandler(
-            ResponseWriter responseWriter
-    ) {
+    AuthenticationFailureHandler credentialAuthenticationFailureHandler(ResponseWriter responseWriter) {
         return new CredentialAuthenticationFailureHandler(responseWriter);
     }
 

@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.server.security.authentication.method.credential;
+package com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

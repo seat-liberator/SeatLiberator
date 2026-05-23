@@ -7,41 +7,36 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
 public class CustomOidcUserService extends OidcUserService {
-    private final FederatedPrincipalMapperRegistry federatedPrincipalMapperRegistry;
+    private final FederatedPrincipalMapperRegistry registry;
 
     @Override
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
-        log.debug("Attempting OIDC user loading.");
+        var oidcUser = super.loadUser(userRequest);
 
-        OidcUser oidcUser = super.loadUser(userRequest);
+        var registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-        String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        log.debug("OIDC user loaded from provider. registrationId={}", registrationId);
+        var mapper = registry.getByKey(registrationId);
+        if (mapper == null) {
+            throw authenticationException("No principal mapper found. registrationId=" + registrationId);
+        }
 
-        var federatedPrincipalMapper = Optional.ofNullable(federatedPrincipalMapperRegistry.resolve(registrationId))
-                .orElseThrow(() -> {
-                    log.debug(
-                            "OIDC user loading failed because no federated principal mapper was found. registrationId={}",
-                            registrationId
-                    );
-                    return new IllegalStateException(
-                            "No profile mapper found for registrationId=" + registrationId
-                    );
-                });
+        try {
+            return (CustomOidcPrincipal) mapper.resolve(oidcUser);
+        } catch (IllegalArgumentException e) {
+            throw authenticationException(e.getMessage());
+        }
+    }
 
-        log.debug("Federated principal mapper resolved. registrationId={}", registrationId);
-
-        var principal = (CustomOidcPrincipal) federatedPrincipalMapper.resolve(oidcUser);
-
-        log.debug("OIDC principal mapping succeeded. registrationId={}", registrationId);
-
-        return principal;
+    private OAuth2AuthenticationException authenticationException(String message) {
+        return new OAuth2AuthenticationException(
+                new OAuth2Error("invalid_federated_principal"),
+                message
+        );
     }
 }

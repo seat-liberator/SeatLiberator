@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.server.security.authentication.exception;
+package com.seatliberator.seatliberator.identity.server.security.shared.exception;
 
 import org.springframework.security.core.AuthenticationException;
 

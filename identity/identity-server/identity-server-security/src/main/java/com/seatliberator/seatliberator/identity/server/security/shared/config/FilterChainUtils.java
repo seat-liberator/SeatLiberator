@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.server.security;
+package com.seatliberator.seatliberator.identity.server.security.shared.config;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;

@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.server.security;
+package com.seatliberator.seatliberator.identity.server.security.shared.response;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
