@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.handler;
 
-import com.seatliberator.seatliberator.identity.server.security.ResponseWriter;
+import com.seatliberator.seatliberator.identity.server.security.shared.response.ResponseWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,17 +24,10 @@ public class CredentialAuthenticationFailureHandler implements AuthenticationFai
             @Nullable HttpServletResponse response,
             AuthenticationException exception
     ) throws IOException, ServletException {
-        log.debug(
-                "Credential authentication failed. message={}",
-                exception.getMessage()
-        );
-
         responseWriter.write(
                 response,
                 HttpStatus.UNAUTHORIZED,
                 exception.getMessage()
         );
-
-        log.debug("Credential authentication failure response written.");
     }
 }

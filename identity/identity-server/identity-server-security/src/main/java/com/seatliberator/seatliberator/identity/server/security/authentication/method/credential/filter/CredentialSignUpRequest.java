@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.request;
+package com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.filter;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

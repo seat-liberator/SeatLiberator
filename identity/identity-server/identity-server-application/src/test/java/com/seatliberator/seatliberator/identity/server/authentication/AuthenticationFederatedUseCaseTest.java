@@ -19,9 +19,7 @@ import java.util.Optional;
 import static com.seatliberator.seatliberator.identity.server.authentication.AuthenticationUseCaseTestSupport.*;
 import static com.seatliberator.seatliberator.kernel.test.assertion.ApplicationAssertions.assertThatApplicationThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("AuthenticationFederatedUseCase 테스트")
@@ -61,7 +59,7 @@ public class AuthenticationFederatedUseCaseTest {
         verify(scopeReader).readScopes(USER_ID.toString());
         assertThat(result.userId()).isEqualTo(USER_ID);
         assertThat(result.nickname()).isEqualTo(NICKNAME);
-        assertThat(result.grantedRole()).isEqualTo(SCOPES);
+        assertThat(result.scopes()).isEqualTo(SCOPES);
     }
 
     @Test

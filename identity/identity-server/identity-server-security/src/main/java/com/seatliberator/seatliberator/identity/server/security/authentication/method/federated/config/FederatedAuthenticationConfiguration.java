@@ -1,18 +1,17 @@
-package com.seatliberator.seatliberator.identity.server.security.authentication.method.federated;
+package com.seatliberator.seatliberator.identity.server.security.authentication.method.federated.config;
 
-import com.seatliberator.seatliberator.identity.server.application.shared.port.in.AccountAuthenticator;
-import com.seatliberator.seatliberator.identity.server.application.shared.port.in.AccountExistenceChecker;
-import com.seatliberator.seatliberator.identity.server.application.shared.port.in.UserRegistrar;
-import com.seatliberator.seatliberator.identity.server.security.FilterChainUtils;
-import com.seatliberator.seatliberator.identity.server.security.ResponseWriter;
-import com.seatliberator.seatliberator.identity.server.security.authentication.method.federated.handler.DefaultFederatedSignInProcessor;
+import com.seatliberator.seatliberator.identity.server.application.authentication.port.in.AuthenticationFederatedUseCase;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.federated.handler.FederatedAuthenticationFailureHandler;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.federated.handler.FederatedAuthenticationSuccessHandler;
-import com.seatliberator.seatliberator.identity.server.security.authentication.method.federated.handler.FederatedSignInProcessor;
-import com.seatliberator.seatliberator.identity.server.security.authentication.method.federated.mapper.*;
+import com.seatliberator.seatliberator.identity.server.security.authentication.method.federated.mapper.FederatedPrincipalMapper;
+import com.seatliberator.seatliberator.identity.server.security.authentication.method.federated.mapper.FederatedPrincipalMapperRegistry;
+import com.seatliberator.seatliberator.identity.server.security.authentication.method.federated.mapper.GithubOAuth2PrincipalMapper;
+import com.seatliberator.seatliberator.identity.server.security.authentication.method.federated.mapper.GoogleOidcPrincipalMapper;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.federated.service.CustomOAuth2UserService;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.federated.service.CustomOidcUserService;
-import com.seatliberator.seatliberator.identity.server.security.authentication.method.token.handler.TokenIssueProcessor;
+import com.seatliberator.seatliberator.identity.server.security.shared.config.FilterChainUtils;
+import com.seatliberator.seatliberator.identity.server.security.shared.response.ResponseWriter;
+import com.seatliberator.seatliberator.identity.server.security.shared.response.TokenResponseProcessor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,7 +44,7 @@ public class FederatedAuthenticationConfiguration {
     FederatedPrincipalMapperRegistry oidcProfileMapperRegistry(
             List<FederatedPrincipalMapper> federatedPrincipalMappers
     ) {
-        return new DefaultFederatedPrincipalMapperRegistry(federatedPrincipalMappers);
+        return new FederatedPrincipalMapperRegistry(federatedPrincipalMappers);
     }
 
     @Bean
@@ -63,29 +62,14 @@ public class FederatedAuthenticationConfiguration {
     }
 
     @Bean
-    FederatedSignInProcessor federatedSignInProcessor(
-            AccountAuthenticator accountAuthenticator,
-            AccountExistenceChecker accountExistenceChecker,
-            UserRegistrar userRegistrar
-    ) {
-        return new DefaultFederatedSignInProcessor(
-                accountAuthenticator,
-                accountExistenceChecker,
-                userRegistrar
-        );
-    }
-
-    @Bean
     @Qualifier("federated")
     AuthenticationSuccessHandler federatedAuthenticationSuccessHandler(
-            FederatedSignInProcessor federatedSignInProcessor,
-            TokenIssueProcessor tokenIssueProcessor,
-            ResponseWriter responseWriter
+            AuthenticationFederatedUseCase useCase,
+            TokenResponseProcessor tokenResponseProcessor
     ) {
         return new FederatedAuthenticationSuccessHandler(
-                federatedSignInProcessor,
-                tokenIssueProcessor,
-                responseWriter
+                useCase,
+                tokenResponseProcessor
         );
     }
 

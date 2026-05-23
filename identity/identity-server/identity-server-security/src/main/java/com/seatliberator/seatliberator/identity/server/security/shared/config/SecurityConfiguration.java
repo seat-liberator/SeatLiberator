@@ -1,5 +1,9 @@
-package com.seatliberator.seatliberator.identity.server.security;
+package com.seatliberator.seatliberator.identity.server.security.shared.config;
 
+import com.seatliberator.seatliberator.identity.server.application.jwks.service.JwtProvider;
+import com.seatliberator.seatliberator.identity.server.application.jwks.service.OpaqueTokenProvider;
+import com.seatliberator.seatliberator.identity.server.security.shared.response.ResponseWriter;
+import com.seatliberator.seatliberator.identity.server.security.shared.response.TokenResponseProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,5 +45,14 @@ public class SecurityConfiguration {
             ObjectMapper objectMapper
     ) {
         return new ResponseWriter(objectMapper);
+    }
+
+    @Bean
+    TokenResponseProcessor tokenResponseProcessor(
+            JwtProvider jwtProvider,
+            OpaqueTokenProvider opaqueTokenProvider,
+            ResponseWriter responseWriter
+    ) {
+        return new TokenResponseProcessor(jwtProvider, opaqueTokenProvider, responseWriter);
     }
 }

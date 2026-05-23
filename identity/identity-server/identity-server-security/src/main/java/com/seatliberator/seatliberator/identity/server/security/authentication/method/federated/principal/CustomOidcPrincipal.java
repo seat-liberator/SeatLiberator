@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.identity.server.security.authentication.method.federated.principal;
 
+import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 import lombok.Setter;
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
@@ -11,17 +11,22 @@ import java.util.Collection;
 
 @Setter
 public class CustomOidcPrincipal extends DefaultOidcUser implements FederatedPrincipal {
-    private String registrationId;
-    private String providerUserId;
-    private String email;
-    private String nickname;
+    private final String registrationId;
+    private final String providerUserId;
+    private final String providerUserNickname;
 
-    public CustomOidcPrincipal(Collection<? extends GrantedAuthority> authorities, OidcIdToken idToken, OidcUserInfo userInfo) {
+    public CustomOidcPrincipal(
+            Collection<? extends GrantedAuthority> authorities,
+            OidcIdToken idToken,
+            OidcUserInfo userInfo,
+            String registrationId,
+            String providerUserId,
+            String providerUserNickname
+    ) {
         super(authorities, idToken, userInfo);
-    }
-
-    public CustomOidcPrincipal(Collection<? extends GrantedAuthority> authorities, OidcIdToken idToken, OidcUserInfo userInfo, String nameAttributeKey) {
-        super(authorities, idToken, userInfo, nameAttributeKey);
+        this.registrationId = Preconditions.requireNonBlank(registrationId, "registrationId");
+        this.providerUserId = Preconditions.requireNonBlank(providerUserId, "providerUserId");
+        this.providerUserNickname = Preconditions.requireNonBlank(providerUserNickname, "providerUserNickname");
     }
 
     @Override
@@ -35,12 +40,7 @@ public class CustomOidcPrincipal extends DefaultOidcUser implements FederatedPri
     }
 
     @Override
-    public @Nullable String email() {
-        return email;
-    }
-
-    @Override
-    public @Nullable String nickname() {
-        return nickname;
+    public String providerUserNickname() {
+        return providerUserNickname;
     }
 }

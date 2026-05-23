@@ -21,9 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static com.seatliberator.seatliberator.identity.server.federated.FederatedUseCaseTestSupport.*;
 import static com.seatliberator.seatliberator.kernel.test.assertion.ApplicationAssertions.assertThatApplicationThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("RegisterFederatedAccountUseCase 테스트")
@@ -80,7 +78,7 @@ public class RegisterFederatedAccountUseCaseTest {
         assertThat(savedAccount.getCreatedAt()).isEqualTo(CLOCK.instant());
         assertThat(result.userId()).isEqualTo(USER_ID);
         assertThat(result.nickname()).isEqualTo(NICKNAME);
-        assertThat(result.grantedRole()).isEqualTo(SCOPES);
+        assertThat(result.scopes()).isEqualTo(SCOPES);
     }
 
     @Test

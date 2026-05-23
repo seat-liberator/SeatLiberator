@@ -7,8 +7,13 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.StringUtils;
 
+import java.util.Map;
+import java.util.regex.Pattern;
+
 @Slf4j
 public class GoogleOidcPrincipalMapper implements FederatedPrincipalMapper {
+    private static final String FALLBACK_NICKNAME = "user";
+
     @Override
     public String key() {
         return "google";
@@ -16,51 +21,32 @@ public class GoogleOidcPrincipalMapper implements FederatedPrincipalMapper {
 
     @Override
     public FederatedPrincipal resolve(OAuth2User oAuth2User) {
-        log.debug("Attempting federated principal mapping. registrationId={}", key());
-
-        if (!(oAuth2User instanceof OidcUser oidcUser)) {
-            log.debug(
-                    "Google federated principal mapping failed because oauth2 user was not OIDC user. registrationId={}, principalType={}",
-                    key(),
-                    oAuth2User == null ? "null" : oAuth2User.getClass().getName()
-            );
-            throw new IllegalArgumentException("Google federated principal mapping requires OidcUser");
-        }
+        if (!(oAuth2User instanceof OidcUser oidcUser))
+            throw new IllegalArgumentException("Federated principal mapper requires OidcUser. registrationId=" + key());
 
         var claims = oidcUser.getClaims();
 
+        var authorities = oidcUser.getAuthorities();
+        var idToken = oidcUser.getIdToken();
+        var userInfo = oidcUser.getUserInfo();
+
+        var registrationId = key();
         var providerUserId = oidcUser.getSubject();
-        var email = (String) claims.get("email");
-        var nickname = String.valueOf(claims.getOrDefault("name", ""));
+        var providerUserNickname = getNickname(claims);
 
-        log.debug(
-                "Google principal claims resolved. registrationId={}, email={}, nicknamePresent={}",
-                key(),
-                email,
-                StringUtils.hasText(nickname)
-        );
+        return new CustomOidcPrincipal(authorities, idToken, userInfo, registrationId, providerUserId, providerUserNickname);
+    }
 
-        var principal = new CustomOidcPrincipal(
-                oidcUser.getAuthorities(),
-                oidcUser.getIdToken(),
-                oidcUser.getUserInfo()
-        );
+    private String getNickname(Map<String, Object> attributes) {
+        var nickname = (String) attributes.get("name");
+        var email = (String) attributes.get("email");
 
-        principal.setRegistrationId(key());
-        principal.setProviderUserId(providerUserId);
-        principal.setEmail(email);
+        if (StringUtils.hasText(nickname)) return nickname;
+        if (!StringUtils.hasText(email)) return FALLBACK_NICKNAME;
 
-        if (StringUtils.hasText(nickname)) {
-            principal.setNickname(nickname);
-        }
+        var emailParts = email.split(Pattern.quote("@"));
+        if (emailParts.length != 2 || emailParts[0].isBlank()) return FALLBACK_NICKNAME;
 
-        log.debug(
-                "Google federated principal mapping succeeded. registrationId={}, email={}, nicknamePresent={}",
-                key(),
-                email,
-                StringUtils.hasText(nickname)
-        );
-
-        return principal;
+        return emailParts[0];
     }
 }
