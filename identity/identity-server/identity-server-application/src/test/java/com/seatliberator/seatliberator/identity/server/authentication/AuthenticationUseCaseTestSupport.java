@@ -1,12 +1,18 @@
 package com.seatliberator.seatliberator.identity.server.authentication;
 
+import com.seatliberator.seatliberator.identity.core.role.Role;
+import com.seatliberator.seatliberator.identity.core.role.SimpleNamespaceRole;
 import com.seatliberator.seatliberator.identity.server.application.authentication.port.in.command.AuthenticationCredentialCommand;
 import com.seatliberator.seatliberator.identity.server.application.authentication.port.in.command.AuthenticationFederatedCommand;
 import com.seatliberator.seatliberator.identity.server.domain.account.*;
+import com.seatliberator.seatliberator.identity.server.domain.role.UserGrantedRole;
+import com.seatliberator.seatliberator.identity.server.domain.role.UserGrantedRoleFixture;
+import com.seatliberator.seatliberator.kernel.SimpleApplicationNamespace;
 import com.seatliberator.seatliberator.kernel.test.UuidGenerator;
 import com.seatliberator.seatliberator.kernel.test.clock.TestClock;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,7 +29,14 @@ public class AuthenticationUseCaseTestSupport {
     public static final String REGISTRATION_ID = "google";
     public static final String PROVIDER_USER_ID = "google-user-1";
 
-    public static final Set<String> SCOPES = Set.of("identity:user");
+    public static final String NAMESPACE_VALUE = "identity";
+    public static final Role ROLE = Role.USER;
+    public static final SimpleNamespaceRole NAMESPACE_ROLE = SimpleNamespaceRole.from(
+            SimpleApplicationNamespace.of(NAMESPACE_VALUE),
+            ROLE
+    );
+    public static final String SCOPE = "identity:USER";
+    public static final Set<String> SCOPES = Set.of(SCOPE);
 
     public static User user() {
         var user = new UserFixture.Builder()
@@ -50,6 +63,18 @@ public class AuthenticationUseCaseTestSupport {
                 .providerUserId(PROVIDER_USER_ID)
                 .createdAt(USER_CREATED_AT)
                 .build();
+    }
+
+    public static UserGrantedRole userGrantedRole() {
+        return new UserGrantedRoleFixture.Builder()
+                .userId(USER_ID)
+                .namespaceRole(NAMESPACE_ROLE)
+                .createdAt(USER_CREATED_AT)
+                .build();
+    }
+
+    public static List<UserGrantedRole> userGrantedRoles() {
+        return List.of(userGrantedRole());
     }
 
     public static AuthenticationCredentialCommand authenticationCredentialCommand() {

@@ -1,11 +1,13 @@
 package com.seatliberator.seatliberator.identity.server.federated;
 
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleFormatter;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.in.RegisterFederatedAccountUseCase;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.out.FederatedAccountReader;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.out.FederatedAccountStore;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.out.criteria.FederatedAccountLookupCriteria;
 import com.seatliberator.seatliberator.identity.server.application.federated.service.FederatedAccountCommandService;
-import com.seatliberator.seatliberator.identity.server.application.role.port.in.ScopeReader;
+import com.seatliberator.seatliberator.identity.server.application.role.contract.InitialRoleGrantor;
 import com.seatliberator.seatliberator.identity.server.application.shared.exception.IdentityApplicationErrorCode;
 import com.seatliberator.seatliberator.identity.server.application.user.contract.UserCreator;
 import com.seatliberator.seatliberator.identity.server.application.user.port.out.UserReader;
@@ -33,7 +35,10 @@ public class RegisterFederatedAccountUseCaseTest {
     FederatedAccountStore store;
 
     @Mock
-    ScopeReader scopeReader;
+    InitialRoleGrantor roleGrantor;
+
+    @Mock
+    NamespaceRoleFormatter formatter;
 
     @Mock
     UserReader userReader;
@@ -48,9 +53,10 @@ public class RegisterFederatedAccountUseCaseTest {
         useCase = new FederatedAccountCommandService(
                 reader,
                 store,
-                scopeReader,
                 userReader,
                 userCreator,
+                roleGrantor,
+                formatter,
                 CLOCK
         );
     }
@@ -61,7 +67,8 @@ public class RegisterFederatedAccountUseCaseTest {
         when(reader.existsByCriteria(FederatedAccountLookupCriteria.of(REGISTRATION_ID, PROVIDER_USER_ID)))
                 .thenReturn(false);
         when(userCreator.create(PROVIDER_USER_NICKNAME)).thenReturn(user());
-        when(scopeReader.readScopes(USER_ID.toString())).thenReturn(SCOPES);
+        when(roleGrantor.grantInitial(USER_ID)).thenReturn(userGrantedRoles());
+        when(formatter.format(any(NamespaceRole.class))).thenReturn(SCOPE);
 
         var result = useCase.register(registerFederatedAccountCommand());
 
@@ -69,7 +76,8 @@ public class RegisterFederatedAccountUseCaseTest {
         verify(reader).existsByCriteria(FederatedAccountLookupCriteria.of(REGISTRATION_ID, PROVIDER_USER_ID));
         verify(userCreator).create(PROVIDER_USER_NICKNAME);
         verify(store).save(captor.capture());
-        verify(scopeReader).readScopes(USER_ID.toString());
+        verify(roleGrantor).grantInitial(USER_ID);
+        verify(formatter).format(any(NamespaceRole.class));
 
         var savedAccount = captor.getValue();
         assertThat(savedAccount.getUserId()).isEqualTo(USER_ID);
@@ -90,6 +98,6 @@ public class RegisterFederatedAccountUseCaseTest {
         assertThatApplicationThrownBy(() -> useCase.register(registerFederatedAccountCommand()))
                 .hasErrorCode(IdentityApplicationErrorCode.ACCOUNT_ALREADY_EXISTS);
 
-        verifyNoInteractions(store, userCreator, scopeReader);
+        verifyNoInteractions(store, userCreator, roleGrantor, formatter);
     }
 }

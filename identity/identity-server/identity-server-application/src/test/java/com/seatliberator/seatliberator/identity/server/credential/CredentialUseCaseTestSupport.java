@@ -1,16 +1,22 @@
 package com.seatliberator.seatliberator.identity.server.credential;
 
+import com.seatliberator.seatliberator.identity.core.role.Role;
+import com.seatliberator.seatliberator.identity.core.role.SimpleNamespaceRole;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.in.command.RegisterCredentialAccountCommand;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.in.command.UpdatePasswordCommand;
 import com.seatliberator.seatliberator.identity.server.domain.account.CredentialAccount;
 import com.seatliberator.seatliberator.identity.server.domain.account.CredentialAccountFixture;
 import com.seatliberator.seatliberator.identity.server.domain.account.User;
 import com.seatliberator.seatliberator.identity.server.domain.account.UserFixture;
+import com.seatliberator.seatliberator.identity.server.domain.role.UserGrantedRole;
+import com.seatliberator.seatliberator.identity.server.domain.role.UserGrantedRoleFixture;
+import com.seatliberator.seatliberator.kernel.SimpleApplicationNamespace;
 import com.seatliberator.seatliberator.kernel.test.UuidGenerator;
 import com.seatliberator.seatliberator.kernel.test.clock.TestClock;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -28,7 +34,14 @@ public class CredentialUseCaseTestSupport {
     public static final String PASSWORD_HASH = "{bcrypt}password-hash";
     public static final String ENCODED_PASSWORD_HASH = "{bcrypt}encoded-password-hash";
 
-    public static final Set<String> SCOPES = Set.of("identity:user");
+    public static final String NAMESPACE_VALUE = "identity";
+    public static final Role ROLE = Role.USER;
+    public static final SimpleNamespaceRole NAMESPACE_ROLE = SimpleNamespaceRole.from(
+            SimpleApplicationNamespace.of(NAMESPACE_VALUE),
+            ROLE
+    );
+    public static final String SCOPE = "identity:USER";
+    public static final Set<String> SCOPES = Set.of(SCOPE);
 
     public static User user() {
         var user = new UserFixture.Builder()
@@ -46,6 +59,18 @@ public class CredentialUseCaseTestSupport {
                 .passwordHash(PASSWORD_HASH)
                 .createdAt(USER_CREATED_AT)
                 .build();
+    }
+
+    public static UserGrantedRole userGrantedRole() {
+        return new UserGrantedRoleFixture.Builder()
+                .userId(USER_ID)
+                .namespaceRole(NAMESPACE_ROLE)
+                .createdAt(USER_CREATED_AT)
+                .build();
+    }
+
+    public static List<UserGrantedRole> userGrantedRoles() {
+        return List.of(userGrantedRole());
     }
 
     public static RegisterCredentialAccountCommand registerCredentialAccountCommand() {

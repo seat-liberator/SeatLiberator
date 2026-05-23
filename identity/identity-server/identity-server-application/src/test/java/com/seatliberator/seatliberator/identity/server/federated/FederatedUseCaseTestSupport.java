@@ -1,5 +1,7 @@
 package com.seatliberator.seatliberator.identity.server.federated;
 
+import com.seatliberator.seatliberator.identity.core.role.Role;
+import com.seatliberator.seatliberator.identity.core.role.SimpleNamespaceRole;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.in.command.LinkFederatedAccountCommand;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.in.command.RegisterFederatedAccountCommand;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.in.command.UnlinkFederatedAccountCommand;
@@ -7,11 +9,15 @@ import com.seatliberator.seatliberator.identity.server.domain.account.FederatedA
 import com.seatliberator.seatliberator.identity.server.domain.account.FederatedAccountFixture;
 import com.seatliberator.seatliberator.identity.server.domain.account.User;
 import com.seatliberator.seatliberator.identity.server.domain.account.UserFixture;
+import com.seatliberator.seatliberator.identity.server.domain.role.UserGrantedRole;
+import com.seatliberator.seatliberator.identity.server.domain.role.UserGrantedRoleFixture;
+import com.seatliberator.seatliberator.kernel.SimpleApplicationNamespace;
 import com.seatliberator.seatliberator.kernel.test.UuidGenerator;
 import com.seatliberator.seatliberator.kernel.test.clock.TestClock;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -26,7 +32,14 @@ public class FederatedUseCaseTestSupport {
     public static final String PROVIDER_USER_ID = "google-user-1";
     public static final String PROVIDER_USER_NICKNAME = "google-nickname";
 
-    public static final Set<String> SCOPES = Set.of("identity:user");
+    public static final String NAMESPACE_VALUE = "identity";
+    public static final Role ROLE = Role.USER;
+    public static final SimpleNamespaceRole NAMESPACE_ROLE = SimpleNamespaceRole.from(
+            SimpleApplicationNamespace.of(NAMESPACE_VALUE),
+            ROLE
+    );
+    public static final String SCOPE = "identity:USER";
+    public static final Set<String> SCOPES = Set.of(SCOPE);
 
     public static User user() {
         var user = new UserFixture.Builder()
@@ -44,6 +57,18 @@ public class FederatedUseCaseTestSupport {
                 .providerUserId(PROVIDER_USER_ID)
                 .createdAt(USER_CREATED_AT)
                 .build();
+    }
+
+    public static UserGrantedRole userGrantedRole() {
+        return new UserGrantedRoleFixture.Builder()
+                .userId(USER_ID)
+                .namespaceRole(NAMESPACE_ROLE)
+                .createdAt(USER_CREATED_AT)
+                .build();
+    }
+
+    public static List<UserGrantedRole> userGrantedRoles() {
+        return List.of(userGrantedRole());
     }
 
     public static RegisterFederatedAccountCommand registerFederatedAccountCommand() {

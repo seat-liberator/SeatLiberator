@@ -1,11 +1,12 @@
 package com.seatliberator.seatliberator.identity.server.credential;
 
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleFormatter;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.in.UpdatePasswordUseCase;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.out.CredentialAccountReader;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.out.CredentialAccountStore;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.out.criteria.CredentialAccountUserCriteria;
 import com.seatliberator.seatliberator.identity.server.application.credential.service.CredentialAccountCommandService;
-import com.seatliberator.seatliberator.identity.server.application.role.port.in.ScopeReader;
+import com.seatliberator.seatliberator.identity.server.application.role.contract.InitialRoleGrantor;
 import com.seatliberator.seatliberator.identity.server.application.shared.exception.IdentityApplicationErrorCode;
 import com.seatliberator.seatliberator.identity.server.application.user.contract.UserCreator;
 import com.seatliberator.seatliberator.identity.server.domain.account.CredentialAccount;
@@ -23,9 +24,7 @@ import java.util.Optional;
 import static com.seatliberator.seatliberator.identity.server.credential.CredentialUseCaseTestSupport.*;
 import static com.seatliberator.seatliberator.kernel.test.assertion.ApplicationAssertions.assertThatApplicationThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("UpdatePasswordUseCase 테스트")
@@ -37,7 +36,10 @@ public class UpdatePasswordUseCaseTest {
     CredentialAccountStore store;
 
     @Mock
-    ScopeReader scopeReader;
+    InitialRoleGrantor roleGrantor;
+
+    @Mock
+    NamespaceRoleFormatter formatter;
 
     @Mock
     UserCreator userCreator;
@@ -52,8 +54,9 @@ public class UpdatePasswordUseCaseTest {
         useCase = new CredentialAccountCommandService(
                 reader,
                 store,
-                scopeReader,
                 userCreator,
+                roleGrantor,
+                formatter,
                 passwordEncoder,
                 CLOCK
         );
