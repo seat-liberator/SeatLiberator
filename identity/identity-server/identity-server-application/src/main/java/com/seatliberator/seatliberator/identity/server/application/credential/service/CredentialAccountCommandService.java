@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.server.application.credential.service;
 
-import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleFormatter;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleSerializer;
 import com.seatliberator.seatliberator.identity.server.application.authentication.port.in.result.AuthenticatedResult;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.in.RegisterCredentialAccountUseCase;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.in.UpdatePasswordUseCase;
@@ -35,7 +35,7 @@ public class CredentialAccountCommandService implements
 
     private final UserCreator userCreator;
     private final InitialRoleGrantor roleGrantor;
-    private final NamespaceRoleFormatter formatter;
+    private final NamespaceRoleSerializer formatter;
     private final PasswordEncoder passwordEncoder;
     private final Clock clock;
 
@@ -56,7 +56,7 @@ public class CredentialAccountCommandService implements
 
         var userId = user.getId();
         var grants = roleGrantor.grantInitial(userId).stream()
-                .map(grant -> formatter.format(grant.getNamespaceRole()))
+                .map(grant -> formatter.serialize(grant.getNamespaceRole()))
                 .collect(Collectors.toUnmodifiableSet());
         return AuthenticatedResult.from(userId, user.getNickname(), grants);
     }

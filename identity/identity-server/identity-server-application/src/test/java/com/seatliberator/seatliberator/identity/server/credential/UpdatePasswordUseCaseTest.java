@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.server.credential;
 
-import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleFormatter;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleSerializer;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.in.UpdatePasswordUseCase;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.out.CredentialAccountReader;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.out.CredentialAccountStore;
@@ -39,7 +39,7 @@ public class UpdatePasswordUseCaseTest {
     InitialRoleGrantor roleGrantor;
 
     @Mock
-    NamespaceRoleFormatter formatter;
+    NamespaceRoleSerializer formatter;
 
     @Mock
     UserCreator userCreator;

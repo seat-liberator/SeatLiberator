@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.server.application.federated.service;
 
-import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleFormatter;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleSerializer;
 import com.seatliberator.seatliberator.identity.server.application.authentication.port.in.result.AuthenticatedResult;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.in.LinkFederatedAccountUseCase;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.in.RegisterFederatedAccountUseCase;
@@ -39,7 +39,7 @@ public class FederatedAccountCommandService implements
     private final UserReader userReader;
     private final UserCreator userCreator;
     private final InitialRoleGrantor roleGrantor;
-    private final NamespaceRoleFormatter formatter;
+    private final NamespaceRoleSerializer formatter;
     private final Clock clock;
 
     @Override
@@ -55,7 +55,7 @@ public class FederatedAccountCommandService implements
 
         var userId = user.getId();
         var grants = roleGrantor.grantInitial(userId).stream()
-                .map(grant -> formatter.format(grant.getNamespaceRole()))
+                .map(grant -> formatter.serialize(grant.getNamespaceRole()))
                 .collect(Collectors.toUnmodifiableSet());
         return AuthenticatedResult.from(userId, user.getNickname(), grants);
 

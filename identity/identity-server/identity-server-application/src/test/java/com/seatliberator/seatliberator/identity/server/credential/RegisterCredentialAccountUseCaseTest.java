@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.identity.server.credential;
 
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
-import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleFormatter;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleSerializer;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.in.RegisterCredentialAccountUseCase;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.out.CredentialAccountReader;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.out.CredentialAccountStore;
@@ -38,7 +38,7 @@ public class RegisterCredentialAccountUseCaseTest {
     InitialRoleGrantor roleGrantor;
 
     @Mock
-    NamespaceRoleFormatter formatter;
+    NamespaceRoleSerializer formatter;
 
     @Mock
     UserCreator userCreator;
@@ -68,7 +68,7 @@ public class RegisterCredentialAccountUseCaseTest {
         when(userCreator.create(NICKNAME)).thenReturn(user());
         when(passwordEncoder.encode(PASSWORD)).thenReturn(ENCODED_PASSWORD_HASH);
         when(roleGrantor.grantInitial(USER_ID)).thenReturn(userGrantedRoles());
-        when(formatter.format(any(NamespaceRole.class))).thenReturn(SCOPE);
+        when(formatter.serialize(any(NamespaceRole.class))).thenReturn(SCOPE);
 
         var result = useCase.register(registerCredentialAccountCommand());
 
@@ -78,7 +78,7 @@ public class RegisterCredentialAccountUseCaseTest {
         verify(passwordEncoder).encode(PASSWORD);
         verify(store).save(captor.capture());
         verify(roleGrantor).grantInitial(USER_ID);
-        verify(formatter).format(any(NamespaceRole.class));
+        verify(formatter).serialize(any(NamespaceRole.class));
 
         var savedAccount = captor.getValue();
         assertThat(savedAccount.getUserId()).isEqualTo(USER_ID);

@@ -1,6 +1,7 @@
 package com.seatliberator.seatliberator.identity.core.role;
 
 import com.seatliberator.seatliberator.kernel.SimpleApplicationNamespace;
+import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,23 +9,16 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class SeparatorNamespaceRoleDeserializer implements NamespaceRoleDeserializer {
-    private final String separator;
-
-    public SeparatorNamespaceRoleDeserializer(String separator) {
-        if (separator == null || separator.isBlank())
-            throw new IllegalArgumentException("separator must not be null or blank.");
-        this.separator = separator;
-    }
+public class SeparatorBasedNamespaceRoleDeserializer implements NamespaceRoleDeserializer {
+    public static final String SEPARATOR = ":";
 
     @Override
     public NamespaceRole materialize(String raw) {
-        if (raw == null || raw.isBlank())
-            throw new IllegalArgumentException("namespace role format must not be null or blank.");
+        Preconditions.requireNonBlank(raw, "raw");
 
-        var parts = raw.split(Pattern.quote(separator), -1);
+        var parts = raw.split(Pattern.quote(SEPARATOR), -1);
         if (parts.length != 2 || Arrays.stream(parts).anyMatch(String::isBlank))
-            throw new IllegalArgumentException("invalid namespace role format. expected '<namespace>%s<role>', but was '%s'.".formatted(separator, raw));
+            throw new IllegalArgumentException("invalid namespace role format. expected '<namespace>%s<role>', but was '%s'.".formatted(SEPARATOR, raw));
 
         var namespace = SimpleApplicationNamespace.of(parts[0]);
 

@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.identity.server.federated;
 
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
-import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleFormatter;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleSerializer;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.in.RegisterFederatedAccountUseCase;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.out.FederatedAccountReader;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.out.FederatedAccountStore;
@@ -38,7 +38,7 @@ public class RegisterFederatedAccountUseCaseTest {
     InitialRoleGrantor roleGrantor;
 
     @Mock
-    NamespaceRoleFormatter formatter;
+    NamespaceRoleSerializer formatter;
 
     @Mock
     UserReader userReader;
@@ -68,7 +68,7 @@ public class RegisterFederatedAccountUseCaseTest {
                 .thenReturn(false);
         when(userCreator.create(PROVIDER_USER_NICKNAME)).thenReturn(user());
         when(roleGrantor.grantInitial(USER_ID)).thenReturn(userGrantedRoles());
-        when(formatter.format(any(NamespaceRole.class))).thenReturn(SCOPE);
+        when(formatter.serialize(any(NamespaceRole.class))).thenReturn(SCOPE);
 
         var result = useCase.register(registerFederatedAccountCommand());
 
@@ -77,7 +77,7 @@ public class RegisterFederatedAccountUseCaseTest {
         verify(userCreator).create(PROVIDER_USER_NICKNAME);
         verify(store).save(captor.capture());
         verify(roleGrantor).grantInitial(USER_ID);
-        verify(formatter).format(any(NamespaceRole.class));
+        verify(formatter).serialize(any(NamespaceRole.class));
 
         var savedAccount = captor.getValue();
         assertThat(savedAccount.getUserId()).isEqualTo(USER_ID);
