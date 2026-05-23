@@ -1,11 +1,12 @@
 package com.seatliberator.seatliberator.identity.server.federated;
 
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleFormatter;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.in.UnlinkFederatedAccountUseCase;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.out.FederatedAccountReader;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.out.FederatedAccountStore;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.out.criteria.FederatedAccountUserRegistrationLookupCriteria;
 import com.seatliberator.seatliberator.identity.server.application.federated.service.FederatedAccountCommandService;
-import com.seatliberator.seatliberator.identity.server.application.role.port.in.ScopeReader;
+import com.seatliberator.seatliberator.identity.server.application.role.contract.InitialRoleGrantor;
 import com.seatliberator.seatliberator.identity.server.application.shared.exception.IdentityApplicationErrorCode;
 import com.seatliberator.seatliberator.identity.server.application.user.contract.UserCreator;
 import com.seatliberator.seatliberator.identity.server.application.user.port.out.UserReader;
@@ -20,9 +21,7 @@ import java.util.Optional;
 
 import static com.seatliberator.seatliberator.identity.server.federated.FederatedUseCaseTestSupport.*;
 import static com.seatliberator.seatliberator.kernel.test.assertion.ApplicationAssertions.assertThatApplicationThrownBy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("UnlinkFederatedAccountUseCase 테스트")
@@ -34,7 +33,10 @@ public class UnlinkFederatedAccountUseCaseTest {
     FederatedAccountStore store;
 
     @Mock
-    ScopeReader scopeReader;
+    InitialRoleGrantor roleGrantor;
+
+    @Mock
+    NamespaceRoleFormatter formatter;
 
     @Mock
     UserReader userReader;
@@ -49,9 +51,10 @@ public class UnlinkFederatedAccountUseCaseTest {
         useCase = new FederatedAccountCommandService(
                 reader,
                 store,
-                scopeReader,
                 userReader,
                 userCreator,
+                roleGrantor,
+                formatter,
                 CLOCK
         );
     }

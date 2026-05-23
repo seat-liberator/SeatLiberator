@@ -1,10 +1,12 @@
 package com.seatliberator.seatliberator.identity.server.authentication;
 
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleFormatter;
 import com.seatliberator.seatliberator.identity.server.application.authentication.port.in.AuthenticationCredentialUseCase;
 import com.seatliberator.seatliberator.identity.server.application.authentication.service.AuthenticationCredentialService;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.out.CredentialAccountReader;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.out.criteria.CredentialAccountEmailCriteria;
-import com.seatliberator.seatliberator.identity.server.application.role.port.in.ScopeReader;
+import com.seatliberator.seatliberator.identity.server.application.role.port.out.UserGrantedRoleReader;
 import com.seatliberator.seatliberator.identity.server.application.shared.exception.IdentityApplicationErrorCode;
 import com.seatliberator.seatliberator.identity.server.application.user.port.out.UserReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +34,10 @@ public class AuthenticationCredentialUseCaseTest {
     UserReader userReader;
 
     @Mock
-    ScopeReader scopeReader;
+    UserGrantedRoleReader roleReader;
+
+    @Mock
+    NamespaceRoleFormatter formatter;
 
     @Mock
     PasswordEncoder passwordEncoder;
@@ -44,7 +49,8 @@ public class AuthenticationCredentialUseCaseTest {
         useCase = new AuthenticationCredentialService(
                 accountReader,
                 userReader,
-                scopeReader,
+                roleReader,
+                formatter,
                 passwordEncoder
         );
     }
@@ -56,14 +62,16 @@ public class AuthenticationCredentialUseCaseTest {
                 .thenReturn(Optional.of(credentialAccount()));
         when(passwordEncoder.matches(PASSWORD, PASSWORD_HASH)).thenReturn(true);
         when(userReader.findById(USER_ID)).thenReturn(Optional.of(user()));
-        when(scopeReader.readScopes(USER_ID.toString())).thenReturn(SCOPES);
+        when(roleReader.findByUserId(USER_ID)).thenReturn(userGrantedRoles());
+        when(formatter.format(any(NamespaceRole.class))).thenReturn(SCOPE);
 
         var result = useCase.authenticate(authenticationCredentialCommand());
 
         verify(accountReader).findByCriteria(CredentialAccountEmailCriteria.of(EMAIL));
         verify(passwordEncoder).matches(PASSWORD, PASSWORD_HASH);
         verify(userReader).findById(USER_ID);
-        verify(scopeReader).readScopes(USER_ID.toString());
+        verify(roleReader).findByUserId(USER_ID);
+        verify(formatter).format(any(NamespaceRole.class));
         assertThat(result.userId()).isEqualTo(USER_ID);
         assertThat(result.nickname()).isEqualTo(NICKNAME);
         assertThat(result.scopes()).isEqualTo(SCOPES);
@@ -78,7 +86,7 @@ public class AuthenticationCredentialUseCaseTest {
         assertThatApplicationThrownBy(() -> useCase.authenticate(authenticationCredentialCommand()))
                 .hasErrorCode(IdentityApplicationErrorCode.ACCOUNT_NOT_FOUND);
 
-        verifyNoInteractions(userReader, scopeReader, passwordEncoder);
+        verifyNoInteractions(userReader, roleReader, formatter, passwordEncoder);
     }
 
     @Test
@@ -91,7 +99,7 @@ public class AuthenticationCredentialUseCaseTest {
         assertThatApplicationThrownBy(() -> useCase.authenticate(authenticationCredentialCommand()))
                 .hasErrorCode(IdentityApplicationErrorCode.AUTHENTICATION_FAILED);
 
-        verifyNoInteractions(userReader, scopeReader);
+        verifyNoInteractions(userReader, roleReader, formatter);
     }
 
     @Test
@@ -105,6 +113,6 @@ public class AuthenticationCredentialUseCaseTest {
         assertThatApplicationThrownBy(() -> useCase.authenticate(authenticationCredentialCommand()))
                 .hasErrorCode(IdentityApplicationErrorCode.USER_NOT_FOUND);
 
-        verifyNoInteractions(scopeReader);
+        verifyNoInteractions(roleReader, formatter);
     }
 }

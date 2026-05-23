@@ -1,11 +1,13 @@
 package com.seatliberator.seatliberator.identity.server.credential;
 
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleFormatter;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.in.RegisterCredentialAccountUseCase;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.out.CredentialAccountReader;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.out.CredentialAccountStore;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.out.criteria.CredentialAccountEmailCriteria;
 import com.seatliberator.seatliberator.identity.server.application.credential.service.CredentialAccountCommandService;
-import com.seatliberator.seatliberator.identity.server.application.role.port.in.ScopeReader;
+import com.seatliberator.seatliberator.identity.server.application.role.contract.InitialRoleGrantor;
 import com.seatliberator.seatliberator.identity.server.application.shared.exception.IdentityApplicationErrorCode;
 import com.seatliberator.seatliberator.identity.server.application.user.contract.UserCreator;
 import com.seatliberator.seatliberator.identity.server.domain.account.CredentialAccount;
@@ -33,7 +35,10 @@ public class RegisterCredentialAccountUseCaseTest {
     CredentialAccountStore store;
 
     @Mock
-    ScopeReader scopeReader;
+    InitialRoleGrantor roleGrantor;
+
+    @Mock
+    NamespaceRoleFormatter formatter;
 
     @Mock
     UserCreator userCreator;
@@ -48,8 +53,9 @@ public class RegisterCredentialAccountUseCaseTest {
         useCase = new CredentialAccountCommandService(
                 reader,
                 store,
-                scopeReader,
                 userCreator,
+                roleGrantor,
+                formatter,
                 passwordEncoder,
                 CLOCK
         );
@@ -61,7 +67,8 @@ public class RegisterCredentialAccountUseCaseTest {
         when(reader.existsByCriteria(CredentialAccountEmailCriteria.of(EMAIL))).thenReturn(false);
         when(userCreator.create(NICKNAME)).thenReturn(user());
         when(passwordEncoder.encode(PASSWORD)).thenReturn(ENCODED_PASSWORD_HASH);
-        when(scopeReader.readScopes(USER_ID.toString())).thenReturn(SCOPES);
+        when(roleGrantor.grantInitial(USER_ID)).thenReturn(userGrantedRoles());
+        when(formatter.format(any(NamespaceRole.class))).thenReturn(SCOPE);
 
         var result = useCase.register(registerCredentialAccountCommand());
 
@@ -70,7 +77,8 @@ public class RegisterCredentialAccountUseCaseTest {
         verify(userCreator).create(NICKNAME);
         verify(passwordEncoder).encode(PASSWORD);
         verify(store).save(captor.capture());
-        verify(scopeReader).readScopes(USER_ID.toString());
+        verify(roleGrantor).grantInitial(USER_ID);
+        verify(formatter).format(any(NamespaceRole.class));
 
         var savedAccount = captor.getValue();
         assertThat(savedAccount.getUserId()).isEqualTo(USER_ID);
@@ -90,6 +98,6 @@ public class RegisterCredentialAccountUseCaseTest {
         assertThatApplicationThrownBy(() -> useCase.register(registerCredentialAccountCommand()))
                 .hasErrorCode(IdentityApplicationErrorCode.EMAIL_DUPLICATED);
 
-        verifyNoInteractions(store, userCreator, passwordEncoder, scopeReader);
+        verifyNoInteractions(store, userCreator, roleGrantor, formatter, passwordEncoder);
     }
 }
