@@ -2,14 +2,13 @@ package com.seatliberator.seatliberator.identity.server.application.role.port.ou
 
 import com.seatliberator.seatliberator.identity.server.domain.role.UserGrantedRole;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface UserGrantedRoleStore {
-    UserGrantedRole save(UserGrantedRole userGrantedRole);
+    UserGrantedRole save(UserGrantedRole grantedRole);
 
-    List<UserGrantedRole> saveAll(List<UserGrantedRole> userGrantedRoles);
+    List<UserGrantedRole> saveAll(Collection<UserGrantedRole> grantedRoles);
 
-    List<UserGrantedRole> findByUserId(String userId);
-
-    void deleteByUserIdAndNamespace(String userId, String namespace);
+    void delete(UserGrantedRole grantedRole);
 }
