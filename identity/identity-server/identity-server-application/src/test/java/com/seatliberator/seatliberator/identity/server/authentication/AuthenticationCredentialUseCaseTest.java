@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.identity.server.authentication;
 
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRole;
-import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleFormatter;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleSerializer;
 import com.seatliberator.seatliberator.identity.server.application.authentication.port.in.AuthenticationCredentialUseCase;
 import com.seatliberator.seatliberator.identity.server.application.authentication.service.AuthenticationCredentialService;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.out.CredentialAccountReader;
@@ -37,7 +37,7 @@ public class AuthenticationCredentialUseCaseTest {
     UserGrantedRoleReader roleReader;
 
     @Mock
-    NamespaceRoleFormatter formatter;
+    NamespaceRoleSerializer formatter;
 
     @Mock
     PasswordEncoder passwordEncoder;
@@ -63,7 +63,7 @@ public class AuthenticationCredentialUseCaseTest {
         when(passwordEncoder.matches(PASSWORD, PASSWORD_HASH)).thenReturn(true);
         when(userReader.findById(USER_ID)).thenReturn(Optional.of(user()));
         when(roleReader.findByUserId(USER_ID)).thenReturn(userGrantedRoles());
-        when(formatter.format(any(NamespaceRole.class))).thenReturn(SCOPE);
+        when(formatter.serialize(any(NamespaceRole.class))).thenReturn(SCOPE);
 
         var result = useCase.authenticate(authenticationCredentialCommand());
 
@@ -71,7 +71,7 @@ public class AuthenticationCredentialUseCaseTest {
         verify(passwordEncoder).matches(PASSWORD, PASSWORD_HASH);
         verify(userReader).findById(USER_ID);
         verify(roleReader).findByUserId(USER_ID);
-        verify(formatter).format(any(NamespaceRole.class));
+        verify(formatter).serialize(any(NamespaceRole.class));
         assertThat(result.userId()).isEqualTo(USER_ID);
         assertThat(result.nickname()).isEqualTo(NICKNAME);
         assertThat(result.scopes()).isEqualTo(SCOPES);

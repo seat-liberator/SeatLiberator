@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.server.application.authentication.service;
 
-import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleFormatter;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleSerializer;
 import com.seatliberator.seatliberator.identity.server.application.authentication.port.in.AuthenticationCredentialUseCase;
 import com.seatliberator.seatliberator.identity.server.application.authentication.port.in.command.AuthenticationCredentialCommand;
 import com.seatliberator.seatliberator.identity.server.application.authentication.port.in.result.AuthenticatedResult;
@@ -24,7 +24,7 @@ public class AuthenticationCredentialService implements AuthenticationCredential
     private final CredentialAccountReader accountReader;
     private final UserReader userReader;
     private final UserGrantedRoleReader roleReader;
-    private final NamespaceRoleFormatter formatter;
+    private final NamespaceRoleSerializer formatter;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -43,7 +43,7 @@ public class AuthenticationCredentialService implements AuthenticationCredential
         var user = userReader.findById(userId)
                 .orElseThrow(() -> new IdentityApplicationException(IdentityApplicationErrorCode.USER_NOT_FOUND));
         var scopes = roleReader.findByUserId(userId).stream()
-                .map(grant -> formatter.format(grant.getNamespaceRole()))
+                .map(grant -> formatter.serialize(grant.getNamespaceRole()))
                 .collect(Collectors.toUnmodifiableSet());
         return AuthenticatedResult.from(user.getId(), user.getNickname(), scopes);
     }

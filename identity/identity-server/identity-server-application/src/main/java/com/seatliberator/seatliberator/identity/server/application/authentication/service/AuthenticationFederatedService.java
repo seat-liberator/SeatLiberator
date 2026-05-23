@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.server.application.authentication.service;
 
-import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleFormatter;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleSerializer;
 import com.seatliberator.seatliberator.identity.server.application.authentication.port.in.AuthenticationFederatedUseCase;
 import com.seatliberator.seatliberator.identity.server.application.authentication.port.in.command.AuthenticationFederatedCommand;
 import com.seatliberator.seatliberator.identity.server.application.authentication.port.in.result.AuthenticatedResult;
@@ -23,7 +23,7 @@ public class AuthenticationFederatedService implements AuthenticationFederatedUs
     private final FederatedAccountReader accountReader;
     private final UserReader userReader;
     private final UserGrantedRoleReader roleReader;
-    private final NamespaceRoleFormatter formatter;
+    private final NamespaceRoleSerializer formatter;
 
     @Override
     public AuthenticatedResult authenticate(AuthenticationFederatedCommand command) {
@@ -38,7 +38,7 @@ public class AuthenticationFederatedService implements AuthenticationFederatedUs
         var user = userReader.findById(userId)
                 .orElseThrow(() -> new IdentityApplicationException(IdentityApplicationErrorCode.USER_NOT_FOUND));
         var scopes = roleReader.findByUserId(userId).stream()
-                .map(grant -> formatter.format(grant.getNamespaceRole()))
+                .map(grant -> formatter.serialize(grant.getNamespaceRole()))
                 .collect(Collectors.toUnmodifiableSet());
         return AuthenticatedResult.from(user.getId(), user.getNickname(), scopes);
     }

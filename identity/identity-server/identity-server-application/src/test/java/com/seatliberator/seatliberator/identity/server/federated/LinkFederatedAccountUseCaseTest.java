@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.identity.server.federated;
 
-import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleFormatter;
+import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleSerializer;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.in.LinkFederatedAccountUseCase;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.out.FederatedAccountReader;
 import com.seatliberator.seatliberator.identity.server.application.federated.port.out.FederatedAccountStore;
@@ -37,7 +37,7 @@ public class LinkFederatedAccountUseCaseTest {
     InitialRoleGrantor roleGrantor;
 
     @Mock
-    NamespaceRoleFormatter formatter;
+    NamespaceRoleSerializer formatter;
 
     @Mock
     UserReader userReader;
