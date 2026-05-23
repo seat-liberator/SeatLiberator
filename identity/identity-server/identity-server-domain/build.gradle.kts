@@ -9,5 +9,8 @@ dependencies {
     implementation(project(":identity:identity-core"))
     implementation(project(":kernel:kernel-core"))
 
+    testFixturesImplementation(project(":identity:identity-core"))
+    testFixturesImplementation(project(":kernel:kernel-core"))
+
     testImplementation(project(":kernel:kernel-test"))
 }
