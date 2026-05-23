@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.identity.client.autoconfigure;
 
 import com.seatliberator.seatliberator.identity.client.web.ActorContextBindingFilter;
-import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
+import com.seatliberator.seatliberator.identity.core.actor.context.ActorContextHolder;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

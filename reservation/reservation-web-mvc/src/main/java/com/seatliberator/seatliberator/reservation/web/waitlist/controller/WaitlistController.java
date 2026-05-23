@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.web.waitlist.controller;
 
-import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
+import com.seatliberator.seatliberator.identity.core.actor.context.ActorContextHolder;
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.CancelWaitlistUseCase;
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.CreateWaitlistUseCase;
 import com.seatliberator.seatliberator.reservation.application.waitlist.port.in.command.CancelWaitlistCommand;

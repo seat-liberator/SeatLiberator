@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.application.reservation.service;
 
-import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
+import com.seatliberator.seatliberator.identity.core.actor.context.ActorContextHolder;
 import com.seatliberator.seatliberator.reservation.application.reservation.contract.ReservationOwnershipPolicy;
 import com.seatliberator.seatliberator.reservation.application.reservation.contract.ReservationPolicyReason;
 import com.seatliberator.seatliberator.reservation.application.reservation.contract.ReservationReadAuthorizer;

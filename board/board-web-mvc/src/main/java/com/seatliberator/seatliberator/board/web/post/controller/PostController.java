@@ -10,7 +10,7 @@ import com.seatliberator.seatliberator.board.web.post.request.CreatePostRequest;
 import com.seatliberator.seatliberator.board.web.post.request.UpdatePostCategoryRequest;
 import com.seatliberator.seatliberator.board.web.post.request.UpdatePostContentRequest;
 import com.seatliberator.seatliberator.board.web.post.request.UpdatePostTitleRequest;
-import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
+import com.seatliberator.seatliberator.identity.core.actor.context.ActorContextHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
