@@ -7,7 +7,7 @@ import com.seatliberator.seatliberator.board.application.comment.port.in.query.L
 import com.seatliberator.seatliberator.board.application.comment.port.in.result.CommentResult;
 import com.seatliberator.seatliberator.board.web.comment.request.CreateCommentRequest;
 import com.seatliberator.seatliberator.board.web.comment.request.UpdateCommentContentRequest;
-import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
+import com.seatliberator.seatliberator.identity.core.actor.context.ActorContextHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

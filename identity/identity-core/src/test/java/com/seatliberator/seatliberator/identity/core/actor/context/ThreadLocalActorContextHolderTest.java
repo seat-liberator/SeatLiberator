@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.client.actor;
+package com.seatliberator.seatliberator.identity.core.actor.context;
 
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
 import com.seatliberator.seatliberator.identity.core.actor.SimpleActor;
@@ -14,9 +14,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayName("ThreadLocalActorContextHolder 테스트")
 public class ThreadLocalActorContextHolderTest {
     private static final String MDC_KEY = "actor_context";
-    private final com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder holder = new ThreadLocalActorContextHolder();
+    private final ActorContextHolder holder = new ThreadLocalActorContextHolder();
 
     @AfterEach
     void runClear() {

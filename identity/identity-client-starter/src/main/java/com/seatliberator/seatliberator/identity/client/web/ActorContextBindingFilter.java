@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.identity.client.web;
 
 import com.seatliberator.seatliberator.identity.core.actor.Actor;
-import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
+import com.seatliberator.seatliberator.identity.core.actor.context.ActorContextHolder;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

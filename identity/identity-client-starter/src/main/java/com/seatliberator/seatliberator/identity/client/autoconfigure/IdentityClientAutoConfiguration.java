@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.identity.client.autoconfigure;
 
-import com.seatliberator.seatliberator.identity.client.actor.ThreadLocalActorContextHolder;
 import com.seatliberator.seatliberator.identity.client.jwt.ActorContextJwtAuthenticationConverter;
+import com.seatliberator.seatliberator.identity.core.actor.context.ActorContextHolder;
+import com.seatliberator.seatliberator.identity.core.actor.context.ThreadLocalActorContextHolder;
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleCapabilitiesRegistry;
-import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
 import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleDeserializer;
 import com.seatliberator.seatliberator.identity.core.role.RoleCapabilities;
 import com.seatliberator.seatliberator.kernel.CurrentApplicationNamespaceProvider;

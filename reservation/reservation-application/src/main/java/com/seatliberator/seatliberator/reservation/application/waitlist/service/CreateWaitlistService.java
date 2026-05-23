@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.reservation.application.waitlist.service;
 
-import com.seatliberator.seatliberator.identity.core.actor.ActorContextHolder;
+import com.seatliberator.seatliberator.identity.core.actor.context.ActorContextHolder;
 import com.seatliberator.seatliberator.reservation.application.seat.contract.SeatTimeSlotBundlePolicy;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
