@@ -7,5 +7,5 @@ import java.util.Set;
 public interface Actor {
     String subject();
 
-    Set<? extends Capability> capabilities();
+    Set<Capability> capabilities();
 }
