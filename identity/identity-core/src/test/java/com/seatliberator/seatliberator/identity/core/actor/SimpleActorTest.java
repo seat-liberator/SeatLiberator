@@ -6,20 +6,18 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
+import static com.seatliberator.seatliberator.kernel.test.assertion.DomainAssertions.assertThatDomainThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class SimpleActorTest {
     @Test
     @DisplayName("subject가 유효하지 않으면 예외")
     void throw_exception_when_subject_invalid() {
-        assertThatThrownBy(() -> SimpleActor.of(null, Set.of()))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("subject must not be null or blank.");
+        assertThatDomainThrownBy(() -> SimpleActor.of(null, Set.of()))
+                .hasNonNullMessageFor("subject");
 
-        assertThatThrownBy(() -> SimpleActor.of("  ", Set.of()))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("subject must not be null or blank.");
+        assertThatDomainThrownBy(() -> SimpleActor.of("  ", Set.of()))
+                .hasNonBlankMessageFor("subject");
     }
 
     @Test
@@ -27,18 +25,16 @@ public class SimpleActorTest {
     void throw_exception_when_capabilities_null() {
         var subject = "user-1";
 
-        assertThatThrownBy(() -> SimpleActor.of(subject, null))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("capabilities must not be null.");
+        assertThatDomainThrownBy(() -> SimpleActor.of(subject, null))
+                .hasNonNullMessageFor("capabilities");
     }
 
     @Test
     @DisplayName("subject와 capabilities로 생성한다")
     void create_with_subject_and_capabilities() {
         var subject = "user-1";
-        var capabilities = Set.of(TestCapability.TEST_CAPABILITY);
 
-        var actor = SimpleActor.of(subject, capabilities);
+        var actor = SimpleActor.of(subject, Set.of(TestCapability.TEST_CAPABILITY));
 
         assertThat(actor.subject()).isEqualTo(subject);
         assertThat(actor.capabilities())

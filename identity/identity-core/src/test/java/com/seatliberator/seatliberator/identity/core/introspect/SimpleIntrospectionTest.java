@@ -15,8 +15,7 @@ public class SimpleIntrospectionTest {
     void SimpleIntrospection은_전달된_값을_그대로_반환한다() {
         // given
         var subject = "user-1";
-        var capabilities = Set.of(TestCapability.TEST_CAPABILITY);
-        var actor = SimpleActor.of(subject, capabilities);
+        var actor = SimpleActor.of(subject, Set.of(TestCapability.TEST_CAPABILITY));
         Long expiration = 123456789L;
 
         // when

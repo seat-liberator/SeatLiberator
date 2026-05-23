@@ -31,8 +31,7 @@ public class SimpleIntrospectionFactoryTest {
     void shouldCreateActiveIntrospection() {
         // given
         var subject = "user-1";
-        var capabilities = Set.of(TestCapability.TEST_CAPABILITY);
-        var actor = SimpleActor.of(subject, capabilities);
+        var actor = SimpleActor.of(subject, Set.of(TestCapability.TEST_CAPABILITY));
         Long expiration = 999999L;
 
         // when
@@ -51,8 +50,7 @@ public class SimpleIntrospectionFactoryTest {
     void shouldThrowWhenExpirationIsNull() {
         // given
         var subject = "user-1";
-        var capabilities = Set.of(TestCapability.TEST_CAPABILITY);
-        var actor = SimpleActor.of(subject, capabilities);
+        var actor = SimpleActor.of(subject, Set.of(TestCapability.TEST_CAPABILITY));
 
         // when & then
         assertThrows(NullPointerException.class, () -> factory.createIntrospection(null, actor));

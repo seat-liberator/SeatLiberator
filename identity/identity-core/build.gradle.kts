@@ -17,9 +17,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
     testImplementation("ch.qos.logback:logback-classic:1.5.18")
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation(project(":kernel:kernel-test"))
 }
 
 tasks.test {
