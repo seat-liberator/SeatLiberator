@@ -10,7 +10,8 @@ dependencies {
     implementation(project(":reservation:reservation-api"))
     implementation(project(":reservation:reservation-domain"))
 
-    implementation(project(":bootstrap:application-starter"))
+    implementation(project(":event-relay:event-relay-starter"))
+    implementation(project(":identity:identity-application-starter"))
 
     testImplementation(project(":kernel:kernel-test"))
     testImplementation(testFixtures(project(":reservation:reservation-domain")))
