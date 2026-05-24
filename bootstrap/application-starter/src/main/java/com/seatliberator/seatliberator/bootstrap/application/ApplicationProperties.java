@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import java.time.ZoneId;
 
 @Validated
-@ConfigurationProperties(prefix = "seatliberator.application")
+@ConfigurationProperties(prefix = "seatliberator.bootstrap.application")
 public record ApplicationProperties(
         @DefaultValue("true")
         boolean enabled,
