@@ -7,6 +7,7 @@ val libs = extensions
     .named("libs")
 
 dependencies {
+    add("implementation", libs.findLibrary("spring-boot-starter-validation").get())
     add("implementation", libs.findLibrary("spring-boot-autoconfigure").get())
     add("annotationProcessor", libs.findLibrary("spring-boot-configuration-processor").get())
 }
