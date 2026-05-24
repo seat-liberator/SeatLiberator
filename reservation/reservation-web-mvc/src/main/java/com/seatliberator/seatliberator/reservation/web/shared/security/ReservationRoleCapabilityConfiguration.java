@@ -4,16 +4,12 @@ import com.seatliberator.seatliberator.identity.core.role.Role;
 import com.seatliberator.seatliberator.identity.core.role.RoleCapabilities;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import java.util.Set;
 
 import static com.seatliberator.seatliberator.reservation.application.shared.configuration.ReservationCapability.*;
 
 @Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
 public class ReservationRoleCapabilityConfiguration {
     @Bean
     RoleCapabilities guestRoleCapabilities() {

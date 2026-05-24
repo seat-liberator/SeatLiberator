@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":board:board-application"))
     implementation(project(":board:board-domain"))
 
-    implementation(project(":bootstrap:security-starter"))
+    implementation(project(":identity:identity-client-starter"))
 
     testImplementation(project(":kernel:kernel-test"))
 }

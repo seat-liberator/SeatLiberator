@@ -1,6 +1,6 @@
 plugins {
     id("seatliberator.base.library")
-    id("seatliberator.spring.security")
+    id("seatliberator.layer.security")
     id("seatliberator.spring.autoconfigure")
 }
 
@@ -9,6 +9,7 @@ version = "0.0.1-SNAPSHOT"
 
 dependencies {
     api(project(":identity:identity-core"))
+    api(project(":bootstrap:security-starter"))
 
     implementation(libs.spring.security.jose)
 }
