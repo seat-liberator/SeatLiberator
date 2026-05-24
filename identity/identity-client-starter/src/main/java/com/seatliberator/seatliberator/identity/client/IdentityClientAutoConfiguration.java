@@ -3,12 +3,13 @@ package com.seatliberator.seatliberator.identity.client;
 import com.seatliberator.seatliberator.identity.client.jwt.ActorContextBindingFilter;
 import com.seatliberator.seatliberator.identity.client.jwt.ActorContextJwtAuthenticationConverter;
 import com.seatliberator.seatliberator.identity.core.actor.context.ActorContextHolder;
-import com.seatliberator.seatliberator.identity.core.actor.context.ThreadLocalActorContextHolder;
 import com.seatliberator.seatliberator.identity.core.role.*;
 import com.seatliberator.seatliberator.kernel.CurrentApplicationNamespaceProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -17,6 +18,12 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import java.util.List;
 
 @AutoConfiguration
+@ConditionalOnProperty(
+        prefix = "identity.client",
+        name = "enabled",
+        havingValue = "true",
+        matchIfMissing = true
+)
 @EnableConfigurationProperties(IdentityClientProperties.class)
 public class IdentityClientAutoConfiguration {
     @Bean
@@ -37,6 +44,7 @@ public class IdentityClientAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(ActorContextBindingFilter.class)
+    @ConditionalOnBean(ActorContextHolder.class)
     @ConditionalOnClass({
             jakarta.servlet.Filter.class,
             org.springframework.security.core.context.SecurityContextHolder.class,
@@ -44,12 +52,6 @@ public class IdentityClientAutoConfiguration {
     })
     ActorContextBindingFilter actorContextBindingFilter(ActorContextHolder actorContextHolder) {
         return new ActorContextBindingFilter(actorContextHolder);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(ActorContextHolder.class)
-    ThreadLocalActorContextHolder threadLocalActorContextHolder() {
-        return new ThreadLocalActorContextHolder();
     }
 
     @Bean

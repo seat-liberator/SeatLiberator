@@ -1,1 +1,2 @@
 com.seatliberator.seatliberator.identity.client.IdentityClientAutoConfiguration
+com.seatliberator.seatliberator.identity.client.IdentityClientSecurityAutoConfiguration

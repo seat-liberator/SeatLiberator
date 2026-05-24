@@ -12,6 +12,6 @@ version = "0.0.1-SNAPSHOT"
 dependencies {
     implementation(project(":notification:notification-api"))
 
-    implementation(project(":bootstrap:application-starter"))
-    implementation(project(":bootstrap:security-starter"))
+    implementation(project(":identity:identity-application-starter"))
+    implementation(project(":identity:identity-client-starter"))
 }

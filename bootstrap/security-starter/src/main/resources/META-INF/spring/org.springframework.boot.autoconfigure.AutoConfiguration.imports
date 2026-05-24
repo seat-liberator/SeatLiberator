@@ -1,2 +1,1 @@
-com.seatliberator.seatliberator.bootstrap.autoconfigure.ResourceServerSecurityAutoConfiguration
-com.seatliberator.seatliberator.bootstrap.autoconfigure.ResourceServerAuthorizeAutoConfiguration
+com.seatliberator.seatliberator.bootstrap.security.SecurityStarterAutoConfigure
