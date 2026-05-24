@@ -11,9 +11,9 @@ public record ApplicationProperties(
         boolean enabled,
 
         @DefaultValue("UTC")
-        ZoneId zoneId
+        ZoneId timezone
 ) {
     public ApplicationProperties {
-        if (zoneId == null) throw new IllegalArgumentException("zoneId must not be null or blank.");
+        if (timezone == null) throw new IllegalArgumentException("timezone must not be null or blank.");
     }
 }

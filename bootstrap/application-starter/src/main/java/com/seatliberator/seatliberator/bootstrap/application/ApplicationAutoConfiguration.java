@@ -20,6 +20,6 @@ public class ApplicationAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(Clock.class)
     Clock clock(ApplicationProperties properties) {
-        return Clock.system(properties.zoneId());
+        return Clock.system(properties.timezone());
     }
 }
