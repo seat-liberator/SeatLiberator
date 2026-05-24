@@ -8,7 +8,7 @@ version = "0.0.1-SNAPSHOT"
 dependencies {
     implementation(project(":event-relay:event-relay-core"))
     implementation("org.springframework.boot:spring-boot-autoconfigure")
-    implementation("org.springframework.kafka:spring-kafka")
+    implementation("org.springframework.boot:spring-boot-starter-kafka")
 
     implementation("org.slf4j:slf4j-api")
 
