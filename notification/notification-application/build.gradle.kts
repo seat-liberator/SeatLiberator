@@ -13,5 +13,5 @@ dependencies {
     implementation(project(":notification:notification-api"))
 
     implementation(project(":bootstrap:application-starter"))
-    implementation(project(":bootstrap:resource-application-starter"))
+    implementation(project(":bootstrap:security-starter"))
 }
