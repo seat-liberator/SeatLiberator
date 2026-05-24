@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.identity.server.application.shared.seed;
 
+import com.seatliberator.seatliberator.identity.core.role.InitialNamespaceRoleRegistry;
 import com.seatliberator.seatliberator.identity.core.role.Role;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.in.RegisterCredentialAccountUseCase;
 import com.seatliberator.seatliberator.identity.server.application.credential.port.in.command.RegisterCredentialAccountCommand;
-import com.seatliberator.seatliberator.identity.server.application.role.internal.InitialNamespaceRoleRegistry;
 import com.seatliberator.seatliberator.identity.server.application.role.port.in.UpdateRoleUseCase;
 import com.seatliberator.seatliberator.identity.server.application.role.port.in.command.UpdateRoleCommand;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class UserSeeder {
     private final InitialNamespaceRoleRegistry initialNamespaceRoleRegistry;
 
     public void seed() {
-        var initialNamespaceRoles = initialNamespaceRoleRegistry.getInitialNamespaceRoles();
+        var initialNamespaceRoles = initialNamespaceRoleRegistry.getAll();
 
         for (var role : Role.values()) {
             var roleName = role.name().toLowerCase(Locale.ROOT);
