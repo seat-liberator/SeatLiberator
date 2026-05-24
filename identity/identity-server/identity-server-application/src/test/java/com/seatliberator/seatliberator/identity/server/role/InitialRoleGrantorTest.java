@@ -1,7 +1,7 @@
 package com.seatliberator.seatliberator.identity.server.role;
 
+import com.seatliberator.seatliberator.identity.core.role.InitialNamespaceRoleRegistry;
 import com.seatliberator.seatliberator.identity.server.application.role.contract.InitialRoleGrantor;
-import com.seatliberator.seatliberator.identity.server.application.role.internal.InitialNamespaceRoleRegistry;
 import com.seatliberator.seatliberator.identity.server.application.role.port.out.UserGrantedRoleStore;
 import com.seatliberator.seatliberator.identity.server.application.user.port.out.UserReader;
 import com.seatliberator.seatliberator.identity.server.domain.role.UserGrantedRole;
@@ -43,7 +43,7 @@ public class InitialRoleGrantorTest {
     @DisplayName("초기 namespaceRole을 사용자에게 부여한다")
     void grant_initial_namespace_roles_to_user() {
         var savedGrants = new AtomicReference<Collection<UserGrantedRole>>();
-        when(registry.getInitialNamespaceRoles()).thenReturn(List.of(NAMESPACE_ROLE));
+        when(registry.getAll()).thenReturn(List.of(NAMESPACE_ROLE));
         when(store.saveAll(anyCollection())).thenAnswer(invocation -> {
             Collection<UserGrantedRole> grants = invocation.getArgument(0);
             savedGrants.set(grants);
@@ -52,7 +52,7 @@ public class InitialRoleGrantorTest {
 
         var result = grantor.grantInitial(USER_ID);
 
-        verify(registry).getInitialNamespaceRoles();
+        verify(registry).getAll();
         verify(store).saveAll(anyCollection());
         verifyNoInteractions(userReader);
 
