@@ -1,3 +1,1 @@
-com.seatliberator.seatliberator.identity.client.introspector.web.WebIntrospectionAutoConfiguration
-com.seatliberator.seatliberator.identity.client.autoconfigure.IdentityClientAutoConfiguration
-com.seatliberator.seatliberator.identity.client.autoconfigure.IdentityClientServletAutoConfiguration
+com.seatliberator.seatliberator.identity.client.IdentityClientAutoConfiguration
