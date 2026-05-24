@@ -1,13 +1,13 @@
-package com.seatliberator.seatliberator.identity.client.autoconfigure;
+package com.seatliberator.seatliberator.identity.client;
 
+import com.seatliberator.seatliberator.identity.client.jwt.ActorContextBindingFilter;
 import com.seatliberator.seatliberator.identity.client.jwt.ActorContextJwtAuthenticationConverter;
 import com.seatliberator.seatliberator.identity.core.actor.context.ActorContextHolder;
 import com.seatliberator.seatliberator.identity.core.actor.context.ThreadLocalActorContextHolder;
-import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleCapabilitiesRegistry;
-import com.seatliberator.seatliberator.identity.core.role.NamespaceRoleDeserializer;
-import com.seatliberator.seatliberator.identity.core.role.RoleCapabilities;
+import com.seatliberator.seatliberator.identity.core.role.*;
 import com.seatliberator.seatliberator.kernel.CurrentApplicationNamespaceProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +26,7 @@ public class IdentityClientAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(ActorContextJwtAuthenticationConverter.class)
     ActorContextJwtAuthenticationConverter actorContextJwtAuthenticationConverter(
             NamespaceRoleDeserializer namespaceRoleDeserializer,
             NamespaceRoleCapabilitiesRegistry namespaceRoleCapabilitiesRegistry,
@@ -36,16 +36,40 @@ public class IdentityClientAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(ActorContextBindingFilter.class)
+    @ConditionalOnClass({
+            jakarta.servlet.Filter.class,
+            org.springframework.security.core.context.SecurityContextHolder.class,
+            org.springframework.web.filter.OncePerRequestFilter.class
+    })
+    ActorContextBindingFilter actorContextBindingFilter(ActorContextHolder actorContextHolder) {
+        return new ActorContextBindingFilter(actorContextHolder);
+    }
+
+    @Bean
     @ConditionalOnMissingBean(ActorContextHolder.class)
     ThreadLocalActorContextHolder threadLocalActorContextHolder() {
         return new ThreadLocalActorContextHolder();
     }
 
     @Bean
+    @ConditionalOnMissingBean(NamespaceRoleCapabilitiesRegistry.class)
     NamespaceRoleCapabilitiesRegistry namespaceRoleCapabilitiesRegistry(
             CurrentApplicationNamespaceProvider namespaceProvider,
             List<RoleCapabilities> roleCapabilities
     ) {
         return new NamespaceRoleCapabilitiesRegistry(namespaceProvider.current(), roleCapabilities);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(NamespaceRoleSerializer.class)
+    SeparatorBasedNamespaceRoleSerializer separatorBasedNamespaceRoleSerializer() {
+        return new SeparatorBasedNamespaceRoleSerializer();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(NamespaceRoleDeserializer.class)
+    SeparatorBasedNamespaceRoleDeserializer separatorBasedNamespaceRoleDeserializer() {
+        return new SeparatorBasedNamespaceRoleDeserializer();
     }
 }

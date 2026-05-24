@@ -3,7 +3,7 @@ package com.seatliberator.seatliberator.bootstrap.autoconfigure;
 import com.seatliberator.seatliberator.bootstrap.security.customizer.ResourceServerAuthorizeRequestMatcherCustomizer;
 import com.seatliberator.seatliberator.bootstrap.security.customizer.ResourceServerHttpSecurityCustomizer;
 import com.seatliberator.seatliberator.bootstrap.security.customizer.ResourceServerOAuth2Customizer;
-import com.seatliberator.seatliberator.identity.client.web.ActorContextBindingFilter;
+import com.seatliberator.seatliberator.identity.client.jwt.ActorContextBindingFilter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
