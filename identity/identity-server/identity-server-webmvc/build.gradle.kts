@@ -13,7 +13,7 @@ dependencies {
     implementation(project(":identity:identity-server:identity-server-persistence"))
     implementation(project(":identity:identity-server:identity-server-security"))
     implementation(project(":identity:identity-core"))
-    implementation(project(":identity:identity-client-starter"))
+    implementation(project(":identity:identity-security-starter"))
 
     implementation(libs.nimbus.jose.jwt)
 }

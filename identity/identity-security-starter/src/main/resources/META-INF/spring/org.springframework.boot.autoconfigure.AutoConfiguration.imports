@@ -1,0 +1,2 @@
+com.seatliberator.seatliberator.identity.starter.security.IdentitySecurityStarterAutoConfigure
+com.seatliberator.seatliberator.identity.starter.security.IdentitySecurityStarterOAuth2AutoConfigure

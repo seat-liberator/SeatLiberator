@@ -1,9 +1,9 @@
-package com.seatliberator.seatliberator.identity.client;
+package com.seatliberator.seatliberator.identity.starter.security;
 
-import com.seatliberator.seatliberator.identity.client.jwt.ActorContextBindingFilter;
-import com.seatliberator.seatliberator.identity.client.jwt.ActorContextJwtAuthenticationConverter;
 import com.seatliberator.seatliberator.identity.core.actor.context.ActorContextHolder;
 import com.seatliberator.seatliberator.identity.core.role.*;
+import com.seatliberator.seatliberator.identity.starter.security.jwt.ActorContextBindingFilter;
+import com.seatliberator.seatliberator.identity.starter.security.jwt.ActorContextJwtAuthenticationConverter;
 import com.seatliberator.seatliberator.kernel.CurrentApplicationNamespaceProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -25,7 +25,7 @@ import java.util.List;
         matchIfMissing = true
 )
 @EnableConfigurationProperties(IdentityClientProperties.class)
-public class IdentityClientAutoConfiguration {
+public class IdentitySecurityStarterAutoConfigure {
     @Bean
     @ConditionalOnMissingBean(JwtDecoder.class)
     JwtDecoder jwtDecoder(IdentityClientProperties properties) {
