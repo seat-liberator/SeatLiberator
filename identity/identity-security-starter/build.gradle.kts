@@ -9,7 +9,7 @@ version = "0.0.1-SNAPSHOT"
 
 dependencies {
     api(project(":identity:identity-core"))
-    api(project(":bootstrap:security-starter"))
+    api(project(":starter:security-starter"))
 
     implementation(libs.spring.security.jose)
 }

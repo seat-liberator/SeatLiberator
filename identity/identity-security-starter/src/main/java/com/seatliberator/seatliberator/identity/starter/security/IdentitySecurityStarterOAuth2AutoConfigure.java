@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.identity.starter.security;
 
-import com.seatliberator.seatliberator.bootstrap.security.SecurityStarterAutoConfigure;
-import com.seatliberator.seatliberator.bootstrap.security.customizer.HttpSecurityCustomizer;
 import com.seatliberator.seatliberator.identity.starter.security.jwt.ActorContextBindingFilter;
 import com.seatliberator.seatliberator.identity.starter.security.jwt.ActorContextJwtAuthenticationConverter;
+import com.seatliberator.seatliberator.starter.security.SecurityStarterAutoConfigure;
+import com.seatliberator.seatliberator.starter.security.customizer.HttpSecurityCustomizer;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

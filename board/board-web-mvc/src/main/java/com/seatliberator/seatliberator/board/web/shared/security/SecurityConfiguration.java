@@ -1,6 +1,6 @@
 package com.seatliberator.seatliberator.board.web.shared.security;
 
-import com.seatliberator.seatliberator.bootstrap.security.customizer.HttpSecurityCustomizer;
+import com.seatliberator.seatliberator.starter.security.customizer.HttpSecurityCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
