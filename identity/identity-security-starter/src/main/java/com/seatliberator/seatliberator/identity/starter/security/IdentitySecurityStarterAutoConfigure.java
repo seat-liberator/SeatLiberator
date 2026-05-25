@@ -19,7 +19,7 @@ import java.util.List;
 
 @AutoConfiguration
 @ConditionalOnProperty(
-        prefix = "identity.client",
+        prefix = "identity.starter.security",
         name = "enabled",
         havingValue = "true",
         matchIfMissing = true
