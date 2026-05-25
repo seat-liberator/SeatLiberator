@@ -1,8 +1,7 @@
-seatliberator:
-  resource-server:
+identity:
+  starter:
     security:
-      authorize:
-        jwk-set-uri: ${JWKS_BASE_URL:http://localhost:8080}/.well-known/jwks.json
+      jwk-set-uri: ${JWKS_BASE_URL:http://localhost:8080}/.well-known/jwks.json
 
 spring:
   datasource:
