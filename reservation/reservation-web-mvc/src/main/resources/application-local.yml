@@ -1,6 +1,7 @@
 identity:
-  client:
-    jwk-set-uri: ${LOCAL_JWKS_BASE_URL:http://localhost:8080}/.well-known/jwks.json
+  starter:
+    security:
+      jwk-set-uri: ${LOCAL_JWKS_BASE_URL:http://localhost:8080}/.well-known/jwks.json
 
 app:
   seed:
