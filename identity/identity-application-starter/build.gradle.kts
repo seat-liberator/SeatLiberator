@@ -8,5 +8,5 @@ version = "0.0.1-SNAPSHOT"
 
 dependencies {
     api(project(":identity:identity-core"))
-    api(project(":bootstrap:application-starter"))
+    api(project(":starter:application-starter"))
 }

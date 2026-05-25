@@ -20,8 +20,8 @@ rootProject.name = "seatliberator"
 include("kernel:kernel-core")
 include("kernel:kernel-test")
 
-include("bootstrap:application-starter")
-include("bootstrap:security-starter")
+include("starter:application-starter")
+include("starter:security-starter")
 
 include("gateway")
 
