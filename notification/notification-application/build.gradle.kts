@@ -13,5 +13,5 @@ dependencies {
     implementation(project(":notification:notification-api"))
 
     implementation(project(":identity:identity-application-starter"))
-    implementation(project(":identity:identity-client-starter"))
+    implementation(project(":identity:identity-security-starter"))
 }

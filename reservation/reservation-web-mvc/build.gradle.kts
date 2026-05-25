@@ -12,7 +12,7 @@ dependencies {
     implementation(project(":reservation:reservation-application"))
     implementation(project(":reservation:reservation-domain"))
 
-    implementation(project(":identity:identity-client-starter"))
+    implementation(project(":identity:identity-security-starter"))
 
     testImplementation(project(":kernel:kernel-test"))
     testImplementation(testFixtures(project(":reservation:reservation-domain")))

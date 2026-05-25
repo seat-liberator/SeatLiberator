@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.client;
+package com.seatliberator.seatliberator.identity.starter.security;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
