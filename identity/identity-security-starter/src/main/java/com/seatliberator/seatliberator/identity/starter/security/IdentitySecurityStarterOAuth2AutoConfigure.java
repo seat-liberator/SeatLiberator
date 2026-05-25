@@ -14,7 +14,7 @@ import org.springframework.security.oauth2.server.resource.web.authentication.Be
 
 @AutoConfiguration(after = SecurityStarterAutoConfigure.class)
 @ConditionalOnProperty(
-        prefix = "identity.client.security",
+        prefix = "identity.starter.security",
         name = "enabled",
         havingValue = "true",
         matchIfMissing = true

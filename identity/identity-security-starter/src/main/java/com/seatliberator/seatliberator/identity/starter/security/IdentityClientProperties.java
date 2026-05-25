@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.net.URI;
 
-@ConfigurationProperties(prefix = "identity.client")
+@ConfigurationProperties(prefix = "identity.starter.security")
 public record IdentityClientProperties(
         @DefaultValue("true")
         boolean enabled,
