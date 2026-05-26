@@ -22,8 +22,8 @@ public interface BookingDetailRepository extends Repository<Reservation, UUID> {
                 occupancy.id AS occupancyId,
                 occupancy.occupancyDate AS occupancyDate,
                 slot.id AS seatTimeSlotId,
-                room.roomId AS roomId,
-                seat.seatId AS seatId,
+                room.code AS roomCode,
+                seat.code AS seatCode,
                 slot.slotRange.startNanoOfDay AS slotStartNanoOfDay,
                 slot.slotRange.endNanoOfDay AS slotEndNanoOfDay,
                 slot.slotStatus AS slotStatus
