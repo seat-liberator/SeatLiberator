@@ -1,3 +1,9 @@
+seatliberator:
+  starter:
+    security:
+      authorize:
+        anyRequest: AUTHENTICATED
+
 identity:
   starter:
     security:
