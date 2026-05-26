@@ -11,7 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import java.util.List;
 
 @Validated
-@ConfigurationProperties(prefix = "seatliberator.bootstrap.security")
+@ConfigurationProperties(prefix = "seatliberator.starter.security")
 public record SecurityStarterProperties(
         @DefaultValue("true")
         boolean enabled,

@@ -31,7 +31,7 @@ import java.util.Optional;
 @EnableMethodSecurity
 @ConditionalOnClass({HttpSecurity.class, SecurityFilterChain.class})
 @ConditionalOnProperty(
-        prefix = "seatliberator.bootstrap.security",
+        prefix = "seatliberator.starter.security",
         name = "enabled",
         havingValue = "true",
         matchIfMissing = true
@@ -66,7 +66,7 @@ public class SecurityStarterAutoConfigure {
     @Bean
     @ConditionalOnMissingBean(CorsConfigurationSource.class)
     @ConditionalOnProperty(
-            prefix = "seatliberator.bootstrap.security.cors",
+            prefix = "seatliberator.starter.security.cors",
             name = "enabled",
             havingValue = "true",
             matchIfMissing = true
@@ -92,7 +92,7 @@ public class SecurityStarterAutoConfigure {
     @Bean("permitAllRequestsCustomizer")
     @ConditionalOnMissingBean(name = "permitAllRequestsCustomizer")
     @ConditionalOnProperty(
-            prefix = "seatliberator.bootstrap.security.authorize",
+            prefix = "seatliberator.starter.security.authorize",
             name = "enabled",
             havingValue = "true",
             matchIfMissing = true
@@ -128,7 +128,7 @@ public class SecurityStarterAutoConfigure {
             var corsSource = Optional.ofNullable(corsConfigurationSourceObjectProvider.getIfAvailable())
                     .orElseThrow(() -> new IllegalStateException("""
                             CORS is enabled but CorsConfigurationSource bean is not available.
-                            Check seatliberator.bootstrap.security.cors.enabled or define a CorsConfigurationSource bean.
+                            Check seatliberator.starter.security.cors.enabled or define a CorsConfigurationSource bean.
                             """));
 
             httpSecurity.cors(configurer -> configurer.configurationSource(corsSource));
