@@ -18,12 +18,12 @@ public class RoomFixture {
     private static final String CODE_FORMAT = "study-room-%s";
     private static final Generator<String> CODE_GENERATOR = FormattedStringGenerator.of(CODE_FORMAT, new SequenceCounter());
 
-    private static final RoomOperationPolicy OPERATION_POLICY = RoomOperationPolicyFixture.get();
     private static final Instant CREATED_AT = CLOCK.instant();
 
-    public static Room get() {
+    public static Room next() {
         var code = CODE_GENERATOR.generate();
-        return Room.of(code, OPERATION_POLICY, CREATED_AT);
+        var operationPolicy = RoomOperationPolicyFixture.get();
+        return Room.of(code, operationPolicy, CREATED_AT);
     }
 
     public static UUID nextId() {
@@ -36,7 +36,7 @@ public class RoomFixture {
 
     public static class Builder {
         private String code = CODE_GENERATOR.generate();
-        private RoomOperationPolicy operationPolicy = OPERATION_POLICY;
+        private RoomOperationPolicy operationPolicy = RoomOperationPolicyFixture.get();
         private Instant createdAt = CREATED_AT;
 
         public Builder() {
