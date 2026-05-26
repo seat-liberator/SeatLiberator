@@ -33,18 +33,18 @@ public class SeatTest {
     class CreationTest {
         static Stream<Arguments> nullArgumentCases() {
             return Stream.of(
-                    arguments("room = null", (Supplier<Seat>) () -> new SeatFixture.Builder().room(null).build(), "room"),
+                    arguments("roomId = null", (Supplier<Seat>) () -> new SeatFixture.Builder().roomId(null).build(), "roomId"),
                     arguments("code = null", (Supplier<Seat>) () -> new SeatFixture.Builder().code(null).build(), "code"),
                     arguments("createdAt = null", (Supplier<Seat>) () -> new SeatFixture.Builder().createdAt(null).build(), "createdAt")
             );
         }
 
         @Test
-        @DisplayName("room과 code를 넘겨서 Seat 생성 가능")
+        @DisplayName("roomId과 code를 넘겨서 Seat 생성 가능")
         void create_with_room_and_code() {
-            var room = RoomFixture.get();
+            var roomId = RoomFixture.nextId();
             var code = "seat-A";
-            var seat = Seat.of(room, code, now);
+            var seat = Seat.of(roomId, code, now);
 
             assertThat(seat.getCode()).isEqualTo(code);
             assertThat(seat.getCreatedAt()).isEqualTo(now);
@@ -65,9 +65,9 @@ public class SeatTest {
         @Test
         @DisplayName("초기 상태를 전달하지 않으면 ACTIVE로 초기화되고 lastActivatedAt은 createdAt과 같다")
         void active_when_created() {
-            var room = RoomFixture.get();
+            var roomId = RoomFixture.nextId();
             var code = "seat-A";
-            var seat = Seat.of(room, code, now);
+            var seat = Seat.of(roomId, code, now);
 
             assertThat(seat.getStatus()).isEqualTo(SeatStatus.ACTIVE);
             assertThat(seat.getCreatedAt()).isEqualTo(seat.getLastActivatedAt());
@@ -76,9 +76,9 @@ public class SeatTest {
         @Test
         @DisplayName("INACTIVE 상태로 생성하면 lastInactivatedAt은 createdAt과 같다")
         void inactive_when_created() {
-            var room = RoomFixture.get();
+            var roomId = RoomFixture.nextId();
             var code = "seat-A";
-            var seat = Seat.of(room, code, SeatStatus.INACTIVE, now);
+            var seat = Seat.of(roomId, code, SeatStatus.INACTIVE, now);
 
             assertThat(seat.getStatus()).isEqualTo(SeatStatus.INACTIVE);
             assertThat(seat.getCreatedAt()).isEqualTo(seat.getLastInactivatedAt());
@@ -88,9 +88,9 @@ public class SeatTest {
         @ValueSource(strings = {" ", "  ", "\t", "\n"})
         @DisplayName("code가 공백이면 예외")
         void throw_exception_when_empty_code(String code) {
-            var room = RoomFixture.get();
+            var roomId = RoomFixture.nextId();
 
-            assertThatDomainThrownBy(() -> Seat.of(room, code, now))
+            assertThatDomainThrownBy(() -> Seat.of(roomId, code, now))
                     .hasNonBlankMessageFor("code");
         }
     }
@@ -100,7 +100,6 @@ public class SeatTest {
     class UpdateTest {
         static Stream<Arguments> nullArgumentCases() {
             return Stream.of(
-                    arguments("room = null", (Consumer<Seat>) (seat) -> seat.updateRoom(null), "room"),
                     arguments("code = null", (Consumer<Seat>) (seat) -> seat.updateCode(null), "code"),
                     arguments("activatedAt = null", (Consumer<Seat>) (seat) -> seat.active(null), "activatedAt"),
                     arguments("inactivatedAt = null", (Consumer<Seat>) (seat) -> seat.inactive(null), "inactivatedAt")
@@ -129,34 +128,6 @@ public class SeatTest {
             var seat = SeatFixture.next();
             assertThatDomainThrownBy(() -> consumer.accept(seat))
                     .hasNonNullMessageFor(fieldName);
-        }
-
-        @Test
-        @DisplayName("새로운 방으로 변경 가능")
-        void update_with_new_room() {
-            var room = RoomFixture.get();
-            var seat = SeatFixture.nextWithRoom(room);
-
-            assertThat(seat.getRoom()).isEqualTo(room);
-
-            var newRoom = RoomFixture.get();
-
-            seat.updateRoom(newRoom);
-
-            assertThat(seat.getRoom()).isEqualTo(newRoom);
-        }
-
-        @Test
-        @DisplayName("같은 방으로 변경하면 기존 방이랑 동일")
-        void ignore_when_update_same_room() {
-            var code = "seat-A";
-            var roomId = "room-1";
-            var room = new RoomFixture.Builder().code(roomId).build();
-            var seat = new SeatFixture.Builder().code(code).room(room).build();
-
-            seat.updateRoom(room);
-
-            assertThat(seat.getRoom()).isEqualTo(room);
         }
 
         @ParameterizedTest(name = "newCode = {0}")

@@ -25,8 +25,11 @@ public class Seat {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id", nullable = false)
+    @Column(name = "room_id", nullable = false, updatable = false)
+    private UUID roomId;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "room_id", nullable = false, insertable = false, updatable = false)
     private Room room;
 
     @Column(name = "code", nullable = false)
@@ -46,12 +49,12 @@ public class Seat {
     private Instant lastInactivatedAt;
 
     private Seat(
-            Room room,
+            UUID roomId,
             String code,
             SeatStatus status,
             Instant createdAt
     ) {
-        this.room = Preconditions.requireNonNull(room, "room");
+        this.roomId = Preconditions.requireNonNull(roomId, "roomId");
         this.code = Preconditions.requireNonBlank(code, "code");
         this.status = Preconditions.requireNonNull(status, "status");
         this.createdAt = Preconditions.requireNonNull(createdAt, "createdAt");
@@ -62,12 +65,12 @@ public class Seat {
         }
     }
 
-    public static Seat of(Room room, String code, Instant createdAt) {
-        return of(room, code, SeatStatus.ACTIVE, createdAt);
+    public static Seat of(UUID roomId, String code, Instant createdAt) {
+        return of(roomId, code, SeatStatus.ACTIVE, createdAt);
     }
 
-    public static Seat of(Room room, String code, SeatStatus status, Instant createdAt) {
-        return new Seat(room, code, status, createdAt);
+    public static Seat of(UUID roomId, String code, SeatStatus status, Instant createdAt) {
+        return new Seat(roomId, code, status, createdAt);
     }
 
     public SeatLocator getLocator() {
@@ -77,12 +80,6 @@ public class Seat {
     public void updateCode(String code) {
         Preconditions.requireNonBlank(code, "code");
         this.code = code;
-    }
-
-    public void updateRoom(Room room) {
-        Preconditions.requireNonNull(room, "room");
-        if (this.room.equals(room)) return;
-        this.room = room;
     }
 
     public void active(Instant activatedAt) {

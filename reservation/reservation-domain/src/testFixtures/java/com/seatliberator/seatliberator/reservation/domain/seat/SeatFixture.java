@@ -5,7 +5,6 @@ import com.seatliberator.seatliberator.kernel.test.Generator;
 import com.seatliberator.seatliberator.kernel.test.SequenceCounter;
 import com.seatliberator.seatliberator.kernel.test.UuidGenerator;
 import com.seatliberator.seatliberator.kernel.test.clock.TestClock;
-import com.seatliberator.seatliberator.reservation.domain.room.Room;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
 
 import java.time.Clock;
@@ -17,7 +16,7 @@ public class SeatFixture {
 
     private static final Generator<UUID> ID_GENERATOR = new UuidGenerator(new SequenceCounter());
 
-    private static final Room ROOM = RoomFixture.get();
+    private static final UUID ROOM_ID = RoomFixture.nextId();
 
     private static final String CODE_FORMAT = "seat-%s";
     private static final Generator<String> CODE_GENERATOR = FormattedStringGenerator.of(CODE_FORMAT, new SequenceCounter());
@@ -27,12 +26,7 @@ public class SeatFixture {
 
     public static Seat next() {
         var code = CODE_GENERATOR.generate();
-        return Seat.of(ROOM, code, STATUS, CREATED_AT);
-    }
-
-    public static Seat nextWithRoom(Room room) {
-        var code = CODE_GENERATOR.generate();
-        return Seat.of(room, code, STATUS, CREATED_AT);
+        return Seat.of(ROOM_ID, code, STATUS, CREATED_AT);
     }
 
     public static UUID nextId() {
@@ -44,7 +38,7 @@ public class SeatFixture {
     }
 
     public static class Builder {
-        private Room room = ROOM;
+        private UUID roomId = ROOM_ID;
         private String code = CODE_GENERATOR.generate();
         private SeatStatus status = STATUS;
         private Instant createdAt = CREATED_AT;
@@ -57,8 +51,8 @@ public class SeatFixture {
             return this;
         }
 
-        public Builder room(Room room) {
-            this.room = room;
+        public Builder roomId(UUID roomId) {
+            this.roomId = roomId;
             return this;
         }
 
@@ -73,7 +67,7 @@ public class SeatFixture {
         }
 
         public Seat build() {
-            return Seat.of(room, code, status, createdAt);
+            return Seat.of(roomId, code, status, createdAt);
         }
     }
 }
