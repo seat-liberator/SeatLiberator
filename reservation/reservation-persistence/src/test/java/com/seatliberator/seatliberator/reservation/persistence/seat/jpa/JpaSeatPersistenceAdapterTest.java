@@ -2,7 +2,7 @@ package com.seatliberator.seatliberator.reservation.persistence.seat.jpa;
 
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatStore;
-import com.seatliberator.seatliberator.reservation.application.seat.port.out.criteria.SeatExclusion;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.filter.SeatFilter;
 import com.seatliberator.seatliberator.reservation.domain.room.Room;
 import com.seatliberator.seatliberator.reservation.domain.seat.Seat;
 import com.seatliberator.seatliberator.reservation.persistence.AbstractPersistenceAdapterTest;
@@ -15,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import java.util.List;
-
-import static com.seatliberator.seatliberator.reservation.persistence.TestSupport.*;
+import static com.seatliberator.seatliberator.reservation.persistence.seat.SeatTestSupport.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -37,40 +35,75 @@ public class JpaSeatPersistenceAdapterTest extends AbstractPersistenceAdapterTes
     RoomRepository roomRepository;
 
     private Room saveRoom() {
-        return saveRoom(ROOM_ID);
+        return roomRepository.save(room());
     }
 
-    private Room saveRoom(String roomId) {
-        return roomRepository.save(room(roomId));
+    private Room saveOtherRoom() {
+        return roomRepository.save(otherRoom());
     }
 
     private Seat saveSeat(Room room) {
-        return saveSeat(room, SEAT_ID);
+        return seatRepository.save(seat(room));
     }
 
-    private Seat saveSeat(Room room, String seatId) {
-        return seatRepository.save(seat(room, seatId));
-    }
-
-    private void assertSameSeat(Seat actual, Seat expected) {
-        assertThat(actual.getId()).isEqualTo(expected.getId());
-        assertThat(actual.getRoom().getRoomId()).isEqualTo(expected.getRoom().getRoomId());
-        assertThat(actual.getSeatId()).isEqualTo(expected.getSeatId());
-        assertThat(actual.getStatus()).isEqualTo(expected.getStatus());
-        assertThat(actual.getCreatedAt()).isEqualTo(expected.getCreatedAt());
+    private Seat saveOtherSeat(Room room) {
+        return seatRepository.save(otherSeat(room));
     }
 
     @Nested
     @DisplayName("Reader 테스트")
     class ReaderTest {
         @Test
-        @DisplayName("findByLocator는 Locator에 해당하는 좌석을 반환한다")
-        void should_find_seat_by_locator() {
+        @DisplayName("existsById는 좌석 Id에 해당하는 좌석이 있으면 True")
+        void should_return_true_when_exists_seat_by_id() {
             var room = saveRoom();
             var seat = saveSeat(room);
             flushAndClear();
 
-            var actual = reader.findByLocator(seat.getLocator());
+            var actual = reader.existsById(seat.getId());
+
+            assertThat(actual).isTrue();
+        }
+
+        @Test
+        @DisplayName("existsById는 좌석 Id에 해당하는 좌석이 없으면 False")
+        void should_return_false_when_seat_not_exists_by_id() {
+            var actual = reader.existsById(UNKNOWN_SEAT_ID);
+
+            assertThat(actual).isFalse();
+        }
+
+        @Test
+        @DisplayName("existsByCriteria는 조건에 해당하는 좌석이 있으면 True")
+        void should_return_true_when_exists_seat_by_criteria() {
+            var room = saveRoom();
+            var seat = saveSeat(room);
+            flushAndClear();
+
+            var actual = reader.existsByCriteria(lookupCriteria(seat));
+
+            assertThat(actual).isTrue();
+        }
+
+        @Test
+        @DisplayName("existsByCriteria는 조건에 해당하는 좌석이 없으면 False")
+        void should_return_false_when_seat_not_exists_by_criteria() {
+            var room = saveRoom();
+            flushAndClear();
+
+            var actual = reader.existsByCriteria(unknownSeatLookupCriteria(room));
+
+            assertThat(actual).isFalse();
+        }
+
+        @Test
+        @DisplayName("findById는 좌석 Id에 해당하는 좌석을 반환한다")
+        void should_find_seat_by_id() {
+            var room = saveRoom();
+            var seat = saveSeat(room);
+            flushAndClear();
+
+            var actual = reader.findById(seat.getId());
 
             assertThat(actual)
                     .isPresent()
@@ -79,24 +112,24 @@ public class JpaSeatPersistenceAdapterTest extends AbstractPersistenceAdapterTes
         }
 
         @Test
-        @DisplayName("findByLocator는 Locator에 해당하는 좌석이 없으면 Optional.empty를 반환한다")
-        void should_return_empty_when_seat_not_found_by_locator() {
-            var actual = reader.findByLocator(locator());
+        @DisplayName("findById는 좌석 Id에 해당하는 좌석이 없으면 Optional.empty를 반환한다")
+        void should_return_empty_when_seat_not_found_by_id() {
+            var actual = reader.findById(UNKNOWN_SEAT_ID);
 
             assertThat(actual).isEmpty();
         }
 
         @Test
-        @DisplayName("findByRoomId는 방 Id에 해당하는 모든 좌석을 반환한다")
-        void should_find_seats_by_room_id() {
+        @DisplayName("findByFilter는 방 Id에 해당하는 모든 좌석을 반환한다")
+        void should_find_seats_by_room_id_filter() {
             var room = saveRoom();
-            var otherRoom = saveRoom(OTHER_ROOM_ID);
+            var otherRoom = saveOtherRoom();
             var seat = saveSeat(room);
-            var otherSeat = saveSeat(room, OTHER_SEAT_ID);
+            var otherSeat = saveOtherSeat(room);
             saveSeat(otherRoom);
             flushAndClear();
 
-            var actual = reader.findByRoomId(room.getRoomId());
+            var actual = reader.findByFilter(roomSeatFilter(room));
 
             assertThat(actual)
                     .hasSize(2)
@@ -105,50 +138,20 @@ public class JpaSeatPersistenceAdapterTest extends AbstractPersistenceAdapterTes
         }
 
         @Test
-        @DisplayName("existsByLocator는 Locator에 해당하는 좌석이 있으면 True")
-        void should_return_true_when_exists_seat_by_locator() {
+        @DisplayName("findByFilter는 빈 필터이면 저장된 모든 좌석을 반환한다")
+        void should_find_all_seats_when_filter_empty() {
             var room = saveRoom();
+            var otherRoom = saveOtherRoom();
             var seat = saveSeat(room);
+            var otherSeat = saveSeat(otherRoom);
             flushAndClear();
 
-            var actual = reader.existsByLocator(seat.getLocator());
+            var actual = reader.findByFilter(SeatFilter.empty());
 
-            assertThat(actual).isTrue();
-        }
-
-        @Test
-        @DisplayName("existsByLocator는 Locator에 해당하는 좌석이 없으면 False")
-        void should_return_false_when_seat_not_exists_by_locator() {
-            var actual = reader.existsByLocator(locator());
-
-            assertThat(actual).isFalse();
-        }
-
-        @Test
-        @DisplayName("existsByLocator는 제외 대상에 포함된 좌석을 존재 여부에서 제외한다")
-        void should_exclude_seat_when_exists_by_locator_with_exclusion() {
-            var room = saveRoom();
-            var seat = saveSeat(room);
-            flushAndClear();
-
-            var exclusion = SeatExclusion.of(List.of(seat.getId()));
-            var actual = reader.existsByLocator(seat.getLocator(), exclusion);
-
-            assertThat(actual).isFalse();
-        }
-
-        @Test
-        @DisplayName("existsByLocator는 제외 대상에 포함되지 않은 좌석이면 True")
-        void should_return_true_when_seat_exists_and_not_excluded() {
-            var room = saveRoom();
-            var seat = saveSeat(room);
-            var otherSeat = saveSeat(room, OTHER_SEAT_ID);
-            flushAndClear();
-
-            var exclusion = SeatExclusion.of(List.of(otherSeat.getId()));
-            var actual = reader.existsByLocator(seat.getLocator(), exclusion);
-
-            assertThat(actual).isTrue();
+            assertThat(actual)
+                    .hasSize(2)
+                    .anySatisfy(found -> assertSameSeat(found, seat))
+                    .anySatisfy(found -> assertSameSeat(found, otherSeat));
         }
     }
 
@@ -161,78 +164,25 @@ public class JpaSeatPersistenceAdapterTest extends AbstractPersistenceAdapterTes
             var room = saveRoom();
             var seat = seat(room);
 
-            store.save(seat);
+            var saved = store.save(seat);
             flushAndClear();
 
-            var actual = seatRepository.findByRoom_RoomIdAndSeatId(room.getRoomId(), seat.getSeatId());
+            var actual = seatRepository.findById(saved.getId());
             assertThat(actual)
                     .isPresent()
                     .get()
-                    .satisfies(found -> assertSameSeat(found, seat));
+                    .satisfies(found -> assertSameSeat(found, saved));
         }
 
         @Test
-        @DisplayName("findByRoomIdAndSeatId는 방 Id와 좌석 Id에 해당하는 좌석을 반환한다")
-        void should_find_seat_by_room_id_and_seat_id() {
+        @DisplayName("delete는 좌석을 삭제한다")
+        void should_delete_seat() {
             var room = saveRoom();
             var seat = saveSeat(room);
+            var otherSeat = saveOtherSeat(room);
             flushAndClear();
 
-            var actual = store.findByRoomIdAndSeatId(room.getRoomId(), seat.getSeatId());
-
-            assertThat(actual)
-                    .isPresent()
-                    .get()
-                    .satisfies(found -> assertSameSeat(found, seat));
-        }
-
-        @Test
-        @DisplayName("findByRoomIdAndSeatId는 방 Id와 좌석 Id에 해당하는 좌석이 없으면 Optional.empty를 반환한다")
-        void should_return_empty_when_seat_not_found_by_room_id_and_seat_id() {
-            var actual = store.findByRoomIdAndSeatId(ROOM_ID, SEAT_ID);
-
-            assertThat(actual).isEmpty();
-        }
-
-        @Test
-        @DisplayName("findForUpdate는 방 Id와 좌석 Id에 해당하는 좌석을 반환한다")
-        void should_find_seat_for_update_by_room_id_and_seat_id() {
-            var room = saveRoom();
-            var seat = saveSeat(room);
-            flushAndClear();
-
-            var actual = store.findForUpdate(room.getRoomId(), seat.getSeatId());
-
-            assertThat(actual)
-                    .isPresent()
-                    .get()
-                    .satisfies(found -> assertSameSeat(found, seat));
-        }
-
-        @Test
-        @DisplayName("findForUpdate는 Locator에 해당하는 좌석을 반환한다")
-        void should_find_seat_for_update_by_locator() {
-            var room = saveRoom();
-            var seat = saveSeat(room);
-            flushAndClear();
-
-            var actual = store.findForUpdate(seat.getLocator());
-
-            assertThat(actual)
-                    .isPresent()
-                    .get()
-                    .satisfies(found -> assertSameSeat(found, seat));
-        }
-
-        @Test
-        @DisplayName("deleteByLocator는 Locator에 해당하는 좌석을 삭제한다")
-        void should_delete_seat_by_locator() {
-            var room = saveRoom();
-            var seat = saveSeat(room);
-            var otherSeat = saveSeat(room, OTHER_SEAT_ID);
-            flushAndClear();
-
-            store.deleteByLocator(seat.getLocator());
+            store.delete(seat);
             flushAndClear();
 
             assertThat(seatRepository.existsById(seat.getId())).isFalse();

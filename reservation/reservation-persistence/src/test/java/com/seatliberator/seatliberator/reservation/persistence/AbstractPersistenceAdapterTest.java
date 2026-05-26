@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.persistence;
 
+import com.seatliberator.seatliberator.kernel.test.clock.TestClock;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ public class AbstractPersistenceAdapterTest {
 
     @BeforeEach
     void run() {
-        clock = TestSupport.fixedClock;
+        clock = TestClock.getFixed();
     }
 
     protected void flushAndClear() {
