@@ -5,17 +5,17 @@ import org.junit.jupiter.api.DisplayName;
 @DisplayName("Domain: Simple Seat Locator")
 public class SimpleSeatLocatorTest implements SeatLocatorContractTest<SimpleSeatLocator> {
     @Override
-    public SimpleSeatLocator create(String roomId, String seatId) {
-        return SimpleSeatLocator.of(roomId, seatId);
+    public SimpleSeatLocator create(String roomCode, String seatCode) {
+        return SimpleSeatLocator.of(roomCode, seatCode);
     }
 
     @Override
-    public String getRoomId() {
+    public String getRoomCode() {
         return "room-1";
     }
 
     @Override
-    public String getSeatId() {
+    public String getSeatCode() {
         return "seat-1";
     }
 }

@@ -1,5 +1,6 @@
 package com.seatliberator.seatliberator.reservation.domain.shared;
 
+import com.seatliberator.seatliberator.kernel.condition.Preconditions;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -10,48 +11,42 @@ import org.jspecify.annotations.NullUnmarked;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @NullUnmarked
 public class EmbeddableSeatLocator implements SeatLocator {
-    @Column(name = "room_id", nullable = false)
-    private String roomId;
+    @Column(name = "room_code", nullable = false)
+    private String roomCode;
 
-    @Column(name = "seat_id", nullable = false)
-    private String seatId;
+    @Column(name = "seat_code", nullable = false)
+    private String seatCode;
 
-    public EmbeddableSeatLocator(String roomId, String seatId) {
-        if (roomId == null || roomId.isBlank()) {
-            throw new IllegalArgumentException("roomId must not be null or blank.");
-        }
-        if (seatId == null || seatId.isBlank()) {
-            throw new IllegalArgumentException("seatId must not be null or blank.");
-        }
-        this.roomId = roomId;
-        this.seatId = seatId;
+    public EmbeddableSeatLocator(String roomCode, String seatCode) {
+        this.roomCode = Preconditions.requireNonBlank(roomCode, "roomCode");
+        this.seatCode = Preconditions.requireNonBlank(seatCode, "seatCode");
     }
 
-    public static EmbeddableSeatLocator from(String roomId, String seatId) {
-        return new EmbeddableSeatLocator(roomId, seatId);
+    public static EmbeddableSeatLocator from(String roomCode, String seatCode) {
+        return new EmbeddableSeatLocator(roomCode, seatCode);
     }
 
     public static EmbeddableSeatLocator of(SeatLocator locator) {
-        return new EmbeddableSeatLocator(locator.roomId(), locator.seatId());
+        return new EmbeddableSeatLocator(locator.roomCode(), locator.seatCode());
     }
 
     @Override
-    public String roomId() {
-        return roomId;
+    public String roomCode() {
+        return roomCode;
     }
 
     @Override
-    public String seatId() {
-        return seatId;
+    public String seatCode() {
+        return seatCode;
     }
 
-    public void setLocate(String roomId, String seatId) {
-        var locator = SimpleSeatLocator.of(roomId, seatId);
+    public void setLocate(String roomCode, String seatCode) {
+        var locator = SimpleSeatLocator.of(roomCode, seatCode);
         apply(locator);
     }
 
     private void apply(SeatLocator locator) {
-        this.roomId = locator.roomId();
-        this.seatId = locator.seatId();
+        this.roomCode = locator.roomCode();
+        this.seatCode = locator.seatCode();
     }
 }

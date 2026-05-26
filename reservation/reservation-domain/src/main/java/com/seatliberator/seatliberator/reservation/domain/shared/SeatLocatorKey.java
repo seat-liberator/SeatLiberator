@@ -1,19 +1,21 @@
 package com.seatliberator.seatliberator.reservation.domain.shared;
 
-public record SeatLocatorKey(String roomId, String seatId) implements Comparable<SeatLocatorKey> {
+import com.seatliberator.seatliberator.kernel.condition.Preconditions;
+
+public record SeatLocatorKey(String roomCode, String seatCode) implements Comparable<SeatLocatorKey> {
     public SeatLocatorKey {
-        if (roomId.isBlank()) throw new IllegalArgumentException("roomId must not be blank.");
-        if (seatId.isBlank()) throw new IllegalArgumentException("seatId must not be blank.");
+        Preconditions.requireNonBlank(roomCode, "roomCode");
+        Preconditions.requireNonBlank(seatCode, "seatCode");
     }
 
     public static SeatLocatorKey from(SeatLocator locator) {
-        return new SeatLocatorKey(locator.roomId(), locator.seatId());
+        return new SeatLocatorKey(locator.roomCode(), locator.seatCode());
     }
 
     @Override
     public int compareTo(SeatLocatorKey other) {
-        int roomCompare = roomId.compareTo(other.roomId);
+        int roomCompare = roomCode.compareTo(other.roomCode);
         if (roomCompare != 0) return roomCompare;
-        return seatId.compareTo(other.seatId);
+        return seatCode.compareTo(other.seatCode);
     }
 }

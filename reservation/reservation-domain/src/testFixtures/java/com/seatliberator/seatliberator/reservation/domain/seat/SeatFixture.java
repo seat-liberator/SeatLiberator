@@ -1,52 +1,59 @@
 package com.seatliberator.seatliberator.reservation.domain.seat;
 
+import com.seatliberator.seatliberator.kernel.test.FormattedStringGenerator;
+import com.seatliberator.seatliberator.kernel.test.Generator;
+import com.seatliberator.seatliberator.kernel.test.SequenceCounter;
+import com.seatliberator.seatliberator.kernel.test.UuidGenerator;
+import com.seatliberator.seatliberator.kernel.test.clock.TestClock;
 import com.seatliberator.seatliberator.reservation.domain.room.Room;
 import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
 
+import java.time.Clock;
 import java.time.Instant;
-
-import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
+import java.util.UUID;
 
 public class SeatFixture {
-    public static final Room INITIAL_ROOM = RoomFixture.get();
-    public static final String INITIAL_SEAT_ID = "seat-a";
-    public static final SeatStatus INITIAL_STATUS = SeatStatus.ACTIVE;
-    public static final Instant INITIAL_CREATED_AT = fixedClock.instant();
+    private static final Clock CLOCK = TestClock.getFixed();
 
-    public static Seat createSeat() {
-        return create(INITIAL_ROOM, INITIAL_SEAT_ID, INITIAL_CREATED_AT);
+    private static final Generator<UUID> ID_GENERATOR = new UuidGenerator(new SequenceCounter());
+
+    private static final Room ROOM = RoomFixture.get();
+
+    private static final String CODE_FORMAT = "seat-%s";
+    private static final Generator<String> CODE_GENERATOR = FormattedStringGenerator.of(CODE_FORMAT, new SequenceCounter());
+
+    private static final SeatStatus STATUS = SeatStatus.ACTIVE;
+    private static final Instant CREATED_AT = CLOCK.instant();
+
+    public static Seat next() {
+        var code = CODE_GENERATOR.generate();
+        return Seat.of(ROOM, code, STATUS, CREATED_AT);
     }
 
-    public static Seat create(Room room, String seatId, Instant createdAt) {
-        return Seat.of(room, seatId, createdAt);
+    public static Seat nextWithRoom(Room room) {
+        var code = CODE_GENERATOR.generate();
+        return Seat.of(room, code, STATUS, CREATED_AT);
+    }
+
+    public static UUID nextId() {
+        return ID_GENERATOR.generate();
+    }
+
+    public static String nextCode() {
+        return CODE_GENERATOR.generate();
     }
 
     public static class Builder {
-        private Room room = INITIAL_ROOM;
-        private String seatId = INITIAL_SEAT_ID;
-        private SeatStatus status = INITIAL_STATUS;
-        private Instant createdAt = INITIAL_CREATED_AT;
+        private Room room = ROOM;
+        private String code = CODE_GENERATOR.generate();
+        private SeatStatus status = STATUS;
+        private Instant createdAt = CREATED_AT;
 
         public Builder() {
         }
 
-        public Builder(Room room, String seatId, SeatStatus status, Instant createdAt) {
-            this.room = room;
-            this.seatId = seatId;
-            this.status = status;
-            this.createdAt = createdAt;
-        }
-
-        public static Builder from(Builder other) {
-            return new Builder(other.room, other.seatId, other.status, other.createdAt);
-        }
-
-        public Builder copy() {
-            return from(this);
-        }
-
-        public Builder seatId(String seatId) {
-            this.seatId = seatId;
+        public Builder code(String code) {
+            this.code = code;
             return this;
         }
 
@@ -66,7 +73,7 @@ public class SeatFixture {
         }
 
         public Seat build() {
-            return Seat.of(room, seatId, status, createdAt);
+            return Seat.of(room, code, status, createdAt);
         }
     }
 }

@@ -1,9 +1,9 @@
 package com.seatliberator.seatliberator.reservation.domain.shared;
 
 public interface SeatLocator {
-    String roomId();
+    String roomCode();
 
-    String seatId();
+    String seatCode();
 
     default SeatLocatorKey key() {
         return SeatLocatorKey.from(this);

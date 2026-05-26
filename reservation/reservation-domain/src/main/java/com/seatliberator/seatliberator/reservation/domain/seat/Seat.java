@@ -17,7 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"room_pk", "seat_id"})
+                @UniqueConstraint(columnNames = {"room_id", "code"})
         }
 )
 public class Seat {
@@ -26,11 +26,11 @@ public class Seat {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_pk", nullable = false)
+    @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
-    @Column(name = "seat_id", nullable = false)
-    private String seatId;
+    @Column(name = "code", nullable = false)
+    private String code;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -47,12 +47,12 @@ public class Seat {
 
     private Seat(
             Room room,
-            String seatId,
+            String code,
             SeatStatus status,
             Instant createdAt
     ) {
         this.room = Preconditions.requireNonNull(room, "room");
-        this.seatId = Preconditions.requireNonBlank(seatId, "seatId");
+        this.code = Preconditions.requireNonBlank(code, "code");
         this.status = Preconditions.requireNonNull(status, "status");
         this.createdAt = Preconditions.requireNonNull(createdAt, "createdAt");
 
@@ -62,21 +62,21 @@ public class Seat {
         }
     }
 
-    public static Seat of(Room room, String seatId, Instant createdAt) {
-        return of(room, seatId, SeatStatus.ACTIVE, createdAt);
+    public static Seat of(Room room, String code, Instant createdAt) {
+        return of(room, code, SeatStatus.ACTIVE, createdAt);
     }
 
-    public static Seat of(Room room, String seatId, SeatStatus status, Instant createdAt) {
-        return new Seat(room, seatId, status, createdAt);
+    public static Seat of(Room room, String code, SeatStatus status, Instant createdAt) {
+        return new Seat(room, code, status, createdAt);
     }
 
     public SeatLocator getLocator() {
-        return SimpleSeatLocator.of(room.getRoomId(), seatId);
+        return SimpleSeatLocator.of(room.getCode(), code);
     }
 
-    public void updateSeatId(String seatId) {
-        Preconditions.requireNonBlank(seatId, "seatId");
-        this.seatId = seatId;
+    public void updateCode(String code) {
+        Preconditions.requireNonBlank(code, "code");
+        this.code = code;
     }
 
     public void updateRoom(Room room) {

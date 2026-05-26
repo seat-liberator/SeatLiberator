@@ -6,10 +6,10 @@ import com.seatliberator.seatliberator.reservation.domain.shared.temporal.DailyS
 import java.time.Duration;
 
 public class RoomOperationPolicyFixture {
-    public static final Integer MAX_RESERVATION_PER_USER = 5;
-    public static final Duration MAX_RESERVATION_DURATION = Duration.ofMinutes(30);
-    public static final DailySchedule OPERATION_SCHEDULE = DailyScheduleFixture.get();
-    public static final RoomOperationStatus OPERATION_STATUS = RoomOperationStatus.OPEN;
+    private static final Integer MAX_RESERVATION_PER_USER = 5;
+    private static final Duration MAX_RESERVATION_DURATION = Duration.ofMinutes(30);
+    private static final DailySchedule OPERATION_SCHEDULE = DailyScheduleFixture.get();
+    private static final RoomOperationStatus OPERATION_STATUS = RoomOperationStatus.OPEN;
 
     public static RoomOperationPolicy get() {
         return RoomOperationPolicy.of(MAX_RESERVATION_PER_USER, MAX_RESERVATION_DURATION, OPERATION_STATUS, OPERATION_SCHEDULE);
