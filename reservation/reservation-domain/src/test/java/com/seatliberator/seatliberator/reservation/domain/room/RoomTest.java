@@ -74,7 +74,7 @@ public class RoomTest {
                 Consumer<Room> consumer,
                 String fieldName
         ) {
-            var room = RoomFixture.get();
+            var room = RoomFixture.next();
             assertThatDomainThrownBy(() -> consumer.accept(room))
                     .hasNonNullMessageFor(fieldName);
         }
@@ -82,7 +82,7 @@ public class RoomTest {
         @Test
         @DisplayName("방 ID를 변경할 수 있다")
         void update_room_id() {
-            var room = RoomFixture.get();
+            var room = RoomFixture.next();
 
             var newRoomId = "new-room-1";
             room.updateCode(newRoomId);
@@ -93,7 +93,7 @@ public class RoomTest {
         @Test
         @DisplayName("방 운영 정책을 변경할 수 있다")
         void update_operation_policy() {
-            var room = RoomFixture.get();
+            var room = RoomFixture.next();
             var policy = new RoomOperationPolicyFixture.Builder()
                     .maxReservationPerUser(10)
                     .build();
@@ -108,7 +108,7 @@ public class RoomTest {
         @ValueSource(strings = {" ", "  ", "\t", "\n"})
         @DisplayName("code가 공백이면 예외, 값은 안바뀐다")
         void throw_exception_when_update_with_empty_code(String newCode) {
-            var room = RoomFixture.get();
+            var room = RoomFixture.next();
             var code = room.getCode();
 
             assertThatDomainThrownBy(() -> room.updateCode(newCode))
@@ -121,7 +121,7 @@ public class RoomTest {
         @NullSource
         @DisplayName("code가 null이면 예외, 값은 안바뀐다")
         void throw_exception_when_update_with_null_code(String newCode) {
-            var room = RoomFixture.get();
+            var room = RoomFixture.next();
             var code = room.getCode();
 
             assertThatDomainThrownBy(() -> room.updateCode(newCode))
