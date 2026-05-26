@@ -6,6 +6,8 @@ import com.seatliberator.seatliberator.reservation.application.occupancy.port.ou
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.result.SeatTimeSlotResult;
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatTimeSlotReader;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.filter.SeatTimeSlotFilter;
+import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static com.seatliberator.seatliberator.kernel.test.assertion.ApplicationAssertions.assertThatApplicationThrownBy;
 import static com.seatliberator.seatliberator.reservation.application.booking.BookingTestSupport.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,23 +44,27 @@ public class FindAvailableSlotsBySeatUseCaseTest {
     }
 
     @Test
-    @DisplayName("좌석별 사용 가능 슬롯 조회 시 seatId와 날짜 범위로 점유 criteria를 만들어 조회한다")
+    @DisplayName("좌석별 사용 가능 슬롯 조회 시 seatId와 날짜 범위로 슬롯 및 점유 criteria를 만들어 조회한다")
     void find_available_slots_builds_expected_occupancy_filter() {
         var query = findAvailableSlotsBySeatQuery();
         var slots = slots();
 
-        when(slotReader.findBySeatId(query.seatId())).thenReturn(slots);
+        when(seatReader.existsById(query.seatId())).thenReturn(true);
+        when(slotReader.findByFilter(any(SeatTimeSlotFilter.class))).thenReturn(slots);
         when(occupancyReader.findByCriteria(any(SeatOccupancySlotCriteria.class))).thenReturn(List.of());
 
         useCase.findAtDateRange(query);
 
-        var captor = ArgumentCaptor.forClass(SeatOccupancySlotCriteria.class);
-        verify(slotReader).findBySeatId(query.seatId());
-        verify(occupancyReader).findByCriteria(captor.capture());
-        verifyNoInteractions(seatReader);
+        var filterCaptor = ArgumentCaptor.forClass(SeatTimeSlotFilter.class);
+        var criteriaCaptor = ArgumentCaptor.forClass(SeatOccupancySlotCriteria.class);
+        verify(seatReader).existsById(query.seatId());
+        verify(slotReader).findByFilter(filterCaptor.capture());
+        verify(occupancyReader).findByCriteria(criteriaCaptor.capture());
         verifyNoMoreInteractions(slotReader, occupancyReader);
 
-        var actual = captor.getValue();
+        assertThat(filterCaptor.getValue().seatId()).isEqualTo(query.seatId());
+
+        var actual = criteriaCaptor.getValue();
         assertThat(actual.slotIds()).containsExactlyInAnyOrder(MORNING_SLOT_ID, AFTERNOON_SLOT_ID);
         assertThat(actual.matchMode()).isEqualTo(SeatOccupancySlotCriteria.MatchMode.ANY_OF);
         assertThat(actual.filter().range()).isEqualTo(DATE_RANGE);
@@ -71,7 +78,8 @@ public class FindAvailableSlotsBySeatUseCaseTest {
         var afternoonSlot = afternoonSlot();
         var slots = List.of(morningSlot, afternoonSlot);
 
-        when(slotReader.findBySeatId(query.seatId())).thenReturn(slots);
+        when(seatReader.existsById(query.seatId())).thenReturn(true);
+        when(slotReader.findByFilter(any(SeatTimeSlotFilter.class))).thenReturn(slots);
         when(occupancyReader.findByCriteria(any(SeatOccupancySlotCriteria.class))).thenReturn(List.of(
                 occupancy(morningSlot, RANGE_START_DATE),
                 occupancy(afternoonSlot, RANGE_START_DATE.plusDays(1))
@@ -100,7 +108,8 @@ public class FindAvailableSlotsBySeatUseCaseTest {
         var query = findAvailableSlotsBySeatQuery();
         var slots = slots();
 
-        when(slotReader.findBySeatId(query.seatId())).thenReturn(slots);
+        when(seatReader.existsById(query.seatId())).thenReturn(true);
+        when(slotReader.findByFilter(any(SeatTimeSlotFilter.class))).thenReturn(slots);
         when(occupancyReader.findByCriteria(any(SeatOccupancySlotCriteria.class))).thenReturn(List.of());
 
         var result = useCase.findAtDateRange(query);
@@ -111,5 +120,19 @@ public class FindAvailableSlotsBySeatUseCaseTest {
                         .usingRecursiveFieldByFieldElementComparator()
                         .containsExactlyElementsOf(slots.stream().map(SeatTimeSlotResult::from).toList())
         );
+    }
+
+    @Test
+    @DisplayName("seatId에 해당하는 좌석이 없으면 SEAT_NOT_FOUND 예외")
+    void throw_exception_when_seat_not_found() {
+        var query = findAvailableSlotsBySeatQuery();
+
+        when(seatReader.existsById(query.seatId())).thenReturn(false);
+
+        assertThatApplicationThrownBy(() -> useCase.findAtDateRange(query))
+                .hasErrorCode(ReservationApplicationErrorCode.SEAT_NOT_FOUND);
+
+        verify(seatReader).existsById(query.seatId());
+        verifyNoInteractions(slotReader, occupancyReader);
     }
 }
