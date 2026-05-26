@@ -1,19 +1,23 @@
 package com.seatliberator.seatliberator.reservation.application.seat.port.in.command;
 
 import com.seatliberator.seatliberator.kernel.condition.Preconditions;
-import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.UUID;
 
 public record CreateSeatTimeSlotCommand(
-        SeatLocator locator,
+        UUID seatId,
         LocalTime startAt,
         Duration duration
 ) {
     public CreateSeatTimeSlotCommand {
-        Preconditions.requireNonNull(locator, "locator");
+        Preconditions.requireNonNull(seatId, "seatId");
         Preconditions.requireNonNull(startAt, "startAt");
         Preconditions.requireNonNull(duration, "duration");
+    }
+
+    public static CreateSeatTimeSlotCommand of(UUID seatId, LocalTime startAt, Duration duration) {
+        return new CreateSeatTimeSlotCommand(seatId, startAt, duration);
     }
 }

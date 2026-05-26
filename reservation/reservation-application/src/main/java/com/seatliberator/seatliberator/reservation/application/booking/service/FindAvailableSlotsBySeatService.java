@@ -8,6 +8,9 @@ import com.seatliberator.seatliberator.reservation.application.occupancy.port.ou
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.result.SeatTimeSlotResult;
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatTimeSlotReader;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.filter.SeatTimeSlotFilter;
+import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
+import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.domain.reservation.SeatOccupancy;
 import com.seatliberator.seatliberator.reservation.domain.seat.SeatTimeSlot;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +33,12 @@ public class FindAvailableSlotsBySeatService implements FindAvailableSlotsBySeat
     @Override
     public Map<LocalDate, List<SeatTimeSlotResult>> findAtDateRange(FindAvailableSlotsBySeatQuery query) {
         var seatId = query.seatId();
-        var range = query.range();
+        var existsSeat = seatReader.existsById(seatId);
+        if (!existsSeat) throw new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND);
 
-        var slots = slotReader.findBySeatId(seatId);
+        var range = query.range();
+        var filter = SeatTimeSlotFilter.empty().seatId(seatId);
+        var slots = slotReader.findByFilter(filter);
         var slotIds = slots.stream().map(SeatTimeSlot::getId).toList();
 
         var criteria = SeatOccupancySlotCriteria

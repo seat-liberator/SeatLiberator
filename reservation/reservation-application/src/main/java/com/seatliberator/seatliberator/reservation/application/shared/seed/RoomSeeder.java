@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -31,7 +32,7 @@ public class RoomSeeder {
         var rooms = seedRoom();
 
         for (var room : rooms) {
-            seedSeat(room);
+            seedSeat(room.getId());
         }
     }
 
@@ -47,10 +48,10 @@ public class RoomSeeder {
         return result;
     }
 
-    private void seedSeat(Room room) {
+    private void seedSeat(UUID roomId) {
         for (int i = 0; i < seatNumber; i++) {
             var seatId = String.format("%s%s", seatIdPrefix, i);
-            var seat = Seat.of(room, seatId, clock.instant());
+            var seat = Seat.of(roomId, seatId, clock.instant());
             seatStore.save(seat);
         }
     }
