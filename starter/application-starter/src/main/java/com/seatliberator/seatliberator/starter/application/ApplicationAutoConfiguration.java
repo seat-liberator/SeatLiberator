@@ -10,7 +10,7 @@ import java.time.Clock;
 
 @AutoConfiguration
 @ConditionalOnProperty(
-        prefix = "seatliberator.bootstrap.application",
+        prefix = "seatliberator.starter.application",
         name = "enabled",
         havingValue = "true",
         matchIfMissing = true
