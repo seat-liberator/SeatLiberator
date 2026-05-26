@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":reservation:reservation-api"))
     implementation(project(":board:board-api"))
     implementation(project(":event-relay:event-relay-starter"))
-    implementation(project(":starter:application-starter"))
+    implementation(project(":identity:identity-application-starter"))
 
     implementation(libs.spring.boot.starter.oauth2.client)
     implementation(libs.spring.boot.starter.kafka)
