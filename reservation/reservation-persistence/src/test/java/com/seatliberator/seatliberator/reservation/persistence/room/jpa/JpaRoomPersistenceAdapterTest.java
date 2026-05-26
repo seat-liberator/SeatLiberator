@@ -2,7 +2,6 @@ package com.seatliberator.seatliberator.reservation.persistence.room.jpa;
 
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomReader;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomStore;
-import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
 import com.seatliberator.seatliberator.reservation.persistence.AbstractPersistenceAdapterTest;
 import com.seatliberator.seatliberator.reservation.persistence.room.jpa.repository.RoomRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import static com.seatliberator.seatliberator.reservation.persistence.TestSupport.OTHER_ROOM_ID;
+import static com.seatliberator.seatliberator.reservation.persistence.room.RoomTestSupport.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -32,48 +31,64 @@ public class JpaRoomPersistenceAdapterTest extends AbstractPersistenceAdapterTes
     @DisplayName("Reader 테스트")
     class ReaderTest {
         @Test
-        @DisplayName("existsByRoomId는 방 Id에 해당하는 방 있으면 True")
+        @DisplayName("existsById는 방 Id에 해당하는 방이 있으면 True")
         void should_return_true_when_exists_room() {
-            var room = RoomFixture.get();
+            var room = room();
             repository.save(room);
             flushAndClear();
 
-            var roomId = room.getRoomId();
+            var actual = reader.existsById(room.getId());
 
-            assertThat(reader.existsByRoomId(roomId)).isTrue();
+            assertThat(actual).isTrue();
         }
 
         @Test
-        @DisplayName("existsByRoomId는 방 Id 에 해당하는 방 없으면 False")
+        @DisplayName("existsById는 방 Id에 해당하는 방이 없으면 False")
         void should_return_false_when_non_exists_room() {
-            var room = RoomFixture.get();
-            var roomId = room.getRoomId();
+            var actual = reader.existsById(UNKNOWN_ROOM_ID);
 
-            assertThat(reader.existsByRoomId(roomId)).isFalse();
+            assertThat(actual).isFalse();
         }
 
         @Test
-        @DisplayName("findByRoomId는 방 Id에 해당하는 방을 반환한다")
-        void should_find_room_by_room_id() {
-            var room = RoomFixture.get();
+        @DisplayName("existsByCode는 방 코드에 해당하는 방이 있으면 True")
+        void should_return_true_when_exists_room_by_code() {
+            var room = room();
             repository.save(room);
             flushAndClear();
 
-            var actual = reader.findByRoomId(room.getRoomId());
+            var actual = reader.existsByCode(room.getCode());
+
+            assertThat(actual).isTrue();
+        }
+
+        @Test
+        @DisplayName("existsByCode는 방 코드에 해당하는 방이 없으면 False")
+        void should_return_false_when_non_exists_room_by_code() {
+            var actual = reader.existsByCode(UNKNOWN_ROOM_CODE);
+
+            assertThat(actual).isFalse();
+        }
+
+        @Test
+        @DisplayName("findById는 방 Id에 해당하는 방을 반환한다")
+        void should_find_room_by_id() {
+            var room = room();
+            repository.save(room);
+            flushAndClear();
+
+            var actual = reader.findById(room.getId());
 
             assertThat(actual)
                     .isPresent()
                     .get()
-                    .usingRecursiveComparison()
-                    .isEqualTo(room);
+                    .satisfies(found -> assertSameRoom(found, room));
         }
 
         @Test
-        @DisplayName("findByRoomId는 방 Id에 해당하는 방이 없으면 Optional.empty를 반환한다")
-        void should_return_empty_when_room_not_found_by_room_id() {
-            var room = RoomFixture.get();
-
-            var actual = reader.findByRoomId(room.getRoomId());
+        @DisplayName("findById는 방 Id에 해당하는 방이 없으면 Optional.empty를 반환한다")
+        void should_return_empty_when_room_not_found_by_id() {
+            var actual = reader.findById(UNKNOWN_ROOM_ID);
 
             assertThat(actual).isEmpty();
         }
@@ -81,10 +96,8 @@ public class JpaRoomPersistenceAdapterTest extends AbstractPersistenceAdapterTes
         @Test
         @DisplayName("findAll은 저장된 모든 방을 반환한다")
         void should_find_all_rooms() {
-            var room = RoomFixture.get();
-            var otherRoom = new RoomFixture.Builder()
-                    .roomId(OTHER_ROOM_ID)
-                    .build();
+            var room = room();
+            var otherRoom = otherRoom();
             repository.save(room);
             repository.save(otherRoom);
             flushAndClear();
@@ -92,8 +105,9 @@ public class JpaRoomPersistenceAdapterTest extends AbstractPersistenceAdapterTes
             var actual = reader.findAll();
 
             assertThat(actual)
-                    .usingRecursiveFieldByFieldElementComparator()
-                    .containsExactlyInAnyOrder(room, otherRoom);
+                    .hasSize(2)
+                    .anySatisfy(found -> assertSameRoom(found, room))
+                    .anySatisfy(found -> assertSameRoom(found, otherRoom));
         }
     }
 
@@ -103,30 +117,29 @@ public class JpaRoomPersistenceAdapterTest extends AbstractPersistenceAdapterTes
         @Test
         @DisplayName("save는 방을 저장한다")
         void should_save_room() {
-            var room = RoomFixture.get();
+            var room = room();
 
             var savedRoom = store.save(room);
             flushAndClear();
 
-            var actual = repository.findByRoomId(savedRoom.getRoomId());
+            var actual = repository.findById(savedRoom.getId());
             assertThat(actual)
                     .isPresent()
                     .get()
-                    .usingRecursiveComparison()
-                    .isEqualTo(savedRoom);
+                    .satisfies(found -> assertSameRoom(found, savedRoom));
         }
 
         @Test
-        @DisplayName("deleteByRoomId는 방 Id에 해당하는 방을 삭제한다")
-        void should_delete_room_by_room_id() {
-            var room = RoomFixture.get();
+        @DisplayName("delete는 방을 삭제한다")
+        void should_delete_room() {
+            var room = room();
             repository.save(room);
             flushAndClear();
 
-            store.deleteByRoomId(room.getRoomId());
+            store.delete(room);
             flushAndClear();
 
-            assertThat(repository.existsByRoomId(room.getRoomId())).isFalse();
+            assertThat(repository.existsById(room.getId())).isFalse();
         }
     }
 }

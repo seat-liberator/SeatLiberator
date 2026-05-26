@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.reservation.persistence.book.jpa;
+package com.seatliberator.seatliberator.reservation.persistence.reservation.jpa;
 
 import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationReader;
 import com.seatliberator.seatliberator.reservation.application.reservation.port.out.ReservationStore;
@@ -7,7 +7,7 @@ import com.seatliberator.seatliberator.reservation.application.reservation.port.
 import com.seatliberator.seatliberator.reservation.domain.reservation.Reservation;
 import com.seatliberator.seatliberator.reservation.domain.reservation.ReservationStatus;
 import com.seatliberator.seatliberator.reservation.persistence.AbstractPersistenceAdapterTest;
-import com.seatliberator.seatliberator.reservation.persistence.book.jpa.repository.ReservationRepository;
+import com.seatliberator.seatliberator.reservation.persistence.reservation.jpa.repository.ReservationRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,9 +16,8 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 import java.time.Duration;
-import java.util.UUID;
 
-import static com.seatliberator.seatliberator.reservation.persistence.TestSupport.*;
+import static com.seatliberator.seatliberator.reservation.persistence.reservation.ReservationTestSupport.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -42,16 +41,6 @@ public class JpaReservationPersistenceAdapterTest extends AbstractPersistenceAda
         return repository.save(reservation);
     }
 
-    private void assertSameReservation(Reservation actual, Reservation expected) {
-        assertThat(actual.getId()).isEqualTo(expected.getId());
-        assertThat(actual.getUserId()).isEqualTo(expected.getUserId());
-        assertThat(actual.getState().getStatus()).isEqualTo(expected.getState().getStatus());
-        assertThat(actual.getState().getReservedAt()).isEqualTo(expected.getState().getReservedAt());
-        assertThat(actual.getState().getUsedAt()).isEqualTo(expected.getState().getUsedAt());
-        assertThat(actual.getState().getCancelledAt()).isEqualTo(expected.getState().getCancelledAt());
-        assertThat(actual.getState().getExpiredAt()).isEqualTo(expected.getState().getExpiredAt());
-    }
-
     @Nested
     @DisplayName("Reader 테스트")
     class ReaderTest {
@@ -72,7 +61,7 @@ public class JpaReservationPersistenceAdapterTest extends AbstractPersistenceAda
         @Test
         @DisplayName("findById는 예약 Id에 해당하는 예약이 없으면 Optional.empty를 반환한다")
         void should_return_empty_when_reservation_not_found_by_id() {
-            var actual = reader.findById(UUID.randomUUID());
+            var actual = reader.findById(UNKNOWN_RESERVATION_ID);
 
             assertThat(actual).isEmpty();
         }
@@ -130,18 +119,14 @@ public class JpaReservationPersistenceAdapterTest extends AbstractPersistenceAda
         @DisplayName("findByFilter는 상태와 상태 시각 범위가 일치하는 예약 목록을 반환한다")
         void should_find_reservations_by_status_and_state_range_filter() {
             var reservation = saveReservation();
-            saveReservation(Reservation.of(USER_ID, reservationStartAt().plus(Duration.ofHours(2))));
+            saveReservation(reservationAt(reservationStartAt().plus(Duration.ofHours(2))));
             flushAndClear();
 
-            var reservedAt = reservation.getState().getReservedAt();
             var filter = ReservationFilter.empty()
                     .userId(USER_ID)
                     .state(ReservationStateFilter
                             .status(ReservationStatus.RESERVED)
-                            .range(range(
-                                    reservedAt.minus(Duration.ofMinutes(1)),
-                                    reservedAt.plus(Duration.ofMinutes(1))
-                            )));
+                            .range(stateRange(reservation)));
             var actual = reader.findByFilter(filter);
 
             assertThat(actual)

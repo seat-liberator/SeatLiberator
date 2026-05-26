@@ -2,11 +2,10 @@ package com.seatliberator.seatliberator.reservation.persistence.seat.jpa;
 
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatTimeSlotReader;
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatTimeSlotStore;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.filter.SeatTimeSlotFilter;
 import com.seatliberator.seatliberator.reservation.domain.room.Room;
 import com.seatliberator.seatliberator.reservation.domain.seat.Seat;
 import com.seatliberator.seatliberator.reservation.domain.seat.SeatTimeSlot;
-import com.seatliberator.seatliberator.reservation.domain.seat.SeatTimeSlotStatus;
-import com.seatliberator.seatliberator.reservation.domain.shared.temporal.SimpleDailyNanoRange;
 import com.seatliberator.seatliberator.reservation.persistence.AbstractPersistenceAdapterTest;
 import com.seatliberator.seatliberator.reservation.persistence.room.jpa.repository.RoomRepository;
 import com.seatliberator.seatliberator.reservation.persistence.seat.jpa.repository.SeatRepository;
@@ -19,11 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import java.time.Duration;
-import java.time.LocalTime;
-import java.util.UUID;
+import java.util.List;
 
-import static com.seatliberator.seatliberator.reservation.persistence.TestSupport.*;
+import static com.seatliberator.seatliberator.reservation.persistence.seat.SeatTimeSlotTestSupport.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -55,29 +52,15 @@ public class JpaSeatTimeSlotPersistenceAdapterTest extends AbstractPersistenceAd
     }
 
     private Seat saveOtherSeat(Room room) {
-        return seatRepository.save(seat(room, OTHER_SEAT_ID));
+        return seatRepository.save(otherSeat(room));
     }
 
     private SeatTimeSlot saveSeatTimeSlot(Seat seat) {
-        return seatTimeSlotRepository.save(seatTimeSlot(seat, LocalTime.of(9, 0), Duration.ofHours(2)));
+        return seatTimeSlotRepository.save(seatTimeSlot(seat));
     }
 
     private SeatTimeSlot saveOtherSeatTimeSlot(Seat seat) {
-        return seatTimeSlotRepository.save(seatTimeSlot(seat, LocalTime.of(13, 0), Duration.ofHours(2)));
-    }
-
-    private SeatTimeSlot seatTimeSlot(Seat seat, LocalTime startAt, Duration duration) {
-        var slotRange = SimpleDailyNanoRange.of(startAt, duration);
-        return SeatTimeSlot.of(seat, slotRange, SeatTimeSlotStatus.ACTIVE, now());
-    }
-
-    private void assertSameSeatTimeSlot(SeatTimeSlot actual, SeatTimeSlot expected) {
-        assertThat(actual.getId()).isEqualTo(expected.getId());
-        assertThat(actual.getSeat().getId()).isEqualTo(expected.getSeat().getId());
-        assertThat(actual.getSlotRange().startNanoOfDay()).isEqualTo(expected.getSlotRange().startNanoOfDay());
-        assertThat(actual.getSlotRange().endNanoOfDay()).isEqualTo(expected.getSlotRange().endNanoOfDay());
-        assertThat(actual.getSlotStatus()).isEqualTo(expected.getSlotStatus());
-        assertThat(actual.getCreatedAt()).isEqualTo(expected.getCreatedAt());
+        return seatTimeSlotRepository.save(otherSeatTimeSlot(seat));
     }
 
     @Nested
@@ -99,7 +82,33 @@ public class JpaSeatTimeSlotPersistenceAdapterTest extends AbstractPersistenceAd
         @Test
         @DisplayName("existsById는 Id에 해당하는 시간 슬롯이 없으면 False")
         void should_return_false_when_not_exists_by_id() {
-            var actual = reader.existsById(UUID.randomUUID());
+            var actual = reader.existsById(UNKNOWN_SEAT_TIME_SLOT_ID);
+
+            assertThat(actual).isFalse();
+        }
+
+        @Test
+        @DisplayName("existsByCriteria는 겹치는 구간 시간 슬롯이 있으면 True")
+        void should_return_true_when_exists_overlapping_slot_by_criteria() {
+            var room = saveRoom();
+            var seat = saveSeat(room);
+            saveSeatTimeSlot(seat);
+            flushAndClear();
+
+            var actual = reader.existsByCriteria(overlappingCriteria(seat));
+
+            assertThat(actual).isTrue();
+        }
+
+        @Test
+        @DisplayName("existsByCriteria는 겹치는 구간 시간 슬롯이 없으면 False")
+        void should_return_false_when_not_exists_overlapping_slot_by_criteria() {
+            var room = saveRoom();
+            var seat = saveSeat(room);
+            saveSeatTimeSlot(seat);
+            flushAndClear();
+
+            var actual = reader.existsByCriteria(nonOverlappingCriteria(seat));
 
             assertThat(actual).isFalse();
         }
@@ -123,14 +132,31 @@ public class JpaSeatTimeSlotPersistenceAdapterTest extends AbstractPersistenceAd
         @Test
         @DisplayName("findById는 Id에 해당하는 시간 슬롯이 없으면 Optional.empty를 반환한다")
         void should_return_empty_when_seat_time_slot_not_found_by_id() {
-            var actual = reader.findById(UUID.randomUUID());
+            var actual = reader.findById(UNKNOWN_SEAT_TIME_SLOT_ID);
 
             assertThat(actual).isEmpty();
         }
 
         @Test
-        @DisplayName("findBySeatId는 좌석 Id에 해당하는 모든 시간 슬롯을 반환한다")
-        void should_find_seat_time_slots_by_seat_id() {
+        @DisplayName("findByIds는 Id 목록에 해당하는 시간 슬롯들을 반환한다")
+        void should_find_seat_time_slots_by_ids() {
+            var room = saveRoom();
+            var seat = saveSeat(room);
+            var seatTimeSlot = saveSeatTimeSlot(seat);
+            var otherSeatTimeSlot = saveOtherSeatTimeSlot(seat);
+            flushAndClear();
+
+            var actual = reader.findByIds(List.of(seatTimeSlot.getId(), otherSeatTimeSlot.getId(), UNKNOWN_SEAT_TIME_SLOT_ID));
+
+            assertThat(actual)
+                    .hasSize(2)
+                    .anySatisfy(found -> assertSameSeatTimeSlot(found, seatTimeSlot))
+                    .anySatisfy(found -> assertSameSeatTimeSlot(found, otherSeatTimeSlot));
+        }
+
+        @Test
+        @DisplayName("findByFilter는 좌석 Id에 해당하는 모든 시간 슬롯을 반환한다")
+        void should_find_seat_time_slots_by_seat_id_filter() {
             var room = saveRoom();
             var seat = saveSeat(room);
             var otherSeat = saveOtherSeat(room);
@@ -139,7 +165,25 @@ public class JpaSeatTimeSlotPersistenceAdapterTest extends AbstractPersistenceAd
             saveSeatTimeSlot(otherSeat);
             flushAndClear();
 
-            var actual = reader.findBySeatId(seat.getId());
+            var actual = reader.findByFilter(seatTimeSlotFilter(seat));
+
+            assertThat(actual)
+                    .hasSize(2)
+                    .anySatisfy(found -> assertSameSeatTimeSlot(found, seatTimeSlot))
+                    .anySatisfy(found -> assertSameSeatTimeSlot(found, otherSeatTimeSlot));
+        }
+
+        @Test
+        @DisplayName("findByFilter는 빈 필터이면 저장된 모든 시간 슬롯을 반환한다")
+        void should_find_all_seat_time_slots_when_filter_empty() {
+            var room = saveRoom();
+            var seat = saveSeat(room);
+            var otherSeat = saveOtherSeat(room);
+            var seatTimeSlot = saveSeatTimeSlot(seat);
+            var otherSeatTimeSlot = saveSeatTimeSlot(otherSeat);
+            flushAndClear();
+
+            var actual = reader.findByFilter(SeatTimeSlotFilter.empty());
 
             assertThat(actual)
                     .hasSize(2)
@@ -156,7 +200,7 @@ public class JpaSeatTimeSlotPersistenceAdapterTest extends AbstractPersistenceAd
         void should_save_seat_time_slot() {
             var room = saveRoom();
             var seat = saveSeat(room);
-            var seatTimeSlot = seatTimeSlot(seat, LocalTime.of(9, 0), Duration.ofHours(2));
+            var seatTimeSlot = seatTimeSlot(seat);
 
             var saved = store.save(seatTimeSlot);
             flushAndClear();
@@ -192,7 +236,7 @@ public class JpaSeatTimeSlotPersistenceAdapterTest extends AbstractPersistenceAd
             saveSeatTimeSlot(seat);
             flushAndClear();
 
-            var duplicated = seatTimeSlot(seat, LocalTime.of(9, 0), Duration.ofHours(2));
+            var duplicated = seatTimeSlot(seat);
 
             assertThatThrownBy(() -> {
                 store.save(duplicated);
@@ -209,7 +253,7 @@ public class JpaSeatTimeSlotPersistenceAdapterTest extends AbstractPersistenceAd
             saveSeatTimeSlot(seat);
             flushAndClear();
 
-            var sameRangeSlot = seatTimeSlot(otherSeat, LocalTime.of(9, 0), Duration.ofHours(2));
+            var sameRangeSlot = seatTimeSlot(otherSeat);
 
             var saved = store.save(sameRangeSlot);
             flushAndClear();
@@ -225,7 +269,7 @@ public class JpaSeatTimeSlotPersistenceAdapterTest extends AbstractPersistenceAd
             saveSeatTimeSlot(seat);
             flushAndClear();
 
-            var differentRangeSlot = seatTimeSlot(seat, LocalTime.of(13, 0), Duration.ofHours(2));
+            var differentRangeSlot = otherSeatTimeSlot(seat);
 
             var saved = store.save(differentRangeSlot);
             flushAndClear();

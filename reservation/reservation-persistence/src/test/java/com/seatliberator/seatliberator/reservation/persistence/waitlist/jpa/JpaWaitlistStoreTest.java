@@ -17,9 +17,8 @@ import org.springframework.context.annotation.Import;
 
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
-import static com.seatliberator.seatliberator.reservation.persistence.TestSupport.*;
+import static com.seatliberator.seatliberator.reservation.persistence.waitlist.WaitlistTestSupport.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -34,20 +33,6 @@ public class JpaWaitlistStoreTest extends AbstractPersistenceAdapterTest {
 
     @Autowired
     WaitlistRepository repository;
-
-    private void assertSameWaitlist(Waitlist actual, Waitlist expected) {
-        assertThat(actual.getId()).isEqualTo(expected.getId());
-        assertThat(actual.getUserId()).isEqualTo(expected.getUserId());
-        assertThat(actual.getSlotIds()).containsExactlyElementsOf(expected.getSlotIds());
-        assertThat(actual.getOccupancyDate()).isEqualTo(expected.getOccupancyDate());
-        assertThat(actual.getBehavior()).isEqualTo(expected.getBehavior());
-        assertThat(actual.getState().getStatus()).isEqualTo(expected.getState().getStatus());
-        assertThat(actual.getState().getResolution()).isEqualTo(expected.getState().getResolution());
-        assertThat(actual.getState().getRequestedAt()).isEqualTo(expected.getState().getRequestedAt());
-        assertThat(actual.getState().getCancelledAt()).isEqualTo(expected.getState().getCancelledAt());
-        assertThat(actual.getState().getExpiredAt()).isEqualTo(expected.getState().getExpiredAt());
-        assertThat(actual.getState().getCompletedAt()).isEqualTo(expected.getState().getCompletedAt());
-    }
 
     @Nested
     @DisplayName("Reader 테스트")
@@ -66,7 +51,7 @@ public class JpaWaitlistStoreTest extends AbstractPersistenceAdapterTest {
         @Test
         @DisplayName("existsById는 대기열 Id에 해당하는 대기열이 없으면 False")
         void should_return_false_when_waitlist_not_exists_by_id() {
-            var actual = reader.existsById(UUID.randomUUID());
+            var actual = reader.existsById(UNKNOWN_WAITLIST_ID);
 
             assertThat(actual).isFalse();
         }
@@ -88,7 +73,7 @@ public class JpaWaitlistStoreTest extends AbstractPersistenceAdapterTest {
         @Test
         @DisplayName("findById는 대기열 Id에 해당하는 대기열이 없으면 Optional.empty를 반환한다")
         void should_return_empty_when_waitlist_not_found_by_id() {
-            var actual = reader.findById(UUID.randomUUID());
+            var actual = reader.findById(UNKNOWN_WAITLIST_ID);
 
             assertThat(actual).isEmpty();
         }
@@ -97,13 +82,13 @@ public class JpaWaitlistStoreTest extends AbstractPersistenceAdapterTest {
         @DisplayName("findByFilter는 슬롯 Id와 점유일이 일치하는 대기열을 반환한다")
         void should_find_waitlists_by_slot_ids_and_occupancy_date_filter() {
             var waitlist = saveWaitlist();
-            saveWaitlist(waitlist(OTHER_USER_ID, List.of(OTHER_SLOT_ID), occupancyDate()));
-            saveWaitlist(waitlist(OTHER_USER_ID, List.of(SLOT_ID), occupancyDate().plusDays(1)));
+            saveWaitlist(waitlist(OTHER_USER_ID, List.of(OTHER_SLOT_ID), OCCUPANCY_DATE));
+            saveWaitlist(waitlist(OTHER_USER_ID, List.of(SLOT_ID), OCCUPANCY_DATE.plusDays(1)));
             flushAndClear();
 
             var filter = WaitlistFilter.empty()
                     .slotIds(Set.of(SLOT_ID))
-                    .occupancyDate(occupancyDate());
+                    .occupancyDate(OCCUPANCY_DATE);
             var actual = reader.findByFilter(filter, WaitlistOrder.fifo());
 
             assertThat(actual)
@@ -115,13 +100,13 @@ public class JpaWaitlistStoreTest extends AbstractPersistenceAdapterTest {
         @DisplayName("findByFilter는 슬롯 Id와 점유일과 상태가 일치하는 대기열을 반환한다")
         void should_find_waitlists_by_slot_ids_occupancy_date_and_status_filter() {
             var activeWaitlist = saveWaitlist();
-            var cancelledWaitlist = saveWaitlist(waitlist(OTHER_USER_ID, List.of(SLOT_ID), occupancyDate()));
-            cancelledWaitlist.cancel(reservationStartAt());
+            var cancelledWaitlist = saveWaitlist(waitlist(OTHER_USER_ID, List.of(SLOT_ID), OCCUPANCY_DATE));
+            cancelledWaitlist.cancel(TRANSITIONED_AT);
             flushAndClear();
 
             var filter = WaitlistFilter.empty()
                     .slotIds(Set.of(SLOT_ID))
-                    .occupancyDate(occupancyDate())
+                    .occupancyDate(OCCUPANCY_DATE)
                     .status(WaitlistStatus.ACTIVE);
             var actual = reader.findByFilter(filter, WaitlistOrder.fifo());
 
@@ -139,7 +124,7 @@ public class JpaWaitlistStoreTest extends AbstractPersistenceAdapterTest {
             var filter = WaitlistFilter.empty()
                     .userId(USER_ID)
                     .slotIds(Set.of(SLOT_ID))
-                    .occupancyDate(occupancyDate())
+                    .occupancyDate(OCCUPANCY_DATE)
                     .status(WaitlistStatus.ACTIVE);
             var actual = reader.existsByFilter(filter);
 
@@ -155,7 +140,7 @@ public class JpaWaitlistStoreTest extends AbstractPersistenceAdapterTest {
             var filter = WaitlistFilter.empty()
                     .userId(USER_ID)
                     .slotIds(Set.of(SLOT_ID))
-                    .occupancyDate(occupancyDate())
+                    .occupancyDate(OCCUPANCY_DATE)
                     .status(WaitlistStatus.CANCELLED);
             var actual = reader.existsByFilter(filter);
 
@@ -193,7 +178,7 @@ public class JpaWaitlistStoreTest extends AbstractPersistenceAdapterTest {
         @DisplayName("saveAll은 여러 대기열을 저장한다")
         void should_save_all_waitlists() {
             var waitlist = waitlist();
-            var otherWaitlist = waitlist(OTHER_USER_ID, List.of(OTHER_SLOT_ID), occupancyDate());
+            var otherWaitlist = waitlist(OTHER_USER_ID, List.of(OTHER_SLOT_ID), OCCUPANCY_DATE);
 
             var savedWaitlists = store.saveAll(List.of(waitlist, otherWaitlist));
             flushAndClear();
