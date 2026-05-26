@@ -3,10 +3,10 @@ package com.seatliberator.seatliberator.reservation.application.room.service;
 import com.seatliberator.seatliberator.reservation.application.room.internal.RoomOperationPolicyProvisioner;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.CreateRoomUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.DeleteRoomUseCase;
-import com.seatliberator.seatliberator.reservation.application.room.port.in.UpdateRoomUseCase;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.UpdateRoomCodeUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.CreateRoomCommand;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.DeleteRoomCommand;
-import com.seatliberator.seatliberator.reservation.application.room.port.in.command.UpdateRoomCommand;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.command.UpdateRoomCodeCommand;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.result.RoomResult;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomReader;
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomStore;
@@ -24,7 +24,7 @@ import java.time.Clock;
 @Transactional
 public class RoomCommandService implements
         CreateRoomUseCase,
-        UpdateRoomUseCase,
+        UpdateRoomCodeUseCase,
         DeleteRoomUseCase {
     private final RoomReader reader;
     private final RoomStore store;
@@ -34,23 +34,31 @@ public class RoomCommandService implements
 
     @Override
     public RoomResult create(CreateRoomCommand command) {
-        ensureRoomNotExists(command.roomId());
+        var code = command.code();
+        var existsRoom = reader.existsByCode(code);
+        if (existsRoom) throw new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_ALREADY_EXISTS);
 
+        var now = clock.instant();
         var operationPolicy = policyProvisioner.provide();
-        var room = Room.of(command.roomId(), operationPolicy, clock.instant());
+        var room = Room.of(code, operationPolicy, now);
         store.save(room);
 
         return RoomResult.from(room);
     }
 
     @Override
-    public RoomResult update(UpdateRoomCommand command) {
-        var room = tryFindByRoomId(command.oldRoomId());
-        if (command.oldRoomId().equals(command.newRoomId())) return RoomResult.from(room);
+    public RoomResult update(UpdateRoomCodeCommand command) {
+        var roomId = command.roomId();
+        var room = reader.findById(roomId)
+                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_NOT_FOUND));
 
-        ensureRoomNotExists(command.newRoomId());
+        var newCode = command.newCode();
+        if (room.getCode().equals(command.newCode())) return RoomResult.from(room);
 
-        room.updateRoomId(command.newRoomId());
+        var existsRoom = reader.existsByCode(newCode);
+        if (existsRoom) throw new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_ALREADY_EXISTS);
+
+        room.updateCode(newCode);
         store.save(room);
 
         return RoomResult.from(room);
@@ -58,17 +66,9 @@ public class RoomCommandService implements
 
     @Override
     public void delete(DeleteRoomCommand command) {
-        var exists = reader.existsByRoomId(command.roomId());
-        if (!exists) throw new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_NOT_FOUND);
-        store.deleteByRoomId(command.roomId());
-    }
-
-    private Room tryFindByRoomId(String roomId) {
-        return reader.findByRoomId(roomId).orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_NOT_FOUND));
-    }
-
-    private void ensureRoomNotExists(String roomId) {
-        var exists = reader.existsByRoomId(roomId);
-        if (exists) throw new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_ALREADY_EXISTS);
+        var roomId = command.roomId();
+        var room = reader.findById(roomId)
+                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_NOT_FOUND));
+        store.delete(room);
     }
 }

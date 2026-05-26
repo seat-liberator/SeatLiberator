@@ -4,9 +4,11 @@ import com.seatliberator.seatliberator.reservation.domain.seat.Seat;
 import com.seatliberator.seatliberator.reservation.domain.seat.SeatStatus;
 
 import java.time.Instant;
+import java.util.UUID;
 
 public record SeatResult(
-        String seatId,
+        UUID seatId,
+        String code,
         Instant createdAt,
         SeatStatus status,
         Instant lastActivatedAt,
@@ -14,7 +16,8 @@ public record SeatResult(
 ) {
     public static SeatResult from(Seat seat) {
         return new SeatResult(
-                seat.getSeatId(),
+                seat.getId(),
+                seat.getCode(),
                 seat.getCreatedAt(),
                 seat.getStatus(),
                 seat.getLastActivatedAt(),

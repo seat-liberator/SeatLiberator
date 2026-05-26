@@ -21,7 +21,8 @@ public class RoomOperationPolicyCommandService implements UpdateRoomOperationPol
     @Override
     @Transactional
     public RoomOperationPolicyResult update(UpdateRoomOperationPolicyCommand command) {
-        var room = reader.findByRoomId(command.roomId())
+        var roomId = command.roomId();
+        var room = reader.findById(roomId)
                 .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_NOT_FOUND));
 
         var operationPolicy = RoomOperationPolicy.of(

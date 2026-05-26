@@ -10,6 +10,8 @@ import com.seatliberator.seatliberator.reservation.application.seat.port.in.resu
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatTimeSlotReader;
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatTimeSlotStore;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.filter.SeatTimeSlotFilter;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.filter.SeatTimeSlotRangeOverlapCriteria;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import com.seatliberator.seatliberator.reservation.domain.seat.SeatTimeSlot;
@@ -20,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,43 +31,60 @@ public class SeatTimeSlotCommandService implements
         UpdateSeatTimeSlotUseCase,
         DeleteSeatTimeSlotUseCase {
 
+    private final SeatTimeSlotReader reader;
+    private final SeatTimeSlotStore store;
+
     private final SeatReader seatReader;
-    private final SeatTimeSlotReader seatTimeSlotReader;
-    private final SeatTimeSlotStore seatTimeSlotStore;
     private final Clock clock;
 
     @Override
     public SeatTimeSlotResult create(CreateSeatTimeSlotCommand command) {
-        var seat = seatReader.findByLocator(command.locator())
-                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND));
+        var seatId = command.seatId();
+        var existsSeat = seatReader.existsById(seatId);
+        if (!existsSeat) throw new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND);
 
         var slotRange = SimpleDailyNanoRange.of(command.startAt(), command.duration());
-        var seatTimeSlot = SeatTimeSlot.of(seat, slotRange, SeatTimeSlotStatus.ACTIVE, clock.instant());
+        var seatTimeSlot = SeatTimeSlot.of(seatId, slotRange, SeatTimeSlotStatus.ACTIVE, clock.instant());
 
-        seatTimeSlotStore.save(seatTimeSlot);
+        var filter = SeatTimeSlotFilter.empty().seatId(seatId);
+        var criteria = SeatTimeSlotRangeOverlapCriteria.of(slotRange, filter);
+
+        var existsOverlaps = reader.existsByCriteria(criteria);
+        if (existsOverlaps)
+            throw new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_TIME_SLOT_RANGE_CONFLICT);
+
+        store.save(seatTimeSlot);
 
         return SeatTimeSlotResult.from(seatTimeSlot);
     }
 
     @Override
     public SeatTimeSlotResult update(UpdateSeatTimeSlotCommand command) {
-        var seatTimeSlot = findSeatTimeSlot(command.seatTimeSlotId());
+        var slotId = command.seatTimeSlotId();
+        var slot = reader.findById(slotId)
+                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_TIME_SLOT_NOT_FOUND));
 
         var slotRange = SimpleDailyNanoRange.of(command.startAt(), command.duration());
-        seatTimeSlot.updateSlotRange(slotRange);
-        seatTimeSlotStore.save(seatTimeSlot);
 
-        return SeatTimeSlotResult.from(seatTimeSlot);
+        var seatId = slot.getSeatId();
+        var filter = SeatTimeSlotFilter.empty().seatId(seatId);
+        var criteria = SeatTimeSlotRangeOverlapCriteria.of(slotRange, filter);
+
+        var existsOverlaps = reader.existsByCriteria(criteria);
+        if (existsOverlaps)
+            throw new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_TIME_SLOT_RANGE_CONFLICT);
+
+        slot.updateSlotRange(slotRange);
+        var saved = store.save(slot);
+
+        return SeatTimeSlotResult.from(saved);
     }
 
     @Override
     public void delete(DeleteSeatTimeSlotCommand command) {
-        var seatTimeSlot = findSeatTimeSlot(command.seatTimeSlotId());
-        seatTimeSlotStore.delete(seatTimeSlot);
-    }
-
-    private SeatTimeSlot findSeatTimeSlot(UUID seatTimeSlotId) {
-        return seatTimeSlotReader.findById(seatTimeSlotId)
+        var slotId = command.seatTimeSlotId();
+        var slot = reader.findById(slotId)
                 .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_TIME_SLOT_NOT_FOUND));
+        store.delete(slot);
     }
 }

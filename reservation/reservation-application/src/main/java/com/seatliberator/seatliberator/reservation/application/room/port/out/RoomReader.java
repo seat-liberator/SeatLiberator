@@ -4,11 +4,14 @@ import com.seatliberator.seatliberator.reservation.domain.room.Room;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface RoomReader {
-    boolean existsByRoomId(String roomId);
+    boolean existsById(UUID id);
 
-    Optional<Room> findByRoomId(String roomId);
+    boolean existsByCode(String code);
+
+    Optional<Room> findById(UUID id);
 
     List<Room> findAll();
 }

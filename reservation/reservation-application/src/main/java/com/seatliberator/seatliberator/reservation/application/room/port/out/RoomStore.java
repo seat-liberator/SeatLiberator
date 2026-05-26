@@ -5,5 +5,5 @@ import com.seatliberator.seatliberator.reservation.domain.room.Room;
 public interface RoomStore {
     Room save(Room room);
 
-    void deleteByRoomId(String roomId);
+    void delete(Room room);
 }

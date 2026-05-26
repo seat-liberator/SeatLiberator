@@ -1,21 +1,19 @@
 package com.seatliberator.seatliberator.reservation.application.seat.port.out;
 
-import com.seatliberator.seatliberator.reservation.application.seat.port.out.criteria.SeatExclusion;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.criteria.SeatLookupCriteria;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.filter.SeatFilter;
 import com.seatliberator.seatliberator.reservation.domain.seat.Seat;
-import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface SeatReader {
+    boolean existsById(UUID id);
+
+    boolean existsByCriteria(SeatLookupCriteria criteria);
+
     Optional<Seat> findById(UUID id);
 
-    Optional<Seat> findByLocator(SeatLocator locator);
-
-    List<Seat> findByRoomId(String roomId);
-
-    boolean existsByLocator(SeatLocator locator);
-
-    boolean existsByLocator(SeatLocator locator, SeatExclusion exclusion);
+    List<Seat> findByFilter(SeatFilter filter);
 }

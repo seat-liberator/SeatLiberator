@@ -14,6 +14,7 @@ public enum ReservationApplicationErrorCode implements ErrorCode {
     SEAT_ALREADY_EXISTS("RS005", "좌석이 이미 존재합니다."),
     SEAT_TIME_SLOT_NOT_FOUND("RS006", "좌석 시간 슬롯 정보가 존재하지 않습니다."),
     WAITLIST_NOT_FOUND("RS007", "대기열이 존재하지 않습니다."),
+    SEAT_TIME_SLOT_RANGE_CONFLICT("RS008", "다른 시간 슬롯 구간과 겹치는 구간이 있습니다."),
 
     RESERVATION_READ_FORBIDDEN("RS100", "조회할 수 없는 예약입니다."),
     RESERVATION_VERIFY_FORBIDDEN("RS101", "사용 처리 할 수 없는 예약입니다."),

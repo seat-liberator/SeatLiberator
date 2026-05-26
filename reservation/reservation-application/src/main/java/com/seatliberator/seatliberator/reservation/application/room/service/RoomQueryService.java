@@ -23,7 +23,8 @@ public class RoomQueryService implements
 
     @Override
     public RoomResult find(FindRoomQuery query) {
-        return reader.findByRoomId(query.roomId())
+        var roomId = query.roomId();
+        return reader.findById(roomId)
                 .map(RoomResult::from)
                 .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.ROOM_NOT_FOUND));
     }

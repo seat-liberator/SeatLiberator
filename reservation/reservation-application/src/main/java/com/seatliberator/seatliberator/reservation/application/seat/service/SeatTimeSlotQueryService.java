@@ -7,6 +7,7 @@ import com.seatliberator.seatliberator.reservation.application.seat.port.in.quer
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.result.SeatTimeSlotResult;
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatTimeSlotReader;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.filter.SeatTimeSlotFilter;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
 import lombok.RequiredArgsConstructor;
@@ -34,10 +35,13 @@ public class SeatTimeSlotQueryService implements
 
     @Override
     public List<SeatTimeSlotResult> list(ListSeatTimeSlotQuery query) {
-        var seat = seatReader.findByLocator(query.locator())
-                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND));
+        var seatId = query.seatId();
+        var existsSeat = seatReader.existsById(seatId);
+        if (!existsSeat) throw new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND);
 
-        return seatTimeSlotReader.findBySeatId(seat.getId()).stream()
+        var filter = SeatTimeSlotFilter.empty()
+                .seatId(seatId);
+        return seatTimeSlotReader.findByFilter(filter).stream()
                 .map(SeatTimeSlotResult::from)
                 .toList();
     }

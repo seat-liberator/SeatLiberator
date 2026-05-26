@@ -1,23 +1,23 @@
 package com.seatliberator.seatliberator.reservation.application.seat.service;
 
-import com.seatliberator.seatliberator.reservation.application.seat.internal.SeatAssignmentService;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.CreateSeatUseCase;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.DeleteSeatUseCase;
-import com.seatliberator.seatliberator.reservation.application.seat.port.in.MoveSeatUseCase;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.UpdateSeatUseCase;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.command.CreateSeatCommand;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.command.DeleteSeatCommand;
-import com.seatliberator.seatliberator.reservation.application.seat.port.in.command.MoveSeatCommand;
-import com.seatliberator.seatliberator.reservation.application.seat.port.in.command.UpdateSeatCommand;
+import com.seatliberator.seatliberator.reservation.application.seat.port.in.command.UpdateSeatCodeCommand;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.result.SeatResult;
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatStore;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.criteria.SeatLookupCriteria;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationException;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
+import com.seatliberator.seatliberator.reservation.domain.seat.Seat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Clock;
 
 @Service
 @RequiredArgsConstructor
@@ -25,36 +25,52 @@ import org.springframework.transaction.annotation.Transactional;
 public class SeatCommandService implements
         CreateSeatUseCase,
         UpdateSeatUseCase,
-        MoveSeatUseCase,
         DeleteSeatUseCase {
 
     private final SeatStore store;
     private final SeatReader reader;
-    private final SeatAssignmentService seatAssignmentService;
+
+    private final Clock clock;
 
     @Override
     public SeatResult create(CreateSeatCommand command) {
-        var seat = seatAssignmentService.createSeat(command.roomId(), command.seatId());
-        return SeatResult.from(seat);
+        var roomId = command.roomId();
+        var seatCode = command.seatCode();
+        var criteria = SeatLookupCriteria.of(roomId, seatCode);
+        var existsSeat = reader.existsByCriteria(criteria);
+        if (existsSeat) throw new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_ALREADY_EXISTS);
+
+        var now = clock.instant();
+        var seat = Seat.of(roomId, seatCode, now);
+
+        var saved = store.save(seat);
+
+        return SeatResult.from(saved);
     }
 
     @Override
-    public SeatResult update(UpdateSeatCommand command) {
-        var seat = seatAssignmentService.changeSeatId(command.roomId(), command.oldSeatId(), command.newSeatId());
-        return SeatResult.from(seat);
-    }
+    public SeatResult update(UpdateSeatCodeCommand command) {
+        var seatId = command.seatId();
+        var seat = reader.findById(seatId)
+                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND));
 
-    @Override
-    public SeatResult move(MoveSeatCommand command) {
-        var seat = seatAssignmentService.moveSeat(command.oldRoomId(), command.newRoomId(), command.seatId());
-        return SeatResult.from(seat);
+        var roomId = seat.getRoomId();
+        var newCode = command.newCode();
+        var criteria = SeatLookupCriteria.of(roomId, newCode);
+        var existsSeat = reader.existsByCriteria(criteria);
+        if (existsSeat) throw new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_ALREADY_EXISTS);
+
+        seat.updateCode(newCode);
+        var saved = store.save(seat);
+
+        return SeatResult.from(saved);
     }
 
     @Override
     public void delete(DeleteSeatCommand command) {
-        var locator = SimpleSeatLocator.of(command.roomId(), command.seatId());
-        var exists = reader.existsByLocator(locator);
-        if (!exists) throw new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND);
-        store.deleteByLocator(locator);
+        var seatId = command.seatId();
+        var seat = reader.findById(seatId)
+                .orElseThrow(() -> new ReservationApplicationException(ReservationApplicationErrorCode.SEAT_NOT_FOUND));
+        store.delete(seat);
     }
 }
