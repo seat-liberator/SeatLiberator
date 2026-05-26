@@ -27,8 +27,8 @@ public record BookingDetailResult(
             UUID seatOccupancyId,
             UUID seatTimeSlotId,
             LocalDate occupancyDate,
-            String roomId,
-            String seatId,
+            String roomCode,
+            String seatCode,
             LocalTime startAt,
             Duration duration,
             SeatTimeSlotStatus status
@@ -37,8 +37,8 @@ public record BookingDetailResult(
             Preconditions.requireNonNull(seatOccupancyId, "seatOccupancyId");
             Preconditions.requireNonNull(seatTimeSlotId, "seatTimeSlotId");
             Preconditions.requireNonNull(occupancyDate, "occupancyDate");
-            Preconditions.requireNonBlank(roomId, "roomId");
-            Preconditions.requireNonNull(seatId, "seatId");
+            Preconditions.requireNonBlank(roomCode, "roomCode");
+            Preconditions.requireNonNull(seatCode, "seatCode");
             Preconditions.requireNonNull(startAt, "startAt");
             Preconditions.requireNonNull(duration, "duration");
             Preconditions.requireNonNull(status, "status");
