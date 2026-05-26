@@ -1,45 +1,49 @@
 package com.seatliberator.seatliberator.reservation.domain.room;
 
-import java.time.Instant;
+import com.seatliberator.seatliberator.kernel.test.FormattedStringGenerator;
+import com.seatliberator.seatliberator.kernel.test.Generator;
+import com.seatliberator.seatliberator.kernel.test.SequenceCounter;
+import com.seatliberator.seatliberator.kernel.test.UuidGenerator;
+import com.seatliberator.seatliberator.kernel.test.clock.TestClock;
 
-import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
+import java.time.Clock;
+import java.time.Instant;
+import java.util.UUID;
 
 public class RoomFixture {
-    public static final String INITIAL_ROOM_ID = "study-room-1";
-    public static final RoomOperationPolicy OPERATION_POLICY = RoomOperationPolicyFixture.get();
-    private static final Instant INITIAL_CREATED_AT = fixedClock.instant();
+    private static final Clock CLOCK = TestClock.getFixed();
+
+    private static final Generator<UUID> ID_GENERATOR = new UuidGenerator(new SequenceCounter());
+
+    private static final String CODE_FORMAT = "study-room-%s";
+    private static final Generator<String> CODE_GENERATOR = FormattedStringGenerator.of(CODE_FORMAT, new SequenceCounter());
+
+    private static final RoomOperationPolicy OPERATION_POLICY = RoomOperationPolicyFixture.get();
+    private static final Instant CREATED_AT = CLOCK.instant();
 
     public static Room get() {
-        return Room.of(INITIAL_ROOM_ID, OPERATION_POLICY, INITIAL_CREATED_AT);
+        var code = CODE_GENERATOR.generate();
+        return Room.of(code, OPERATION_POLICY, CREATED_AT);
     }
 
-    public static Room get(String roomId, RoomOperationPolicy operationPolicy, Instant createdAt) {
-        return Room.of(roomId, operationPolicy, createdAt);
+    public static UUID nextId() {
+        return ID_GENERATOR.generate();
+    }
+
+    public static String nextCode() {
+        return CODE_GENERATOR.generate();
     }
 
     public static class Builder {
-        private String roomId = INITIAL_ROOM_ID;
-        private RoomOperationPolicy operationPolicy = RoomOperationPolicyFixture.get();
-        private Instant createdAt = INITIAL_CREATED_AT;
+        private String code = CODE_GENERATOR.generate();
+        private RoomOperationPolicy operationPolicy = OPERATION_POLICY;
+        private Instant createdAt = CREATED_AT;
 
         public Builder() {
         }
 
-        public Builder(String roomId, Instant createdAt) {
-            this.roomId = roomId;
-            this.createdAt = createdAt;
-        }
-
-        public static Builder from(Builder other) {
-            return new Builder(other.roomId, other.createdAt);
-        }
-
-        public Builder copy() {
-            return from(this);
-        }
-
-        public Builder roomId(String roomId) {
-            this.roomId = roomId;
+        public Builder code(String code) {
+            this.code = code;
             return this;
         }
 
@@ -54,7 +58,7 @@ public class RoomFixture {
         }
 
         public Room build() {
-            return Room.of(roomId, operationPolicy, createdAt);
+            return Room.of(code, operationPolicy, createdAt);
         }
     }
 }

@@ -10,7 +10,13 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "room")
+@Table(
+        name = "room",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_room_code",
+                columnNames = {"code"}
+        )
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Room {
@@ -18,8 +24,8 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "room_id", nullable = false, unique = true)
-    private String roomId;
+    @Column(name = "code", nullable = false, unique = true)
+    private String code;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
@@ -28,22 +34,22 @@ public class Room {
     private RoomOperationPolicy operationPolicy;
 
     private Room(
-            String roomId,
+            String code,
             RoomOperationPolicy operationPolicy,
             Instant createdAt
     ) {
-        this.roomId = Preconditions.requireNonBlank(roomId, "roomId");
+        this.code = Preconditions.requireNonBlank(code, "code");
         this.operationPolicy = Preconditions.requireNonNull(operationPolicy, "operationPolicy");
         this.createdAt = Preconditions.requireNonNull(createdAt, "createdAt");
     }
 
-    public static Room of(String roomId, RoomOperationPolicy operationPolicy, Instant createdAt) {
-        return new Room(roomId, operationPolicy, createdAt);
+    public static Room of(String code, RoomOperationPolicy operationPolicy, Instant createdAt) {
+        return new Room(code, operationPolicy, createdAt);
     }
 
-    public void updateRoomId(String roomId) {
-        Preconditions.requireNonBlank(roomId, "roomId");
-        this.roomId = roomId;
+    public void updateCode(String code) {
+        Preconditions.requireNonBlank(code, "code");
+        this.code = code;
     }
 
     public void updateOperationPolicy(RoomOperationPolicy operationPolicy) {

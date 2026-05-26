@@ -1,14 +1,14 @@
 package com.seatliberator.seatliberator.reservation.domain.shared;
 
 public class SeatLocatorFixture {
-    public static final String INITIAL_ROOM_ID = "room-1";
-    public static final String INITIAL_SEAT_ID = "seat-1";
+    private static final String ROOM_CODE = "room-1";
+    private static final String SEAT_CODE = "seat-1";
 
     public static SeatLocator get() {
-        return get(INITIAL_ROOM_ID, INITIAL_SEAT_ID);
+        return get(ROOM_CODE, SEAT_CODE);
     }
 
-    public static SeatLocator get(String roomId, String seatId) {
-        return SimpleSeatLocator.of(roomId, seatId);
+    public static SeatLocator get(String roomCode, String seatCode) {
+        return SimpleSeatLocator.of(roomCode, seatCode);
     }
 }

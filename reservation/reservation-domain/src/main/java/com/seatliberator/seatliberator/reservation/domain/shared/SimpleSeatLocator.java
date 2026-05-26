@@ -1,23 +1,21 @@
 package com.seatliberator.seatliberator.reservation.domain.shared;
 
+import com.seatliberator.seatliberator.kernel.condition.Preconditions;
+
 public record SimpleSeatLocator(
-        String roomId,
-        String seatId
+        String roomCode,
+        String seatCode
 ) implements SeatLocator {
     public SimpleSeatLocator {
-        if (roomId.isBlank()) {
-            throw new IllegalArgumentException("roomId must not be null or blank.");
-        }
-        if (seatId.isBlank()) {
-            throw new IllegalArgumentException("seatId must not be null or blank.");
-        }
+        Preconditions.requireNonBlank(roomCode, "roomCode");
+        Preconditions.requireNonBlank(seatCode, "seatCode");
     }
 
-    public static SimpleSeatLocator of(String roomId, String seatId) {
-        return new SimpleSeatLocator(roomId, seatId);
+    public static SimpleSeatLocator of(String roomCode, String seatCode) {
+        return new SimpleSeatLocator(roomCode, seatCode);
     }
 
     public static SimpleSeatLocator from(SeatLocator locator) {
-        return new SimpleSeatLocator(locator.roomId(), locator.seatId());
+        return new SimpleSeatLocator(locator.roomCode(), locator.seatCode());
     }
 }
