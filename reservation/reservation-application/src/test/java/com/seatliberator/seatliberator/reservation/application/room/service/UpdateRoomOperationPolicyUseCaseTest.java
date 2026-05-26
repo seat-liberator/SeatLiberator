@@ -7,12 +7,14 @@ import com.seatliberator.seatliberator.reservation.application.room.port.out.Roo
 import com.seatliberator.seatliberator.reservation.application.room.port.out.RoomStore;
 import com.seatliberator.seatliberator.reservation.application.shared.exception.ReservationApplicationErrorCode;
 import com.seatliberator.seatliberator.reservation.domain.room.Room;
-import com.seatliberator.seatliberator.reservation.domain.room.RoomFixture;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Clock;
 import java.util.Optional;
 
 import static com.seatliberator.seatliberator.kernel.test.assertion.ApplicationAssertions.assertThatApplicationThrownBy;
@@ -20,12 +22,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 @DisplayName("Update Room Operation Policy UseCase")
-public class UpdateRoomOperationPolicyUseCaseTest extends AbstractRoomServiceTest<UpdateRoomOperationPolicyUseCase> {
+public class UpdateRoomOperationPolicyUseCaseTest {
+    @Mock
+    RoomReader reader;
 
-    @Override
-    UpdateRoomOperationPolicyUseCase init(RoomReader reader, RoomStore store, Clock clock) {
-        return new RoomOperationPolicyCommandService(reader, store);
+    @Mock
+    RoomStore store;
+
+    UpdateRoomOperationPolicyUseCase useCase;
+
+    @BeforeEach
+    void run() {
+        useCase = new RoomOperationPolicyCommandService(reader, store);
     }
 
     @Test
@@ -34,12 +44,12 @@ public class UpdateRoomOperationPolicyUseCaseTest extends AbstractRoomServiceTes
         var command = RoomTestSupport.updateRoomOperationPolicyCommand();
         var roomId = command.roomId();
 
-        when(reader.findByRoomId(roomId)).thenReturn(Optional.empty());
+        when(reader.findById(roomId)).thenReturn(Optional.empty());
 
         assertThatApplicationThrownBy(() -> useCase.update(command))
                 .hasErrorCode(ReservationApplicationErrorCode.ROOM_NOT_FOUND);
 
-        verify(reader).findByRoomId(roomId);
+        verify(reader).findById(roomId);
         verify(store, never()).save(any());
     }
 
@@ -49,14 +59,14 @@ public class UpdateRoomOperationPolicyUseCaseTest extends AbstractRoomServiceTes
         var command = RoomTestSupport.updateRoomOperationPolicyCommand();
         var operationPolicy = RoomTestSupport.updatedOperationPolicy();
         var roomId = command.roomId();
-        var room = RoomFixture.get();
+        var room = RoomTestSupport.room();
 
-        when(reader.findByRoomId(roomId)).thenReturn(Optional.of(room));
+        when(reader.findById(roomId)).thenReturn(Optional.of(room));
 
         var result = useCase.update(command);
 
         var roomCaptor = ArgumentCaptor.forClass(Room.class);
-        verify(reader).findByRoomId(roomId);
+        verify(reader).findById(roomId);
         verify(store).save(roomCaptor.capture());
 
         var saved = roomCaptor.getValue();
