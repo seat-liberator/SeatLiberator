@@ -36,7 +36,7 @@ public class ReservationTestSupport extends DefaultTestSupport {
             .build();
 
     public static Reservation reservation() {
-        return ReservationFixture.createReservation();
+        return ReservationFixture.next();
     }
 
     public static Reservation reservationWithId() {

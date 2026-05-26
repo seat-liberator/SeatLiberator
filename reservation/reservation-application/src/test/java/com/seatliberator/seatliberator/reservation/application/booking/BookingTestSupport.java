@@ -44,7 +44,7 @@ public class BookingTestSupport extends DefaultTestSupport {
     }
 
     public static Reservation reservation() {
-        return ReservationFixture.createReservation();
+        return ReservationFixture.next();
     }
 
     public static Reservation reservationWithId() {
@@ -70,14 +70,12 @@ public class BookingTestSupport extends DefaultTestSupport {
     }
 
     public static SeatOccupancy occupancy(SeatTimeSlot slot, LocalDate occupancyDate) {
-        var occupancy = new SeatOccupancyFixture.Builder()
-                .seatTimeSlot(slot)
-                .reservation(reservation())
+        return new SeatOccupancyFixture.Builder()
+                .seatTimeSlotId(slot.getId())
+                .reservationId(RESERVATION_ID)
                 .occupancyDate(occupancyDate)
                 .createdAt(NOW)
                 .build();
-        setField(occupancy, "seatTimeSlotId", slot.getId());
-        return occupancy;
     }
 
     private static SeatTimeSlot slot(UUID id, DailyNanoRange range) {
