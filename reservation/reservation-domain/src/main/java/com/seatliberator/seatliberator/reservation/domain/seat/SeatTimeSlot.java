@@ -62,12 +62,12 @@ public class SeatTimeSlot {
     private Instant lastInactivatedAt;
 
     private SeatTimeSlot(
-            Seat seat,
+            UUID seatId,
             EmbeddableDailyNanoRange slotRange,
             SeatTimeSlotStatus slotStatus,
             Instant createdAt
     ) {
-        this.seat = Preconditions.requireNonNull(seat, "seat");
+        this.seatId = Preconditions.requireNonNull(seatId, "seatId");
         this.slotRange = Preconditions.requireNonNull(slotRange, "slotRange");
         this.slotStatus = Preconditions.requireNonNull(slotStatus, "slotStatus");
         this.createdAt = Preconditions.requireNonNull(createdAt, "createdAt");
@@ -79,14 +79,14 @@ public class SeatTimeSlot {
     }
 
     public static SeatTimeSlot of(
-            Seat seat,
+            UUID seatId,
             DailyNanoRange slotRange,
             SeatTimeSlotStatus slotStatus,
             Instant createdAt
     ) {
         Preconditions.requireNonNull(slotRange, "slotRange");
         return new SeatTimeSlot(
-                seat,
+                seatId,
                 EmbeddableDailyNanoRange.from(slotRange),
                 slotStatus,
                 createdAt

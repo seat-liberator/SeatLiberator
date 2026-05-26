@@ -23,7 +23,7 @@ public class SeatTimeSlotTest {
     class CreationTest {
         static Stream<Arguments> nullArgumentCases() {
             return Stream.of(
-                    arguments("seat = null", (Supplier<SeatTimeSlot>) () -> new SeatTimeSlotFixture.Builder().seat(null).build(), "seat"),
+                    arguments("seatId = null", (Supplier<SeatTimeSlot>) () -> new SeatTimeSlotFixture.Builder().seatId(null).build(), "seatId"),
                     arguments("slotRange = null", (Supplier<SeatTimeSlot>) () -> new SeatTimeSlotFixture.Builder().slotRange(null).build(), "slotRange"),
                     arguments("slotStatus = null", (Supplier<SeatTimeSlot>) () -> new SeatTimeSlotFixture.Builder().slotStatus(null).build(), "slotStatus"),
                     arguments("createdAt = null", (Supplier<SeatTimeSlot>) () -> new SeatTimeSlotFixture.Builder().createdAt(null).build(), "createdAt")

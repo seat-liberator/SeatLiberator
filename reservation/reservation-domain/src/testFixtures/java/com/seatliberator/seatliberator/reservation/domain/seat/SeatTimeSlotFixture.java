@@ -16,7 +16,7 @@ public class SeatTimeSlotFixture {
 
     private static final Generator<UUID> ID_GENERATOR = new UuidGenerator(new SequenceCounter());
 
-    private static final Seat SEAT = SeatFixture.next();
+    private static final UUID SEAT_ID = SeatFixture.nextId();
 
     private static final DailyNanoRange SLOT_RANGE = DailyNanoRangeFixture.get();
     private static final SeatTimeSlotStatus STATUS = SeatTimeSlotStatus.ACTIVE;
@@ -24,7 +24,7 @@ public class SeatTimeSlotFixture {
     private static final Instant CREATED_AT = CLOCK.instant();
 
     public static SeatTimeSlot get() {
-        return SeatTimeSlot.of(SEAT, SLOT_RANGE, STATUS, CREATED_AT);
+        return SeatTimeSlot.of(SEAT_ID, SLOT_RANGE, STATUS, CREATED_AT);
     }
 
     public static UUID nextId() {
@@ -32,13 +32,13 @@ public class SeatTimeSlotFixture {
     }
 
     public static class Builder {
-        private Seat seat = SEAT;
+        private UUID seatId = SEAT_ID;
         private DailyNanoRange slotRange = SLOT_RANGE;
         private SeatTimeSlotStatus slotStatus = STATUS;
         private Instant createdAt = CREATED_AT;
 
-        public Builder seat(Seat seat) {
-            this.seat = seat;
+        public Builder seatId(UUID seatId) {
+            this.seatId = seatId;
             return this;
         }
 
@@ -58,7 +58,7 @@ public class SeatTimeSlotFixture {
         }
 
         public SeatTimeSlot build() {
-            return SeatTimeSlot.of(seat, slotRange, slotStatus, createdAt);
+            return SeatTimeSlot.of(seatId, slotRange, slotStatus, createdAt);
         }
     }
 }
