@@ -8,101 +8,72 @@ import com.seatliberator.seatliberator.identity.server.security.authentication.m
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.handler.CredentialAuthenticationSuccessHandler;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.provider.CredentialSignInProvider;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.provider.CredentialSignUpProvider;
-import com.seatliberator.seatliberator.identity.server.security.shared.config.FilterChainUtils;
 import com.seatliberator.seatliberator.identity.server.security.shared.response.ResponseWriter;
 import com.seatliberator.seatliberator.identity.server.security.shared.response.TokenResponseProcessor;
-import lombok.extern.slf4j.Slf4j;
+import com.seatliberator.seatliberator.starter.security.customizer.HttpSecurityCustomizer;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
-import org.springframework.web.cors.CorsConfigurationSource;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
-@Slf4j
 @Configuration
-@EnableConfigurationProperties(CredentialAuthenticationConfigurationProperties.class)
 public class CredentialAuthenticationConfiguration {
     @Bean
-    JsonCredentialSignUpProcessingFilter jsonCredentialSignUpProcessingFilter(
-            AuthenticationManager credentialAuthenticationManager,
-            ObjectMapper objectMapper,
-            CredentialAuthenticationConfigurationProperties properties,
-            @Qualifier("Credential") AuthenticationSuccessHandler credentialAuthenticationSuccessHandler,
-            @Qualifier("Credential") AuthenticationFailureHandler credentialAuthenticationFailureHandler
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    HttpSecurityCustomizer credentialHttpSecurityCustomizer(
+            JsonCredentialSignInProcessingFilter jsonCredentialSignInProcessingFilter,
+            JsonCredentialSignUpProcessingFilter jsonCredentialSignUpProcessingFilter
     ) {
-        var endpoint = properties.signUp();
-        var matcher = PathPatternRequestMatcher.withDefaults()
-                .matcher(HttpMethod.valueOf(endpoint.method()), endpoint.uri());
+        return httpSecurity -> httpSecurity
+                .authorizeHttpRequests(registry -> registry
+                        .requestMatchers("/.well-known/jwks.json", "/auth/**")
+                        .permitAll()
+                )
+                .addFilterBefore(jsonCredentialSignInProcessingFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jsonCredentialSignUpProcessingFilter, UsernamePasswordAuthenticationFilter.class);
+    }
 
+    @Bean
+    JsonCredentialSignUpProcessingFilter jsonCredentialSignUpProcessingFilter(
+            @Qualifier("credential") AuthenticationManager credentialAuthenticationManager,
+            CredentialAuthenticationSuccessHandler successHandler,
+            CredentialAuthenticationFailureHandler failureHandler,
+            ObjectMapper objectMapper
+    ) {
+        var matcher = PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, "/auth/sign-up");
         var filter = new JsonCredentialSignUpProcessingFilter(matcher, objectMapper);
 
-        log.debug(
-                "Credential sign-up processing filter configured successfully. method={}, uri={}, successHandler={}, failureHandler={}",
-                endpoint.method(),
-                endpoint.uri(),
-                credentialAuthenticationSuccessHandler.getClass().getSimpleName(),
-                credentialAuthenticationFailureHandler.getClass().getSimpleName()
-        );
-
         filter.setAuthenticationManager(credentialAuthenticationManager);
-        filter.setAuthenticationSuccessHandler(credentialAuthenticationSuccessHandler);
-        filter.setAuthenticationFailureHandler(credentialAuthenticationFailureHandler);
+        filter.setAuthenticationSuccessHandler(successHandler);
+        filter.setAuthenticationFailureHandler(failureHandler);
 
         return filter;
     }
 
     @Bean
     JsonCredentialSignInProcessingFilter jsonCredentialSignInProcessingFilter(
-            AuthenticationManager credentialAuthenticationManager,
-            ObjectMapper objectMapper,
-            CredentialAuthenticationConfigurationProperties properties,
-            @Qualifier("Credential") AuthenticationSuccessHandler credentialAuthenticationSuccessHandler,
-            @Qualifier("Credential") AuthenticationFailureHandler credentialAuthenticationFailureHandler
+            @Qualifier("credential") AuthenticationManager credentialAuthenticationManager,
+            CredentialAuthenticationSuccessHandler successHandler,
+            CredentialAuthenticationFailureHandler failureHandler,
+            ObjectMapper objectMapper
     ) {
-        var endpoint = properties.signIn();
-        var matcher = PathPatternRequestMatcher.withDefaults()
-                .matcher(HttpMethod.valueOf(endpoint.method()), endpoint.uri());
-
+        var matcher = PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, "/auth/sign-in");
         var filter = new JsonCredentialSignInProcessingFilter(matcher, objectMapper);
 
         filter.setAuthenticationManager(credentialAuthenticationManager);
-        filter.setAuthenticationSuccessHandler(credentialAuthenticationSuccessHandler);
-        filter.setAuthenticationFailureHandler(credentialAuthenticationFailureHandler);
-
-        log.debug(
-                "Registered credential sign-in processing filter. method={}, uri={}, successHandler={}, failureHandler={}",
-                endpoint.method(),
-                endpoint.uri(),
-                credentialAuthenticationSuccessHandler.getClass().getSimpleName(),
-                credentialAuthenticationFailureHandler.getClass().getSimpleName()
-        );
+        filter.setAuthenticationSuccessHandler(successHandler);
+        filter.setAuthenticationFailureHandler(failureHandler);
 
         return filter;
-    }
-
-
-    @Bean
-    AuthenticationManager credentialAuthenticationManager(
-            CredentialSignUpProvider credentialSignUpProvider,
-            CredentialSignInProvider credentialSignInProvider
-    ) {
-        return new ProviderManager(List.of(
-                credentialSignInProvider,
-                credentialSignUpProvider
-        ));
     }
 
     @Bean
@@ -116,36 +87,24 @@ public class CredentialAuthenticationConfiguration {
     }
 
     @Bean
-    @Qualifier("Credential")
-    AuthenticationSuccessHandler credentialAuthenticationSuccessHandler(TokenResponseProcessor tokenIssueProcessor) {
+    CredentialAuthenticationSuccessHandler credentialAuthenticationSuccessHandler(TokenResponseProcessor tokenIssueProcessor) {
         return new CredentialAuthenticationSuccessHandler(tokenIssueProcessor);
     }
 
     @Bean
-    @Qualifier("Credential")
-    AuthenticationFailureHandler credentialAuthenticationFailureHandler(ResponseWriter responseWriter) {
+    CredentialAuthenticationFailureHandler credentialAuthenticationFailureHandler(ResponseWriter responseWriter) {
         return new CredentialAuthenticationFailureHandler(responseWriter);
     }
 
     @Bean
-    @Order(2)
-    SecurityFilterChain credentialAuthenticationSecurityFilterChain(
-            HttpSecurity httpSecurity,
-            @Qualifier("custom") CorsConfigurationSource corsConfigurationSource,
-            JsonCredentialSignInProcessingFilter jsonCredentialSignInProcessingFilter,
-            JsonCredentialSignUpProcessingFilter jsonCredentialSignUpProcessingFilter
+    @Qualifier("credential")
+    AuthenticationManager credentialAuthenticationManager(
+            CredentialSignUpProvider credentialSignUpProvider,
+            CredentialSignInProvider credentialSignInProvider
     ) {
-        FilterChainUtils.configureDefault(httpSecurity, corsConfigurationSource);
-
-        httpSecurity
-                .securityMatcher("/auth/**")
-                .authorizeHttpRequests(
-                        auth -> auth
-                                .anyRequest().permitAll()
-                )
-                .addFilterBefore(jsonCredentialSignInProcessingFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jsonCredentialSignUpProcessingFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return httpSecurity.build();
+        return new ProviderManager(List.of(
+                credentialSignInProvider,
+                credentialSignUpProvider
+        ));
     }
 }

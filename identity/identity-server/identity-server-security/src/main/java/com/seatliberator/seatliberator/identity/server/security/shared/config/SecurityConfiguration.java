@@ -13,7 +13,6 @@ import com.seatliberator.seatliberator.identity.server.application.jwks.service.
 import com.seatliberator.seatliberator.identity.server.security.shared.response.ResponseWriter;
 import com.seatliberator.seatliberator.identity.server.security.shared.response.TokenResponseProcessor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -22,9 +21,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import tools.jackson.databind.ObjectMapper;
 
 @Configuration
@@ -54,29 +50,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @Qualifier("custom")
-    CorsConfigurationSource corsConfigurationSource(
-            SecurityConfigurationProperties properties
-    ) {
-        var configuration = new CorsConfiguration();
-
-
-        configuration.setAllowedOrigins(properties.allowedOrigins());
-        configuration.setAllowedMethods(properties.allowedMethods());
-        configuration.setAllowedHeaders(properties.allowedHeaders());
-        configuration.setAllowCredentials(properties.allowCredentials());
-
-        configuration.setExposedHeaders(properties.exposedHeaders());
-
-        var source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
-    @Bean
-    ResponseWriter responseWriter(
-            ObjectMapper objectMapper
-    ) {
+    ResponseWriter responseWriter(ObjectMapper objectMapper) {
         return new ResponseWriter(objectMapper);
     }
 
