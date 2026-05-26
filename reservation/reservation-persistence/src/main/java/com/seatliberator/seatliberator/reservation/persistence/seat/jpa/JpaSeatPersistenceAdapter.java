@@ -2,13 +2,12 @@ package com.seatliberator.seatliberator.reservation.persistence.seat.jpa;
 
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatReader;
 import com.seatliberator.seatliberator.reservation.application.seat.port.out.SeatStore;
-import com.seatliberator.seatliberator.reservation.application.seat.port.out.criteria.SeatExclusion;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.criteria.SeatLookupCriteria;
+import com.seatliberator.seatliberator.reservation.application.seat.port.out.filter.SeatFilter;
 import com.seatliberator.seatliberator.reservation.domain.seat.Seat;
-import com.seatliberator.seatliberator.reservation.domain.shared.SeatLocator;
 import com.seatliberator.seatliberator.reservation.persistence.seat.jpa.repository.SeatRepository;
 import com.seatliberator.seatliberator.reservation.persistence.shared.jpa.specification.CommonPredicates;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.domain.DeleteSpecification;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -19,12 +18,17 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class JpaSeatPersistenceAdapter implements SeatStore, SeatReader {
-
     private final SeatRepository repository;
 
     @Override
-    public void save(Seat seat) {
-        repository.save(seat);
+    public boolean existsById(UUID id) {
+        return repository.existsById(id);
+    }
+
+    @Override
+    public boolean existsByCriteria(SeatLookupCriteria criteria) {
+        var spec = createSpecificationFromCriteria(criteria);
+        return repository.exists(spec);
     }
 
     @Override
@@ -33,58 +37,37 @@ public class JpaSeatPersistenceAdapter implements SeatStore, SeatReader {
     }
 
     @Override
-    public Optional<Seat> findByRoomIdAndSeatId(String roomId, String seatId) {
-        return repository.findByRoom_RoomIdAndSeatId(roomId, seatId);
+    public List<Seat> findByFilter(SeatFilter filter) {
+        var spec = createSpecificationFromFilter(filter);
+        return repository.findAll(spec);
     }
 
     @Override
-    public Optional<Seat> findByLocator(SeatLocator locator) {
-        return repository.findByRoom_RoomIdAndSeatId(locator.roomId(), locator.seatId());
+    public Seat save(Seat seat) {
+        return repository.save(seat);
     }
 
     @Override
-    public Optional<Seat> findForUpdate(String roomId, String seatId) {
-        return repository.findForUpdate(roomId, seatId);
+    public void delete(Seat seat) {
+        repository.delete(seat);
     }
 
-    @Override
-    public Optional<Seat> findForUpdate(SeatLocator locator) {
-        return repository.findForUpdate(locator.roomId(), locator.seatId());
+    private Specification<Seat> createSpecificationFromFilter(SeatFilter filter) {
+        var spec = Specification.<Seat>unrestricted();
+
+        if (filter.roomId() != null) {
+            spec = spec.and(CommonPredicates.eq(filter.roomId(), from -> from.get("roomId")));
+        }
+
+        return spec;
     }
 
-    @Override
-    public List<Seat> findByRoomId(String roomId) {
-        return repository.findByRoom_RoomId(roomId);
-    }
+    private Specification<Seat> createSpecificationFromCriteria(SeatLookupCriteria criteria) {
+        var spec = Specification.<Seat>unrestricted();
 
-    @Override
-    public void deleteByLocator(SeatLocator locator) {
-        var spec = createLocatorDeleteSpecification(locator);
-        repository.delete(spec);
-    }
+        spec = spec.and(CommonPredicates.eq(criteria.roomId(), from -> from.get("roomId")));
+        spec = spec.and(CommonPredicates.eq(criteria.seatCode(), from -> from.get("code")));
 
-    @Override
-    public boolean existsByLocator(SeatLocator locator) {
-        var spec = createLocatorSpecification(locator);
-        return repository.exists(spec);
-    }
-
-    @Override
-    public boolean existsByLocator(SeatLocator locator, SeatExclusion exclusion) {
-        var spec = createLocatorSpecification(locator)
-                .and(CommonPredicates.excludeIn(exclusion.ids(), from -> from.get("id")));
-        return repository.exists(spec);
-    }
-
-    private Specification<Seat> createLocatorSpecification(SeatLocator locator) {
-        return Specification.<Seat>unrestricted()
-                .and(CommonPredicates.eq(locator.roomId(), from -> from.get("room").get("roomId")))
-                .and(CommonPredicates.eq(locator.seatId(), from -> from.get("seatId")));
-    }
-
-    private DeleteSpecification<Seat> createLocatorDeleteSpecification(SeatLocator locator) {
-        return DeleteSpecification.<Seat>unrestricted()
-                .and(CommonPredicates.eq(locator.roomId(), from -> from.get("room").get("roomId")))
-                .and(CommonPredicates.eq(locator.seatId(), from -> from.get("seatId")));
+        return spec;
     }
 }

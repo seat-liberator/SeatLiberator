@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -16,13 +17,18 @@ public class JpaRoomPersistenceAdapter implements RoomStore, RoomReader {
     private final RoomRepository repository;
 
     @Override
-    public boolean existsByRoomId(String roomId) {
-        return repository.existsByRoomId(roomId);
+    public boolean existsById(UUID id) {
+        return repository.existsById(id);
     }
 
     @Override
-    public Optional<Room> findByRoomId(String roomId) {
-        return repository.findByRoomId(roomId);
+    public boolean existsByCode(String code) {
+        return repository.existsByCode(code);
+    }
+
+    @Override
+    public Optional<Room> findById(UUID id) {
+        return repository.findById(id);
     }
 
     @Override
@@ -36,7 +42,7 @@ public class JpaRoomPersistenceAdapter implements RoomStore, RoomReader {
     }
 
     @Override
-    public void deleteByRoomId(String roomId) {
-        repository.deleteByRoomId(roomId);
+    public void delete(Room room) {
+        repository.delete(room);
     }
 }

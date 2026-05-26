@@ -21,8 +21,8 @@ public record BookingDetailRow(
         UUID occupancyId,
         LocalDate occupancyDate,
         UUID seatTimeSlotId,
-        String roomId,
-        String seatId,
+        String roomCode,
+        String seatCode,
         Long slotStartNanoOfDay,
         Long slotEndNanoOfDay,
         SeatTimeSlotStatus slotStatus
@@ -37,8 +37,8 @@ public record BookingDetailRow(
                 occupancyId,
                 seatTimeSlotId,
                 occupancyDate,
-                roomId,
-                seatId,
+                roomCode,
+                seatCode,
                 range.startAt(),
                 range.duration(),
                 slotStatus
