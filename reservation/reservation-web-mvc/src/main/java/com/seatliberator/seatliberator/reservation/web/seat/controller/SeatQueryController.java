@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @Tag(name = "Seats", description = "스터디룸 좌석 조회 관리 API")
 @Slf4j
@@ -38,10 +39,10 @@ public class SeatQueryController {
     @GetMapping("/{roomId}/seats")
     @PreAuthorize("hasAuthority('seat.list')")
     public ResponseEntity<List<SeatResult>> listSeatsInRoom(
-            @Parameter(description = "조회할 방 ID", example = "study-room-1")
-            @PathVariable("roomId") String roomId
+            @Parameter(description = "조회할 방 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("roomId") UUID roomId
     ) {
-        var query = new ListSeatQuery(roomId);
+        var query = ListSeatQuery.of(roomId);
         var result = listSeatUseCase.list(query);
         return ResponseEntity.ok(result);
     }
@@ -54,12 +55,12 @@ public class SeatQueryController {
     @GetMapping("/{roomId}/seats/{seatId}")
     @PreAuthorize("hasAuthority('seat.read')")
     public ResponseEntity<SeatResult> findSeatInRoom(
-            @Parameter(description = "조회할 방 ID", example = "study-room-1")
-            @PathVariable("roomId") String roomId,
-            @Parameter(description = "조회할 좌석 ID", example = "A1")
-            @PathVariable("seatId") String seatId
+            @Parameter(description = "조회할 방 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("roomId") UUID roomId,
+            @Parameter(description = "조회할 좌석 ID", example = "00000000-0000-0000-0000-000000000002")
+            @PathVariable("seatId") UUID seatId
     ) {
-        var query = new FindSeatQuery(roomId, seatId);
+        var query = FindSeatQuery.of(seatId);
         var result = findSeatUseCase.find(query);
         return ResponseEntity.ok(result);
     }
