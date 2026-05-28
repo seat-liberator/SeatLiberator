@@ -27,7 +27,7 @@ public class ApplicationAutoConfigurationTest {
     @DisplayName("timezone 설정으로 Clock zone을 구성한다")
     void configures_clock_zone_from_property() {
         contextRunner
-                .withPropertyValues("seatliberator.bootstrap.application.timezone=Asia/Seoul")
+                .withPropertyValues("seatliberator.starter.application.timezone=Asia/Seoul")
                 .run(context -> assertThat(context.getBean(Clock.class).getZone())
                         .isEqualTo(ZoneId.of("Asia/Seoul")));
     }
@@ -45,10 +45,10 @@ public class ApplicationAutoConfigurationTest {
     }
 
     @Test
-    @DisplayName("seatliberator.bootstrap.application.enabled가 false이면 자동 설정하지 않는다")
+    @DisplayName("seatliberator.starter.application.enabled가 false이면 자동 설정하지 않는다")
     void does_not_register_beans_when_application_starter_is_disabled() {
         contextRunner
-                .withPropertyValues("seatliberator.bootstrap.application.enabled=false")
+                .withPropertyValues("seatliberator.starter.application.enabled=false")
                 .run(context -> {
                     assertThat(context).doesNotHaveBean(Clock.class);
                 });
