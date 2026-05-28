@@ -13,6 +13,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 @Schema(description = "방 운영 정책 변경 요청")
 public record UpdateRoomOperationPolicyRequest(
@@ -30,8 +31,8 @@ public record UpdateRoomOperationPolicyRequest(
         @NotEmpty
         List<OperationScheduleRequest> operationSchedule
 ) {
-    public UpdateRoomOperationPolicyCommand toCommand(String roomId) {
-        return new UpdateRoomOperationPolicyCommand(
+    public UpdateRoomOperationPolicyCommand toCommand(UUID roomId) {
+        return UpdateRoomOperationPolicyCommand.of(
                 roomId,
                 maxReservationPerUser,
                 maxReservationDuration,

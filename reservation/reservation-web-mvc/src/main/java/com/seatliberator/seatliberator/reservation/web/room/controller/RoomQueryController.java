@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @Tag(name = "Rooms", description = "스터디룸 방 조회 관리 API")
 @Slf4j
@@ -49,10 +50,10 @@ public class RoomQueryController {
     @GetMapping("/{roomId}")
     @PreAuthorize("hasAuthority('room.read')")
     public ResponseEntity<RoomResult> findRoom(
-            @Parameter(description = "조회할 방 ID", example = "study-room-1")
-            @PathVariable("roomId") String roomId
+            @Parameter(description = "조회할 방 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("roomId") UUID roomId
     ) {
-        var query = new FindRoomQuery(roomId);
+        var query = FindRoomQuery.of(roomId);
         var result = findRoomUseCase.find(query);
         return ResponseEntity.ok(result);
     }

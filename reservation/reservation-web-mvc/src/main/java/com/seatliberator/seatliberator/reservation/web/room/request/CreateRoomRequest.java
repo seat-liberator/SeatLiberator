@@ -6,10 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 
 @Schema(description = "방 생성 요청")
 public record CreateRoomRequest(
-        @Schema(description = "방 ID", example = "study-room-1")
-        @NotBlank String roomId
+        @Schema(description = "방 Code", example = "study-room-1")
+        @NotBlank String roomCode
 ) {
     public CreateRoomCommand toCommand() {
-        return new CreateRoomCommand(roomId);
+        return CreateRoomCommand.of(roomCode);
     }
 }
