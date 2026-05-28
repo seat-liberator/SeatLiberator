@@ -5,7 +5,6 @@ import com.seatliberator.seatliberator.reservation.application.seat.port.in.List
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.query.FindSeatTimeSlotQuery;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.query.ListSeatTimeSlotQuery;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.result.SeatTimeSlotResult;
-import com.seatliberator.seatliberator.reservation.domain.shared.SimpleSeatLocator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -39,13 +38,12 @@ public class SeatTimeSlotQueryController {
     })
     @GetMapping("/{roomId}/seats/{seatId}/slots")
     public ResponseEntity<List<SeatTimeSlotResult>> listSeatTimeSlots(
-            @Parameter(description = "조회할 방 ID", example = "study-room-1")
-            @PathVariable("roomId") String roomId,
-            @Parameter(description = "조회할 좌석 ID", example = "A1")
-            @PathVariable("seatId") String seatId
+            @Parameter(description = "조회할 방 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("roomId") UUID roomId,
+            @Parameter(description = "조회할 좌석 ID", example = "00000000-0000-0000-0000-000000000002")
+            @PathVariable("seatId") UUID seatId
     ) {
-        var locator = SimpleSeatLocator.of(roomId, seatId);
-        var query = new ListSeatTimeSlotQuery(locator);
+        var query = ListSeatTimeSlotQuery.of(seatId);
         var result = listSeatTimeSlotUseCase.list(query);
         return ResponseEntity.ok(result);
     }
@@ -57,12 +55,12 @@ public class SeatTimeSlotQueryController {
     })
     @GetMapping("/{roomId}/seats/{seatId}/slots/{slotId}")
     public ResponseEntity<SeatTimeSlotResult> findSeatTimeSlot(
-            @Parameter(description = "조회할 방 ID", example = "study-room-1")
-            @PathVariable("roomId") String roomId,
-            @Parameter(description = "조회할 좌석 ID", example = "A1")
-            @PathVariable("seatId") String seatId,
-            @Parameter(description = "좌석 시간 슬롯 ID", example = "00000000-0000-0000-000000000001")
-            @PathVariable("seatId") UUID seatTimeSlotId
+            @Parameter(description = "조회할 방 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("roomId") UUID roomId,
+            @Parameter(description = "조회할 좌석 ID", example = "00000000-0000-0000-0000-000000000002")
+            @PathVariable("seatId") UUID seatId,
+            @Parameter(description = "좌석 시간 슬롯 ID", example = "00000000-0000-0000-0000-000000000003")
+            @PathVariable("slotId") UUID seatTimeSlotId
     ) {
         var query = new FindSeatTimeSlotQuery(seatTimeSlotId);
         var result = findSeatTimeSlotUseCase.find(query);

@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -38,13 +39,13 @@ public class SeatTimeSlotCommandController {
     })
     @PostMapping("/{roomId}/seats/{seatId}/slots")
     public ResponseEntity<SeatTimeSlotResult> createSeatTimeSlot(
-            @Parameter(description = "방 ID", example = "study-room-1")
-            @PathVariable("roomId") String roomId,
-            @Parameter(description = "좌석 ID", example = "A1")
-            @PathVariable("seatId") String seatId,
-            @RequestBody SeatTimeSlotCreateRequest request
+            @Parameter(description = "방 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("roomId") UUID roomId,
+            @Parameter(description = "좌석 ID", example = "00000000-0000-0000-0000-000000000002")
+            @PathVariable("seatId") UUID seatId,
+            @Valid @RequestBody SeatTimeSlotCreateRequest request
     ) {
-        var command = request.toCommand(roomId, seatId);
+        var command = request.toCommand(seatId);
         var result = createSeatTimeSlotUseCase.create(command);
         return ResponseEntity.ok(result);
     }
@@ -57,13 +58,13 @@ public class SeatTimeSlotCommandController {
     })
     @PutMapping("/{roomId}/seats/{seatId}/slots/{slotId}")
     public ResponseEntity<SeatTimeSlotResult> updateSeatTimeSlot(
-            @Parameter(description = "방 ID", example = "study-room-1")
-            @PathVariable("roomId") String roomId,
-            @Parameter(description = "좌석 ID", example = "A1")
-            @PathVariable("seatId") String seatId,
-            @Parameter(description = "좌석 시간 슬롯 ID", example = "00000000-0000-0000-000000000001")
+            @Parameter(description = "방 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("roomId") UUID roomId,
+            @Parameter(description = "좌석 ID", example = "00000000-0000-0000-0000-000000000002")
+            @PathVariable("seatId") UUID seatId,
+            @Parameter(description = "좌석 시간 슬롯 ID", example = "00000000-0000-0000-0000-000000000003")
             @PathVariable("slotId") UUID seatTimeSlotId,
-            @RequestBody SeatTimeSlotUpdateRequest request
+            @Valid @RequestBody SeatTimeSlotUpdateRequest request
     ) {
         var command = request.toCommand(seatTimeSlotId);
         var result = updateSeatTimeSlotUseCase.update(command);
@@ -78,12 +79,12 @@ public class SeatTimeSlotCommandController {
     })
     @DeleteMapping("/{roomId}/seats/{seatId}/slots/{slotId}")
     public ResponseEntity<Void> deleteSeatTimeSlot(
-            @Parameter(description = "방 ID", example = "study-room-1")
-            @PathVariable("roomId") String roomId,
-            @Parameter(description = "좌석 ID", example = "A1")
-            @PathVariable("seatId") String seatId,
-            @Parameter(description = "좌석 시간 슬롯 ID", example = "00000000-0000-0000-000000000001")
-            @PathVariable("seatId") UUID seatTimeSlotId
+            @Parameter(description = "방 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("roomId") UUID roomId,
+            @Parameter(description = "좌석 ID", example = "00000000-0000-0000-0000-000000000002")
+            @PathVariable("seatId") UUID seatId,
+            @Parameter(description = "좌석 시간 슬롯 ID", example = "00000000-0000-0000-0000-000000000003")
+            @PathVariable("slotId") UUID seatTimeSlotId
     ) {
         var command = new DeleteSeatTimeSlotCommand(seatTimeSlotId);
         deleteSeatTimeSlotUseCase.delete(command);

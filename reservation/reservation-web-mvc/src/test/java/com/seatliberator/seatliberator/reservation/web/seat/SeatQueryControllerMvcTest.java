@@ -32,6 +32,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,6 +63,10 @@ public class SeatQueryControllerMvcTest {
 
     Instant now = clock.instant();
 
+    UUID roomId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+
+    UUID seatId = UUID.fromString("00000000-0000-0000-0000-000000000002");
+
     @BeforeEach
     void run() {
         mockMvc = MockMvcBuilders
@@ -90,7 +95,7 @@ public class SeatQueryControllerMvcTest {
         @Test
         @DisplayName("인증되지 않으면 401")
         void unauthorized() throws Exception {
-            mockMvc.perform(get("/rooms/{roomId}/seats", "study-room-1"))
+            mockMvc.perform(get("/rooms/{roomId}/seats", roomId))
                     .andExpect(status().isUnauthorized());
         }
 
@@ -98,7 +103,7 @@ public class SeatQueryControllerMvcTest {
         @WithMockUser(authorities = "other.permission")
         @DisplayName("seat.list 권한이 없으면 403")
         void forbidden() throws Exception {
-            mockMvc.perform(get("/rooms/{roomId}/seats", "study-room-1"))
+            mockMvc.perform(get("/rooms/{roomId}/seats", roomId))
                     .andExpect(status().isForbidden());
 
             verify(listSeatUseCase, never()).list(any());
@@ -108,16 +113,17 @@ public class SeatQueryControllerMvcTest {
         @WithMockUser(authorities = "seat.list")
         @DisplayName("seat.list 권한이 있으면 path variable로 query를 만들어 유스케이스를 호출한다")
         void list_seats() throws Exception {
-            var result = List.of(new SeatResult("seat-a", now, SeatStatus.ACTIVE, null, null));
+            var result = List.of(new SeatResult(seatId, "seat-a", now, SeatStatus.ACTIVE, null, null));
             when(listSeatUseCase.list(any(ListSeatQuery.class))).thenReturn(result);
 
-            mockMvc.perform(get("/rooms/{roomId}/seats", "study-room-1"))
+            mockMvc.perform(get("/rooms/{roomId}/seats", roomId))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].seatId").value("seat-a"));
+                    .andExpect(jsonPath("$[0].seatId").value(seatId.toString()))
+                    .andExpect(jsonPath("$[0].code").value("seat-a"));
 
             var captor = ArgumentCaptor.forClass(ListSeatQuery.class);
             verify(listSeatUseCase).list(captor.capture());
-            assertThat(captor.getValue().roomId()).isEqualTo("study-room-1");
+            assertThat(captor.getValue().roomId()).isEqualTo(roomId);
         }
     }
 
@@ -127,7 +133,7 @@ public class SeatQueryControllerMvcTest {
         @Test
         @DisplayName("인증되지 않으면 401")
         void unauthorized() throws Exception {
-            mockMvc.perform(get("/rooms/{roomId}/seats/{seatId}", "study-room-1", "seat-a"))
+            mockMvc.perform(get("/rooms/{roomId}/seats/{seatId}", roomId, seatId))
                     .andExpect(status().isUnauthorized());
         }
 
@@ -135,7 +141,7 @@ public class SeatQueryControllerMvcTest {
         @WithMockUser(authorities = "other.permission")
         @DisplayName("seat.read 권한이 없으면 403")
         void forbidden() throws Exception {
-            mockMvc.perform(get("/rooms/{roomId}/seats/{seatId}", "study-room-1", "seat-a"))
+            mockMvc.perform(get("/rooms/{roomId}/seats/{seatId}", roomId, seatId))
                     .andExpect(status().isForbidden());
 
             verify(findSeatUseCase, never()).find(any());
@@ -146,18 +152,18 @@ public class SeatQueryControllerMvcTest {
         @DisplayName("seat.read 권한이 있으면 path variable로 query를 만들어 유스케이스를 호출한다")
         void find_seat() throws Exception {
             when(findSeatUseCase.find(any(FindSeatQuery.class)))
-                    .thenReturn(new SeatResult("seat-a", now, SeatStatus.ACTIVE, null, null));
+                    .thenReturn(new SeatResult(seatId, "seat-a", now, SeatStatus.ACTIVE, null, null));
 
-            mockMvc.perform(get("/rooms/{roomId}/seats/{seatId}", "study-room-1", "seat-a"))
+            mockMvc.perform(get("/rooms/{roomId}/seats/{seatId}", roomId, seatId))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.seatId").value("seat-a"));
+                    .andExpect(jsonPath("$.seatId").value(seatId.toString()))
+                    .andExpect(jsonPath("$.code").value("seat-a"));
 
             var captor = ArgumentCaptor.forClass(FindSeatQuery.class);
             verify(findSeatUseCase).find(captor.capture());
 
             var query = captor.getValue();
-            assertThat(query.roomId()).isEqualTo("study-room-1");
-            assertThat(query.seatId()).isEqualTo("seat-a");
+            assertThat(query.seatId()).isEqualTo(seatId);
         }
     }
 }

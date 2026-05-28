@@ -31,6 +31,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,6 +60,8 @@ public class RoomQueryControllerMvcTest {
     Clock clock = fixedClock;
 
     Instant now = clock.instant();
+
+    UUID roomId = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
     @BeforeEach
     void run() {
@@ -106,12 +109,13 @@ public class RoomQueryControllerMvcTest {
         @WithMockUser(authorities = "room.list")
         @DisplayName("room.list 권한이 있으면 방 목록을 조회한다")
         void list_rooms() throws Exception {
-            var result = List.of(new RoomResult("study-room-1", now));
+            var result = List.of(new RoomResult(roomId, "study-room-1", null, now));
             when(listRoomUseCase.list()).thenReturn(result);
 
             mockMvc.perform(get("/rooms"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].roomId").value("study-room-1"));
+                    .andExpect(jsonPath("$[0].roomId").value(roomId.toString()))
+                    .andExpect(jsonPath("$[0].code").value("study-room-1"));
 
             verify(listRoomUseCase).list();
         }
@@ -123,7 +127,7 @@ public class RoomQueryControllerMvcTest {
         @Test
         @DisplayName("인증되지 않으면 401")
         void unauthorized() throws Exception {
-            mockMvc.perform(get("/rooms/{roomId}", "study-room-1"))
+            mockMvc.perform(get("/rooms/{roomId}", roomId))
                     .andExpect(status().isUnauthorized());
         }
 
@@ -131,7 +135,7 @@ public class RoomQueryControllerMvcTest {
         @WithMockUser(authorities = "other.permission")
         @DisplayName("room.read 권한이 없으면 403")
         void forbidden() throws Exception {
-            mockMvc.perform(get("/rooms/{roomId}", "study-room-1"))
+            mockMvc.perform(get("/rooms/{roomId}", roomId))
                     .andExpect(status().isForbidden());
 
             verify(findRoomUseCase, never()).find(any());
@@ -142,15 +146,16 @@ public class RoomQueryControllerMvcTest {
         @DisplayName("room.read 권한이 있으면 path variable로 query를 만들어 유스케이스를 호출한다")
         void find_room() throws Exception {
             when(findRoomUseCase.find(any(FindRoomQuery.class)))
-                    .thenReturn(new RoomResult("study-room-1", now));
+                    .thenReturn(new RoomResult(roomId, "study-room-1", null, now));
 
-            mockMvc.perform(get("/rooms/{roomId}", "study-room-1"))
+            mockMvc.perform(get("/rooms/{roomId}", roomId))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.roomId").value("study-room-1"));
+                    .andExpect(jsonPath("$.roomId").value(roomId.toString()))
+                    .andExpect(jsonPath("$.code").value("study-room-1"));
 
             var captor = ArgumentCaptor.forClass(FindRoomQuery.class);
             verify(findRoomUseCase).find(captor.capture());
-            assertThat(captor.getValue().roomId()).isEqualTo("study-room-1");
+            assertThat(captor.getValue().roomId()).isEqualTo(roomId);
         }
     }
 }

@@ -44,6 +44,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 import static com.seatliberator.seatliberator.reservation.domain.shared.TestSupport.fixedClock;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -82,6 +83,8 @@ public class RoomCommandControllerMvcTest {
     Clock clock = fixedClock;
 
     Instant now = clock.instant();
+
+    UUID roomId = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
     @BeforeEach
     void run() {
@@ -136,7 +139,7 @@ public class RoomCommandControllerMvcTest {
         @DisplayName("room.manage 권한이 있으면 방 생성 요청을 처리한다")
         void create_room_with_authority() throws Exception {
             var request = new CreateRoomRequest("study-room-1");
-            var result = new RoomResult("study-room-1", now);
+            var result = new RoomResult(roomId, "study-room-1", null, now);
 
             when(createRoomUseCase.create(any(CreateRoomCommand.class))).thenReturn(result);
 
@@ -144,11 +147,12 @@ public class RoomCommandControllerMvcTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.roomId").value("study-room-1"));
+                    .andExpect(jsonPath("$.roomId").value(roomId.toString()))
+                    .andExpect(jsonPath("$.code").value("study-room-1"));
 
             var captor = ArgumentCaptor.forClass(CreateRoomCommand.class);
             verify(createRoomUseCase).create(captor.capture());
-            assertThat(captor.getValue().roomId()).isEqualTo("study-room-1");
+            assertThat(captor.getValue().code()).isEqualTo("study-room-1");
         }
     }
 
@@ -161,7 +165,7 @@ public class RoomCommandControllerMvcTest {
         void unauthorized() throws Exception {
             var request = new UpdateRoomCodeRequest("new-room-1");
 
-            mockMvc.perform(put("/rooms/{roomId}", "old-room-1")
+            mockMvc.perform(put("/rooms/{roomId}", roomId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isUnauthorized());
@@ -173,7 +177,7 @@ public class RoomCommandControllerMvcTest {
         void forbidden() throws Exception {
             var request = new UpdateRoomCodeRequest("new-room-1");
 
-            mockMvc.perform(put("/rooms/{roomId}", "old-room-1")
+            mockMvc.perform(put("/rooms/{roomId}", roomId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isForbidden());
@@ -186,22 +190,24 @@ public class RoomCommandControllerMvcTest {
         @DisplayName("권한이 있으면 path variable과 요청 본문으로 수정 command를 만들어 유스케이스를 호출한다")
         void update_room() throws Exception {
             var request = new UpdateRoomCodeRequest("new-room-1");
-            var result = new RoomResult("new-room-1", now);
+            var result = new RoomResult(roomId, "new-room-1", null, now);
 
             when(updateRoomCodeUseCase.update(any(UpdateRoomCodeCommand.class)))
                     .thenReturn(result);
 
-            mockMvc.perform(put("/rooms/{roomId}", "old-room-1")
+            mockMvc.perform(put("/rooms/{roomId}", roomId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.roomId").value(roomId.toString()))
+                    .andExpect(jsonPath("$.code").value("new-room-1"));
 
             var captor = ArgumentCaptor.forClass(UpdateRoomCodeCommand.class);
             verify(updateRoomCodeUseCase).update(captor.capture());
 
             var command = captor.getValue();
-            assertThat(command.oldRoomId()).isEqualTo("old-room-1");
-            assertThat(command.newRoomId()).isEqualTo("new-room-1");
+            assertThat(command.roomId()).isEqualTo(roomId);
+            assertThat(command.newCode()).isEqualTo("new-room-1");
         }
     }
 
@@ -214,7 +220,7 @@ public class RoomCommandControllerMvcTest {
         void unauthorized() throws Exception {
             var request = updateRoomOperationPolicyRequest();
 
-            mockMvc.perform(put("/rooms/{roomId}/policy", "study-room-1")
+            mockMvc.perform(put("/rooms/{roomId}/policy", roomId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isUnauthorized());
@@ -226,7 +232,7 @@ public class RoomCommandControllerMvcTest {
         void forbidden() throws Exception {
             var request = updateRoomOperationPolicyRequest();
 
-            mockMvc.perform(put("/rooms/{roomId}/policy", "study-room-1")
+            mockMvc.perform(put("/rooms/{roomId}/policy", roomId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isForbidden());
@@ -249,7 +255,7 @@ public class RoomCommandControllerMvcTest {
             when(updateRoomOperationPolicyUseCase.update(any(UpdateRoomOperationPolicyCommand.class)))
                     .thenReturn(result);
 
-            mockMvc.perform(put("/rooms/{roomId}/policy", "study-room-1")
+            mockMvc.perform(put("/rooms/{roomId}/policy", roomId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -261,7 +267,7 @@ public class RoomCommandControllerMvcTest {
             verify(updateRoomOperationPolicyUseCase).update(captor.capture());
 
             var command = captor.getValue();
-            assertThat(command.roomId()).isEqualTo("study-room-1");
+            assertThat(command.roomId()).isEqualTo(roomId);
             assertThat(command.maxReservationPerUser()).isEqualTo(5);
             assertThat(command.maxReservationDuration()).isEqualTo(Duration.ofHours(3));
             assertThat(command.operationStatus()).isEqualTo(RoomOperationStatus.OPEN);
@@ -299,7 +305,7 @@ public class RoomCommandControllerMvcTest {
         @Test
         @DisplayName("인증되지 않으면 401")
         void unauthorized() throws Exception {
-            mockMvc.perform(delete("/rooms/{roomId}", "study-room-1"))
+            mockMvc.perform(delete("/rooms/{roomId}", roomId))
                     .andExpect(status().isUnauthorized());
         }
 
@@ -307,7 +313,7 @@ public class RoomCommandControllerMvcTest {
         @WithMockUser(authorities = "other.permission")
         @DisplayName("room.manage 권한이 없으면 403")
         void forbidden() throws Exception {
-            mockMvc.perform(delete("/rooms/{roomId}", "study-room-1"))
+            mockMvc.perform(delete("/rooms/{roomId}", roomId))
                     .andExpect(status().isForbidden());
 
             verify(deleteRoomUseCase, never()).delete(any());
@@ -317,14 +323,14 @@ public class RoomCommandControllerMvcTest {
         @WithMockUser(authorities = "room.manage")
         @DisplayName("권한이 있으면 path variable로 삭제 command를 만들어 유스케이스를 호출한다")
         void delete_room() throws Exception {
-            mockMvc.perform(delete("/rooms/{roomId}", "study-room-1"))
+            mockMvc.perform(delete("/rooms/{roomId}", roomId))
                     .andExpect(status().isNoContent());
 
             var captor = ArgumentCaptor.forClass(DeleteRoomCommand.class);
             verify(deleteRoomUseCase).delete(captor.capture());
 
             var command = captor.getValue();
-            assertThat(command.roomId()).isEqualTo("study-room-1");
+            assertThat(command.roomId()).isEqualTo(roomId);
         }
     }
 }

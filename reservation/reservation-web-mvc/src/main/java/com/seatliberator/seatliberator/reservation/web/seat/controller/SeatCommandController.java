@@ -57,7 +57,9 @@ public class SeatCommandController {
     })
     @PutMapping("/{roomId}/seats/{seatId}/id")
     public ResponseEntity<SeatResult> updateSeatId(
-            @Parameter(description = "Code를 변경할 좌석 ID", example = "00000000-0000-0000-0000-000000000001")
+            @Parameter(description = "좌석이 속한 방 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("roomId") UUID roomId,
+            @Parameter(description = "Code를 변경할 좌석 ID", example = "00000000-0000-0000-0000-000000000002")
             @PathVariable("seatId") UUID seatId,
             @Valid @RequestBody SeatUpdateCodeRequest request
     ) {
@@ -75,7 +77,9 @@ public class SeatCommandController {
     })
     @DeleteMapping("/{roomId}/seats/{seatId}")
     public ResponseEntity<Void> deleteSeat(
-            @Parameter(description = "좌석 ID", example = "00000000-0000-0000-0000-000000000001")
+            @Parameter(description = "좌석이 속한 방 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("roomId") UUID roomId,
+            @Parameter(description = "좌석 ID", example = "00000000-0000-0000-0000-000000000002")
             @PathVariable("seatId") UUID seatId
     ) {
         var command = DeleteSeatCommand.of(seatId);
