@@ -2,14 +2,14 @@ package com.seatliberator.seatliberator.reservation.web.room.controller;
 
 import com.seatliberator.seatliberator.reservation.application.room.port.in.CreateRoomUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.DeleteRoomUseCase;
+import com.seatliberator.seatliberator.reservation.application.room.port.in.UpdateRoomCodeUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.UpdateRoomOperationPolicyUseCase;
-import com.seatliberator.seatliberator.reservation.application.room.port.in.UpdateRoomUseCase;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.command.DeleteRoomCommand;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.result.RoomOperationPolicyResult;
 import com.seatliberator.seatliberator.reservation.application.room.port.in.result.RoomResult;
 import com.seatliberator.seatliberator.reservation.web.room.request.CreateRoomRequest;
+import com.seatliberator.seatliberator.reservation.web.room.request.UpdateRoomCodeRequest;
 import com.seatliberator.seatliberator.reservation.web.room.request.UpdateRoomOperationPolicyRequest;
-import com.seatliberator.seatliberator.reservation.web.room.request.UpdateRoomRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @Tag(name = "Rooms", description = "스터디룸 방 관련 관리 API")
 @Slf4j
 @RestController
@@ -30,7 +32,7 @@ import org.springframework.web.bind.annotation.*;
 @PreAuthorize("hasAuthority('room.manage')")
 public class RoomCommandController {
     private final CreateRoomUseCase createRoomUseCase;
-    private final UpdateRoomUseCase updateRoomUseCase;
+    private final UpdateRoomCodeUseCase updateRoomCodeUseCase;
     private final DeleteRoomUseCase deleteRoomUseCase;
 
     private final UpdateRoomOperationPolicyUseCase updateRoomOperationPolicyUseCase;
@@ -50,7 +52,7 @@ public class RoomCommandController {
         return ResponseEntity.ok(result);
     }
 
-    @Operation(summary = "방 ID 정보 변경", description = "방의 ID를 변경합니다.")
+    @Operation(summary = "방 Code 정보 변경", description = "방의 Code를 변경합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "변경 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
@@ -58,12 +60,12 @@ public class RoomCommandController {
     })
     @PutMapping("/{roomId}")
     public ResponseEntity<RoomResult> updateRoomId(
-            @Parameter(description = "변경할 방 ID", example = "study-room-1")
-            @PathVariable("roomId") String roomId,
-            @Valid @RequestBody UpdateRoomRequest request
+            @Parameter(description = "변경할 방 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("roomId") UUID roomId,
+            @Valid @RequestBody UpdateRoomCodeRequest request
     ) {
         var command = request.toCommand(roomId);
-        var result = updateRoomUseCase.update(command);
+        var result = updateRoomCodeUseCase.update(command);
         return ResponseEntity.ok(result);
     }
 
@@ -75,8 +77,8 @@ public class RoomCommandController {
     })
     @PutMapping("/{roomId}/policy")
     public ResponseEntity<RoomOperationPolicyResult> updateRoomOperationPolicy(
-            @Parameter(description = "변경할 방 ID", example = "study-room-1")
-            @PathVariable("roomId") String roomId,
+            @Parameter(description = "변경할 방 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("roomId") UUID roomId,
             @Valid @RequestBody UpdateRoomOperationPolicyRequest request
     ) {
         var command = request.toCommand(roomId);
@@ -92,10 +94,10 @@ public class RoomCommandController {
     })
     @DeleteMapping("/{roomId}")
     public ResponseEntity<Void> deleteRoom(
-            @Parameter(description = "삭제할 방 ID", example = "study-room-1")
-            @PathVariable("roomId") String roomId
+            @Parameter(description = "삭제할 방 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("roomId") UUID roomId
     ) {
-        var command = new DeleteRoomCommand(roomId);
+        var command = DeleteRoomCommand.of(roomId);
         deleteRoomUseCase.delete(command);
         return ResponseEntity.noContent().build();
     }

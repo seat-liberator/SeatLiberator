@@ -3,21 +3,22 @@ package com.seatliberator.seatliberator.reservation.web.seat.controller;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.CreateSeatUseCase;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.DeleteSeatUseCase;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.UpdateSeatUseCase;
-import com.seatliberator.seatliberator.reservation.application.seat.port.in.command.CreateSeatCommand;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.command.DeleteSeatCommand;
-import com.seatliberator.seatliberator.reservation.application.seat.port.in.command.UpdateSeatCommand;
 import com.seatliberator.seatliberator.reservation.application.seat.port.in.result.SeatResult;
 import com.seatliberator.seatliberator.reservation.web.seat.request.SeatCreateRequest;
-import com.seatliberator.seatliberator.reservation.web.seat.request.SeatUpdateRequest;
+import com.seatliberator.seatliberator.reservation.web.seat.request.SeatUpdateCodeRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @Tag(name = "Seats", description = "스터디룸 좌석 관련 관리 API")
 @Slf4j
@@ -38,17 +39,17 @@ public class SeatCommandController {
     })
     @PostMapping("/{roomId}/seats")
     public ResponseEntity<SeatResult> createSeat(
-            @Parameter(description = "방 ID", example = "study-room-1")
-            @PathVariable("roomId") String roomId,
-            @RequestBody SeatCreateRequest request
+            @Parameter(description = "좌석을 생성할 방 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("roomId") UUID roomId,
+            @Valid @RequestBody SeatCreateRequest request
     ) {
-        var command = new CreateSeatCommand(roomId, request.seatId());
+        var command = request.toCommand(roomId);
         var result = createSeatUseCase.create(command);
 
         return ResponseEntity.ok(result);
     }
 
-    @Operation(summary = "좌석 Id 변경", description = "기존 좌석의 식별자를 변경합니다.")
+    @Operation(summary = "좌석 Code 변경", description = "기존 좌석의 Code를 변경합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "변경 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
@@ -56,13 +57,11 @@ public class SeatCommandController {
     })
     @PutMapping("/{roomId}/seats/{seatId}/id")
     public ResponseEntity<SeatResult> updateSeatId(
-            @Parameter(description = "방 ID", example = "study-room-1")
-            @PathVariable("roomId") String roomId,
-            @Parameter(description = "좌석 ID", example = "A1")
-            @PathVariable("seatId") String seatId,
-            @RequestBody SeatUpdateRequest request
+            @Parameter(description = "Code를 변경할 좌석 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("seatId") UUID seatId,
+            @Valid @RequestBody SeatUpdateCodeRequest request
     ) {
-        var command = new UpdateSeatCommand(roomId, seatId, request.newSeatId());
+        var command = request.toCommand(seatId);
         var result = updateSeatUseCase.update(command);
 
         return ResponseEntity.ok(result);
@@ -76,12 +75,10 @@ public class SeatCommandController {
     })
     @DeleteMapping("/{roomId}/seats/{seatId}")
     public ResponseEntity<Void> deleteSeat(
-            @Parameter(description = "방 ID", example = "study-room-1")
-            @PathVariable("roomId") String roomId,
-            @Parameter(description = "좌석 ID", example = "A1")
-            @PathVariable("seatId") String seatId
+            @Parameter(description = "좌석 ID", example = "00000000-0000-0000-0000-000000000001")
+            @PathVariable("seatId") UUID seatId
     ) {
-        var command = new DeleteSeatCommand(roomId, seatId);
+        var command = DeleteSeatCommand.of(seatId);
         deleteSeatUseCase.delete(command);
         return ResponseEntity.noContent().build();
     }
