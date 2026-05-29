@@ -70,6 +70,28 @@ public class RefreshToken {
         return new RefreshToken(tokenHash, familyId, userId, issuedAt, issuedAt, idleExpiresAt, sessionExpiresAt, null);
     }
 
+    public static RefreshToken of(
+            String tokenHash,
+            String familyId,
+            UUID userId,
+            Instant issuedAt,
+            Instant sessionIssuedAt,
+            Instant idleExpiresAt,
+            Instant sessionExpiresAt,
+            Instant revokedAt
+    ) {
+        return new RefreshToken(
+                tokenHash,
+                familyId,
+                userId,
+                issuedAt,
+                sessionIssuedAt,
+                idleExpiresAt,
+                sessionExpiresAt,
+                revokedAt
+        );
+    }
+
     public RefreshToken renew(String tokenHash, Instant renewedAt, Duration idleTtl) {
         Preconditions.requireNonNull(renewedAt, "renewedAt");
         Preconditions.requirePositive(idleTtl, "idleTtl");

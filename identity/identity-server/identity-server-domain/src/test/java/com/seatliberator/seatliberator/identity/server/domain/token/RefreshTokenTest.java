@@ -96,6 +96,71 @@ public class RefreshTokenTest {
     }
 
     @Test
+    @DisplayName("저장된 필드로 token을 복원한다")
+    void restore_refresh_token() {
+        var refreshToken = RefreshToken.of(
+                TOKEN_HASH,
+                FAMILY_ID,
+                USER_ID,
+                ISSUED_AT,
+                ISSUED_AT,
+                IDLE_EXPIRES_AT,
+                SESSION_EXPIRES_AT,
+                REVOKED_AT
+        );
+
+        assertThat(refreshToken.getTokenHash()).isEqualTo(TOKEN_HASH);
+        assertThat(refreshToken.getFamilyId()).isEqualTo(FAMILY_ID);
+        assertThat(refreshToken.getUserId()).isEqualTo(USER_ID);
+        assertThat(refreshToken.getIssuedAt()).isEqualTo(ISSUED_AT);
+        assertThat(refreshToken.getSessionIssuedAt()).isEqualTo(ISSUED_AT);
+        assertThat(refreshToken.getIdleExpiresAt()).isEqualTo(IDLE_EXPIRES_AT);
+        assertThat(refreshToken.getSessionExpiresAt()).isEqualTo(SESSION_EXPIRES_AT);
+        assertThat(refreshToken.getRevokedAt()).isEqualTo(REVOKED_AT);
+    }
+
+    @Test
+    @DisplayName("복원 시 sessionIssuedAt이 null이면 예외")
+    void throw_exception_when_restored_session_issued_at_is_null() {
+        assertThatDomainThrownBy(() -> RefreshToken.of(
+                TOKEN_HASH,
+                FAMILY_ID,
+                USER_ID,
+                ISSUED_AT,
+                null,
+                IDLE_EXPIRES_AT,
+                SESSION_EXPIRES_AT,
+                REVOKED_AT
+        )).hasNonNullMessageFor("sessionIssuedAt");
+    }
+
+    @Test
+    @DisplayName("복원 시 idleExpiresAt 또는 sessionExpiresAt이 null이면 예외")
+    void throw_exception_when_restored_expiration_field_is_null() {
+        assertThatDomainThrownBy(() -> RefreshToken.of(
+                TOKEN_HASH,
+                FAMILY_ID,
+                USER_ID,
+                ISSUED_AT,
+                ISSUED_AT,
+                null,
+                SESSION_EXPIRES_AT,
+                REVOKED_AT
+        )).hasNonNullMessageFor("idleExpiresAt");
+
+        assertThatDomainThrownBy(() -> RefreshToken.of(
+                TOKEN_HASH,
+                FAMILY_ID,
+                USER_ID,
+                ISSUED_AT,
+                ISSUED_AT,
+                IDLE_EXPIRES_AT,
+                null,
+                REVOKED_AT
+        )).hasNonNullMessageFor("sessionExpiresAt");
+    }
+
+    @Test
     @DisplayName("idle ttl이 session ttl보다 길면 session 만료 시각으로 idle 만료 시각을 제한한다")
     void caps_idle_expiration_at_session_expiration_when_issue_idle_ttl_exceeds_session_ttl() {
         var refreshToken = RefreshToken.issue(
