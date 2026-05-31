@@ -23,7 +23,7 @@ import java.util.List;
 @Tag(name = "User", description = "사용자 관련 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users")
+@RequestMapping("/api/v1/board/users")
 public class UserController {
     private final ListUserPostUseCase listUserPostUseCase;
     private final ListUserCommentUseCase listUserCommentUseCase;

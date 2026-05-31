@@ -38,8 +38,6 @@ spring:
               uri: http://localhost:8083
               predicates:
                 - Path=/api/v1/board/**
-              filters:
-                - RewritePath=/api/v1/?(?<segment>.*), /$\{segment}
 
             - id: notification-service-route
               uri: http://localhost:8084

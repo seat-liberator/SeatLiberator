@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "Categories", description = "게시판 카테고리 관리 API")
-@RequestMapping("/board/{boardId}/categories")
+@RequestMapping("/api/v1/board/{boardId}/categories")
 @RestController
 @RequiredArgsConstructor
 public class CategoryController {
