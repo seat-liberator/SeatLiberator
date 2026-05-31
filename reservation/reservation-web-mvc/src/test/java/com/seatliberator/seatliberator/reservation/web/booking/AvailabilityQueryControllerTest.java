@@ -59,7 +59,7 @@ public class AvailabilityQueryControllerTest {
                 .willReturn(Map.of());
 
         // when
-        mockMvc.perform(get("/booking/seats/{seatId}/available-slots", seatId)
+        mockMvc.perform(get("/api/v1/booking/seats/{seatId}/available-slots", seatId)
                         .queryParam("start", startAt.toString())
                         .queryParam("end", endAt.toString()))
                 .andExpect(status().isOk());
@@ -86,7 +86,7 @@ public class AvailabilityQueryControllerTest {
                 .willReturn(result);
 
         // when & then
-        mockMvc.perform(get("/booking/seats/{seatId}/available-slots", seatId)
+        mockMvc.perform(get("/api/v1/booking/seats/{seatId}/available-slots", seatId)
                         .queryParam("start", startAt.toString())
                         .queryParam("end", endAt.toString())
                         .accept(MediaType.APPLICATION_JSON))
@@ -98,7 +98,7 @@ public class AvailabilityQueryControllerTest {
     @DisplayName("seatId path variable 형식이 잘못되면 400 Bad Request를 반환한다")
     void find_available_slots_returns_bad_request_when_seat_id_is_invalid() throws Exception {
         // when & then
-        mockMvc.perform(get("/booking/seats/{seatId}/available-slots", "not-a-uuid")
+        mockMvc.perform(get("/api/v1/booking/seats/{seatId}/available-slots", "not-a-uuid")
                         .queryParam("start", "2026-05-18")
                         .queryParam("end", "2026-05-20"))
                 .andExpect(status().isBadRequest());
@@ -110,7 +110,7 @@ public class AvailabilityQueryControllerTest {
     @DisplayName("날짜 요청 파라미터 형식이 잘못되면 400 Bad Request를 반환한다")
     void find_available_slots_returns_bad_request_when_date_is_invalid() throws Exception {
         // when & then
-        mockMvc.perform(get("/booking/seats/{seatId}/available-slots", uuid.generate())
+        mockMvc.perform(get("/api/v1/booking/seats/{seatId}/available-slots", uuid.generate())
                         .queryParam("start", "not-a-date")
                         .queryParam("end", "2026-05-20"))
                 .andExpect(status().isBadRequest());

@@ -12,22 +12,19 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Tag(name = "Seat Availability", description = "스터디룸 좌석 가용 상태 조회 API")
+@Tag(name = "Booking", description = "스터디룸 좌석 예약 관련 API")
+@RequestMapping("/api/v1/booking")
 @RestController
-@RequestMapping("/booking")
 @RequiredArgsConstructor
 public class AvailabilityQueryController {
+
     private final FindAvailableSlotsBySeatUseCase findAvailableSlotsBySeatUseCase;
 
     @Operation(summary = "좌석 예약 가능 슬롯 조회", description = "특정 좌석의 날짜별 예약 가능한 시간 슬롯 목록을 조회합니다.")

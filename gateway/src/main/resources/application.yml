@@ -33,8 +33,6 @@ spring:
               uri: http://localhost:8082
               predicates:
                 - Path=/api/v1/reservations/**,/api/v1/rooms/**,/api/v1/booking/**,/api/v1/waitlist/**
-              filters:
-                - RewritePath=/api/v1/?(?<segment>.*), /$\{segment}
 
             - id: board-service-route
               uri: http://localhost:8083

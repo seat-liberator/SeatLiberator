@@ -22,8 +22,9 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/reservations")
+@RequestMapping("/api/v1/reservations")
 public class UseReservationController {
+
     private final UseReservationUseCase useReservationUseCase;
 
     @Operation(summary = "예약 사용", description = "특정 예약을 사용 처리 합니다.")

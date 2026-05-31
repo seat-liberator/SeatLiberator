@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @Tag(name = "Waitlist", description = "좌석 대기열 요청 관련 API")
+@RequestMapping("/api/v1/waitlist")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/waitlist")
 public class WaitlistController {
 
     private final CreateWaitlistUseCase createWaitlistUseCase;

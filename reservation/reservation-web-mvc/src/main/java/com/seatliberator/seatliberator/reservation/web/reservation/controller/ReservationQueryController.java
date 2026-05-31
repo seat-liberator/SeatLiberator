@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +24,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "Reservations", description = "스터디룸 좌석 예약 관련 API")
-@Slf4j
+@RequestMapping("/api/v1/reservations")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/reservations")
 public class ReservationQueryController {
 
     private final ListReservationUseCase listReservationUseCase;

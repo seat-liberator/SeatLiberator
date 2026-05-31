@@ -52,7 +52,7 @@ public class UseReservationControllerTest {
                 .willReturn(result);
 
         // when
-        mockMvc.perform(post("/reservations/{reservationId}", reservationId))
+        mockMvc.perform(post("/api/v1/reservations/{reservationId}", reservationId))
                 .andExpect(status().isOk());
 
         // then
@@ -74,7 +74,7 @@ public class UseReservationControllerTest {
                 .willReturn(result);
 
         // when & then
-        mockMvc.perform(post("/reservations/{reservationId}", reservationId)
+        mockMvc.perform(post("/api/v1/reservations/{reservationId}", reservationId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(result)));
@@ -84,7 +84,7 @@ public class UseReservationControllerTest {
     @DisplayName("reservationId path variable 형식이 잘못되면 400 Bad Request를 반환한다")
     void use_returns_bad_request_when_reservation_id_is_invalid() throws Exception {
         // when & then
-        mockMvc.perform(post("/reservations/{reservationId}", "not-a-uuid"))
+        mockMvc.perform(post("/api/v1/reservations/{reservationId}", "not-a-uuid"))
                 .andExpect(status().isBadRequest());
 
         verifyNoInteractions(useReservationUseCase);

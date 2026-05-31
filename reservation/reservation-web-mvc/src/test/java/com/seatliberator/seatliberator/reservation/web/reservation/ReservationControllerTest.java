@@ -60,7 +60,7 @@ public class ReservationControllerTest {
                 .willReturn(List.of());
 
         // when
-        mockMvc.perform(get("/reservations")
+        mockMvc.perform(get("/api/v1/reservations")
                         .queryParam("userId", userId)
                         .queryParam("status", status.name())
                         .queryParam("start", startAt.toString())
@@ -88,7 +88,7 @@ public class ReservationControllerTest {
                 .willReturn(List.of());
 
         // when
-        mockMvc.perform(get("/reservations")
+        mockMvc.perform(get("/api/v1/reservations")
                         .queryParam("userId", userId)
                         .queryParam("status", status.name()))
                 .andExpect(status().isOk());
@@ -117,7 +117,7 @@ public class ReservationControllerTest {
                 .willReturn(result);
 
         // when & then
-        mockMvc.perform(get("/reservations")
+        mockMvc.perform(get("/api/v1/reservations")
                         .queryParam("userId", userId)
                         .queryParam("status", status.name())
                         .queryParam("start", startAt.toString())
@@ -131,7 +131,7 @@ public class ReservationControllerTest {
     @DisplayName("예약 목록 조회 요청 파라미터가 누락되면 400 Bad Request를 반환한다")
     void list_returns_bad_request_when_required_parameter_is_missing() throws Exception {
         // when & then
-        mockMvc.perform(get("/reservations")
+        mockMvc.perform(get("/api/v1/reservations")
                         .queryParam("userId", "user-1")
                         .queryParam("start", "2026-04-14T00:00:00Z")
                         .queryParam("end", "2026-04-15T00:00:00Z"))
@@ -144,7 +144,7 @@ public class ReservationControllerTest {
     @DisplayName("상태 시각 요청 파라미터가 한쪽만 전달되면 400 Bad Request를 반환한다")
     void list_returns_bad_request_when_status_range_parameter_is_partial() throws Exception {
         // when & then
-        mockMvc.perform(get("/reservations")
+        mockMvc.perform(get("/api/v1/reservations")
                         .queryParam("userId", "user-1")
                         .queryParam("status", ReservationStatus.RESERVED.name())
                         .queryParam("start", "2026-04-14T00:00:00Z"))
@@ -157,7 +157,7 @@ public class ReservationControllerTest {
     @DisplayName("status 요청 파라미터 형식이 잘못되면 400 Bad Request를 반환한다")
     void list_returns_bad_request_when_status_is_invalid() throws Exception {
         // when & then
-        mockMvc.perform(get("/reservations")
+        mockMvc.perform(get("/api/v1/reservations")
                         .queryParam("userId", "user-1")
                         .queryParam("status", "not-a-status")
                         .queryParam("start", "2026-04-14T00:00:00Z")
@@ -171,7 +171,7 @@ public class ReservationControllerTest {
     @DisplayName("상태 시각 요청 파라미터 형식이 잘못되면 400 Bad Request를 반환한다")
     void list_returns_bad_request_when_status_range_is_invalid() throws Exception {
         // when & then
-        mockMvc.perform(get("/reservations")
+        mockMvc.perform(get("/api/v1/reservations")
                         .queryParam("userId", "user-1")
                         .queryParam("status", ReservationStatus.RESERVED.name())
                         .queryParam("start", "not-an-instant")
@@ -192,7 +192,7 @@ public class ReservationControllerTest {
                 .willReturn(result);
 
         // when
-        mockMvc.perform(get("/reservations/{reservationId}", reservationId))
+        mockMvc.perform(get("/api/v1/reservations/{reservationId}", reservationId))
                 .andExpect(status().isOk());
 
         // then
@@ -214,7 +214,7 @@ public class ReservationControllerTest {
                 .willReturn(result);
 
         // when & then
-        mockMvc.perform(get("/reservations/{reservationId}", reservationId)
+        mockMvc.perform(get("/api/v1/reservations/{reservationId}", reservationId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(result)));
@@ -224,7 +224,7 @@ public class ReservationControllerTest {
     @DisplayName("reservationId path variable 형식이 잘못되면 400 Bad Request를 반환한다")
     void find_returns_bad_request_when_reservation_id_is_invalid() throws Exception {
         // when & then
-        mockMvc.perform(get("/reservations/{reservationId}", "not-a-uuid"))
+        mockMvc.perform(get("/api/v1/reservations/{reservationId}", "not-a-uuid"))
                 .andExpect(status().isBadRequest());
 
         verifyNoInteractions(findReservationUseCase);

@@ -116,7 +116,7 @@ public class RoomCommandControllerMvcTest {
         void create_room_unauthenticated() throws Exception {
             var request = new CreateRoomRequest("study-room-1");
 
-            mockMvc.perform(post("/rooms")
+            mockMvc.perform(post("/api/v1/rooms")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isUnauthorized());
@@ -128,7 +128,7 @@ public class RoomCommandControllerMvcTest {
         void create_room_forbidden() throws Exception {
             var request = new CreateRoomRequest("study-room-1");
 
-            mockMvc.perform(post("/rooms")
+            mockMvc.perform(post("/api/v1/rooms")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isForbidden());
@@ -143,7 +143,7 @@ public class RoomCommandControllerMvcTest {
 
             when(createRoomUseCase.create(any(CreateRoomCommand.class))).thenReturn(result);
 
-            mockMvc.perform(post("/rooms")
+            mockMvc.perform(post("/api/v1/rooms")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -165,7 +165,7 @@ public class RoomCommandControllerMvcTest {
         void unauthorized() throws Exception {
             var request = new UpdateRoomCodeRequest("new-room-1");
 
-            mockMvc.perform(put("/rooms/{roomId}", roomId)
+            mockMvc.perform(put("/api/v1/rooms/{roomId}", roomId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isUnauthorized());
@@ -177,7 +177,7 @@ public class RoomCommandControllerMvcTest {
         void forbidden() throws Exception {
             var request = new UpdateRoomCodeRequest("new-room-1");
 
-            mockMvc.perform(put("/rooms/{roomId}", roomId)
+            mockMvc.perform(put("/api/v1/rooms/{roomId}", roomId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isForbidden());
@@ -195,7 +195,7 @@ public class RoomCommandControllerMvcTest {
             when(updateRoomCodeUseCase.update(any(UpdateRoomCodeCommand.class)))
                     .thenReturn(result);
 
-            mockMvc.perform(put("/rooms/{roomId}", roomId)
+            mockMvc.perform(put("/api/v1/rooms/{roomId}", roomId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -220,7 +220,7 @@ public class RoomCommandControllerMvcTest {
         void unauthorized() throws Exception {
             var request = updateRoomOperationPolicyRequest();
 
-            mockMvc.perform(put("/rooms/{roomId}/policy", roomId)
+            mockMvc.perform(put("/api/v1/rooms/{roomId}/policy", roomId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isUnauthorized());
@@ -232,7 +232,7 @@ public class RoomCommandControllerMvcTest {
         void forbidden() throws Exception {
             var request = updateRoomOperationPolicyRequest();
 
-            mockMvc.perform(put("/rooms/{roomId}/policy", roomId)
+            mockMvc.perform(put("/api/v1/rooms/{roomId}/policy", roomId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isForbidden());
@@ -255,7 +255,7 @@ public class RoomCommandControllerMvcTest {
             when(updateRoomOperationPolicyUseCase.update(any(UpdateRoomOperationPolicyCommand.class)))
                     .thenReturn(result);
 
-            mockMvc.perform(put("/rooms/{roomId}/policy", roomId)
+            mockMvc.perform(put("/api/v1/rooms/{roomId}/policy", roomId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -305,7 +305,7 @@ public class RoomCommandControllerMvcTest {
         @Test
         @DisplayName("인증되지 않으면 401")
         void unauthorized() throws Exception {
-            mockMvc.perform(delete("/rooms/{roomId}", roomId))
+            mockMvc.perform(delete("/api/v1/rooms/{roomId}", roomId))
                     .andExpect(status().isUnauthorized());
         }
 
@@ -313,7 +313,7 @@ public class RoomCommandControllerMvcTest {
         @WithMockUser(authorities = "other.permission")
         @DisplayName("room.manage 권한이 없으면 403")
         void forbidden() throws Exception {
-            mockMvc.perform(delete("/rooms/{roomId}", roomId))
+            mockMvc.perform(delete("/api/v1/rooms/{roomId}", roomId))
                     .andExpect(status().isForbidden());
 
             verify(deleteRoomUseCase, never()).delete(any());
@@ -323,7 +323,7 @@ public class RoomCommandControllerMvcTest {
         @WithMockUser(authorities = "room.manage")
         @DisplayName("권한이 있으면 path variable로 삭제 command를 만들어 유스케이스를 호출한다")
         void delete_room() throws Exception {
-            mockMvc.perform(delete("/rooms/{roomId}", roomId))
+            mockMvc.perform(delete("/api/v1/rooms/{roomId}", roomId))
                     .andExpect(status().isNoContent());
 
             var captor = ArgumentCaptor.forClass(DeleteRoomCommand.class);
