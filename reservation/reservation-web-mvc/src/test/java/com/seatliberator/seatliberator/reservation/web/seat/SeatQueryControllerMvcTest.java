@@ -95,7 +95,7 @@ public class SeatQueryControllerMvcTest {
         @Test
         @DisplayName("인증되지 않으면 401")
         void unauthorized() throws Exception {
-            mockMvc.perform(get("/rooms/{roomId}/seats", roomId))
+            mockMvc.perform(get("/api/v1/rooms/{roomId}/seats", roomId))
                     .andExpect(status().isUnauthorized());
         }
 
@@ -103,7 +103,7 @@ public class SeatQueryControllerMvcTest {
         @WithMockUser(authorities = "other.permission")
         @DisplayName("seat.list 권한이 없으면 403")
         void forbidden() throws Exception {
-            mockMvc.perform(get("/rooms/{roomId}/seats", roomId))
+            mockMvc.perform(get("/api/v1/rooms/{roomId}/seats", roomId))
                     .andExpect(status().isForbidden());
 
             verify(listSeatUseCase, never()).list(any());
@@ -116,7 +116,7 @@ public class SeatQueryControllerMvcTest {
             var result = List.of(new SeatResult(seatId, "seat-a", now, SeatStatus.ACTIVE, null, null));
             when(listSeatUseCase.list(any(ListSeatQuery.class))).thenReturn(result);
 
-            mockMvc.perform(get("/rooms/{roomId}/seats", roomId))
+            mockMvc.perform(get("/api/v1/rooms/{roomId}/seats", roomId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$[0].seatId").value(seatId.toString()))
                     .andExpect(jsonPath("$[0].code").value("seat-a"));
@@ -133,7 +133,7 @@ public class SeatQueryControllerMvcTest {
         @Test
         @DisplayName("인증되지 않으면 401")
         void unauthorized() throws Exception {
-            mockMvc.perform(get("/rooms/{roomId}/seats/{seatId}", roomId, seatId))
+            mockMvc.perform(get("/api/v1/rooms/{roomId}/seats/{seatId}", roomId, seatId))
                     .andExpect(status().isUnauthorized());
         }
 
@@ -141,7 +141,7 @@ public class SeatQueryControllerMvcTest {
         @WithMockUser(authorities = "other.permission")
         @DisplayName("seat.read 권한이 없으면 403")
         void forbidden() throws Exception {
-            mockMvc.perform(get("/rooms/{roomId}/seats/{seatId}", roomId, seatId))
+            mockMvc.perform(get("/api/v1/rooms/{roomId}/seats/{seatId}", roomId, seatId))
                     .andExpect(status().isForbidden());
 
             verify(findSeatUseCase, never()).find(any());
@@ -154,7 +154,7 @@ public class SeatQueryControllerMvcTest {
             when(findSeatUseCase.find(any(FindSeatQuery.class)))
                     .thenReturn(new SeatResult(seatId, "seat-a", now, SeatStatus.ACTIVE, null, null));
 
-            mockMvc.perform(get("/rooms/{roomId}/seats/{seatId}", roomId, seatId))
+            mockMvc.perform(get("/api/v1/rooms/{roomId}/seats/{seatId}", roomId, seatId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.seatId").value(seatId.toString()))
                     .andExpect(jsonPath("$.code").value("seat-a"));

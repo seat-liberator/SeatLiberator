@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,11 +22,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "Seats", description = "스터디룸 좌석 조회 관리 API")
-@Slf4j
+@RequestMapping("/api/v1/rooms")
 @RestController
-@RequestMapping("/rooms")
 @RequiredArgsConstructor
 public class SeatQueryController {
+
     private final ListSeatUseCase listSeatUseCase;
     private final FindSeatUseCase findSeatUseCase;
 

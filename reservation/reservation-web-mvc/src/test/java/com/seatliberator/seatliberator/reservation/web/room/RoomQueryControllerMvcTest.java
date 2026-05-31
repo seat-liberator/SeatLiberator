@@ -91,7 +91,7 @@ public class RoomQueryControllerMvcTest {
         @Test
         @DisplayName("인증되지 않으면 401")
         void unauthorized() throws Exception {
-            mockMvc.perform(get("/rooms"))
+            mockMvc.perform(get("/api/v1/rooms"))
                     .andExpect(status().isUnauthorized());
         }
 
@@ -99,7 +99,7 @@ public class RoomQueryControllerMvcTest {
         @WithMockUser(authorities = "other.permission")
         @DisplayName("room.list 권한이 없으면 403")
         void forbidden() throws Exception {
-            mockMvc.perform(get("/rooms"))
+            mockMvc.perform(get("/api/v1/rooms"))
                     .andExpect(status().isForbidden());
 
             verify(listRoomUseCase, never()).list();
@@ -112,7 +112,7 @@ public class RoomQueryControllerMvcTest {
             var result = List.of(new RoomResult(roomId, "study-room-1", null, now));
             when(listRoomUseCase.list()).thenReturn(result);
 
-            mockMvc.perform(get("/rooms"))
+            mockMvc.perform(get("/api/v1/rooms"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$[0].roomId").value(roomId.toString()))
                     .andExpect(jsonPath("$[0].code").value("study-room-1"));
@@ -127,7 +127,7 @@ public class RoomQueryControllerMvcTest {
         @Test
         @DisplayName("인증되지 않으면 401")
         void unauthorized() throws Exception {
-            mockMvc.perform(get("/rooms/{roomId}", roomId))
+            mockMvc.perform(get("/api/v1/rooms/{roomId}", roomId))
                     .andExpect(status().isUnauthorized());
         }
 
@@ -135,7 +135,7 @@ public class RoomQueryControllerMvcTest {
         @WithMockUser(authorities = "other.permission")
         @DisplayName("room.read 권한이 없으면 403")
         void forbidden() throws Exception {
-            mockMvc.perform(get("/rooms/{roomId}", roomId))
+            mockMvc.perform(get("/api/v1/rooms/{roomId}", roomId))
                     .andExpect(status().isForbidden());
 
             verify(findRoomUseCase, never()).find(any());
@@ -148,7 +148,7 @@ public class RoomQueryControllerMvcTest {
             when(findRoomUseCase.find(any(FindRoomQuery.class)))
                     .thenReturn(new RoomResult(roomId, "study-room-1", null, now));
 
-            mockMvc.perform(get("/rooms/{roomId}", roomId))
+            mockMvc.perform(get("/api/v1/rooms/{roomId}", roomId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.roomId").value(roomId.toString()))
                     .andExpect(jsonPath("$.code").value("study-room-1"));

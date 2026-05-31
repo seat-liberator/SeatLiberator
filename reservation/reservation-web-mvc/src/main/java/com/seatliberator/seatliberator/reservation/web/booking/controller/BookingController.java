@@ -22,10 +22,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @Tag(name = "Booking", description = "스터디룸 좌석 예약 관련 API")
+@RequestMapping("/api/v1/booking")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/booking")
 public class BookingController {
+
     private final FindBookingUseCase findBookingUseCase;
     private final CreateBookingUseCase createBookingUseCase;
     private final CancelBookingUseCase cancelBookingUseCase;
