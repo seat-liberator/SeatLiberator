@@ -8,6 +8,9 @@ identity:
       - kid: "key-20260308-214756"
         private-key: "classpath:keys/key-20260308-214756/private.pem"
         public-key: "classpath:keys/key-20260308-214756/public.pem"
+  token:
+    hash:
+      secret: ${TOKEN_SECRET:dangerous_token_secret_must_replace_here}
 
 server:
   port: ${PORT:8081}
