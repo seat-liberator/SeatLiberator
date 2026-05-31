@@ -32,6 +32,7 @@ public class AccessTokenIssuer {
 
         var grantedRoles = grantedRoleReader.findByUserId(userId);
 
+        var subject = user.getId().toString();
         var nickname = user.getNickname();
         var scopes = grantedRoles.stream()
                 .map(grant -> roleSerializer.serialize(grant.getNamespaceRole()))
@@ -41,6 +42,7 @@ public class AccessTokenIssuer {
         var expiresAt = issuedAt.plus(properties.ttl());
         var claimsSet = JwtClaimsSet.builder()
                 .issuer(properties.issuer())
+                .subject(subject)
                 .audience(properties.audience())
                 .issuedAt(issuedAt)
                 .expiresAt(expiresAt)
