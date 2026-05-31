@@ -1,4 +1,4 @@
-package com.seatliberator.seatliberator.identity.server.application.jwks.port.out;
+package com.seatliberator.seatliberator.identity.server.application.token.internal;
 
 @FunctionalInterface
 public interface ByteEncoder {

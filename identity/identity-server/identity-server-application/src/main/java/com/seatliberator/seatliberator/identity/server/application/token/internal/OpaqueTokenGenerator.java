@@ -1,6 +1,5 @@
 package com.seatliberator.seatliberator.identity.server.application.token.internal;
 
-import com.seatliberator.seatliberator.identity.server.application.jwks.port.out.ByteEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
