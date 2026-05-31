@@ -2,7 +2,9 @@ package com.seatliberator.seatliberator;
 
 import com.seatliberator.seatliberator.board.web.board.controller.BoardController;
 import com.seatliberator.seatliberator.board.web.category.controller.CategoryController;
+import com.seatliberator.seatliberator.board.web.comment.controller.CommentController;
 import com.seatliberator.seatliberator.board.web.post.controller.PostController;
+import com.seatliberator.seatliberator.board.web.user.controller.UserController;
 import com.seatliberator.seatliberator.notification.infrastructure.web.controller.NotificationController;
 import com.seatliberator.seatliberator.reservation.web.booking.controller.AvailabilityQueryController;
 import com.seatliberator.seatliberator.reservation.web.booking.controller.BookingController;
@@ -47,7 +49,7 @@ class GatewayRouteAlignmentTest {
                         SeatCommandController.class,
                         WaitlistController.class
                 ),
-                true
+                false
         );
     }
 
@@ -59,9 +61,11 @@ class GatewayRouteAlignmentTest {
                 controllerPaths(
                         BoardController.class,
                         CategoryController.class,
-                        PostController.class
+                        PostController.class,
+                        CommentController.class,
+                        UserController.class
                 ),
-                true
+                false
         );
     }
 
