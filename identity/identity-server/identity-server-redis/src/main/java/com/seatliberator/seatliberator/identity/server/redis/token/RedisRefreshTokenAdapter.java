@@ -61,7 +61,8 @@ public class RedisRefreshTokenAdapter implements RefreshTokenStore, RefreshToken
 
         redisTemplate.opsForValue().set(
                 keyManager.activeKey(refreshToken.getTokenHash()),
-                serialize(refreshToken)
+                serialize(refreshToken),
+                ttl
         );
     }
 
