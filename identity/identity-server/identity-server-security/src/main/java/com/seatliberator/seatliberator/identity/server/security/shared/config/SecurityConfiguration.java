@@ -8,8 +8,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.seatliberator.seatliberator.identity.server.application.jwks.port.out.KeyStore;
-import com.seatliberator.seatliberator.identity.server.application.jwks.service.JwtProvider;
-import com.seatliberator.seatliberator.identity.server.application.jwks.service.OpaqueTokenProvider;
+import com.seatliberator.seatliberator.identity.server.application.token.port.in.CreateAccessTokenUseCase;
 import com.seatliberator.seatliberator.identity.server.security.shared.response.ResponseWriter;
 import com.seatliberator.seatliberator.identity.server.security.shared.response.TokenResponseProcessor;
 import lombok.RequiredArgsConstructor;
@@ -56,10 +55,9 @@ public class SecurityConfiguration {
 
     @Bean
     TokenResponseProcessor tokenResponseProcessor(
-            JwtProvider jwtProvider,
-            OpaqueTokenProvider opaqueTokenProvider,
+            CreateAccessTokenUseCase useCase,
             ResponseWriter responseWriter
     ) {
-        return new TokenResponseProcessor(jwtProvider, opaqueTokenProvider, responseWriter);
+        return new TokenResponseProcessor(useCase, responseWriter);
     }
 }
