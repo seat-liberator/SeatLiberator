@@ -5,9 +5,6 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.seatliberator.seatliberator.identity.server.application.jwks.port.in.KeyProvider;
-import com.seatliberator.seatliberator.identity.server.application.jwks.port.out.ByteEncoder;
-import com.seatliberator.seatliberator.identity.server.application.jwks.service.JwtProvider;
-import com.seatliberator.seatliberator.identity.server.application.jwks.service.OpaqueTokenProvider;
 import com.seatliberator.seatliberator.identity.server.domain.jwks.RSASignatureKey;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -18,8 +15,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 
 import java.security.SecureRandom;
 import java.time.Clock;
-import java.time.Duration;
-import java.util.Base64;
 import java.util.random.RandomGenerator;
 
 @Configuration
@@ -48,39 +43,7 @@ public class JwksConfiguration {
     }
 
     @Bean
-    JwtProvider jwtProvider(
-            JwtEncoder jwtEncoder,
-            JwtProperties properties,
-            Clock clock
-    ) {
-        Duration expiration = properties.expiration();
-
-        return new JwtProvider(
-                jwtEncoder,
-                expiration,
-                clock
-        );
-    }
-
-    @Bean
     RandomGenerator randomGenerator() {
         return new SecureRandom();
-    }
-
-    @Bean
-    ByteEncoder byteEncoder() {
-        Base64.Encoder encoder = Base64.getUrlEncoder().withoutPadding();
-        return encoder::encodeToString;
-    }
-
-    @Bean
-    OpaqueTokenProvider opaqueTokenProvider(
-            RandomGenerator randomGenerator,
-            ByteEncoder byteEncoder
-    ) {
-        return new OpaqueTokenProvider(
-                randomGenerator,
-                byteEncoder
-        );
     }
 }
