@@ -24,7 +24,7 @@ import java.util.UUID;
 @Tag(name = "Comments", description = "게시글 댓글 관리 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/board/{boardId}/posts/{postId}/comments")
+@RequestMapping("/api/v1/board/{boardId}/posts/{postId}/comments")
 public class CommentController {
     private final CreateCommentUseCase createCommentUseCase;
     private final UpdateCommentContentUseCase updateCommentContentUseCase;

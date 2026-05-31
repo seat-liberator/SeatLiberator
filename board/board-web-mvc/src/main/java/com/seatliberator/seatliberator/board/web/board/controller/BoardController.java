@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "Boards", description = "게시판 관리 API")
-@RequestMapping("/board")
+@RequestMapping("/api/v1/board")
 @RestController
 @RequiredArgsConstructor
 public class BoardController {

@@ -14,10 +14,10 @@ public class SecurityConfiguration {
     @Bean
     HttpSecurityCustomizer authorizeCustomizer() {
         return httpSecurity -> httpSecurity.authorizeHttpRequests(registry -> registry
-                .requestMatchers(HttpMethod.POST, "/board/*/categories").hasAuthority(CATEGORY_MANAGE.scope())
-                .requestMatchers(HttpMethod.PATCH, "/board/*/categories/*").hasAuthority(CATEGORY_MANAGE.scope())
-                .requestMatchers(HttpMethod.DELETE, "/board/*/categories/*").hasAuthority(CATEGORY_MANAGE.scope())
-                .requestMatchers(HttpMethod.POST, "/board/*/posts").hasAuthority(POST_CREATE.scope())
+                .requestMatchers(HttpMethod.POST, "/api/v1/board/*/categories").hasAuthority(CATEGORY_MANAGE.scope())
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/board/*/categories/*").hasAuthority(CATEGORY_MANAGE.scope())
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/board/*/categories/*").hasAuthority(CATEGORY_MANAGE.scope())
+                .requestMatchers(HttpMethod.POST, "/api/v1/board/*/posts").hasAuthority(POST_CREATE.scope())
         );
     }
 }
