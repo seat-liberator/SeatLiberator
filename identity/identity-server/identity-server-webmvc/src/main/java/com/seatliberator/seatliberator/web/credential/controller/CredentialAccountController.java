@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Account", description = "계정 관리 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/accounts")
+@RequestMapping("/api/v1/accounts")
 public class CredentialAccountController {
     private final UpdatePasswordUseCase updatePasswordUseCase;
 

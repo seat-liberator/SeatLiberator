@@ -18,7 +18,7 @@ import java.util.UUID;
 @Tag(name = "User", description = "사용자 관리 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
     private final UpdateNicknameUseCase updateNicknameUseCase;
 

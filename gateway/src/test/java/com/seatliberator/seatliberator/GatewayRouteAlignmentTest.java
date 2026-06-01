@@ -12,7 +12,11 @@ import com.seatliberator.seatliberator.reservation.web.reservation.controller.Re
 import com.seatliberator.seatliberator.reservation.web.reservation.controller.UseReservationController;
 import com.seatliberator.seatliberator.reservation.web.seat.controller.SeatCommandController;
 import com.seatliberator.seatliberator.reservation.web.waitlist.controller.WaitlistController;
+import com.seatliberator.seatliberator.web.authentication.controller.AuthenticationController;
+import com.seatliberator.seatliberator.web.credential.controller.CredentialAccountController;
 import com.seatliberator.seatliberator.web.jwks.controller.JwksController;
+import com.seatliberator.seatliberator.web.role.controller.RoleController;
+import com.seatliberator.seatliberator.web.user.controller.UserRoleController;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.server.PathContainer;
@@ -33,7 +37,33 @@ class GatewayRouteAlignmentTest {
     @Test
     void identityControllerEntrypointsAreCoveredByGatewayRoutes() throws IOException {
         var patterns = gatewayPathPatterns();
-        assertCovered(patterns, controllerPaths(JwksController.class), false);
+        assertCovered(
+                patterns,
+                controllerPaths(
+                        JwksController.class,
+                        AuthenticationController.class,
+                        CredentialAccountController.class,
+                        RoleController.class,
+                        com.seatliberator.seatliberator.web.user.controller.UserController.class,
+                        UserRoleController.class
+                ),
+                false
+        );
+    }
+
+    @Test
+    void identitySecurityEntrypointsAreCoveredByGatewayRoutes() throws IOException {
+        var patterns = gatewayPathPatterns();
+        assertCovered(
+                patterns,
+                Set.of(
+                        "/api/v1/auth/sign-up",
+                        "/api/v1/auth/sign-in",
+                        "/api/v1/oauth2/authorization/github",
+                        "/api/v1/login/oauth2/code/github"
+                ),
+                false
+        );
     }
 
     @Test

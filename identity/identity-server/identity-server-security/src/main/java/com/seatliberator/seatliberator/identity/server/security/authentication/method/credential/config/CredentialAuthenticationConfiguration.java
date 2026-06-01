@@ -35,7 +35,7 @@ public class CredentialAuthenticationConfiguration {
     ) {
         return httpSecurity -> httpSecurity
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers("/.well-known/jwks.json", "/auth/**")
+                        .requestMatchers("/.well-known/jwks.json", "/api/v1/auth/**")
                         .permitAll()
                 )
                 .addFilterBefore(jsonCredentialSignInProcessingFilter, UsernamePasswordAuthenticationFilter.class)
@@ -49,7 +49,7 @@ public class CredentialAuthenticationConfiguration {
             CredentialAuthenticationFailureHandler failureHandler,
             ObjectMapper objectMapper
     ) {
-        var matcher = PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, "/auth/sign-up");
+        var matcher = PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, "/api/v1/auth/sign-up");
         var filter = new JsonCredentialSignUpProcessingFilter(matcher, objectMapper);
 
         filter.setAuthenticationManager(credentialAuthenticationManager);
@@ -66,7 +66,7 @@ public class CredentialAuthenticationConfiguration {
             CredentialAuthenticationFailureHandler failureHandler,
             ObjectMapper objectMapper
     ) {
-        var matcher = PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, "/auth/sign-in");
+        var matcher = PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, "/api/v1/auth/sign-in");
         var filter = new JsonCredentialSignInProcessingFilter(matcher, objectMapper);
 
         filter.setAuthenticationManager(credentialAuthenticationManager);

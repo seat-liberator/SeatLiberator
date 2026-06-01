@@ -26,10 +26,16 @@ public class FederatedAuthenticationConfiguration {
     ) {
         return httpSecurity -> httpSecurity
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers("/oauth2/**", "/login/**")
+                        .requestMatchers("/api/v1/oauth2/**", "/api/v1/login/**")
                         .permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(config -> config
+                                .baseUri("/api/v1/oauth2/authorization")
+                        )
+                        .redirectionEndpoint(config -> config
+                                .baseUri("/api/v1/login/oauth2/code/*")
+                        )
                         .userInfoEndpoint(config -> config
                                 .oidcUserService(customOidcUserService)
                                 .userService(customOAuth2UserService)

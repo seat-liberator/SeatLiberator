@@ -24,8 +24,8 @@ public class CredentialAuthenticationOpenApiConfiguration {
     private final static String TOKEN_SCHEMA_KEY = "IssuedTokenResponse";
 
     private final static List<ApiOperation> CREDENTIAL_OPERATIONS = List.of(
-            new ApiOperation("/auth/sign-in", "이메일 로그인", "이메일과 비밀번호로 로그인하고 토큰을 발급합니다.", SIGN_IN_SCHEMA_KEY),
-            new ApiOperation("/auth/sign-up", "이메일 회원가입", "닉네임, 이메일, 비밀번호로 계정을 생성하고 토큰을 발급합니다.", SIGN_UP_SCHEMA_KEY)
+            new ApiOperation("/api/v1/auth/sign-in", "이메일 로그인", "이메일과 비밀번호로 로그인하고 토큰을 발급합니다.", SIGN_IN_SCHEMA_KEY),
+            new ApiOperation("/api/v1/auth/sign-up", "이메일 회원가입", "닉네임, 이메일, 비밀번호로 계정을 생성하고 토큰을 발급합니다.", SIGN_UP_SCHEMA_KEY)
     );
 
     @Bean
