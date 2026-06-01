@@ -41,5 +41,3 @@ spring:
               uri: http://localhost:8084
               predicates:
                 - Path=/api/v1/notification/**
-              filters:
-                - RewritePath=/api/v1/?(?<segment>.*), /$\{segment}

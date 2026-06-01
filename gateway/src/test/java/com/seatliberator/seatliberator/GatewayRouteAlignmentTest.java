@@ -102,7 +102,7 @@ class GatewayRouteAlignmentTest {
     @Test
     void notificationControllerEntrypointsAreCoveredByGatewayRoutes() throws IOException {
         var patterns = gatewayPathPatterns();
-        assertCovered(patterns, controllerPaths(NotificationController.class), true);
+        assertCovered(patterns, controllerPaths(NotificationController.class), false);
     }
 
     private static void assertCovered(Set<String> gatewayPatterns, Set<String> downstreamPaths, boolean rewriteApiV1Prefix) {
