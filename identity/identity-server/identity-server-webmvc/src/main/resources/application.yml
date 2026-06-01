@@ -27,12 +27,12 @@ spring:
             client-id: ${GITHUB_CLIENT_ID}
             client-secret: ${GITHUB_CLIENT_SECRET}
             scope: read:user, user:email
-            redirect-uri: "{baseUrl}/login/oauth2/code/github"
+            redirect-uri: "{baseUrl}/api/v1/login/oauth2/code/github"
             client-name: GitHub
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
             authorization-grant-type: authorization_code
             scope: openid, profile, email
-            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+            redirect-uri: "{baseUrl}/api/v1/login/oauth2/code/google"
             client-name: Google
