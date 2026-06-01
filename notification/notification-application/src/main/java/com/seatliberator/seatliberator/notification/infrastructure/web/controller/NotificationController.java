@@ -9,11 +9,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Notifications", description = "사용자 알림 조회 API")
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/notification")
 public class NotificationController {
     private final NotificationReader notificationReader;
     private final ActorContextHolder actorContextHolder;
@@ -23,7 +25,7 @@ public class NotificationController {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "401", description = "권한 없음")
     })
-    @GetMapping("/notification")
+    @GetMapping
     public ResponseEntity<?> getNotification() {
         var userId = actorContextHolder.getActor().subject();
         var result = notificationReader.readByTargetUserId(userId);
