@@ -1,8 +1,8 @@
 package com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.config;
 
-import com.nimbusds.oauth2.sdk.TokenResponse;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.filter.CredentialSignInRequest;
 import com.seatliberator.seatliberator.identity.server.security.authentication.method.credential.filter.CredentialSignUpRequest;
+import com.seatliberator.seatliberator.identity.server.security.shared.response.TokenPayload;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.*;
 import io.swagger.v3.oas.models.media.Content;
@@ -21,7 +21,7 @@ import java.util.List;
 public class CredentialAuthenticationOpenApiConfiguration {
     private final static String SIGN_IN_SCHEMA_KEY = "CredentialSignInRequest";
     private final static String SIGN_UP_SCHEMA_KEY = "CredentialSignUpRequest";
-    private final static String TOKEN_SCHEMA_KEY = "IssuedTokenResponse";
+    private final static String TOKEN_SCHEMA_KEY = "TokenPayload";
 
     private final static List<ApiOperation> CREDENTIAL_OPERATIONS = List.of(
             new ApiOperation("/api/v1/auth/sign-in", "이메일 로그인", "이메일과 비밀번호로 로그인하고 토큰을 발급합니다.", SIGN_IN_SCHEMA_KEY),
@@ -79,12 +79,12 @@ public class CredentialAuthenticationOpenApiConfiguration {
     private void applySchema(OpenAPI openApi) {
         var credentialSignInSchema = resolveSchema(CredentialSignInRequest.class);
         var credentialSignUpSchema = resolveSchema(CredentialSignUpRequest.class);
-        var issuedTokenResponseSchema = resolveSchema(TokenResponse.class);
+        var tokenPayloadSchema = resolveSchema(TokenPayload.class);
 
         getComponents(openApi)
                 .addSchemas(SIGN_IN_SCHEMA_KEY, credentialSignInSchema)
                 .addSchemas(SIGN_UP_SCHEMA_KEY, credentialSignUpSchema)
-                .addSchemas(TOKEN_SCHEMA_KEY, issuedTokenResponseSchema);
+                .addSchemas(TOKEN_SCHEMA_KEY, tokenPayloadSchema);
     }
 
     private Schema<?> resolveSchema(Class<?> schema) {
