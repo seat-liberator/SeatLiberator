@@ -22,6 +22,7 @@ include("kernel:kernel-test")
 
 include("starter:application-starter")
 include("starter:security-starter")
+include("starter:spring-application-launcher")
 
 include("gateway")
 
