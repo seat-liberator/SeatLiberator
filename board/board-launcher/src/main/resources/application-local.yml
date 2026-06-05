@@ -1,5 +1,23 @@
 seatliberator:
+  board:
+    launcher:
+      seed:
+        board:
+          namePrefixFormat: "SeatLiberator Board %s"
+          descriptionPrefixFormat: "SeatLiberator Board Description %s"
+          num: 5
+        category:
+          namePrefixFormat: "SeatLiberator Category #%s"
+          descriptionPrefixFormat: "SeatLiberator Category #%s"
+          num: 5
+        post:
+          titlePrefixFormat: "SeatLiberator Post #%s"
+          contentPrefixFormat: "SeatLiberator Post Content #%s"
+          num: 20
   starter:
+    launcher:
+      seed:
+        enabled: true
     security:
       authorize:
         anyRequest: AUTHENTICATED
