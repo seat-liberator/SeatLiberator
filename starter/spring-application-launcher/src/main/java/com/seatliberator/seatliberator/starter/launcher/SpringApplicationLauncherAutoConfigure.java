@@ -21,6 +21,11 @@ import java.util.List;
 public class SpringApplicationLauncherAutoConfigure {
 
     @Bean
+    @ConditionalOnProperty(
+            prefix = "seatliberator.starter.launcher.seed",
+            name = "enabled",
+            havingValue = "true"
+    )
     @ConditionalOnMissingBean
     ApplicationSeedRunner applicationSeedRunner(List<Seeder> seeders) {
         return new ApplicationSeedRunner(seeders);

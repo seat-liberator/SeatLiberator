@@ -18,7 +18,7 @@ public record SpringApplicationLauncherProperties(
         Seed seed
 ) {
     public record Seed(
-            @DefaultValue("true")
+            @DefaultValue("false")
             boolean enabled
     ) {
     }
