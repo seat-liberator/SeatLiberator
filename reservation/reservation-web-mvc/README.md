@@ -2,13 +2,14 @@
 
 `reservation:reservation-web-mvc`는 reservation HTTP API를 제공하는 web adapter 모듈입니다.
 
-이 모듈은 Spring Web MVC 기반 컨트롤러, 요청 DTO, 보안 권한 설정, 전역 예외 응답, OpenAPI 설정을 담당합니다.
+이 모듈은 Spring Web MVC 기반 컨트롤러, 요청 DTO, 보안 권한 설정, 전역 예외 응답, OpenAPI 설정, reservation 애플리케이션
+bootstrap을 담당합니다. REST API는 컨트롤러가 직접 `/api/v1` prefix를 노출합니다.
 
 ## 역할
 
-- 방/좌석 HTTP API 제공
-- 예약 생성/수정/취소/조회/사용 HTTP API 제공
-- 좌석 가용성/점유 상태 조회 HTTP API 제공
+- 방/좌석/좌석 시간 슬롯 HTTP API 제공
+- 예약 생성/취소/조회/사용 HTTP API 제공
+- 좌석 예약 가능 슬롯 조회 HTTP API 제공
 - 대기열 생성/취소 HTTP API 제공
 - Actor context 기반 요청자 식별
 - controller advice 기반 ProblemDetail 응답 변환
@@ -26,52 +27,46 @@
 
 ## 패키지 구조
 
-### `infrastructure.web.room`
+### `reservation.web.room`
 
-방과 좌석 API를 담당합니다.
+방 조회/관리 API를 담당합니다.
 
-- controller: `RoomCommandController`, `RoomQueryController`, `SeatCommandController`, `SeatQueryController`
-- request: `CreateRoomRequest`, `UpdateRoomRequest`, `SeatCreateRequest`, `SeatUpdateRequest`
+- controller: `RoomCommandController`, `RoomQueryController`
+- request: `CreateRoomRequest`, `UpdateRoomCodeRequest`, `UpdateRoomOperationPolicyRequest`
 
-주요 권한:
+### `reservation.web.seat`
 
-- `room.manage`
-- `room.list`
-- `room.read`
-- `seat.list`
-- `seat.read`
+좌석과 좌석 시간 슬롯 조회/관리 API를 담당합니다.
 
-### `infrastructure.web.book`
+- controller: `SeatCommandController`, `SeatQueryController`, `SeatTimeSlotCommandController`,
+  `SeatTimeSlotQueryController`
+- request: `SeatCreateRequest`, `SeatUpdateCodeRequest`, `SeatTimeSlotCreateRequest`, `SeatTimeSlotUpdateRequest`
 
-예약 생성/수정/취소/조회 API를 담당합니다.
+### `reservation.web.booking`
 
-- controller: `CreateReservationController`, `ReservationController`, `ReservationQueryController`
-- request: `ReservationCreateRequest`, `ReservationUpdateRequest`
+예약 생성/취소/조회와 예약 가능 슬롯 조회 API를 담당합니다.
 
-예약 생성/수정/취소/조회에서 사용자 식별자는 `ActorContextHolder`의 actor subject를 사용합니다.
+- controller: `BookingController`, `AvailabilityQueryController`
+- request: `CreateBookingRequest`, `CancelBookingRequest`
 
-### `infrastructure.web.usage`
+예약 생성에서는 `ActorContextHolder`의 actor subject를 예약 사용자 식별자로 사용합니다.
 
-예약 사용 API를 담당합니다.
+### `reservation.web.reservation`
 
-- controller: `ReservationUsageController`
+예약 목록/상세 조회와 예약 사용 API를 담당합니다.
 
-예약 사용 요청은 path variable의 예약 ID와 `ActorContextHolder`의 actor를 기반으로 command를 생성합니다.
+- controller: `ReservationQueryController`, `UseReservationController`
 
-### `infrastructure.web.availability`
+### `reservation.web.waitlist`
 
-좌석 가용성/점유 상태 조회 API를 담당합니다.
-
-- controller: `SeatAvailabilityController`
-
-### `infrastructure.web.waitlist`
-
-대기열 API를 담당합니다.
+대기열 생성/취소 API를 담당합니다.
 
 - controller: `WaitlistController`
 - request: `CreateWaitlistRequest`
 
-### `infrastructure.web.shared`
+대기열 생성에서는 `ActorContextHolder`의 actor subject를 요청자 식별자로 사용합니다.
+
+### `reservation.web.shared`
 
 web adapter 공통 구성을 담당합니다.
 
@@ -81,37 +76,58 @@ web adapter 공통 구성을 담당합니다.
 
 ## Endpoint 구성
 
-### Room and Seat
+### Rooms
 
-- `GET /rooms`
-- `GET /rooms/{roomId}`
-- `POST /rooms`
-- `PUT /rooms/{roomId}`
-- `DELETE /rooms/{roomId}`
-- `GET /rooms/{roomId}/seats`
-- `GET /rooms/{roomId}/seats/{seatId}`
-- `POST /rooms/{roomId}/seats`
-- `PUT /rooms/{roomId}/seats/{seatId}/id`
-- `DELETE /rooms/{roomId}/seats/{seatId}`
+- `GET /api/v1/rooms`
+- `GET /api/v1/rooms/{roomId}`
+- `POST /api/v1/rooms`
+- `PUT /api/v1/rooms/{roomId}`
+- `PUT /api/v1/rooms/{roomId}/policy`
+- `DELETE /api/v1/rooms/{roomId}`
 
-### Reservation
+### Seats
 
-- `POST /rooms/{roomId}/seats/{seatId}/reservations`
-- `PUT /reservations`
-- `DELETE /reservations`
-- `GET /reservations/me`
-- `POST /reservations/{reservationId}`
+- `GET /api/v1/rooms/{roomId}/seats`
+- `GET /api/v1/rooms/{roomId}/seats/{seatId}`
+- `POST /api/v1/rooms/{roomId}/seats`
+- `PUT /api/v1/rooms/{roomId}/seats/{seatId}/id`
+- `DELETE /api/v1/rooms/{roomId}/seats/{seatId}`
 
-### Availability
+### Seat Time Slots
 
-- `GET /rooms/{roomId}/available-seats`
-- `GET /rooms/{roomId}/seat-statuses`
-- `GET /rooms/{roomId}/seats/{seatId}/occupy`
+- `GET /api/v1/rooms/{roomId}/seats/{seatId}/slots`
+- `GET /api/v1/rooms/{roomId}/seats/{seatId}/slots/{slotId}`
+- `POST /api/v1/rooms/{roomId}/seats/{seatId}/slots`
+- `PUT /api/v1/rooms/{roomId}/seats/{seatId}/slots/{slotId}`
+- `DELETE /api/v1/rooms/{roomId}/seats/{seatId}/slots/{slotId}`
+
+### Booking
+
+- `GET /api/v1/booking/{reservationId}`
+- `POST /api/v1/booking/booking`
+- `DELETE /api/v1/booking/booking`
+- `GET /api/v1/booking/seats/{seatId}/available-slots?start={yyyy-MM-dd}&end={yyyy-MM-dd}`
+
+### Reservations
+
+- `GET /api/v1/reservations?userId={userId}&status={status}`
+- `GET /api/v1/reservations?userId={userId}&status={status}&start={isoInstant}&end={isoInstant}`
+- `GET /api/v1/reservations/{reservationId}`
+- `POST /api/v1/reservations/{reservationId}`
 
 ### Waitlist
 
-- `POST /waitlist`
-- `DELETE /waitlist/{waitlistId}`
+- `POST /api/v1/waitlist`
+- `DELETE /api/v1/waitlist/{waitlistId}`
+
+## 권한 구성
+
+`ReservationRoleCapabilityConfiguration`은 reservation capability를 기본 역할에 매핑합니다.
+
+- `GUEST`: `room.list`, `seat.list`
+- `USER`: `room.read`, `seat.read`, `booking.create`, `owned.booking.update`, `owned.booking.cancel`
+- `MAINTAINER`: `room.manage`, `seat.manage`, `booking.manage`
+- `ADMIN`: 별도 reservation capability 없음
 
 ## 빌드 구성
 
@@ -120,8 +136,9 @@ web adapter 공통 구성을 담당합니다.
 - `:reservation:reservation-persistence`
 - `:reservation:reservation-application`
 - `:reservation:reservation-domain`
-- `:bootstrap:resource-application-starter`
-- `testFixtures(project(":reservation:reservation-domain"))`
+- `:identity:identity-security-starter`
+- `:kernel:kernel-test` (test)
+- `testFixtures(project(":reservation:reservation-domain"))` (test)
 
 ## 테스트
 

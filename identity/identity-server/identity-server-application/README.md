@@ -43,15 +43,15 @@
 
 ### Credential 인증
 
-- `POST /auth/sign-up`
-- `POST /auth/sign-in`
+- `POST /api/v1/auth/sign-up`
+- `POST /api/v1/auth/sign-in`
 
 성공 시 access token / refresh token 을 반환합니다.
 
 ### Federated 인증
 
-- `/oauth2/**`
-- `/login/**`
+- `/api/v1/oauth2/**`
+- `/api/v1/login/**`
 
 GitHub, Google 로그인 이후 내부 사용자와 연계한 뒤 동일하게 토큰을 발급합니다.
 
