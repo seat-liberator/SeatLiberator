@@ -1,18 +1,17 @@
 plugins {
-    id("seatliberator.layer.webmvc")
-    id("seatliberator.spring.security")
+    id("seatliberator.layer.launcher")
 }
 
 group = "com.seatliberator.seatliberator"
 version = "0.0.1-SNAPSHOT"
 
 dependencies {
+    implementation(project(":reservation:reservation-web-mvc"))
     implementation(project(":reservation:reservation-persistence"))
     implementation(project(":reservation:reservation-application"))
     implementation(project(":reservation:reservation-domain"))
 
-    implementation(project(":identity:identity-security-starter"))
+    implementation(project(":starter:spring-application-launcher"))
 
-    testImplementation(project(":kernel:kernel-test"))
-    testImplementation(testFixtures(project(":reservation:reservation-domain")))
+    implementation(libs.spring.boot.starter.validation)
 }

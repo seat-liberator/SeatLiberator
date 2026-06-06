@@ -1,5 +1,8 @@
 seatliberator:
   starter:
+    launcher:
+      seed:
+        enabled: true
     security:
       authorize:
         anyRequest: AUTHENTICATED
