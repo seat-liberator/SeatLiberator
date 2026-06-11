@@ -66,4 +66,3 @@ include("notification")
 include("notification:notification-api")
 include("notification:notification-application")
 include("identity:identity-server:identity-server-redis")
-
